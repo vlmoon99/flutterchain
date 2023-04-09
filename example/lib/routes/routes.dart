@@ -6,7 +6,8 @@ class Routes {
 class _Auth extends RouteClass {
   @override
   String module = '/auth';
-  String login = '/';
+  String login = '/login';
+  String intro = '/';
 }
 
 class _Home extends RouteClass {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/lib_initialization_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +11,12 @@ import 'package:flutterchain_example/routes/routes.dart';
 
 void main() {
   runZonedGuarded(() async {
+    LicenseRegistry.addLicense(() async* {
+      final license = await rootBundle.loadString('OFL.txt');
+      yield LicenseEntryWithLineBreaks(['assets/fonts/manrope'], license);
+    });
     WidgetsFlutterBinding.ensureInitialized();
-    await initChainkitLib();
+    await initFlutterChainLib();
     await EasyLocalization.ensureInitialized();
     final isAuthorized = await checkIfUserAuthorized();
 

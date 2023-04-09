@@ -7,7 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 final InAppLocalhostServer localhostServer =
     InAppLocalhostServer(documentRoot: WebViewConstants.documentRoot);
 
-Future<void> initChainkitLib() async {
+Future<void> initFlutterChainLib() async {
   if (!kIsWeb) {
     await localhostServer.start();
   }
