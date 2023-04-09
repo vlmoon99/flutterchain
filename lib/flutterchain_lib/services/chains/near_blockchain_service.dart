@@ -1,0 +1,170 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
+import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_specific_arguments_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_vm.dart';
+
+class NearBlockChainService implements BlockChainService {
+  final JsVMService jsVMService;
+  final NearRpcClient nearRpcClient;
+  NearBlockChainService({
+    required this.jsVMService,
+    required this.nearRpcClient,
+  });
+
+  @override
+  Future<String> getWalletBalance(String accountId) async {
+    final res = await nearRpcClient.getAccountBalance(accountId);
+    return res;
+  }
+
+  Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
+      String accountId, publicKey) async {
+    final res =
+        await nearRpcClient.getNonceAndBlockHashInfo(accountId, publicKey);
+
+    return res;
+  }
+
+  Future<dynamic> sendTransactionNearSync({
+    required String tx,
+  }) async {
+    final res = await nearRpcClient.sendSyncTx([tx]);
+    return res.toString();
+  }
+
+  Future<dynamic> sendTransactionNearAsync({
+    required String tx,
+  }) async {
+    final res = await nearRpcClient.sendSyncTx([tx]);
+    return res;
+  }
+
+  Future<String> signNearActions({
+    required String fromAddress,
+    required String toAddress,
+    required String transferAmount,
+    required String privateKey,
+    required String gas,
+    required int nonce,
+    required String blockHash,
+    required List<Map<String, dynamic>> actions,
+  }) async {
+    nonce++;
+    String encodedArgs = base64.encode(utf8.encode(jsonEncode(actions)));
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.signNearActions('$fromAddress','$toAddress','$transferAmount', '$gas' , '$privateKey','$nonce','$blockHash','${jsonEncode(actions)}')");
+
+    final decodedRes = jsonDecode(res);
+    log("decodedRes ${decodedRes.toString()}");
+    return decodedRes['signedTransaction'].toString();
+  }
+
+  @override
+  Future callSmartContractFunction(
+    String toAdress,
+    String fromAdress,
+    String transferAmount,
+    String privateKey,
+    String methodName,
+    Map<String, dynamic> arguments,
+  ) async {
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+    final List<Map<String, dynamic>> actions = [
+      {
+        "type": "functionCall",
+        "data": {
+          "methodName": methodName,
+          "args": arguments,
+        },
+      },
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: toAdress,
+      transferAmount: transferAmount,
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
+  @override
+  Future sendTransferNativeCoin(
+    String toAdress,
+    String fromAdress,
+    String transferAmount,
+    String privateKey,
+  ) async {
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+    final actions = [
+      {
+        "type": "transfer",
+        "data": {"amount": transferAmount}
+      }
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: toAdress,
+      transferAmount: transferAmount,
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
+  @override
+  Future<BlockChainData> getBlockChainDataFromMnemonic(
+      String mnemonic, String passphrase) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.createNearWalletFromMnemonic('$mnemonic','$passphrase')");
+    final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
+    return blockChainData;
+  }
+
+  @override
+  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
+    nearRpcClient.networkClient.setUrl(newUrl);
+  }
+}
