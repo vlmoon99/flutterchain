@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
@@ -8,24 +9,35 @@ import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterchain_example/modules/auth/auth_module.dart';
+import 'package:flutterchain_example/modules/auth/vm/auth_vm.dart';
 import 'package:flutterchain_example/modules/home/home_module.dart';
+import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
+import 'package:flutterchain_example/theme/app_theme.dart';
 
 class AppModule extends Module {
   @override
   final List<Bind> binds = [
+    Bind.singleton(
+      (i) => AppTheme(),
+    ),
     Bind.singleton(
       (i) => const FlutterSecureStorage(),
     ),
     Bind.singleton(
       (i) => JsVMService(),
     ),
+    Bind.singleton(
+      (i) => Dio(),
+    ),
     //Inject Blockchain Code
 
     //1. Near Blockchain
     Bind.singleton(
-      (i) =>
-          NearNetworkClient(baseUrl: NearBlockChainNetworkUrls.nearTestNetUrl),
+      (i) => NearNetworkClient(
+        baseUrl: NearBlockChainNetworkUrls.nearTestNetUrl,
+        dio: i(),
+      ),
     ),
     Bind.singleton(
       (i) => NearRpcClient(
@@ -63,6 +75,14 @@ class AppModule extends Module {
       ),
     ),
     //
+
+    //Inject VMS
+    Bind.singleton((i) => HomeVM(i())),
+    Bind.singleton(
+      (i) => AuthVM(
+        i(),
+      ),
+    ),
   ];
 
   @override

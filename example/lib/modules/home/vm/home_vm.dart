@@ -7,7 +7,7 @@ class HomeVM {
   final FlutterChainCryptoLibrary cryptoLibary;
 
   HomeVM(this.cryptoLibary) {
-    cryptoLibary.walletsStream.value.forEach((element) {
+    cryptoLibary.walletsStream.valueOrNull?.forEach((element) {
       print(element.name);
     });
   }

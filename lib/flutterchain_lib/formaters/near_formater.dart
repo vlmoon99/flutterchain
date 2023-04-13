@@ -1,3 +1,4 @@
+// TODO Check and re-wtite tests (on demand)
 class NearFormatter {
   static String yoctoNearToNear(String yoctoNearAmount) {
     BigInt yoctoNear = BigInt.parse(yoctoNearAmount);

@@ -96,5 +96,5 @@ class NearRpcClient {
 }
 
 class NearNetworkClient extends NetworkClient {
-  NearNetworkClient({required super.baseUrl});
+  NearNetworkClient({required super.baseUrl, required super.dio});
 }

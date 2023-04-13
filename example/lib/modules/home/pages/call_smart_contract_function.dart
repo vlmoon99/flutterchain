@@ -1,11 +1,4 @@
-import 'dart:developer';
-
-import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/modules/auth/pages/login_page.dart';
-import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
 
 class CallSmartContractFunction extends StatefulWidget {
   const CallSmartContractFunction({super.key});
@@ -52,25 +45,25 @@ class _CallSmartContractFunctionState extends State<CallSmartContractFunction> {
               ],
             ),
           ),
-          AppButton(
-            title: "Call SM function",
-            onPress: () async {
-              final homeVM = Modular.get<HomeVM>();
-              final argumentValue = argument.text;
-              final smAdressValue = smAddress.text;
+          // AppButton(
+          //   title: "Call SM function",
+          //   onPress: () async {
+          //     final homeVM = Modular.get<HomeVM>();
+          //     final argumentValue = argument.text;
+          //     final smAdressValue = smAddress.text;
 
-              final resOfTx =
-                  await homeVM.cryptoLibary.callSmartContractFunction(
-                walletId: homeVM.cryptoLibary.walletsStream.value.first.id,
-                method: 'get_greeting',
-                args: {},
-                typeOfBlockchain: BlockChains.near,
-                toAdress: smAddress.text,
-                transferAmount: '0',
-              );
-              log("resOfTx $resOfTx");
-            },
-          ),
+          //     final resOfTx =
+          //         await homeVM.cryptoLibary.callSmartContractFunction(
+          //       walletId: homeVM.cryptoLibary.walletsStream.value.first.id,
+          //       method: 'get_greeting',
+          //       args: {},
+          //       typeOfBlockchain: BlockChains.near,
+          //       toAdress: smAddress.text,
+          //       transferAmount: '0',
+          //     );
+          //     log("resOfTx $resOfTx");
+          //   },
+          // ),
         ],
       ),
     );

@@ -6,9 +6,9 @@ class JsVMService {
   HeadlessInAppWebView? _headlessWebView;
   InAppWebViewController? _webViewMobileController;
   JsVMService() {
-    _initMobile();
+    initMobile();
   }
-  Future<void> _initMobile() async {
+  Future<void> initMobile() async {
     _headlessWebView = HeadlessInAppWebView(
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,

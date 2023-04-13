@@ -32,19 +32,20 @@ class LoggingInterceptor extends Interceptor {
 }
 
 class NetworkClient {
-  late Dio _dio;
+  final Dio dio;
   NetworkClient({
+    required this.dio,
     required String baseUrl,
   }) {
-    _dio = Dio();
-    _dio.options.baseUrl = baseUrl;
-    _dio.options.connectTimeout = const Duration(milliseconds: 5000);
-    _dio.options.receiveTimeout = const Duration(milliseconds: 10000);
-    _dio.interceptors.add(LoggingInterceptor());
+    // dio = Dio();
+    dio.options.baseUrl = baseUrl;
+    dio.options.connectTimeout = const Duration(milliseconds: 5000);
+    dio.options.receiveTimeout = const Duration(milliseconds: 10000);
+    dio.interceptors.add(LoggingInterceptor());
   }
 
   void setUrl(String newUrl) {
-    _dio.options.baseUrl = newUrl;
+    dio.options.baseUrl = newUrl;
   }
 
   AppExceptions _handleError(DioError e) {
@@ -59,7 +60,7 @@ class NetworkClient {
   Future<ApiResponse> getRequest(String url) async {
     AppExceptions? appExceptions;
     try {
-      Response response = await _dio.get(url);
+      Response response = await dio.get(url);
       return ApiResponse.sucsess(response.data, response.statusCode!, true);
     } on DioError catch (e) {
       appExceptions = _handleError(e);
@@ -72,7 +73,7 @@ class NetworkClient {
     AppExceptions? appExceptions;
 
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         url,
         data: data,
       );
@@ -88,7 +89,7 @@ class NetworkClient {
     AppExceptions? appExceptions;
 
     try {
-      Response response = await _dio.put(url, data: data);
+      Response response = await dio.put(url, data: data);
       return ApiResponse.sucsess(response.data, response.statusCode!, true);
     } on DioError catch (e) {
       appExceptions = _handleError(e);
@@ -101,7 +102,7 @@ class NetworkClient {
     AppExceptions? appExceptions;
 
     try {
-      Response response = await _dio.delete(url, data: data);
+      Response response = await dio.delete(url, data: data);
       return ApiResponse.sucsess(response.data, response.statusCode!, true);
     } on DioError catch (e) {
       appExceptions = _handleError(e);

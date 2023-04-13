@@ -5,13 +5,13 @@ class AuthVM {
   AuthVM(this.cryptoLibary);
 
   Future<void> createWallet(
-    String mnemonic,
+    String? mnemonic,
     String walletName,
   ) async {
-    cryptoLibary.createWallet(mnemonic: mnemonic, walletName: walletName);
-  }
-
-  Future<void> createWalletWithGeneratedMnemonic(String walletName) async {
-    cryptoLibary.createWalletWithGeneratedMnemonic(walletName: walletName);
+    if (mnemonic?.isEmpty ?? true) {
+      cryptoLibary.createWalletWithGeneratedMnemonic(walletName: walletName);
+    } else {
+      cryptoLibary.createWallet(mnemonic: mnemonic!, walletName: walletName);
+    }
   }
 }

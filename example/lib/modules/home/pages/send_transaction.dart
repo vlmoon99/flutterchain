@@ -82,28 +82,28 @@ class _SendTransactionPageState extends State<SendTransactionPage> {
                 decoration: const InputDecoration(hintText: "Amount"),
               ),
             ),
-            AppButton(
-              title: "Send transaction",
-              onPress: () async {
-                if (toAddressController.text.isNotEmpty &&
-                    amountController.text.isNotEmpty) {
-                  final resOfTx =
-                      await homeVM.sendNativeCoinTransferByWalletName(
-                    toAdress: toAddressController.text,
-                    transferAmount: amountController.text,
-                    typeOfBlockchain: BlockChains.near,
-                    walletId: homeVM.cryptoLibary.walletsStream.value.first.id,
-                  );
-                  log("resOfTx $resOfTx");
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Your address or amount is incorrect"),
-                    ),
-                  );
-                }
-              },
-            ),
+            // AppButton(
+            //   title: "Send transaction",
+            //   onPress: () async {
+            //     if (toAddressController.text.isNotEmpty &&
+            //         amountController.text.isNotEmpty) {
+            //       final resOfTx =
+            //           await homeVM.sendNativeCoinTransferByWalletName(
+            //         toAdress: toAddressController.text,
+            //         transferAmount: amountController.text,
+            //         typeOfBlockchain: BlockChains.near,
+            //         walletId: homeVM.cryptoLibary.walletsStream.value.first.id,
+            //       );
+            //       log("resOfTx $resOfTx");
+            //     } else {
+            //       ScaffoldMessenger.of(context).showSnackBar(
+            //         const SnackBar(
+            //           content: Text("Your address or amount is incorrect"),
+            //         ),
+            //       );
+            //     }
+            //   },
+            // ),
           ],
         ),
       ),

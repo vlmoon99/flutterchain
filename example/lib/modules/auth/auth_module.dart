@@ -7,11 +7,11 @@ import 'package:flutterchain_example/routes/routes.dart';
 class AuthModule extends Module {
   @override
   final List<Bind> binds = [
-    Bind.singleton(
-      (i) => AuthVM(
-        i(),
-      ),
-    ),
+    // Bind.singleton(
+    //   (i) => AuthVM(
+    //     i(),
+    //   ),
+    // ),
   ];
 
   @override
