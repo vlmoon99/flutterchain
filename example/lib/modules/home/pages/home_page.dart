@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/auth/pages/login_page.dart';
 import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
+import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class CryptoListPage extends StatefulWidget {
@@ -64,6 +65,10 @@ class _CryptoListPageState extends State<CryptoListPage> {
                             setState(() {
                               selectedWallet = homeVM
                                   .cryptoLibary.walletsStream.value[index].name;
+                              homeVM.walletIdStream.add(
+                                homeVM
+                                    .cryptoLibary.walletsStream.value[index].id,
+                              );
                             });
                             Navigator.pop(context);
                           },
@@ -134,7 +139,15 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         highlightColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          // Add your desired animation code here
+                          homeVM.walletIdStream.add(homeVM.cryptoLibary
+                                  .walletsStream.valueOrNull?.first.id ??
+                              'not founded');
+
+                          Modular.to.pushNamed(
+                            Routes.home.getRoute(Routes.home.actions),
+                            arguments: currentWallet?.blockchainsData?.keys
+                                .toList()[index],
+                          );
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -224,7 +237,7 @@ class _HomePageState extends State<HomePage> {
           style: nearTextStyles.headline,
         ),
         centerTitle: true,
-        backgroundColor: nearColors.nearBlack,
+        backgroundColor: nearColors.nearPurple,
       ),
       body: PageView(
         controller: _pageController,

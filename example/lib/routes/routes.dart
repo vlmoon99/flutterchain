@@ -16,6 +16,7 @@ class _Home extends RouteClass {
   String startPage = '/';
   String sendTransaction = '/sendTransaction';
   String callSmartContractFunction = '/callSmartContractFunction';
+  String actions = '/actions';
 }
 
 abstract class RouteClass {

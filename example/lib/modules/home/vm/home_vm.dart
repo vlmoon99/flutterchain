@@ -2,14 +2,17 @@ import 'dart:convert';
 
 import 'package:flutterchain/flutterchain_lib/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
+import 'package:rxdart/rxdart.dart';
 
 class HomeVM {
   final FlutterChainCryptoLibrary cryptoLibary;
-
+  final BehaviorSubject<String> walletIdStream = BehaviorSubject<String>();
   HomeVM(this.cryptoLibary) {
     cryptoLibary.walletsStream.valueOrNull?.forEach((element) {
       print(element.name);
     });
+    walletIdStream
+        .add(cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded');
   }
 
   Future<dynamic> getWalletBalanceByPublicKey({
@@ -19,7 +22,7 @@ class HomeVM {
       cryptoLibary.getBalanceOfAddressOnSpecificBlockchain(
           walletId: walletId, blockchainType: blockchainType);
 
-  Future<String> getWalletPublicKeyAddressByWalletName(
+  Future<String> getWalletPublicKeyAddressByWalletId(
           String walletName, String blockchainType) async =>
       cryptoLibary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
@@ -27,14 +30,14 @@ class HomeVM {
           ?.publicKey ??
       'No public key';
 
-  Future<String> getMnemonicPhraseByWalletName(
+  Future<String> getMnemonicPhraseByWalletId(
     String walletName,
   ) async =>
       cryptoLibary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
           .mnemonic;
 
-  Future<dynamic> sendNativeCoinTransferByWalletName({
+  Future<dynamic> sendNativeCoinTransferByWalletId({
     required String toAdress,
     required String transferAmount,
     required String walletId,
@@ -48,98 +51,4 @@ class HomeVM {
     );
     return response;
   }
-
-  // Future<String> getWalletBalance() async =>
-  //     _walletService.getWalletBalance((await getWallet()).publicKey);
-
-  // Future<dynamic> sendNearToAddress(
-  //     String toAddress, String transferAmount) async {
-  //   final wallet = await getWallet();
-  //   final txSubInfo = await _walletService.getNonceAndBlockHashInfo(
-  //       wallet.publicKey, wallet.publicKey);
-  //   final actions = [
-  //     {
-  //       "type": "transfer",
-  //       "data": {"amount": transferAmount}
-  //     }
-  //   ];
-  //   final signedTX = await _walletService.signNearActions(
-  //     fromAddress: wallet.publicKey,
-  //     toAddress: toAddress,
-  //     transferAmount: nearToYoctoNear(transferAmount),
-  //     privateKey: wallet.privateKey,
-  //     nonce: txSubInfo.nonce,
-  //     blockHash: txSubInfo.blockHash,
-  //     actions: actions,
-  //     gas: '30000000000000',
-  //   );
-  //   final res = await _walletService.sendTransactionNearSync(tx: signedTX);
-  //   return res;
-  // }
-
-  // Future<dynamic> callSmartContractFunctionSet(
-  //   String argumentValue,
-  //   String smAdressValue,
-  // ) async {
-  //   final wallet = await getWallet();
-  //   final txSubInfo = await _walletService.getNonceAndBlockHashInfo(
-  //       wallet.publicKey, wallet.publicKey);
-  //   final List<Map<String, dynamic>> actions = [
-  //     {
-  //       "type": "functionCall",
-  //       "data": {
-  //         "methodName": "set_greeting",
-  //         "args": {"message": argumentValue},
-  //       },
-  //     },
-  //   ];
-  //   final signedTX = await _walletService.signNearActions(
-  //     actions: actions,
-  //     blockHash: txSubInfo.blockHash,
-  //     fromAddress: wallet.publicKey,
-  //     nonce: txSubInfo.nonce,
-  //     gas: "30000000000000",
-  //     privateKey: wallet.privateKey,
-  //     toAddress: smAdressValue,
-  //     transferAmount: nearToYoctoNear("0"),
-  //   );
-  //   final res = await _walletService.sendTransactionNearAsync(tx: signedTX);
-
-  //   return res;
-  // }
-
-  // Future<dynamic> callSmartContractFunctionGet(
-  //   String argumentValue,
-  //   String smAdressValue,
-  // ) async {
-  //   final wallet = await getWallet();
-  //   final txSubInfo = await _walletService.getNonceAndBlockHashInfo(
-  //       wallet.publicKey, wallet.publicKey);
-  //   final List<Map<String, dynamic>> actions = [
-  //     {
-  //       "type": "functionCall",
-  //       "data": {
-  //         "methodName": "get_greeting",
-  //         "args": {"message": argumentValue},
-  //       },
-  //     },
-  //   ];
-  //   final signedTX = await _walletService.signNearActions(
-  //     actions: actions,
-  //     blockHash: txSubInfo.blockHash,
-  //     fromAddress: wallet.publicKey,
-  //     nonce: txSubInfo.nonce,
-  //     gas: "30000000000000",
-  //     privateKey: wallet.privateKey,
-  //     toAddress: smAdressValue,
-  //     transferAmount: nearToYoctoNear("0"),
-  //   );
-  //   final res = await _walletService.sendTransactionNearAsync(tx: signedTX);
-
-  //   final value = res['result']['status']['SuccessValue'] ?? 'no result';
-  //   String decodedString =
-  //       utf8.decode(base64.decode(value)).replaceAll(r'"', "");
-
-  //   return decodedString;
-  // }
 }

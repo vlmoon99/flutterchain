@@ -212,10 +212,10 @@ class NearColors extends ThemeExtension<NearColors> {
   });
 
   const NearColors.defaultColors({
-    this.nearSlate = const Color(0xFF262626),
-    this.nearGray = const Color(0xFF3F4246),
-    this.nearWhite = const Color(0xFFA7A7A7),
-    this.nearBlack = const Color(0xFFFFFFFF),
+    this.nearSlate = const Color(0xff3F4246),
+    this.nearGray = const Color(0xffA7A7A7),
+    this.nearWhite = const Color(0xffffffff),
+    this.nearBlack = const Color(0xff262626),
     this.nearBlue = const Color(0xFF5F8AFA),
     this.nearLilac = const Color(0xFFA463B0),
     this.nearPurple = const Color(0xFF6B6EF9),
