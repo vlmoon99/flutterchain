@@ -58,7 +58,6 @@ class NearBlockChainService implements BlockChainService {
     required List<Map<String, dynamic>> actions,
   }) async {
     nonce++;
-    String encodedArgs = base64.encode(utf8.encode(jsonEncode(actions)));
     final res = await jsVMService.callJS(
         "window.NearBlockchain.signNearActions('$fromAddress','$toAddress','$transferAmount', '$gas' , '$privateKey','$nonce','$blockHash','${jsonEncode(actions)}')");
 

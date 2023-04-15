@@ -11,7 +11,7 @@ class HomeModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    ChildRoute(Routes.home.startPage, child: (_, args) => HomePage()),
+    ChildRoute(Routes.home.startPage, child: (_, args) => const HomePage()),
     ChildRoute(Routes.home.sendTransaction,
         child: (_, args) => const SendTransactionPage()),
     ChildRoute(
@@ -20,7 +20,7 @@ class HomeModule extends Module {
     ),
     ChildRoute(
       Routes.home.actions,
-      child: (_, args) => const CryptoActionsPage(),
+      child: (_, args) => CryptoActionsPage(),
     ),
   ];
 }

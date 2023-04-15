@@ -52,7 +52,6 @@ export class NearBlockchain {
       let parsedActions = JSON.parse(actions);
 
       const twActions = parsedActions.map((action) => {
-        console.log(`JSON ${typeof action}`);
         if (action.type === "transfer") {
           return {
             transfer: TW.NEAR.Proto.Transfer.create({
@@ -61,13 +60,12 @@ export class NearBlockchain {
           };
         } else if (action.type === "functionCall") {
           const encoder = new TextEncoder();
-          const utf8BytesArgs = encoder.encode(action.data.args);
+          const utf8BytesArgs = encoder.encode(JSON.stringify(action.data.args));
           const methodName = action.data.methodName;
-
           const mappedAction = {
             functionCall: TW.NEAR.Proto.FunctionCall.create({
               methodName: methodName,
-              args: action.data.args !== "" ? utf8BytesArgs : [],
+              args: utf8BytesArgs,
               gas: Long.fromString(gas),
               deposit: amountBytes,
             }),
@@ -91,7 +89,7 @@ export class NearBlockchain {
 
       return JSON.stringify(output);
     } catch (error) {
-      console.error(JSON.stringify({ error: error }));
+      console.error(JSON.stringify(error));
       return JSON.stringify({ error: error.message });
     }
   }

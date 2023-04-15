@@ -15,6 +15,25 @@ class HomeVM {
         .add(cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded');
   }
 
+  Future<dynamic> callSmartContractFunction({
+    required Map<String, dynamic> args,
+    required String amountOfDeposit,
+    required String blockchainType,
+    required String walletId,
+    required String smartContractAddress,
+    required String method,
+  }) {
+    final response = cryptoLibary.callSmartContractFunction(
+      walletId: walletId,
+      typeOfBlockchain: blockchainType,
+      toAdress: smartContractAddress,
+      transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
+      args: args,
+      method: method,
+    );
+    return response;
+  }
+
   Future<dynamic> getWalletBalanceByPublicKey({
     required String walletId,
     required String blockchainType,

@@ -152,7 +152,7 @@ class FlutterChainCryptoLibrary {
       transferAmount: transferAmount,
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
-      arguments: {},
+      arguments: args,
       methodName: method,
     );
   }
