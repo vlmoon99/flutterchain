@@ -93,16 +93,4 @@ void main() {
       expect(gasValue, '30000000000000');
     });
   });
-
-  group('NearBlockChainNetworkUrls tests', () {
-    test('Test getting NEAR testnet URL', () {
-      expect(NearBlockChainNetworkUrls.nearTestNetUrl,
-          'https://rpc.testnet.near.org');
-    });
-
-    test('Test getting NEAR mainnet URL', () {
-      expect(NearBlockChainNetworkUrls.nearMainNetUrl,
-          'https://rpc.mainnet.near.org');
-    });
-  });
 }

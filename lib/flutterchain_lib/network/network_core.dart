@@ -7,7 +7,7 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     log(
-      'Make ${options.method} request to route ${options.path} with data ${options.data}',
+      'Make ${options.method} request to route ${options.baseUrl + options.path} with data ${options.data}',
     );
     return super.onRequest(options, handler);
   }
@@ -37,10 +37,9 @@ class NetworkClient {
     required this.dio,
     required String baseUrl,
   }) {
-    // dio = Dio();
     dio.options.baseUrl = baseUrl;
     dio.options.connectTimeout = const Duration(milliseconds: 5000);
-    dio.options.receiveTimeout = const Duration(milliseconds: 10000);
+    dio.options.receiveTimeout = const Duration(milliseconds: 5000);
     dio.interceptors.add(LoggingInterceptor());
   }
 

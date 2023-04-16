@@ -1,12 +1,14 @@
 import 'dart:convert';
 
-import 'package:flutterchain/flutterchain_lib/flutterchain_lib.dart';
+import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeVM {
   final FlutterChainCryptoLibrary cryptoLibary;
   final BehaviorSubject<String> walletIdStream = BehaviorSubject<String>();
+
   HomeVM(this.cryptoLibary) {
     cryptoLibary.walletsStream.valueOrNull?.forEach((element) {
       print(element.name);
@@ -15,7 +17,22 @@ class HomeVM {
         .add(cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded');
   }
 
-  Future<dynamic> callSmartContractFunction({
+  Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
+    return cryptoLibary.getBlockchainsUrlsByBlockchainType(blockchainType);
+  }
+
+  Future<void> createWallet(
+    String? mnemonic,
+    String walletName,
+  ) async {
+    if (mnemonic?.isEmpty ?? true) {
+      cryptoLibary.createWalletWithGeneratedMnemonic(walletName: walletName);
+    } else {
+      cryptoLibary.createWallet(mnemonic: mnemonic!, walletName: walletName);
+    }
+  }
+
+  Future<BlockchainResponse> callSmartContractFunction({
     required Map<String, dynamic> args,
     required String amountOfDeposit,
     required String blockchainType,

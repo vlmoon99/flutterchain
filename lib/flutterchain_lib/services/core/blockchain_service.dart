@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 abstract class BlockChainService {
@@ -6,14 +7,14 @@ abstract class BlockChainService {
     String passphrase,
   );
 
-  Future<dynamic> sendTransferNativeCoin(
+  Future<BlockchainResponse> sendTransferNativeCoin(
     String toAdress,
     String fromAdress,
     String transferAmount,
     String privateKey,
   );
 
-  Future<dynamic> callSmartContractFunction(
+  Future<BlockchainResponse> callSmartContractFunction(
     String toAdress,
     String fromAdress,
     String transferAmount,
@@ -25,4 +26,6 @@ abstract class BlockChainService {
   Future<String> getWalletBalance(String accountId);
 
   Future<void> setBlockchainNetworkEnvironment({required String newUrl});
+
+  Set<String> getBlockchainsUrlsByBlockchainType();
 }

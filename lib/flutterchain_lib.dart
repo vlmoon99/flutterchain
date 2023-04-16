@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
@@ -121,7 +122,7 @@ class FlutterChainCryptoLibrary {
     );
   }
 
-  Future<dynamic> callSmartContractFunction({
+  Future<BlockchainResponse> callSmartContractFunction({
     required String walletId,
     required String method,
     required Map<String, dynamic> args,
@@ -163,5 +164,9 @@ class FlutterChainCryptoLibrary {
       blockchainType: blockchainType,
       newUrl: newUrl,
     );
+  }
+
+  Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
+    return cryptoService.getBlockchainsUrlsByBlockchainType(blockchainType);
   }
 }

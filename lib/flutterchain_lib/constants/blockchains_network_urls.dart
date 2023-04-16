@@ -1,5 +1,7 @@
 class NearBlockChainNetworkUrls {
-  static const nearTestNetUrl = "https://rpc.testnet.near.org";
-
-  static const nearMainNetUrl = "https://rpc.mainnet.near.org";
+  static const listOfUrls = {
+    "https://rpc.testnet.near.org",
+    "https://rpc.mainnet.near.org",
+    'https://rpc.betanet.near.org',
+  };
 }

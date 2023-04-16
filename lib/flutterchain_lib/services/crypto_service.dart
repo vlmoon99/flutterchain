@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -47,7 +48,7 @@ class CryptoService {
         toAdress, fromAdress, transferAmount, privateKey);
   }
 
-  Future<dynamic> callSmartContractFunction({
+  Future<BlockchainResponse> callSmartContractFunction({
     required String toAdress,
     required String fromAdress,
     required String transferAmount,
@@ -60,7 +61,8 @@ class CryptoService {
       throw Exception('Incorrect Blockchain');
     }
 
-    return blockchainServices[typeOfBlockchain]?.callSmartContractFunction(
+    final res =
+        await blockchainServices[typeOfBlockchain]?.callSmartContractFunction(
       toAdress,
       fromAdress,
       transferAmount,
@@ -68,6 +70,12 @@ class CryptoService {
       methodName,
       arguments,
     );
+
+    if (res == null) {
+      throw Exception('Incorrect Smart Contract Call');
+    }
+
+    return res;
   }
 
   Future<Map<String, BlockChainData>> createBlockchainsDataFromTheMnemonic({
@@ -102,5 +110,10 @@ class CryptoService {
       blockchainsData: {},
       name: walletName,
     );
+  }
+
+  Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
+    return blockchainServices[blockchainType]!
+        .getBlockchainsUrlsByBlockchainType();
   }
 }

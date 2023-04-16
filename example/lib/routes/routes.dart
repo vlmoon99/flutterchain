@@ -6,7 +6,6 @@ class Routes {
 class _Auth extends RouteClass {
   @override
   String module = '/auth';
-  String login = '/login';
   String intro = '/';
 }
 
@@ -14,8 +13,7 @@ class _Home extends RouteClass {
   @override
   String module = '/home';
   String startPage = '/';
-  String sendTransaction = '/sendTransaction';
-  String callSmartContractFunction = '/callSmartContractFunction';
+  String login = '/login';
   String actions = '/actions';
 }
 

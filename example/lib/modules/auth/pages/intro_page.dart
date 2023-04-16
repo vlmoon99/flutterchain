@@ -82,8 +82,7 @@ class _IntroPageState extends State<IntroPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_controller.page?.toInt() == 2) {
-                    Modular.to
-                        .pushNamed(Routes.auth.getRoute(Routes.auth.login));
+                    Modular.to.navigate(Routes.home.getModule());
                   }
                   _controller.nextPage(
                     duration: const Duration(milliseconds: 300),

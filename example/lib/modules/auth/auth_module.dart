@@ -1,7 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/modules/auth/pages/intro_page.dart';
-import 'package:flutterchain_example/modules/auth/pages/login_page.dart';
-import 'package:flutterchain_example/modules/auth/vm/auth_vm.dart';
+import 'package:flutterchain_example/modules/home/pages/login_page.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 
 class AuthModule extends Module {
@@ -19,10 +18,6 @@ class AuthModule extends Module {
     ChildRoute(
       Routes.auth.intro,
       child: (_, args) => const IntroPage(),
-    ),
-    ChildRoute(
-      Routes.auth.login,
-      child: (_, args) => const LoginPage(),
     ),
   ];
 }

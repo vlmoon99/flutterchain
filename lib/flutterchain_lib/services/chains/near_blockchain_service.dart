@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
+import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_specific_arguments_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -33,19 +35,15 @@ class NearBlockChainService implements BlockChainService {
     return res;
   }
 
-  Future<dynamic> sendTransactionNearSync({
+  Future<BlockchainResponse> sendTransactionNearSync({
     required String tx,
-  }) async {
-    final res = await nearRpcClient.sendSyncTx([tx]);
-    return res.toString();
-  }
+  }) =>
+      nearRpcClient.sendSyncTx([tx]);
 
-  Future<dynamic> sendTransactionNearAsync({
+  Future<BlockchainResponse> sendTransactionNearAsync({
     required String tx,
-  }) async {
-    final res = await nearRpcClient.sendSyncTx([tx]);
-    return res;
-  }
+  }) =>
+      nearRpcClient.sendSyncTx([tx]);
 
   Future<String> signNearActions({
     required String fromAddress,
@@ -67,7 +65,7 @@ class NearBlockChainService implements BlockChainService {
   }
 
   @override
-  Future callSmartContractFunction(
+  Future<BlockchainResponse> callSmartContractFunction(
     String toAdress,
     String fromAdress,
     String transferAmount,
@@ -113,7 +111,7 @@ class NearBlockChainService implements BlockChainService {
   }
 
   @override
-  Future sendTransferNativeCoin(
+  Future<BlockchainResponse> sendTransferNativeCoin(
     String toAdress,
     String fromAdress,
     String transferAmount,
@@ -165,5 +163,10 @@ class NearBlockChainService implements BlockChainService {
   @override
   Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
     nearRpcClient.networkClient.setUrl(newUrl);
+  }
+
+  @override
+  Set<String> getBlockchainsUrlsByBlockchainType() {
+    return NearBlockChainNetworkUrls.listOfUrls;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/modules/auth/vm/auth_vm.dart';
+import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
@@ -174,7 +174,7 @@ class CreateWalletComponent extends StatelessWidget {
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearColors = theme.getTheme().extension<NearColors>()!;
 
-    final authVM = Modular.get<AuthVM>();
+    final authVM = Modular.get<HomeVM>();
 
     return SizedBox(
       width: 200,

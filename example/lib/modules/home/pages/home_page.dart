@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
-import 'package:flutterchain_example/modules/auth/pages/login_page.dart';
+import 'package:flutterchain_example/modules/home/pages/login_page.dart';
 import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -63,12 +65,13 @@ class _CryptoListPageState extends State<CryptoListPage> {
                           ),
                           onTap: () {
                             setState(() {
-                              selectedWallet = homeVM
-                                  .cryptoLibary.walletsStream.value[index].name;
+                              final choosenWallet = homeVM
+                                  .cryptoLibary.walletsStream.value[index];
+                              selectedWallet = choosenWallet.name;
                               homeVM.walletIdStream.add(
-                                homeVM
-                                    .cryptoLibary.walletsStream.value[index].id,
+                                choosenWallet.id,
                               );
+                              log("Current Wallet ID ${homeVM.walletIdStream.value}");
                             });
                             Navigator.pop(context);
                           },
@@ -139,9 +142,9 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         highlightColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          homeVM.walletIdStream.add(homeVM.cryptoLibary
-                                  .walletsStream.valueOrNull?.first.id ??
-                              'not founded');
+                          // homeVM.walletIdStream.add(homeVM.cryptoLibary
+                          //         .walletsStream.valueOrNull?.first.id ??
+                          //     'not founded');
 
                           Modular.to.pushNamed(
                             Routes.home.getRoute(Routes.home.actions),

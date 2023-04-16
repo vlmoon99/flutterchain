@@ -1,8 +1,11 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:bs58/bs58.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/network/network_core.dart';
 import 'dart:async';
 
@@ -66,7 +69,7 @@ class NearRpcClient {
     }
   }
 
-  Future<dynamic> sendAsyncTx(List<String> params) async {
+  Future<BlockchainResponse> sendAsyncTx(List<String> params) async {
     final res = await networkClient.postHTTP('', {
       "jsonrpc": "2.0",
       "id": "dontcare",
@@ -74,13 +77,21 @@ class NearRpcClient {
       "params": params
     });
     if (res.isSucsess) {
-      return res.data;
+      return BlockchainResponse(
+        data: res.data['result'],
+        status: 'success',
+      );
     } else {
-      return 0;
+      return BlockchainResponse(
+        data: {
+          "error": "'Error while sending transaction'",
+        },
+        status: 'error',
+      );
     }
   }
 
-  Future<dynamic> sendSyncTx(List<String> params) async {
+  Future<BlockchainResponse> sendSyncTx(List<String> params) async {
     final res = await networkClient.postHTTP('', {
       "jsonrpc": "2.0",
       "id": "dontcare",
@@ -88,13 +99,34 @@ class NearRpcClient {
       "params": params
     });
     if (res.isSucsess) {
-      return res.data;
+      return BlockchainResponse(
+        data: res.data['result'],
+        status: 'success',
+      );
     } else {
-      return 0;
+      return BlockchainResponse(
+        data: {
+          "error": "'Error while sending transaction'",
+        },
+        status: 'error',
+      );
     }
   }
 }
 
 class NearNetworkClient extends NetworkClient {
-  NearNetworkClient({required super.baseUrl, required super.dio});
+  NearNetworkClient({required super.baseUrl, required super.dio}) {
+    dio.interceptors.add(RetryInterceptor(
+      dio: dio,
+      logPrint: log,
+      retries: 5,
+      retryDelays: const [
+        Duration(seconds: 2),
+        Duration(seconds: 1),
+        Duration(seconds: 1),
+        Duration(seconds: 1),
+        Duration(seconds: 1),
+      ],
+    ));
+  }
 }
