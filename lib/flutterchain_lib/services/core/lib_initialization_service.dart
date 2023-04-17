@@ -4,12 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final InAppLocalhostServer localhostServer =
-    InAppLocalhostServer(documentRoot: WebViewConstants.documentRoot);
+final InAppLocalhostServer? localhostServer = kIsWeb
+    ? null
+    : InAppLocalhostServer(documentRoot: WebViewConstants.documentRoot);
 
 Future<void> initFlutterChainLib() async {
   if (!kIsWeb) {
-    await localhostServer.start();
+    await localhostServer?.start();
   }
 
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {

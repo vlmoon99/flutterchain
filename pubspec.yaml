@@ -58,12 +58,12 @@ flutter:
         pluginClass: FlutterchainPlugin
       ios:
         pluginClass: FlutterchainPlugin
-      linux:
-        pluginClass: FlutterchainPlugin
-      macos:
-        pluginClass: FlutterchainPlugin
-      windows:
-        pluginClass: FlutterchainPluginCApi
+      # linux:
+      #   pluginClass: FlutterchainPlugin
+      # macos:
+      #   pluginClass: FlutterchainPlugin
+      # windows:
+      #   pluginClass: FlutterchainPluginCApi
       web:
         pluginClass: FlutterchainWeb
         fileName: flutterchain_web.dart
