@@ -11,7 +11,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_vm.dart';
 
 class NearBlockChainService implements BlockChainService {
   final JsVMService jsVMService;

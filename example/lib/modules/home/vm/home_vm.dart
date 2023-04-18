@@ -13,8 +13,10 @@ class HomeVM {
     cryptoLibary.walletsStream.valueOrNull?.forEach((element) {
       print(element.name);
     });
-    walletIdStream
-        .add(cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded');
+    walletIdStream.add(
+        (cryptoLibary.walletsStream.valueOrNull?.isNotEmpty ?? false)
+            ? cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded'
+            : 'not founded');
   }
 
   Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {

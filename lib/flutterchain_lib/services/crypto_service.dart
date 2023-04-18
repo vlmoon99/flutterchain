@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_vm.dart';
 
 class CryptoService {
   final JsVMService jsVMService;
@@ -27,6 +28,7 @@ class CryptoService {
 
   Future<dynamic> getWalletBalance(
       {required String accountId, required String blockchainType}) async {
+    log("accountId $accountId");
     final res =
         await blockchainServices[blockchainType]?.getWalletBalance(accountId);
     return res;

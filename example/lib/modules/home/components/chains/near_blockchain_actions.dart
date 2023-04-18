@@ -264,6 +264,17 @@ class _NetworkSelectorState extends State<NetworkSelector> {
 
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Text(
+            'Your Address :${homeVM.cryptoLibary.walletsStream.valueOrNull?[int.tryParse(homeVM.walletIdStream.value) ?? 0].blockchainsData?[widget.blockchainType]?.publicKey}',
+            style: nearTextStyles.headline!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: nearColors.nearBlack,
+              fontSize: 20,
+            ),
+          ),
+        ),
         FutureBuilder(
           future: homeVM.getWalletBalanceByPublicKey(
             walletId: homeVM.walletIdStream.value,

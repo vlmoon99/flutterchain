@@ -17,9 +17,17 @@ class CryptoListPage extends StatefulWidget {
 }
 
 class _CryptoListPageState extends State<CryptoListPage> {
-  String? selectedWallet =
-      Modular.get<HomeVM>().cryptoLibary.walletsStream.valueOrNull?[0].name ??
-          "No wallet founded"; // Default value
+  String? selectedWallet;
+
+  @override
+  void initState() {
+    super.initState();
+    final cryptoLibary = Modular.get<HomeVM>().cryptoLibary;
+
+    selectedWallet = cryptoLibary.walletsStream.valueOrNull?.isNotEmpty ?? false
+        ? cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded'
+        : 'not founded';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +244,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Crypto App',
+          'Flutter Chain Libary Example',
           style: nearTextStyles.headline,
         ),
         centerTitle: true,

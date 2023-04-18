@@ -172,7 +172,6 @@ class CreateWalletComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
-    final nearColors = theme.getTheme().extension<NearColors>()!;
 
     final authVM = Modular.get<HomeVM>();
 
