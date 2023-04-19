@@ -1,18 +1,15 @@
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_vm.dart';
 import 'package:flutterchain/flutterchain_lib/constants/webview_constants.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'dart:io';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 JsVMService getJsVM() {
-  return MobileJsVMService();
+  return WebviewJsVMService();
 }
 
-class MobileJsVMService implements JsVMService {
+class WebviewJsVMService implements JsVMService {
   HeadlessInAppWebView? _headlessWebView;
   InAppWebViewController? _webViewMobileController;
-  MobileJsVMService() {
+  WebviewJsVMService() {
     init();
   }
 

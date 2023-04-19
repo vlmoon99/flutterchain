@@ -33,7 +33,7 @@ class NearRpcClient {
         "public_key": "ed25519:${base58.encode(hash)}"
       }
     });
-    if (res.isSucsess) {
+    if (res.isSuccess) {
       final nonce = int.tryParse(res.data['result']['nonce'].toString()) ?? 0;
       final blockHash = res.data['result']['block_hash'].toString();
       return NearTransactionInfoModel(blockHash: blockHash, nonce: nonce);
@@ -58,7 +58,7 @@ class NearRpcClient {
         }
       },
     );
-    if (res.isSucsess) {
+    if (res.isSuccess) {
       final decodedRes = res.data['result']['amount'].toString();
       final nearAmount = NearFormatter.yoctoNearToNear(
         decodedRes,
@@ -76,7 +76,7 @@ class NearRpcClient {
       "method": "broadcast_tx_async",
       "params": params
     });
-    if (res.isSucsess) {
+    if (res.isSuccess) {
       return BlockchainResponse(
         data: res.data['result'],
         status: 'success',
@@ -98,7 +98,7 @@ class NearRpcClient {
       "method": "broadcast_tx_commit",
       "params": params
     });
-    if (res.isSucsess) {
+    if (res.isSuccess) {
       return BlockchainResponse(
         data: res.data['result'],
         status: 'success',

@@ -20,7 +20,8 @@ class NearFormatter {
         }
       }
       decimalPart = decimalPart.substring(0, endIndex);
-      return '$integerPart.$decimalPart';
+      return double.tryParse('$integerPart.$decimalPart')?.toStringAsFixed(5) ??
+          '0';
     }
   }
 
