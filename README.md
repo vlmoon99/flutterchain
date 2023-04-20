@@ -38,9 +38,16 @@ Instructions for building the library from source code.
 ```
 
 6. Set minSdkVersion 19 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest
+7. Init flutterchain lib after WidgetsFlutterBinding.ensureInitialized()
+   in main function()
 
-7. Run `flutter pub get` to get the necessary dependencies.
-8. Run `flutter run` to run the example.
+   ```
+    WidgetsFlutterBinding.ensureInitialized();
+    await initFlutterChainLib();
+   ```
+
+8. Run `flutter pub get` to get the necessary dependencies.
+9. Run `flutter run` to run the example.
 
 ## Running Examples
 
