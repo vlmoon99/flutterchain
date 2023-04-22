@@ -18,11 +18,14 @@ class NearBlockchainActions extends StatefulWidget {
 
 class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   final formKey = GlobalKey<FormState>();
+
+  //Transfer Near
   final TextEditingController recipientEditingController =
       TextEditingController();
   final TextEditingController transferDepositController =
       TextEditingController();
 
+  //Smart contract call
   final TextEditingController argumentsSmartContractController =
       TextEditingController();
   final TextEditingController amountOfDepositController =
@@ -34,17 +37,42 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   final TextEditingController smartContractMethodNameController =
       TextEditingController();
 
+  //Add key
+
+  final TextEditingController addKeySmartContractAddressController =
+      TextEditingController();
+  final TextEditingController addKeyMethodsNamesController =
+      TextEditingController();
+  final TextEditingController addKeyAllowanceAmountController =
+      TextEditingController();
+  final TextEditingController addKeyPassPhraseController =
+      TextEditingController();
+  final TextEditingController addKeyIndexOfTheDerivationPathController =
+      TextEditingController();
+  final TextEditingController addKeyPermissionTypeController =
+      TextEditingController();
+
   dynamic resultOfSmartContractCall;
   @override
   void initState() {
     super.initState();
+    //Transfer Near
     recipientEditingController.text = "pay4result_business.testnet";
     transferDepositController.text = "1";
+    //Smart contract call
     argumentsSmartContractController.text =
         r'{"message": "Hello From FlutterChain"}';
     smartContractAddressController.text = "dev-1679756367837-29230485683009";
     smartContractMethodNameController.text = "set_greeting";
     amountOfDepositOnSmartContractController.text = "0";
+    //Add key
+    addKeySmartContractAddressController.text =
+        'dev-1679756367837-29230485683009';
+    addKeyMethodsNamesController.text = 'set_greeting, get_greeting';
+    addKeyAllowanceAmountController.text = '1';
+    addKeyPassPhraseController.text = '';
+    addKeyIndexOfTheDerivationPathController.text = '1';
+    addKeyPermissionTypeController.text = 'functionCall';
   }
 
   @override
@@ -200,6 +228,99 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                     fontWeight: FontWeight.bold,
                     color: nearColors.nearBlack,
                     fontSize: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        CryptoActionCard(
+          title: 'Add Key',
+          height: 700,
+          icon: Icons.key_rounded,
+          color: nearColors.nearPurple,
+          onTap: () {
+            final passPhrase = addKeyPassPhraseController.text;
+            final indexOfDerivationPath =
+                addKeyIndexOfTheDerivationPathController.text;
+            final permissionType = addKeyPermissionTypeController.text;
+            final walletID = homeVM.walletIdStream.value;
+            final methodsNames =
+                addKeyMethodsNamesController.text.split(',').toList();
+            final allowanceAmount = addKeyAllowanceAmountController.text;
+            final smartContractAdress = smartContractAddressController.text;
+
+            homeVM
+                .addKeyNearBlockChain(
+              blockchainType: BlockChains.near,
+              allowance: allowanceAmount,
+              indexOfTheDerivationPath: indexOfDerivationPath,
+              methodNames: methodsNames,
+              permission: permissionType,
+              smartContractId: smartContractAdress,
+              walletID: walletID,
+            )
+                .then((value) {
+              setState(() {
+                resultOfSmartContractCall = value.nearSuccessValue;
+                log(resultOfSmartContractCall);
+              });
+            });
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              TextField(
+                controller: smartContractAddressController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Smart contract address',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: smartContractMethodNameController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Method names',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: addKeyIndexOfTheDerivationPathController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Derevation index',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: addKeyAllowanceAmountController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Amount of Allowance',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: addKeyPermissionTypeController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'functionCall | fullAccess',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
                   ),
                 ),
               ),

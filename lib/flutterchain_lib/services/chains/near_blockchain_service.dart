@@ -64,6 +64,66 @@ class NearBlockChainService implements BlockChainService {
     return decodedRes['signedTransaction'].toString();
   }
 
+  Future<BlockchainResponse> addKey({
+    required String fromAdress,
+    required String mnemonic,
+    String passphrase = '',
+    required String indexOfTheDerivationPath,
+    required String permission,
+    required String allowance,
+    required String smartContractId,
+    required List<String> methodNames,
+    required String privateKey,
+  }) async {
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+    //{mnemonic,
+    // passphrase,
+    // indexOfTheDerivationPath,
+    // permission,
+    // allowance,
+    //receiverId,
+    // methodNames}
+
+    final List<Map<String, dynamic>> actions = [
+      {
+        "type": "addKey",
+        "data": {
+          "mnemonic": mnemonic,
+          "passphrase": passphrase,
+          "indexOfTheDerivationPath": indexOfTheDerivationPath,
+          "permission": permission,
+          "receiverId": smartContractId,
+          "methodNames": methodNames,
+        },
+      },
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: smartContractId,
+      transferAmount: allowance,
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
   @override
   Future<BlockchainResponse> callSmartContractFunction(
     String toAdress,

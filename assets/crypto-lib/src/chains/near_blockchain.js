@@ -26,10 +26,13 @@ export class NearBlockchain {
     privateKey,
     nonce,
     blockHash,
+    actions,
   ) {
     try {
       const { TW, WalletCore } = window;
-      const { AnySigner, CoinType, Base58 , PublicKeyType} = WalletCore;
+      const { AnySigner, CoinType, Base58 } = WalletCore;
+      const {HDWallet } = window.WalletCore;
+
       const amount = new BN(transferAmount);
       const amountBytes = amount.toArrayLike(Uint8Array, "le", 16);
       let parsedActions = JSON.parse(actions);
@@ -57,39 +60,54 @@ export class NearBlockchain {
         }  else if (action.type === "addKey") {
           const mnemonic = action.data.mnemonic;
           const passphrase = action.data.passphrase;
-          const index = action.data.index;
+          const index = action.data.indexOfTheDerivationPath;
 
           const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
-
+          console.log(`STEP 1`);
+          console.log(`Derevation path ${`44'/397'/0'/0'/${index}}`}`)
           // Get the private key at index 0 of the derivation path
-          const privateKey = wallet.getKey(CoinType.near, `44'/397'/0'/0'/${index}}`);
-
+          const privateKeyDerivedWallet = wallet.getKey(CoinType.near,`44'/397'/0'/0'/${index}'`);
+          console.log(`STEP 2`);
           // Derive the public key from the private key
-          const publicKey = privateKey.getPublicKeyEd25519();
+          const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
+          const actionType = action.type;
+          const receiverId = action.data.receiverId;
+          const methodNames = action.data.methodNames;
+          console.log(`STEP 3`);
 
-          console.log(`JSON of pub key: ${JSON.stringify(publicKey)}`);
+          console.log(`JSON of pub key: ${JSON.stringify(this.bufferToBase64(publicKey.data()))}`);
           console.log(`pub key type : ${JSON.stringify(typeof publicKey)}`);
-
-          // const encoder = new TextEncoder();
+          console.log(`action.data.permission : ${JSON.stringify(action.data.permission)}`);
+          // privateKey = privateKeyDerivedWallet.data();
           const mappedAction = {
             addKey: TW.NEAR.Proto.AddKey.create({
               publicKey: {
-                keyType:PublicKeyType.ed25519,
-                data: publicKey,
+                // keyType: 0,
+                data: publicKey.data(),
               },
               accessKey : {
-                nonce: Long.fromString(nonce),
-                functionCall: (TW.NEAR.Proto.IFunctionCallPermission|null),
-                fullAccess: (TW.NEAR.Proto.IFullAccessPermission|null),
-                permission: action.data.permission,
+                nonce: Long.fromString(nonce), 
+                // functionCall: actionType == "functionCall" ? TW.NEAR.Proto.FunctionCallPermission.create({
+                //  allowance: amountBytes,//bytes of total amount of gas preperiad for the transaction
+                //  receiverId: receiverId, // contract id
+                //  methodNames: methodNames, // list of methods that can be called
+                // }) : null,
+                fullAccess: TW.NEAR.Proto.FullAccessPermission.create(),
+                // fullAccess: actionType == "fullAccess" ? TW.NEAR.Proto.FullAccessPermission.create() : null,
+                // permission: action.data.permission,
+                permission : 'fullAccess',
 
               },
-             
             }),
           };
+          console.log(`STEP 4`);
+          // console.log(`mappedAction ${JSON.stringify(mappedAction)}}`);
+
           return mappedAction;
         }
       });
+      
+      console.log(`STEP 5`);
 
       const input = TW.NEAR.Proto.SigningInput.create({
         signerId: fromAddress,
@@ -110,4 +128,11 @@ export class NearBlockchain {
       return JSON.stringify({ error: error.message });
     }
   }
+ bufferToBase64(buffer) {
+    const uint8Array = new Uint8Array(buffer);
+    const binaryString = String.fromCharCode.apply(null, uint8Array);
+    const base64 = btoa(binaryString);
+    return base64;
+}
+
 }

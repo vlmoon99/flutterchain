@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeVM {
@@ -32,6 +33,28 @@ class HomeVM {
     } else {
       cryptoLibary.createWallet(mnemonic: mnemonic!, walletName: walletName);
     }
+  }
+
+  Future<BlockchainResponse> addKeyNearBlockChain({
+    required String indexOfTheDerivationPath,
+    required String permission,
+    required String allowance,
+    required String smartContractId,
+    required List<String> methodNames,
+    required String blockchainType,
+    required String walletID,
+  }) {
+    final response = cryptoLibary.addKeyNearBlockChain(
+      indexOfTheDerivationPath: indexOfTheDerivationPath,
+      permission: permission,
+      allowance: allowance,
+      smartContractId: smartContractId,
+      methodNames: methodNames,
+      blockchainType: blockchainType,
+      walletID: walletID,
+    );
+
+    return response;
   }
 
   Future<BlockchainResponse> callSmartContractFunction({

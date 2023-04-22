@@ -2,6 +2,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -168,5 +169,47 @@ class FlutterChainCryptoLibrary {
 
   Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
     return cryptoService.getBlockchainsUrlsByBlockchainType(blockchainType);
+  }
+
+  Future<BlockchainResponse> addKeyNearBlockChain({
+    required String indexOfTheDerivationPath,
+    required String permission,
+    required String allowance,
+    required String smartContractId,
+    required List<String> methodNames,
+    required String blockchainType,
+    required String walletID,
+  }) {
+    final wallet = walletsStream.valueOrNull
+        ?.firstWhereOrNull((element) => element.id == walletID);
+    if (wallet == null) {
+      throw Exception('Does not exist wallet with this name');
+    }
+
+    final privateKey = wallet.blockchainsData?[blockchainType]?.privateKey;
+    final publicKey = wallet.blockchainsData?[blockchainType]?.publicKey;
+    final mnemonic = wallet.mnemonic;
+
+    if (privateKey == null) {
+      throw Exception('Private key is null');
+    }
+
+    if (publicKey == null) {
+      throw Exception('Public key is null');
+    }
+
+    final nearBlockChainService = cryptoService
+        .blockchainServices[blockchainType] as NearBlockChainService;
+
+    return nearBlockChainService.addKey(
+      indexOfTheDerivationPath: indexOfTheDerivationPath,
+      permission: permission,
+      allowance: allowance,
+      smartContractId: smartContractId,
+      methodNames: methodNames,
+      privateKey: privateKey,
+      fromAdress: publicKey,
+      mnemonic: mnemonic,
+    );
   }
 }
