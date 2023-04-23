@@ -26,12 +26,12 @@ export class NearBlockchain {
     privateKey,
     nonce,
     blockHash,
-    actions,
+    actions
   ) {
     try {
       const { TW, WalletCore } = window;
       const { AnySigner, CoinType, Base58 } = WalletCore;
-      const {HDWallet } = window.WalletCore;
+      const { HDWallet } = window.WalletCore;
 
       const amount = new BN(transferAmount);
       const amountBytes = amount.toArrayLike(Uint8Array, "le", 16);
@@ -46,7 +46,9 @@ export class NearBlockchain {
           };
         } else if (action.type === "functionCall") {
           const encoder = new TextEncoder();
-          const utf8BytesArgs = encoder.encode(JSON.stringify(action.data.args));
+          const utf8BytesArgs = encoder.encode(
+            JSON.stringify(action.data.args)
+          );
           const methodName = action.data.methodName;
           const mappedAction = {
             functionCall: TW.NEAR.Proto.FunctionCall.create({
@@ -57,14 +59,20 @@ export class NearBlockchain {
             }),
           };
           return mappedAction;
-        }  else if (action.type === "addKey") {
+        } else if (action.type === "addKey") {
           const mnemonic = action.data.mnemonic;
           const passphrase = action.data.passphrase;
           const index = action.data.indexOfTheDerivationPath;
 
-          const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
+          const wallet = HDWallet.createWithMnemonic(
+            mnemonic,
+            passphrase ?? ""
+          );
           // Get the private key at index 0 of the derivation path
-          const privateKeyDerivedWallet = wallet.getKey(CoinType.near,`44'/397'/0'/0'/${index}'`);
+          const privateKeyDerivedWallet = wallet.getKey(
+            CoinType.near,
+            `44'/397'/0'/0'/${index}'`
+          );
           // Derive the public key from the private key
           const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
           const permission = action.data.permission;
@@ -80,25 +88,79 @@ export class NearBlockchain {
                 // keyType: 0,
                 data: publicKey.data(),
               },
-              accessKey : {
-                nonce: Long.fromString(nonce), 
-                functionCall: permission == "functionCall" ? TW.NEAR.Proto.FunctionCallPermission.create({
-                 allowance: amountBytes,//bytes of total amount of gas prepaid for the transaction
-                 receiverId: receiverId, // receiverId id
-                 methodNames: methodNames, // list of methods that can be called
-                }) : null,
-                fullAccess: permission == "fullAccess" ? TW.NEAR.Proto.FullAccessPermission.create() : null,
-                permission : action.data.permission,
-
+              accessKey: {
+                nonce: Long.fromString(nonce),
+                functionCall:
+                  permission == "functionCall"
+                    ? TW.NEAR.Proto.FunctionCallPermission.create({
+                        allowance: amountBytes, //bytes of total amount of gas prepaid for the transaction
+                        receiverId: receiverId, // receiverIds id
+                        methodNames: methodNames, // list of methods that can be sss
+                      })
+                    : null,
+                fullAccess:
+                  permission == "fullAccess"
+                    ? TW.NEAR.Proto.FullAccessPermission.create()
+                    : null,
+                permission: action.data.permission,
               },
             }),
           };
           // console.log(`mappedAction ${JSON.stringify(mappedAction)}}`);
 
           return mappedAction;
+        } else if (action.type === "deleteKey") {
+          const publicKey = action.data.publicKey;
+          const byteArray = Buffer.from(publicKey, "hex");
+          const uint8Array = new Uint8Array(byteArray);
+
+          const mappedAction = {
+            deleteKey: TW.NEAR.Proto.DeleteKey.create({
+              publicKey: TW.NEAR.Proto.PublicKey.create({
+                data: uint8Array,
+              }),
+            }),
+          };
+          return mappedAction;
+        } else if (action.type === "stake") {
+          const publicKey = action.data.publicKey;
+          const byteArray = Buffer.from(publicKey, "hex");
+          const uint8Array = new Uint8Array(byteArray);
+
+          const mappedAction = {
+            stake: TW.NEAR.Proto.Stake.create({
+              stake: amountBytes,
+              publicKey: TW.NEAR.Proto.PublicKey.create({
+                data: uint8Array,
+              }),
+            }),
+          };
+          return mappedAction;
+        } else if (action.type == "createAccount") {
+          const mappedAction = {
+            createAccount: TW.NEAR.Proto.CreateAccount.create({}),
+          };
+          return mappedAction;
+        } else if (action.type == "deleteAccount") {
+          const beneficiaryId = action.data.beneficiaryId;
+          const mappedAction = {
+            deleteAccount: TW.NEAR.Proto.DeleteAccount.create({
+              beneficiaryId: beneficiaryId,
+            }),
+          };
+          return mappedAction;
+        } else if (action.type == "deployContract") {
+          const wasmByteCode = action.data.wasmByteCode;
+          const mappedAction = {
+            deleteAccount: TW.NEAR.Proto.DeployContract.create({
+              code: wasmByteCode,
+            }),
+          };
+          return mappedAction;
         }
       });
-      
+
+      console.log(`fromAddress ${JSON.stringify(fromAddress)}`);
 
       const input = TW.NEAR.Proto.SigningInput.create({
         signerId: fromAddress,
@@ -119,11 +181,4 @@ export class NearBlockchain {
       return JSON.stringify({ error: error.message });
     }
   }
- bufferToBase64(buffer) {
-    const uint8Array = new Uint8Array(buffer);
-    const binaryString = String.fromCharCode.apply(null, uint8Array);
-    const base64 = btoa(binaryString);
-    return base64;
-}
-
 }

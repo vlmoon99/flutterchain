@@ -52,6 +52,10 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   final TextEditingController addKeyPermissionTypeController =
       TextEditingController();
 
+  //Delete key
+  final TextEditingController deleteKeyPublicKeyAddressController =
+      TextEditingController();
+
   dynamic resultOfSmartContractCall;
   @override
   void initState() {
@@ -75,6 +79,10 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     addKeyPassPhraseController.text = '';
     addKeyIndexOfTheDerivationPathController.text = '0';
     addKeyPermissionTypeController.text = 'functionCall';
+
+    //Delete key
+    deleteKeyPublicKeyAddressController.text =
+        "c1cb858d5b6177be0f4847d310eddbb302a06c76dd2f464138ec8761d9fe1c54";
   }
 
   @override
@@ -322,6 +330,50 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: 'functionCall | fullAccess',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        CryptoActionCard(
+          title: 'Delete Key',
+          height: 350,
+          icon: Icons.key_off,
+          color: nearColors.nearGreen,
+          onTap: () {
+            final deleteKeyPublicKeyAddress =
+                deleteKeyPublicKeyAddressController.text;
+            final walletID = homeVM.walletIdStream.value;
+            final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+                .firstWhere((element) => element.id == walletID)
+                .blockchainsData![BlockChains.near]!
+                .publicKey;
+            homeVM
+                .deleteKeyNearBlockChain(
+              blockchainType: BlockChains.near,
+              walletID: walletID,
+              publicKey: deleteKeyPublicKeyAddress,
+              fromAdress: currentPublicAdress,
+            )
+                .then(
+              (value) {
+                setState(() {
+                  log("Result of deleteKeyNearBlockChain $value");
+                });
+              },
+            );
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: deleteKeyPublicKeyAddressController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Delete Key',
                   labelStyle: nearTextStyles.bodyCopy!.copyWith(
                     color: nearColors.nearBlack,
                   ),

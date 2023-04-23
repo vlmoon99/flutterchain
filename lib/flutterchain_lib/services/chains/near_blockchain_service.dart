@@ -64,6 +64,48 @@ class NearBlockChainService implements BlockChainService {
     return decodedRes['signedTransaction'].toString();
   }
 
+  Future<BlockchainResponse> deleteKey({
+    required String fromAdress,
+    required String privateKey,
+    required String publicKey,
+  }) async {
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+
+    final List<Map<String, dynamic>> actions = [
+      {
+        "type": "deleteKey",
+        "data": {
+          "publicKey": publicKey,
+        },
+      },
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: fromAdress,
+      transferAmount: "0",
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
   Future<BlockchainResponse> addKey({
     required String fromAdress,
     required String mnemonic,

@@ -57,6 +57,21 @@ class HomeVM {
     return response;
   }
 
+  Future<BlockchainResponse> deleteKeyNearBlockChain({
+    required String blockchainType,
+    required String walletID,
+    required String publicKey,
+    required String fromAdress,
+  }) {
+    final response = cryptoLibary.deleteKeyNearBlockChain(
+        blockchainType: blockchainType,
+        walletID: walletID,
+        publicKey: publicKey,
+        fromAdress: fromAdress);
+
+    return response;
+  }
+
   Future<BlockchainResponse> callSmartContractFunction({
     required Map<String, dynamic> args,
     required String amountOfDeposit,

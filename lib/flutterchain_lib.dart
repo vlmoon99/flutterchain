@@ -212,4 +212,36 @@ class FlutterChainCryptoLibrary {
       mnemonic: mnemonic,
     );
   }
+
+  Future<BlockchainResponse> deleteKeyNearBlockChain({
+    required String fromAdress,
+    required String publicKey,
+    required String blockchainType,
+    required String walletID,
+  }) {
+    final wallet = walletsStream.valueOrNull
+        ?.firstWhereOrNull((element) => element.id == walletID);
+    if (wallet == null) {
+      throw Exception('Does not exist wallet with this name');
+    }
+
+    final privateKey = wallet.blockchainsData?[blockchainType]?.privateKey;
+
+    if (privateKey == null) {
+      throw Exception('Private key is null');
+    }
+
+    if (publicKey == null) {
+      throw Exception('Public key is null');
+    }
+
+    final nearBlockChainService = cryptoService
+        .blockchainServices[blockchainType] as NearBlockChainService;
+
+    return nearBlockChainService.deleteKey(
+      publicKey: publicKey,
+      privateKey: privateKey,
+      fromAdress: fromAdress,
+    );
+  }
 }
