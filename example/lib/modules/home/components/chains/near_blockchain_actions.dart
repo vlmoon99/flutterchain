@@ -66,12 +66,14 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     smartContractMethodNameController.text = "set_greeting";
     amountOfDepositOnSmartContractController.text = "0";
     //Add key
+    //47926de662240fd5488434cb7d1c6c8ab5f0c708c6b247b5ccd04baed4475463
+    //dev-1679756367837-29230485683009
     addKeySmartContractAddressController.text =
         'dev-1679756367837-29230485683009';
     addKeyMethodsNamesController.text = 'set_greeting, get_greeting';
     addKeyAllowanceAmountController.text = '1';
     addKeyPassPhraseController.text = '';
-    addKeyIndexOfTheDerivationPathController.text = '1';
+    addKeyIndexOfTheDerivationPathController.text = '0';
     addKeyPermissionTypeController.text = 'functionCall';
   }
 
@@ -248,7 +250,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final methodsNames =
                 addKeyMethodsNamesController.text.split(',').toList();
             final allowanceAmount = addKeyAllowanceAmountController.text;
-            final smartContractAdress = smartContractAddressController.text;
+            final smartContractAdress =
+                addKeySmartContractAddressController.text;
 
             homeVM
                 .addKeyNearBlockChain(
@@ -271,7 +274,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             children: [
               const SizedBox(height: 20),
               TextField(
-                controller: smartContractAddressController,
+                controller: addKeySmartContractAddressController,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: 'Smart contract address',
@@ -282,7 +285,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               ),
               const SizedBox(height: 20),
               TextField(
-                controller: smartContractMethodNameController,
+                controller: addKeyMethodsNamesController,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: 'Method names',

@@ -63,22 +63,17 @@ export class NearBlockchain {
           const index = action.data.indexOfTheDerivationPath;
 
           const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
-          console.log(`STEP 1`);
-          console.log(`Derevation path ${`44'/397'/0'/0'/${index}}`}`)
           // Get the private key at index 0 of the derivation path
           const privateKeyDerivedWallet = wallet.getKey(CoinType.near,`44'/397'/0'/0'/${index}'`);
-          console.log(`STEP 2`);
           // Derive the public key from the private key
           const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
-          const actionType = action.type;
+          const permission = action.data.permission;
           const receiverId = action.data.receiverId;
           const methodNames = action.data.methodNames;
-          console.log(`STEP 3`);
-
-          console.log(`JSON of pub key: ${JSON.stringify(this.bufferToBase64(publicKey.data()))}`);
-          console.log(`pub key type : ${JSON.stringify(typeof publicKey)}`);
-          console.log(`action.data.permission : ${JSON.stringify(action.data.permission)}`);
           // privateKey = privateKeyDerivedWallet.data();
+          console.log(`Methods names ${JSON.stringify(methodNames)}`);
+          console.log(`receiverId ${JSON.stringify(receiverId)}`);
+
           const mappedAction = {
             addKey: TW.NEAR.Proto.AddKey.create({
               publicKey: {
@@ -87,27 +82,23 @@ export class NearBlockchain {
               },
               accessKey : {
                 nonce: Long.fromString(nonce), 
-                // functionCall: actionType == "functionCall" ? TW.NEAR.Proto.FunctionCallPermission.create({
-                //  allowance: amountBytes,//bytes of total amount of gas preperiad for the transaction
-                //  receiverId: receiverId, // contract id
-                //  methodNames: methodNames, // list of methods that can be called
-                // }) : null,
-                fullAccess: TW.NEAR.Proto.FullAccessPermission.create(),
-                // fullAccess: actionType == "fullAccess" ? TW.NEAR.Proto.FullAccessPermission.create() : null,
-                // permission: action.data.permission,
-                permission : 'fullAccess',
+                functionCall: permission == "functionCall" ? TW.NEAR.Proto.FunctionCallPermission.create({
+                 allowance: amountBytes,//bytes of total amount of gas prepaid for the transaction
+                 receiverId: receiverId, // receiverId id
+                 methodNames: methodNames, // list of methods that can be called
+                }) : null,
+                fullAccess: permission == "fullAccess" ? TW.NEAR.Proto.FullAccessPermission.create() : null,
+                permission : action.data.permission,
 
               },
             }),
           };
-          console.log(`STEP 4`);
           // console.log(`mappedAction ${JSON.stringify(mappedAction)}}`);
 
           return mappedAction;
         }
       });
       
-      console.log(`STEP 5`);
 
       const input = TW.NEAR.Proto.SigningInput.create({
         signerId: fromAddress,
