@@ -244,4 +244,38 @@ class FlutterChainCryptoLibrary {
       fromAdress: fromAdress,
     );
   }
+
+  Future<BlockchainResponse> stakeNearBlockChain({
+    required String fromAdress,
+    required String validatorId,
+    required String blockchainType,
+    required String amount,
+    required String walletID,
+  }) {
+    final wallet = walletsStream.valueOrNull
+        ?.firstWhereOrNull((element) => element.id == walletID);
+    if (wallet == null) {
+      throw Exception('Does not exist wallet with this name');
+    }
+
+    final privateKey = wallet.blockchainsData?[blockchainType]?.privateKey;
+
+    if (privateKey == null) {
+      throw Exception('Private key is null');
+    }
+
+    if (validatorId == null) {
+      throw Exception('Public key is null');
+    }
+
+    final nearBlockChainService = cryptoService
+        .blockchainServices[blockchainType] as NearBlockChainService;
+
+    return nearBlockChainService.stake(
+      privateKey: privateKey,
+      fromAdress: fromAdress,
+      amount: amount,
+      validatorId: validatorId,
+    );
+  }
 }

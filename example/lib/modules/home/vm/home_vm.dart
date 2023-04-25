@@ -47,7 +47,7 @@ class HomeVM {
     final response = cryptoLibary.addKeyNearBlockChain(
       indexOfTheDerivationPath: indexOfTheDerivationPath,
       permission: permission,
-      allowance: allowance,
+      allowance: NearFormatter.nearToYoctoNear(allowance),
       smartContractId: smartContractId,
       methodNames: methodNames,
       blockchainType: blockchainType,
@@ -64,10 +64,29 @@ class HomeVM {
     required String fromAdress,
   }) {
     final response = cryptoLibary.deleteKeyNearBlockChain(
-        blockchainType: blockchainType,
-        walletID: walletID,
-        publicKey: publicKey,
-        fromAdress: fromAdress);
+      blockchainType: blockchainType,
+      walletID: walletID,
+      publicKey: publicKey,
+      fromAdress: fromAdress,
+    );
+
+    return response;
+  }
+
+  Future<BlockchainResponse> stakeNearBlockChain({
+    required String blockchainType,
+    required String walletID,
+    required String amount,
+    required String validatorId,
+    required String fromAdress,
+  }) {
+    final response = cryptoLibary.stakeNearBlockChain(
+      blockchainType: blockchainType,
+      walletID: walletID,
+      amount: NearFormatter.nearToYoctoNear(amount),
+      validatorId: validatorId,
+      fromAdress: fromAdress,
+    );
 
     return response;
   }

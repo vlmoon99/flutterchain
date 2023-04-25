@@ -56,6 +56,18 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   final TextEditingController deleteKeyPublicKeyAddressController =
       TextEditingController();
 
+  //Stake
+  final TextEditingController stakeAmountController = TextEditingController();
+
+  final TextEditingController stakeValidatorAccountIDController =
+      TextEditingController();
+
+  //Unstake
+  final TextEditingController unstakeAmountController = TextEditingController();
+
+  final TextEditingController unstakeValidatorAccountIDController =
+      TextEditingController();
+
   dynamic resultOfSmartContractCall;
   @override
   void initState() {
@@ -83,6 +95,13 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     //Delete key
     deleteKeyPublicKeyAddressController.text =
         "c1cb858d5b6177be0f4847d310eddbb302a06c76dd2f464138ec8761d9fe1c54";
+
+    //Stake
+    stakeValidatorAccountIDController.text = 'sevennines-t0.pool.f863973.m0';
+    stakeAmountController.text = "1";
+    //UnStake
+    stakeValidatorAccountIDController.text = 'sevennines-t0.pool.f863973.m0';
+    stakeAmountController.text = "1";
   }
 
   @override
@@ -374,6 +393,140 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: 'Delete Key',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        CryptoActionCard(
+          title: 'Stake',
+          height: 350,
+          icon: Icons.attach_money_outlined,
+          color: nearColors.nearGreen,
+          onTap: () {
+            final walletID = homeVM.walletIdStream.value;
+            final amount = stakeAmountController.text;
+            final validatorId = stakeValidatorAccountIDController.text;
+            final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+                .firstWhere((element) => element.id == walletID)
+                .blockchainsData![BlockChains.near]!
+                .publicKey;
+
+            homeVM
+                .stakeNearBlockChain(
+              blockchainType: BlockChains.near,
+              walletID: walletID,
+              amount: amount,
+              validatorId: validatorId,
+              fromAdress: currentPublicAdress,
+            )
+                .then(
+              (value) {
+                setState(() {
+                  log("Result of deleteKeyNearBlockChain $value");
+                });
+              },
+            );
+
+            // final deleteKeyPublicKeyAddress =
+            //     deleteKeyPublicKeyAddressController.text;
+            // final walletID = homeVM.walletIdStream.value;
+            // final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+            //     .firstWhere((element) => element.id == walletID)
+            //     .blockchainsData![BlockChains.near]!
+            //     .publicKey;
+            // homeVM
+            //     .deleteKeyNearBlockChain(
+            //   blockchainType: BlockChains.near,
+            //   walletID: walletID,
+            //   publicKey: deleteKeyPublicKeyAddress,
+            //   fromAdress: currentPublicAdress,
+            // )
+            //     .then(
+            //   (value) {
+            //     setState(() {
+            //       log("Result of deleteKeyNearBlockChain $value");
+            //     });
+            //   },
+            // );
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: stakeValidatorAccountIDController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Validator account ID',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: stakeAmountController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Amount of staking Near',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        CryptoActionCard(
+          title: 'Unstake',
+          height: 350,
+          icon: Icons.attach_money_outlined,
+          color: nearColors.nearGreen,
+          onTap: () {
+            // final deleteKeyPublicKeyAddress =
+            //     deleteKeyPublicKeyAddressController.text;
+            // final walletID = homeVM.walletIdStream.value;
+            // final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+            //     .firstWhere((element) => element.id == walletID)
+            //     .blockchainsData![BlockChains.near]!
+            //     .publicKey;
+            // homeVM
+            //     .deleteKeyNearBlockChain(
+            //   blockchainType: BlockChains.near,
+            //   walletID: walletID,
+            //   publicKey: deleteKeyPublicKeyAddress,
+            //   fromAdress: currentPublicAdress,
+            // )
+            //     .then(
+            //   (value) {
+            //     setState(() {
+            //       log("Result of deleteKeyNearBlockChain $value");
+            //     });
+            //   },
+            // );
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: unstakeValidatorAccountIDController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Validator account ID',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: unstakeAmountController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Amount of unstaking Near',
                   labelStyle: nearTextStyles.bodyCopy!.copyWith(
                     color: nearColors.nearBlack,
                   ),

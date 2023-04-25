@@ -64,6 +64,49 @@ class NearBlockChainService implements BlockChainService {
     return decodedRes['signedTransaction'].toString();
   }
 
+  Future<BlockchainResponse> stake({
+    required String fromAdress,
+    required String privateKey,
+    required String validatorId,
+    required String amount,
+  }) async {
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+
+    final List<Map<String, dynamic>> actions = [
+      {
+        "type": "stake",
+        "data": {
+          "publicKey": validatorId,
+        },
+      },
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: validatorId,
+      transferAmount: amount,
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
   Future<BlockchainResponse> deleteKey({
     required String fromAdress,
     required String privateKey,
@@ -123,13 +166,6 @@ class NearBlockChainService implements BlockChainService {
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
     }
-    //{mnemonic,
-    // passphrase,
-    // indexOfTheDerivationPath,
-    // permission,
-    // allowance,
-    //receiverId,
-    // methodNames}
 
     final List<Map<String, dynamic>> actions = [
       {
@@ -154,7 +190,7 @@ class NearBlockChainService implements BlockChainService {
 
     final signedAction = await signNearActions(
       fromAddress: fromAdress,
-      toAddress: smartContractId,
+      toAddress: fromAdress,
       transferAmount: allowance,
       privateKey: blockChainSpecificArgumentsData.privateKey,
       gas: blockChainSpecificArgumentsData.gas,

@@ -1,6 +1,5 @@
 import * as BN from "bn.js";
 import Long from "long";
-
 export class NearBlockchain {
   createNearWalletFromMnemonic(mnemonic, passphrase) {
     const { CoinType, HDWallet, Base64 } = window.WalletCore;
@@ -134,6 +133,24 @@ export class NearBlockchain {
                 data: uint8Array,
               }),
             }),
+            // payload: "stake",
+            // payload: ("createAccount"|"deployContract"|"functionCall"|"transfer"|"stake"|"addKey"|"deleteKey"|"deleteAccount"),
+          };
+          return mappedAction;
+        } else if (action.type === "unstake") {
+          const publicKey = action.data.publicKey;
+          const byteArray = Buffer.from(publicKey, "hex");
+          const uint8Array = new Uint8Array(byteArray);
+
+          const mappedAction = {
+            stake: TW.NEAR.Proto.Stake.create({
+              stake: amountBytes,
+              publicKey: TW.NEAR.Proto.PublicKey.create({
+                data: uint8Array,
+              }),
+            }),
+            // payload: "stake",
+            // payload: ("createAccount"|"deployContract"|"functionCall"|"transfer"|"stake"|"addKey"|"deleteKey"|"deleteAccount"),
           };
           return mappedAction;
         } else if (action.type == "createAccount") {
@@ -159,8 +176,6 @@ export class NearBlockchain {
           return mappedAction;
         }
       });
-
-      console.log(`fromAddress ${JSON.stringify(fromAddress)}`);
 
       const input = TW.NEAR.Proto.SigningInput.create({
         signerId: fromAddress,
