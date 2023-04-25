@@ -293,7 +293,7 @@ class NearBlockChainService implements BlockChainService {
   Future<BlockChainData> getBlockChainDataFromMnemonic(
       String mnemonic, String passphrase) async {
     final res = await jsVMService.callJS(
-        "window.NearBlockchain.createNearWalletFromMnemonic('$mnemonic','$passphrase')");
+        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
     final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
     return blockChainData;
   }

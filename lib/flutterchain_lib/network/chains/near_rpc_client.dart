@@ -121,7 +121,7 @@ class NearNetworkClient extends NetworkClient {
       logPrint: log,
       retries: 5,
       retryDelays: const [
-        Duration(seconds: 2),
+        Duration(seconds: 1),
         Duration(seconds: 1),
         Duration(seconds: 1),
         Duration(seconds: 1),

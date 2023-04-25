@@ -1,7 +1,7 @@
 import * as BN from "bn.js";
 import Long from "long";
 export class NearBlockchain {
-  createNearWalletFromMnemonic(mnemonic, passphrase) {
+  getBlockChainDataFromMnemonic(mnemonic, passphrase) {
     const { CoinType, HDWallet, Base64 } = window.WalletCore;
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
     let coinNear = CoinType.near;
@@ -16,7 +16,6 @@ export class NearBlockchain {
     });
   }
 
-  //Sign transaction method
   signNearActions(
     fromAddress,
     toAddress,
@@ -67,19 +66,14 @@ export class NearBlockchain {
             mnemonic,
             passphrase ?? ""
           );
-          // Get the private key at index 0 of the derivation path
           const privateKeyDerivedWallet = wallet.getKey(
             CoinType.near,
             `44'/397'/0'/0'/${index}'`
           );
-          // Derive the public key from the private key
           const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
           const permission = action.data.permission;
           const receiverId = action.data.receiverId;
           const methodNames = action.data.methodNames;
-          // privateKey = privateKeyDerivedWallet.data();
-          console.log(`Methods names ${JSON.stringify(methodNames)}`);
-          console.log(`receiverId ${JSON.stringify(receiverId)}`);
 
           const mappedAction = {
             addKey: TW.NEAR.Proto.AddKey.create({
@@ -92,9 +86,9 @@ export class NearBlockchain {
                 functionCall:
                   permission == "functionCall"
                     ? TW.NEAR.Proto.FunctionCallPermission.create({
-                        allowance: amountBytes, //bytes of total amount of gas prepaid for the transaction
-                        receiverId: receiverId, // receiverIds id
-                        methodNames: methodNames, // list of methods that can be sss
+                        allowance: amountBytes,
+                        receiverId: receiverId,
+                        methodNames: methodNames,
                       })
                     : null,
                 fullAccess:
@@ -105,8 +99,6 @@ export class NearBlockchain {
               },
             }),
           };
-          // console.log(`mappedAction ${JSON.stringify(mappedAction)}}`);
-
           return mappedAction;
         } else if (action.type === "deleteKey") {
           const publicKey = action.data.publicKey;
@@ -122,6 +114,7 @@ export class NearBlockchain {
           };
           return mappedAction;
         } else if (action.type === "stake") {
+          //TODO add stake
           const publicKey = action.data.publicKey;
           const byteArray = Buffer.from(publicKey, "hex");
           const uint8Array = new Uint8Array(byteArray);
@@ -133,11 +126,11 @@ export class NearBlockchain {
                 data: uint8Array,
               }),
             }),
-            // payload: "stake",
-            // payload: ("createAccount"|"deployContract"|"functionCall"|"transfer"|"stake"|"addKey"|"deleteKey"|"deleteAccount"),
           };
           return mappedAction;
         } else if (action.type === "unstake") {
+          //TODO add unstake
+
           const publicKey = action.data.publicKey;
           const byteArray = Buffer.from(publicKey, "hex");
           const uint8Array = new Uint8Array(byteArray);
@@ -149,8 +142,6 @@ export class NearBlockchain {
                 data: uint8Array,
               }),
             }),
-            // payload: "stake",
-            // payload: ("createAccount"|"deployContract"|"functionCall"|"transfer"|"stake"|"addKey"|"deleteKey"|"deleteAccount"),
           };
           return mappedAction;
         } else if (action.type == "createAccount") {
@@ -167,6 +158,7 @@ export class NearBlockchain {
           };
           return mappedAction;
         } else if (action.type == "deployContract") {
+          //TODO add deployContract
           const wasmByteCode = action.data.wasmByteCode;
           const mappedAction = {
             deleteAccount: TW.NEAR.Proto.DeployContract.create({

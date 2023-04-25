@@ -44,10 +44,11 @@ class HomeVM {
     required String blockchainType,
     required String walletID,
   }) {
+    final yoctoNearAllowance = NearFormatter.nearToYoctoNear(allowance);
     final response = cryptoLibary.addKeyNearBlockChain(
       indexOfTheDerivationPath: indexOfTheDerivationPath,
       permission: permission,
-      allowance: NearFormatter.nearToYoctoNear(allowance),
+      allowance: yoctoNearAllowance,
       smartContractId: smartContractId,
       methodNames: methodNames,
       blockchainType: blockchainType,
