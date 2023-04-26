@@ -2,7 +2,7 @@ import * as BN from "bn.js";
 import Long from "long";
 
 export class NearBlockchain {
-  getBlockChainDataFromMnemonic(mnemonic, passphrase = "") {
+  getBlockChainDataFromMnemonic(mnemonic, passphrase = "", index = "0") {
     const { CoinType, HDWallet, Base64 } = window.WalletCore;
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
     const coinNear = CoinType.near;

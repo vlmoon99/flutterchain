@@ -605,6 +605,7 @@ class _NetworkSelectorState extends State<NetworkSelector> {
         ?.firstWhereOrNull((element) =>
             element.derivationPath.replaceAll("'", '').split('/').last == '0')
         ?.publicKey;
+    log("currentPublicAdress $currentPublicAdress");
     return Column(
       children: [
         Padding(
