@@ -16,5 +16,5 @@ initWasm().then((WalletCore) => {
   window.generateMnemonic = generateMnemonic;
   //End
 
-  console.log("Crypto LIB INITED");
+  console.log("Flutterchain lib initialized");
 });
