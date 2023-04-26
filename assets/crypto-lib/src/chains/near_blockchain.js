@@ -14,7 +14,8 @@ export class NearBlockchain {
       mnemonic: wallet.mnemonic(),
       publicKey: wallet.getAddressForCoin(coinNear),
       privateKey: privateKeyString,
-      passphrase,
+      passphrase: passphrase,
+      derivationPath: `44'/397'/0'/0'/${index}'`,
     });
   }
 

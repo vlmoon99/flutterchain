@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:collection/collection.dart';
 
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
@@ -118,11 +119,14 @@ class HomeVM {
       cryptoLibary.getBalanceOfAddressOnSpecificBlockchain(
           walletId: walletId, blockchainType: blockchainType);
 
-  Future<String> getWalletPublicKeyAddressByWalletId(
-          String walletName, String blockchainType) async =>
+  Future<String> getWalletPublicKeyAddressByWalletId(String walletName,
+          String blockchainType, String derivationIndex) async =>
       cryptoLibary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
-          .blockchainsData?[blockchainType]
+          .blockchainsData?[blockchainType]!
+          .firstWhereOrNull((element) =>
+              element.derivationPath.replaceAll("'", '').split('/').last ==
+              derivationIndex)
           ?.publicKey ??
       'No public key';
 

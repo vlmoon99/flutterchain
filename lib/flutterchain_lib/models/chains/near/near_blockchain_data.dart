@@ -10,7 +10,14 @@ class NearBlockChainData extends BlockChainData {
     required String publicKey,
     //Base 64 encoded
     required String privateKey,
-  }) : super(publicKey: publicKey, privateKey: privateKey);
+    required String derivationPath,
+    required String passphrase,
+  }) : super(
+          publicKey: publicKey,
+          privateKey: privateKey,
+          derivationPath: derivationPath,
+          passphrase: passphrase,
+        );
 
   factory NearBlockChainData.fromJson(Map<String, dynamic> json) =>
       _$NearBlockChainDataFromJson(json);

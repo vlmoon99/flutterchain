@@ -8,7 +8,7 @@ class Wallet {
   final String name;
   final String mnemonic;
   final String? passphrase;
-  final Map<String, BlockChainData>? blockchainsData;
+  final Map<String, List<BlockChainData>>? blockchainsData;
   Wallet({
     required this.id,
     required this.name,
@@ -31,10 +31,14 @@ class Wallet {
 class BlockChainData {
   final String publicKey;
   final String privateKey;
+  final String derivationPath;
+  final String passphrase;
 
   BlockChainData({
     required this.publicKey,
     required this.privateKey,
+    required this.derivationPath,
+    required this.passphrase,
   });
 
   factory BlockChainData.fromJson(Map<String, dynamic> json) =>

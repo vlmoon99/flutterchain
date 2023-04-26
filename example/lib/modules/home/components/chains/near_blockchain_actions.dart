@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -367,9 +368,16 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 deleteKeyPublicKeyAddressController.text;
             final walletID = homeVM.walletIdStream.value;
             final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
-                .firstWhere((element) => element.id == walletID)
-                .blockchainsData![BlockChains.near]!
-                .publicKey;
+                    .firstWhere((element) => element.id == walletID)
+                    .blockchainsData![BlockChains.near]
+                    ?.firstWhereOrNull((element) =>
+                        element.derivationPath
+                            .replaceAll("'", '')
+                            .split('/')
+                            .last ==
+                        '0')
+                    ?.publicKey ??
+                'no pub key';
             homeVM
                 .deleteKeyNearBlockChain(
               blockchainType: BlockChains.near,
@@ -591,13 +599,18 @@ class _NetworkSelectorState extends State<NetworkSelector> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final homeVM = Modular.get<HomeVM>();
-
+    final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+        .firstWhere((element) => element.id == homeVM.walletIdStream.value)
+        .blockchainsData![BlockChains.near]
+        ?.firstWhereOrNull((element) =>
+            element.derivationPath.replaceAll("'", '').split('/').last == '0')
+        ?.publicKey;
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Text(
-            'Your Address :${homeVM.cryptoLibary.walletsStream.valueOrNull?[int.tryParse(homeVM.walletIdStream.value) ?? 0].blockchainsData?[widget.blockchainType]?.publicKey}',
+            'Your Address :$currentPublicAdress',
             style: nearTextStyles.headline!.copyWith(
               fontWeight: FontWeight.bold,
               color: nearColors.nearBlack,

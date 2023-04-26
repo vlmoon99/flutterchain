@@ -27,6 +27,8 @@ void main() {
       final nearData = NearBlockChainData(
         publicKey: 'near public key',
         privateKey: 'near private key',
+        derivationPath: "44'/397'/0'/0'/0",
+        passphrase: 'passphrase',
       );
 
       final wallet = Wallet(
@@ -34,15 +36,20 @@ void main() {
         name: 'Test Wallet',
         mnemonic: 'test mnemonic',
         blockchainsData: {
-          BlockChains.near: nearData,
+          BlockChains.near: [nearData],
         },
       );
 
       expect(wallet.blockchainsData, isNotNull);
       expect(wallet.blockchainsData!.length, 1);
-      expect(wallet.blockchainsData![BlockChains.near]!.publicKey,
+      expect(
+          wallet.blockchainsData![BlockChains.near]!.firstWhere(
+              (element) => element.derivationPath == nearData.derivationPath),
           'near public key');
-      expect(wallet.blockchainsData![BlockChains.near]!.privateKey,
+      expect(
+          wallet.blockchainsData![BlockChains.near]!
+            ..firstWhere((element) =>
+                element.derivationPath == nearData.derivationPath).privateKey,
           'near private key');
     });
   });
