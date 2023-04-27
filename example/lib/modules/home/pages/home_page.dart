@@ -13,6 +13,7 @@ class CryptoListPage extends StatefulWidget {
   const CryptoListPage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CryptoListPageState createState() => _CryptoListPageState();
 }
 
@@ -22,11 +23,12 @@ class _CryptoListPageState extends State<CryptoListPage> {
   @override
   void initState() {
     super.initState();
-    final cryptoLibary = Modular.get<HomeVM>().cryptoLibary;
+    final cryptoLibrary = Modular.get<HomeVM>().cryptoLibrary;
 
-    selectedWallet = cryptoLibary.walletsStream.valueOrNull?.isNotEmpty ?? false
-        ? cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded'
-        : 'not founded';
+    selectedWallet =
+        cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false
+            ? cryptoLibrary.walletsStream.valueOrNull?.first.id ?? 'not founded'
+            : 'not founded';
   }
 
   @override
@@ -65,19 +67,21 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return ListView.builder(
-                      itemCount: homeVM.cryptoLibary.walletsStream.value.length,
+                      itemCount:
+                          homeVM.cryptoLibrary.walletsStream.value.length,
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(
-                            homeVM.cryptoLibary.walletsStream.value[index].name,
+                            homeVM
+                                .cryptoLibrary.walletsStream.value[index].name,
                           ),
                           onTap: () {
                             setState(() {
-                              final choosenWallet = homeVM
-                                  .cryptoLibary.walletsStream.value[index];
-                              selectedWallet = choosenWallet.name;
+                              final chosenWallet = homeVM
+                                  .cryptoLibrary.walletsStream.value[index];
+                              selectedWallet = chosenWallet.name;
                               homeVM.walletIdStream.add(
-                                choosenWallet.id,
+                                chosenWallet.id,
                               );
                               log("Current Wallet ID ${homeVM.walletIdStream.value}");
                             });
@@ -90,7 +94,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: nearColors.nearPurple,
+                backgroundColor: nearColors.nearPurple,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -118,7 +122,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: nearColors.nearPurple,
+                backgroundColor: nearColors.nearPurple,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -138,7 +142,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: StreamBuilder<List<Wallet>>(
-                stream: homeVM.cryptoLibary.walletsStream,
+                stream: homeVM.cryptoLibrary.walletsStream,
                 builder: (context, snapshot) {
                   final currentWallet = (snapshot.data ?? []).firstWhereOrNull(
                       (element) => element.name == selectedWallet);
@@ -150,7 +154,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         highlightColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          // homeVM.walletIdStream.add(homeVM.cryptoLibary
+                          // homeVM.walletIdStream.add(homeVM.cryptoLibrary
                           //         .walletsStream.valueOrNull?.first.id ??
                           //     'not founded');
 
@@ -244,7 +248,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Flutter Chain Libary Example',
+          'Flutter Chain Library Example',
           style: nearTextStyles.headline,
         ),
         centerTitle: true,

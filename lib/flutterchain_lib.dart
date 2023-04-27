@@ -1,5 +1,4 @@
 import 'package:flutterchain/flutterchain_lib/constants/derevation_paths.dart';
-import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
@@ -267,10 +266,6 @@ class FlutterChainCryptoLibrary {
       throw Exception('Private key is null');
     }
 
-    if (publicKey == null) {
-      throw Exception('Public key is null');
-    }
-
     final nearBlockChainService = cryptoService
         .blockchainServices[blockchainType] as NearBlockChainService;
 
@@ -302,10 +297,6 @@ class FlutterChainCryptoLibrary {
         ?.privateKey;
     if (privateKey == null) {
       throw Exception('Private key is null');
-    }
-
-    if (validatorId == null) {
-      throw Exception('Public key is null');
     }
 
     final nearBlockChainService = cryptoService

@@ -1,4 +1,3 @@
-// TODO Check and re-wtite tests (on demand)
 import 'dart:convert';
 
 class NearFormatter {

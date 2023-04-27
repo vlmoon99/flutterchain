@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
@@ -54,7 +56,7 @@ class AppModule extends Module {
 
     //
 
-    //Inject Main Services for Main File of Crypto Libary
+    //Inject Main Services for Main File of Crypto Library
     Bind.singleton(
       (i) => CryptoService(
         jsVMService: i(),
@@ -67,7 +69,7 @@ class AppModule extends Module {
       ),
     ),
     //
-    //Inject CryptoLibary
+    //Inject CryptoLibrary
     Bind.singleton(
       (i) => FlutterChainCryptoLibrary(
         i(),

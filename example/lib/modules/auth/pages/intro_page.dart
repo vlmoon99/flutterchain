@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/routes/routes.dart';
@@ -49,65 +51,62 @@ class _IntroPageState extends State<IntroPage> {
         ],
       ),
       bottomNavigationBar: Container(
-        // color: nearColors.nearAqua,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  _controller.previousPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: nearColors.nearPurple,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Previous',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: nearTextStyles.label!.fontSize,
-                  ),
+        margin: const EdgeInsets.only(bottom: 30),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                _controller.previousPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: nearColors.nearPurple,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_controller.page?.toInt() == 2) {
-                    Modular.to.navigate(Routes.home.getModule());
-                  }
-                  _controller.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: nearColors.nearPurple,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: nearTextStyles.label!.fontSize,
-                  ),
+              child: Text(
+                'Previous',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: nearTextStyles.label!.fontSize,
                 ),
               ),
-            ],
-          ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_controller.page?.toInt() == 2) {
+                  Modular.to.navigate(Routes.home.getModule());
+                }
+                _controller.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: nearColors.nearPurple,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(
+                'Next',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: nearTextStyles.label!.fontSize,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -115,7 +114,6 @@ class _IntroPageState extends State<IntroPage> {
 
   Widget _buildPage(String title, String content, TextStyle textStyle) {
     final theme = Modular.get<AppTheme>();
-    final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
 
     return Container(

@@ -57,7 +57,7 @@ class CryptoActionCard extends StatelessWidget {
             ElevatedButton(
               onPressed: onTap,
               style: ElevatedButton.styleFrom(
-                primary: color,
+                backgroundColor: color,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

@@ -1,28 +1,28 @@
-import 'dart:convert';
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeVM {
-  final FlutterChainCryptoLibrary cryptoLibary;
+  final FlutterChainCryptoLibrary cryptoLibrary;
   final BehaviorSubject<String> walletIdStream = BehaviorSubject<String>();
 
-  HomeVM(this.cryptoLibary) {
-    cryptoLibary.walletsStream.valueOrNull?.forEach((element) {
-      print(element.name);
+  HomeVM(this.cryptoLibrary) {
+    cryptoLibrary.walletsStream.valueOrNull?.forEach((element) {
+      log(element.name);
     });
     walletIdStream.add(
-        (cryptoLibary.walletsStream.valueOrNull?.isNotEmpty ?? false)
-            ? cryptoLibary.walletsStream.valueOrNull?.first.id ?? 'not founded'
+        (cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false)
+            ? cryptoLibrary.walletsStream.valueOrNull?.first.id ?? 'not founded'
             : 'not founded');
   }
 
   Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
-    return cryptoLibary.getBlockchainsUrlsByBlockchainType(blockchainType);
+    return cryptoLibrary.getBlockchainsUrlsByBlockchainType(blockchainType);
   }
 
   Future<void> createWallet(
@@ -30,9 +30,9 @@ class HomeVM {
     String walletName,
   ) async {
     if (mnemonic?.isEmpty ?? true) {
-      cryptoLibary.createWalletWithGeneratedMnemonic(walletName: walletName);
+      cryptoLibrary.createWalletWithGeneratedMnemonic(walletName: walletName);
     } else {
-      cryptoLibary.createWallet(mnemonic: mnemonic!, walletName: walletName);
+      cryptoLibrary.createWallet(mnemonic: mnemonic!, walletName: walletName);
     }
   }
 
@@ -46,7 +46,7 @@ class HomeVM {
     required String walletID,
   }) {
     final yoctoNearAllowance = NearFormatter.nearToYoctoNear(allowance);
-    final response = cryptoLibary.addKeyNearBlockChain(
+    final response = cryptoLibrary.addKeyNearBlockChain(
       indexOfTheDerivationPath: indexOfTheDerivationPath,
       permission: permission,
       allowance: yoctoNearAllowance,
@@ -63,13 +63,13 @@ class HomeVM {
     required String blockchainType,
     required String walletID,
     required String publicKey,
-    required String fromAdress,
+    required String fromAddress,
   }) {
-    final response = cryptoLibary.deleteKeyNearBlockChain(
+    final response = cryptoLibrary.deleteKeyNearBlockChain(
       blockchainType: blockchainType,
       walletID: walletID,
       publicKey: publicKey,
-      fromAdress: fromAdress,
+      fromAdress: fromAddress,
     );
 
     return response;
@@ -82,7 +82,7 @@ class HomeVM {
     required String validatorId,
     required String fromAdress,
   }) {
-    final response = cryptoLibary.stakeNearBlockChain(
+    final response = cryptoLibrary.stakeNearBlockChain(
       blockchainType: blockchainType,
       walletID: walletID,
       amount: NearFormatter.nearToYoctoNear(amount),
@@ -101,7 +101,7 @@ class HomeVM {
     required String smartContractAddress,
     required String method,
   }) {
-    final response = cryptoLibary.callSmartContractFunction(
+    final response = cryptoLibrary.callSmartContractFunction(
       walletId: walletId,
       typeOfBlockchain: blockchainType,
       toAdress: smartContractAddress,
@@ -116,12 +116,12 @@ class HomeVM {
     required String walletId,
     required String blockchainType,
   }) async =>
-      cryptoLibary.getBalanceOfAddressOnSpecificBlockchain(
+      cryptoLibrary.getBalanceOfAddressOnSpecificBlockchain(
           walletId: walletId, blockchainType: blockchainType);
 
   Future<String> getWalletPublicKeyAddressByWalletId(String walletName,
           String blockchainType, String derivationIndex) async =>
-      cryptoLibary.walletsStream.value
+      cryptoLibrary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
           .blockchainsData?[blockchainType]!
           .firstWhereOrNull((element) =>
@@ -133,20 +133,20 @@ class HomeVM {
   Future<String> getMnemonicPhraseByWalletId(
     String walletName,
   ) async =>
-      cryptoLibary.walletsStream.value
+      cryptoLibrary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
           .mnemonic;
 
   Future<dynamic> sendNativeCoinTransferByWalletId({
-    required String toAdress,
+    required String toAddress,
     required String transferAmount,
     required String walletId,
     required String typeOfBlockchain,
   }) async {
-    final response = cryptoLibary.sendTransferNativeCoin(
+    final response = cryptoLibrary.sendTransferNativeCoin(
       walletId: walletId,
       typeOfBlockchain: typeOfBlockchain,
-      toAdress: toAdress,
+      toAdress: toAddress,
       transferAmount: NearFormatter.nearToYoctoNear(transferAmount),
     );
     return response;

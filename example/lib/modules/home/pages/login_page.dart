@@ -190,7 +190,7 @@ class CreateWalletComponent extends StatelessWidget {
               }
             : null,
         style: ElevatedButton.styleFrom(
-          primary: theme.getTheme().extension<NearColors>()!.nearPurple,
+          backgroundColor: theme.getTheme().extension<NearColors>()!.nearPurple,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),

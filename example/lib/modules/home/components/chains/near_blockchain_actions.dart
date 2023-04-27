@@ -128,7 +128,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final walletID = homeVM.walletIdStream.value;
             homeVM
                 .sendNativeCoinTransferByWalletId(
-              toAdress: recipient,
+              toAddress: recipient,
               transferAmount: amount,
               walletId: walletID,
               typeOfBlockchain: BlockChains.near,
@@ -183,7 +183,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                     ? {}
                     : jsonDecode(argumentsSmartContractController.text);
             final deposit = amountOfDepositOnSmartContractController.text;
-            final smartContractAdress = smartContractAddressController.text;
+            final smartContractAddress = smartContractAddressController.text;
             final methodName = smartContractMethodNameController.text;
 
             final walletID = homeVM.walletIdStream.value;
@@ -193,7 +193,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               amountOfDeposit: deposit,
               blockchainType: BlockChains.near,
               walletId: walletID,
-              smartContractAddress: smartContractAdress,
+              smartContractAddress: smartContractAddress,
               method: methodName,
             )
                 .then((value) {
@@ -270,6 +270,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           icon: Icons.key_rounded,
           color: nearColors.nearPurple,
           onTap: () {
+            // ignore: unused_local_variable
             final passPhrase = addKeyPassPhraseController.text;
             final indexOfDerivationPath =
                 addKeyIndexOfTheDerivationPathController.text;
@@ -278,7 +279,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final methodsNames =
                 addKeyMethodsNamesController.text.split(',').toList();
             final allowanceAmount = addKeyAllowanceAmountController.text;
-            final smartContractAdress =
+            final smartContractAddress =
                 addKeySmartContractAddressController.text;
 
             homeVM
@@ -288,7 +289,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               indexOfTheDerivationPath: indexOfDerivationPath,
               methodNames: methodsNames,
               permission: permissionType,
-              smartContractId: smartContractAdress,
+              smartContractId: smartContractAddress,
               walletID: walletID,
             )
                 .then((value) {
@@ -327,7 +328,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 controller: addKeyIndexOfTheDerivationPathController,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  labelText: 'Derevation index',
+                  labelText: 'Derivation index',
                   labelStyle: nearTextStyles.bodyCopy!.copyWith(
                     color: nearColors.nearBlack,
                   ),
@@ -367,7 +368,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final deleteKeyPublicKeyAddress =
                 deleteKeyPublicKeyAddressController.text;
             final walletID = homeVM.walletIdStream.value;
-            final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+            final currentPublicAddress = homeVM
+                    .cryptoLibrary.walletsStream.value
                     .firstWhere((element) => element.id == walletID)
                     .blockchainsData![BlockChains.near]
                     ?.firstWhereOrNull((element) =>
@@ -383,7 +385,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               blockchainType: BlockChains.near,
               walletID: walletID,
               publicKey: deleteKeyPublicKeyAddress,
-              fromAdress: currentPublicAdress,
+              fromAddress: currentPublicAddress,
             )
                 .then(
               (value) {
@@ -419,7 +421,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //     final walletID = homeVM.walletIdStream.value;
         //     final amount = stakeAmountController.text;
         //     final validatorId = stakeValidatorAccountIDController.text;
-        //     final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+        //     final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
         //         .firstWhere((element) => element.id == walletID)
         //         .blockchainsData![BlockChains.near]!
         //         .publicKey;
@@ -430,7 +432,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //       walletID: walletID,
         //       amount: amount,
         //       validatorId: validatorId,
-        //       fromAdress: currentPublicAdress,
+        //       fromAddress: currentPublicAddress,
         //     )
         //         .then(
         //       (value) {
@@ -443,7 +445,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //     // final deleteKeyPublicKeyAddress =
         //     //     deleteKeyPublicKeyAddressController.text;
         //     // final walletID = homeVM.walletIdStream.value;
-        //     // final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+        //     // final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
         //     //     .firstWhere((element) => element.id == walletID)
         //     //     .blockchainsData![BlockChains.near]!
         //     //     .publicKey;
@@ -452,7 +454,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //     //   blockchainType: BlockChains.near,
         //     //   walletID: walletID,
         //     //   publicKey: deleteKeyPublicKeyAddress,
-        //     //   fromAdress: currentPublicAdress,
+        //     //   fromAddress: currentPublicAddress,
         //     // )
         //     //     .then(
         //     //   (value) {
@@ -498,7 +500,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //     // final deleteKeyPublicKeyAddress =
         //     //     deleteKeyPublicKeyAddressController.text;
         //     // final walletID = homeVM.walletIdStream.value;
-        //     // final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+        //     // final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
         //     //     .firstWhere((element) => element.id == walletID)
         //     //     .blockchainsData![BlockChains.near]!
         //     //     .publicKey;
@@ -507,7 +509,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //     //   blockchainType: BlockChains.near,
         //     //   walletID: walletID,
         //     //   publicKey: deleteKeyPublicKeyAddress,
-        //     //   fromAdress: currentPublicAdress,
+        //     //   fromAddress: currentPublicAddress,
         //     // )
         //     //     .then(
         //     //   (value) {
@@ -535,7 +537,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
         //         controller: unstakeAmountController,
         //         decoration: InputDecoration(
         //           border: const OutlineInputBorder(),
-        //           labelText: 'Amount of unstaking Near',
+        //           labelText: 'Amount of unstacking Near',
         //           labelStyle: nearTextStyles.bodyCopy!.copyWith(
         //             color: nearColors.nearBlack,
         //           ),
@@ -554,6 +556,7 @@ class NetworkSelector extends StatefulWidget {
       : super(key: key);
   final String blockchainType;
   @override
+  // ignore: library_private_types_in_public_api
   _NetworkSelectorState createState() => _NetworkSelectorState();
 }
 
@@ -575,7 +578,7 @@ class _NetworkSelectorState extends State<NetworkSelector> {
       final homeVM = Modular.get<HomeVM>();
       networkUrls.add(url);
       selectedUrl = url;
-      homeVM.cryptoLibary.cryptoService.setBlockchainNetworkEnvironment(
+      homeVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
           blockchainType: BlockChains.near, newUrl: selectedUrl);
     });
   }
@@ -585,11 +588,11 @@ class _NetworkSelectorState extends State<NetworkSelector> {
     super.initState();
     final homeVM = Modular.get<HomeVM>();
     final preDefinedUrls = homeVM
-        .cryptoLibary.cryptoService.blockchainServices[widget.blockchainType]!
+        .cryptoLibrary.cryptoService.blockchainServices[widget.blockchainType]!
         .getBlockchainsUrlsByBlockchainType();
     networkUrls.addAll(preDefinedUrls);
     selectedUrl = networkUrls.first;
-    homeVM.cryptoLibary.cryptoService.setBlockchainNetworkEnvironment(
+    homeVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
         blockchainType: BlockChains.near, newUrl: selectedUrl);
   }
 
@@ -599,19 +602,19 @@ class _NetworkSelectorState extends State<NetworkSelector> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final homeVM = Modular.get<HomeVM>();
-    final currentPublicAdress = homeVM.cryptoLibary.walletsStream.value
+    final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == homeVM.walletIdStream.value)
         .blockchainsData![BlockChains.near]
         ?.firstWhereOrNull((element) =>
             element.derivationPath.replaceAll("'", '').split('/').last == '0')
         ?.publicKey;
-    log("currentPublicAdress $currentPublicAdress");
+    log("currentPublicAddress $currentPublicAddress");
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Text(
-            'Your Address :$currentPublicAdress',
+            'Your Address :$currentPublicAddress',
             style: nearTextStyles.headline!.copyWith(
               fontWeight: FontWeight.bold,
               color: nearColors.nearBlack,
@@ -656,8 +659,9 @@ class _NetworkSelectorState extends State<NetworkSelector> {
             setState(() {
               selectedUrl = value!;
               final homeVM = Modular.get<HomeVM>();
-              homeVM.cryptoLibary.cryptoService.setBlockchainNetworkEnvironment(
-                  blockchainType: BlockChains.near, newUrl: selectedUrl);
+              homeVM.cryptoLibrary.cryptoService
+                  .setBlockchainNetworkEnvironment(
+                      blockchainType: BlockChains.near, newUrl: selectedUrl);
             });
           },
           items: networkUrls
