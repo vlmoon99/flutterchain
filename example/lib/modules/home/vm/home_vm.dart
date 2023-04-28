@@ -38,7 +38,7 @@ class HomeVM {
   }
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
-    required String derivationPath,
+    required DerivationPath derivationPath,
     required String blockchainType,
     required String walletID,
   }) async {
@@ -50,23 +50,23 @@ class HomeVM {
   }
 
   Future<BlockchainResponse> addKeyNearBlockChain({
-    required String indexOfTheDerivationPath,
     required String permission,
     required String allowance,
     required String smartContractId,
     required List<String> methodNames,
     required String blockchainType,
     required String walletID,
+    required DerivationPath derivationPath,
   }) {
     final yoctoNearAllowance = NearFormatter.nearToYoctoNear(allowance);
     final response = cryptoLibrary.addKeyNearBlockChain(
-      indexOfTheDerivationPath: indexOfTheDerivationPath,
       permission: permission,
       allowance: yoctoNearAllowance,
       smartContractId: smartContractId,
       methodNames: methodNames,
       blockchainType: blockchainType,
       walletID: walletID,
+      derivationPath: derivationPath,
     );
 
     return response;
@@ -77,12 +77,14 @@ class HomeVM {
     required String walletID,
     required String publicKey,
     required String fromAddress,
+    required DerivationPath derivationPath,
   }) {
     final response = cryptoLibrary.deleteKeyNearBlockChain(
       blockchainType: blockchainType,
       walletID: walletID,
       publicKey: publicKey,
       fromAdress: fromAddress,
+      derivationPath: derivationPath,
     );
 
     return response;
@@ -94,6 +96,7 @@ class HomeVM {
     required String amount,
     required String validatorId,
     required String fromAdress,
+    required DerivationPath derivationPath,
   }) {
     final response = cryptoLibrary.stakeNearBlockChain(
       blockchainType: blockchainType,
@@ -101,7 +104,7 @@ class HomeVM {
       amount: NearFormatter.nearToYoctoNear(amount),
       validatorId: validatorId,
       fromAdress: fromAdress,
-      derivationPath: null,
+      derivationPath: derivationPath,
     );
 
     return response;
@@ -134,15 +137,14 @@ class HomeVM {
           walletId: walletId, blockchainType: blockchainType);
 
   Future<String> getWalletPublicKeyAddressByWalletId(String walletName,
-          String blockchainType, String derivationIndex) async =>
+          String blockchainType, DerivationPath derivationPath) async =>
       cryptoLibrary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
           .blockchainsData?[blockchainType]!
-          .firstWhereOrNull((element) =>
-              element.derivationPath.replaceAll("'", '').split('/').last ==
-              derivationIndex)
+          .firstWhereOrNull(
+              (element) => element.derivationPath == derivationPath)
           ?.publicKey ??
-      'No public key';
+      'not founded';
 
   Future<String> getMnemonicPhraseByWalletId(
     String walletName,

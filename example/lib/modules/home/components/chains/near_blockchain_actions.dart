@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -132,11 +133,20 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           color: nearColors.nearGreen,
           onTap: () {
             final walletID = homeVM.walletIdStream.value;
-            final derivationPath = createBlockchainDataDerivationPath.text;
+            final derivationPath = createBlockchainDataDerivationPath.text
+                .replaceAll("'", "")
+                .split('/')
+                .toList();
+
+            final derivationModel = DerivationPath(
+              accountNumber: int.tryParse(derivationPath[2]) ?? 0,
+              change: int.tryParse(derivationPath[3]) ?? 0,
+              address: int.tryParse(derivationPath[4]) ?? 0,
+            );
             homeVM
                 .addBlockChainDataByDerivationPath(
               blockchainType: BlockChains.near,
-              derivationPath: derivationPath,
+              derivationPath: derivationModel,
               walletID: walletID,
             )
                 .then(
@@ -332,11 +342,16 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final smartContractAddress =
                 addKeySmartContractAddressController.text;
 
+            final derivationModel = DerivationPath(
+              accountNumber: 0,
+              change: 0,
+              address: 0,
+            );
             homeVM
                 .addKeyNearBlockChain(
               blockchainType: BlockChains.near,
               allowance: allowanceAmount,
-              indexOfTheDerivationPath: indexOfDerivationPath,
+              derivationPath: derivationModel,
               methodNames: methodsNames,
               permission: permissionType,
               smartContractId: smartContractAddress,
@@ -418,22 +433,24 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final deleteKeyPublicKeyAddress =
                 deleteKeyPublicKeyAddressController.text;
             final walletID = homeVM.walletIdStream.value;
+            final derivationModel = DerivationPath(
+              accountNumber: 0,
+              change: 0,
+              address: 0,
+            );
             final currentPublicAddress = homeVM
                     .cryptoLibrary.walletsStream.value
                     .firstWhere((element) => element.id == walletID)
                     .blockchainsData![BlockChains.near]
-                    ?.firstWhereOrNull((element) =>
-                        element.derivationPath
-                            .replaceAll("'", '')
-                            .split('/')
-                            .last ==
-                        '0')
+                    ?.firstWhereOrNull(
+                        (element) => element.derivationPath == derivationModel)
                     ?.publicKey ??
                 'no pub key';
             homeVM
                 .deleteKeyNearBlockChain(
               blockchainType: BlockChains.near,
               walletID: walletID,
+              derivationPath: derivationModel,
               publicKey: deleteKeyPublicKeyAddress,
               fromAddress: currentPublicAddress,
             )
@@ -461,141 +478,6 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             ],
           ),
         ),
-
-        // CryptoActionCard(
-        //   title: 'Stake',
-        //   height: 350,
-        //   icon: Icons.attach_money_outlined,
-        //   color: nearColors.nearGreen,
-        //   onTap: () {
-        //     final walletID = homeVM.walletIdStream.value;
-        //     final amount = stakeAmountController.text;
-        //     final validatorId = stakeValidatorAccountIDController.text;
-        //     final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
-        //         .firstWhere((element) => element.id == walletID)
-        //         .blockchainsData![BlockChains.near]!
-        //         .publicKey;
-
-        //     homeVM
-        //         .stakeNearBlockChain(
-        //       blockchainType: BlockChains.near,
-        //       walletID: walletID,
-        //       amount: amount,
-        //       validatorId: validatorId,
-        //       fromAddress: currentPublicAddress,
-        //     )
-        //         .then(
-        //       (value) {
-        //         setState(() {
-        //           log("Result of deleteKeyNearBlockChain $value");
-        //         });
-        //       },
-        //     );
-
-        //     // final deleteKeyPublicKeyAddress =
-        //     //     deleteKeyPublicKeyAddressController.text;
-        //     // final walletID = homeVM.walletIdStream.value;
-        //     // final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
-        //     //     .firstWhere((element) => element.id == walletID)
-        //     //     .blockchainsData![BlockChains.near]!
-        //     //     .publicKey;
-        //     // homeVM
-        //     //     .deleteKeyNearBlockChain(
-        //     //   blockchainType: BlockChains.near,
-        //     //   walletID: walletID,
-        //     //   publicKey: deleteKeyPublicKeyAddress,
-        //     //   fromAddress: currentPublicAddress,
-        //     // )
-        //     //     .then(
-        //     //   (value) {
-        //     //     setState(() {
-        //     //       log("Result of deleteKeyNearBlockChain $value");
-        //     //     });
-        //     //   },
-        //     // );
-        //   },
-        //   child: Column(
-        //     children: [
-        //       const SizedBox(height: 20),
-        //       TextFormField(
-        //         controller: stakeValidatorAccountIDController,
-        //         decoration: InputDecoration(
-        //           border: const OutlineInputBorder(),
-        //           labelText: 'Validator account ID',
-        //           labelStyle: nearTextStyles.bodyCopy!.copyWith(
-        //             color: nearColors.nearBlack,
-        //           ),
-        //         ),
-        //       ),
-        //       const SizedBox(height: 20),
-        //       TextFormField(
-        //         controller: stakeAmountController,
-        //         decoration: InputDecoration(
-        //           border: const OutlineInputBorder(),
-        //           labelText: 'Amount of staking Near',
-        //           labelStyle: nearTextStyles.bodyCopy!.copyWith(
-        //             color: nearColors.nearBlack,
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // CryptoActionCard(
-        //   title: 'Unstake',
-        //   height: 350,
-        //   icon: Icons.attach_money_outlined,
-        //   color: nearColors.nearGreen,
-        //   onTap: () {
-        //     // final deleteKeyPublicKeyAddress =
-        //     //     deleteKeyPublicKeyAddressController.text;
-        //     // final walletID = homeVM.walletIdStream.value;
-        //     // final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
-        //     //     .firstWhere((element) => element.id == walletID)
-        //     //     .blockchainsData![BlockChains.near]!
-        //     //     .publicKey;
-        //     // homeVM
-        //     //     .deleteKeyNearBlockChain(
-        //     //   blockchainType: BlockChains.near,
-        //     //   walletID: walletID,
-        //     //   publicKey: deleteKeyPublicKeyAddress,
-        //     //   fromAddress: currentPublicAddress,
-        //     // )
-        //     //     .then(
-        //     //   (value) {
-        //     //     setState(() {
-        //     //       log("Result of deleteKeyNearBlockChain $value");
-        //     //     });
-        //     //   },
-        //     // );
-        //   },
-        //   child: Column(
-        //     children: [
-        //       const SizedBox(height: 20),
-        //       TextFormField(
-        //         controller: unstakeValidatorAccountIDController,
-        //         decoration: InputDecoration(
-        //           border: const OutlineInputBorder(),
-        //           labelText: 'Validator account ID',
-        //           labelStyle: nearTextStyles.bodyCopy!.copyWith(
-        //             color: nearColors.nearBlack,
-        //           ),
-        //         ),
-        //       ),
-        //       const SizedBox(height: 20),
-        //       TextFormField(
-        //         controller: unstakeAmountController,
-        //         decoration: InputDecoration(
-        //           border: const OutlineInputBorder(),
-        //           labelText: 'Amount of unstacking Near',
-        //           labelStyle: nearTextStyles.bodyCopy!.copyWith(
-        //             color: nearColors.nearBlack,
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
@@ -654,19 +536,23 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final homeVM = Modular.get<HomeVM>();
-
+    final derivationModel = DerivationPath(
+      accountNumber: 0,
+      change: 0,
+      address: 0,
+    );
     final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == homeVM.walletIdStream.value)
         .blockchainsData![BlockChains.near]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath.replaceAll("'", '').split('/').last == '0')
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == derivationModel)
         ?.publicKey;
 
     final derivationPath = homeVM.cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == homeVM.walletIdStream.value)
         .blockchainsData![BlockChains.near]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath.replaceAll("'", '').split('/').last == '0')
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == derivationModel)
         ?.derivationPath;
 
     log("currentPublicAddress $currentPublicAddress");

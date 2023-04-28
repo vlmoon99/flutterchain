@@ -194,14 +194,13 @@ class FlutterChainCryptoLibrary {
   }
 
   Future<BlockchainResponse> addKeyNearBlockChain({
-    required String indexOfTheDerivationPath,
     required String permission,
     required String allowance,
     required String smartContractId,
     required List<String> methodNames,
     required String blockchainType,
     required String walletID,
-    String derivationPath = DerivationPaths.nearDefault,
+    required DerivationPath derivationPath,
   }) {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletID);
@@ -232,15 +231,14 @@ class FlutterChainCryptoLibrary {
         .blockchainServices[blockchainType] as NearBlockChainService;
 
     return nearBlockChainService.addKey(
-      indexOfTheDerivationPath: indexOfTheDerivationPath,
-      permission: permission,
-      allowance: allowance,
-      smartContractId: smartContractId,
-      methodNames: methodNames,
-      privateKey: privateKey,
-      fromAdress: publicKey,
-      mnemonic: mnemonic,
-    );
+        permission: permission,
+        allowance: allowance,
+        smartContractId: smartContractId,
+        methodNames: methodNames,
+        privateKey: privateKey,
+        fromAdress: publicKey,
+        mnemonic: mnemonic,
+        derivationPathOfNewGeneratedAccount: derivationPath);
   }
 
   Future<BlockchainResponse> deleteKeyNearBlockChain({
@@ -310,7 +308,7 @@ class FlutterChainCryptoLibrary {
   }
 
   Future<BlockChainData> addNearBlockChainDataByDerivationPath({
-    required String derivationPath,
+    required DerivationPath derivationPath,
     required String blockchainType,
     required String walletID,
   }) async {

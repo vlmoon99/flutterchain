@@ -32,6 +32,6 @@ abstract class BlockChainService {
   Future<BlockChainData> getBlockChainDataByDerivationPath({
     required String mnemonic,
     required String? passphrase,
-    required String derivationPath,
+    required DerivationPath derivationPath,
   });
 }
