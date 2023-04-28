@@ -8,6 +8,7 @@ import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.da
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
+import 'package:flutterchain_example/modules/home/vm/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 
@@ -120,6 +121,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final homeVM = Modular.get<HomeVM>();
+    final nearVM = Modular.get<NearVM>();
 
     return Column(
       children: [
@@ -143,7 +145,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               change: int.tryParse(derivationPath[3]) ?? 0,
               address: int.tryParse(derivationPath[4]) ?? 0,
             );
-            homeVM
+            nearVM
                 .addBlockChainDataByDerivationPath(
               blockchainType: BlockChains.near,
               derivationPath: derivationModel,
@@ -187,7 +189,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final recipient = recipientEditingController.text;
             final amount = transferDepositController.text;
             final walletID = homeVM.walletIdStream.value;
-            homeVM
+            nearVM
                 .sendNativeCoinTransferByWalletId(
               toAddress: recipient,
               transferAmount: amount,
@@ -247,7 +249,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final methodName = smartContractMethodNameController.text;
 
             final walletID = homeVM.walletIdStream.value;
-            homeVM
+            nearVM
                 .callSmartContractFunction(
               args: arguments,
               amountOfDeposit: deposit,
@@ -347,7 +349,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               change: 0,
               address: 0,
             );
-            homeVM
+            nearVM
                 .addKeyNearBlockChain(
               blockchainType: BlockChains.near,
               allowance: allowanceAmount,
@@ -438,7 +440,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               change: 0,
               address: 0,
             );
-            final currentPublicAddress = homeVM
+            final currentPublicAddress = nearVM
                     .cryptoLibrary.walletsStream.value
                     .firstWhere((element) => element.id == walletID)
                     .blockchainsData![BlockChains.near]
@@ -446,7 +448,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                         (element) => element.derivationPath == derivationModel)
                     ?.publicKey ??
                 'no pub key';
-            homeVM
+            nearVM
                 .deleteKeyNearBlockChain(
               blockchainType: BlockChains.near,
               walletID: walletID,
@@ -507,10 +509,10 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
 
   void _handleCustomUrlChanged(String url) {
     setState(() {
-      final homeVM = Modular.get<HomeVM>();
+      final nearVM = Modular.get<NearVM>();
       networkUrls.add(url);
       selectedUrl = url;
-      homeVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
+      nearVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
           blockchainType: BlockChains.near, newUrl: selectedUrl);
     });
   }
@@ -518,13 +520,13 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
   @override
   void initState() {
     super.initState();
-    final homeVM = Modular.get<HomeVM>();
-    final preDefinedUrls = homeVM
+    final nearVM = Modular.get<NearVM>();
+    final preDefinedUrls = nearVM
         .cryptoLibrary.cryptoService.blockchainServices[widget.blockchainType]!
         .getBlockchainsUrlsByBlockchainType();
     networkUrls.addAll(preDefinedUrls);
     selectedUrl = networkUrls.first;
-    homeVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
+    nearVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
       blockchainType: BlockChains.near,
       newUrl: selectedUrl,
     );
@@ -536,6 +538,8 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final homeVM = Modular.get<HomeVM>();
+    final nearVM = Modular.get<NearVM>();
+
     final derivationModel = DerivationPath(
       accountNumber: 0,
       change: 0,
@@ -581,7 +585,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
           ),
         ),
         FutureBuilder(
-          future: homeVM.getWalletBalanceByPublicKey(
+          future: nearVM.getWalletBalanceByPublicKey(
             walletId: homeVM.walletIdStream.value,
             blockchainType: widget.blockchainType,
           ),
@@ -616,8 +620,8 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
           onChanged: (String? value) {
             setState(() {
               selectedUrl = value!;
-              final homeVM = Modular.get<HomeVM>();
-              homeVM.cryptoLibrary.cryptoService
+              final nearVM = Modular.get<NearVM>();
+              nearVM.cryptoLibrary.cryptoService
                   .setBlockchainNetworkEnvironment(
                       blockchainType: BlockChains.near, newUrl: selectedUrl);
             });
