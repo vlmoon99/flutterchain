@@ -12,9 +12,6 @@ export class NearBlockchain {
     const coinNear = CoinType.near;
     //getDerivedKey(coin: CoinType, account: number, change: number, address: number): PrivateKey;
     const privateKey = wallet.getDerivedKey(coinNear, 0, 0, 1);
-    console.log(
-      `derivationPath ${JSON.stringify(derivationPath == "44'/397'/0'/0'/0'")}`
-    );
     // const privateKey = wallet.getKeyForCoin(coinNear);
     const privateKeyString = Base64.encode(privateKey.data());
     const hexString = HexCoding.encode(privateKey.getPublicKeyEd25519().data());

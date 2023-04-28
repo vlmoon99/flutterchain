@@ -31,7 +31,7 @@ class Wallet {
 class BlockChainData {
   final String publicKey;
   final String privateKey;
-  final String derivationPath;
+  final DerivationPath derivationPath;
   final String passphrase;
 
   BlockChainData({
@@ -50,4 +50,40 @@ class BlockChainData {
   String toString() {
     return "{publicKey $publicKey , privateKey $privateKey }";
   }
+}
+
+@JsonSerializable()
+class DerivationPath {
+  int accountNumber;
+  int change;
+  int address;
+
+  DerivationPath({
+    required this.accountNumber,
+    required this.change,
+    required this.address,
+  });
+
+  factory DerivationPath.fromJson(Map<String, dynamic> json) =>
+      _$DerivationPathFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DerivationPathToJson(this);
+
+  @override
+  String toString() {
+    return "{Account Number $accountNumber , Change $change, Address $address }";
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DerivationPath &&
+          runtimeType == other.runtimeType &&
+          accountNumber == other.accountNumber &&
+          change == other.change &&
+          address == other.address;
+
+  @override
+  int get hashCode =>
+      accountNumber.hashCode ^ change.hashCode ^ address.hashCode;
 }

@@ -248,7 +248,8 @@ class FlutterChainCryptoLibrary {
     required String publicKey,
     required String blockchainType,
     required String walletID,
-    String derivationIndex = '0',
+    required DerivationPath derivationPath,
+    // String derivationIndex = '0',
   }) {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletID);
@@ -257,9 +258,8 @@ class FlutterChainCryptoLibrary {
     }
 
     final privateKey = wallet.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath.replaceAll("'", '').split('/').last ==
-            derivationIndex)
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == derivationPath)
         ?.privateKey;
 
     if (privateKey == null) {
@@ -282,7 +282,7 @@ class FlutterChainCryptoLibrary {
     required String blockchainType,
     required String amount,
     required String walletID,
-    String derivationIndex = '0',
+    required DerivationPath derivationPath,
   }) {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletID);
@@ -291,9 +291,8 @@ class FlutterChainCryptoLibrary {
     }
 
     final privateKey = wallet.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath.replaceAll("'", '').split('/').last ==
-            derivationIndex)
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == derivationPath)
         ?.privateKey;
     if (privateKey == null) {
       throw Exception('Private key is null');

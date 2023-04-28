@@ -10,7 +10,8 @@ NearBlockChainData _$NearBlockChainDataFromJson(Map<String, dynamic> json) =>
     NearBlockChainData(
       publicKey: json['publicKey'] as String,
       privateKey: json['privateKey'] as String,
-      derivationPath: json['derivationPath'] as String,
+      derivationPath: DerivationPath.fromJson(
+          json['derivationPath'] as Map<String, dynamic>),
       passphrase: json['passphrase'] as String,
     );
 

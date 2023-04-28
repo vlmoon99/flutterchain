@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
-import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/constants/derevation_paths.dart';
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_specific_arguments_data.dart';
@@ -28,7 +26,7 @@ void main() {
       final nearData = NearBlockChainData(
         publicKey: 'near public key',
         privateKey: 'near private key',
-        derivationPath: DerivationPaths.nearDefault,
+        derivationPath: DerivationPath(accountNumber: 0, change: 0, address: 1),
         passphrase: 'passphrase',
       );
 

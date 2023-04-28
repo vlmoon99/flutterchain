@@ -101,6 +101,7 @@ class HomeVM {
       amount: NearFormatter.nearToYoctoNear(amount),
       validatorId: validatorId,
       fromAdress: fromAdress,
+      derivationPath: null,
     );
 
     return response;

@@ -12,7 +12,7 @@ class NearBlockChainData extends BlockChainData {
     required String publicKey,
     //Base 64 encoded
     required String privateKey,
-    required String derivationPath,
+    required DerivationPath derivationPath,
     required String passphrase,
   }) : super(
           publicKey: publicKey,
