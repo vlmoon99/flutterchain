@@ -1,3 +1,4 @@
+cd .. &&
 cd assets/crypto-lib &&
 npm install && 
 npm run build-dev &&

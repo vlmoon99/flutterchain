@@ -24,6 +24,7 @@ class NearBlockChainData extends BlockChainData {
   factory NearBlockChainData.fromJson(Map<String, dynamic> json) =>
       _$NearBlockChainDataFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$NearBlockChainDataToJson(this);
 
   @override

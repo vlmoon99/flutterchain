@@ -1,17 +1,19 @@
 import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 
 class HomeVM {
   final FlutterChainCryptoLibrary cryptoLibrary;
-  final BehaviorSubject<String> walletIdStream = BehaviorSubject<String>();
-
-  HomeVM(this.cryptoLibrary) {
+  final UserStore userStore;
+  HomeVM(
+    this.cryptoLibrary,
+    this.userStore,
+  ) {
     cryptoLibrary.walletsStream.valueOrNull?.forEach((element) {
       log(element.name);
     });
-    walletIdStream.add(
+    userStore.walletIdStream.add(
         (cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false)
             ? cryptoLibrary.walletsStream.valueOrNull?.first.id ?? 'not founded'
             : 'not founded');

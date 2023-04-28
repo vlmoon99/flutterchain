@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/pages/login_page.dart';
-import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
+import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
@@ -67,8 +67,9 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return ListView.builder(
-                      itemCount:
-                          homeVM.cryptoLibrary.walletsStream.value.length,
+                      itemCount: homeVM.cryptoLibrary.walletsStream.valueOrNull
+                              ?.length ??
+                          0,
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(
@@ -80,10 +81,10 @@ class _CryptoListPageState extends State<CryptoListPage> {
                               final chosenWallet = homeVM
                                   .cryptoLibrary.walletsStream.value[index];
                               selectedWallet = chosenWallet.name;
-                              homeVM.walletIdStream.add(
+                              homeVM.userStore.walletIdStream.add(
                                 chosenWallet.id,
                               );
-                              log("Current Wallet ID ${homeVM.walletIdStream.value}");
+                              log("Current Wallet ID ${homeVM.userStore.walletIdStream.value}");
                             });
                             Navigator.pop(context);
                           },
@@ -154,7 +155,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         highlightColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
-                          // homeVM.walletIdStream.add(homeVM.cryptoLibrary
+                          // homeVM.userStore.walletIdStream.add(homeVM.cryptoLibrary
                           //         .walletsStream.valueOrNull?.first.id ??
                           //     'not founded');
 

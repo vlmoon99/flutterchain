@@ -5,46 +5,32 @@ export class NearBlockchain {
   getBlockChainDataFromMnemonic(
     mnemonic,
     passphrase = "",
-    derivationPath = "44'/397'/0'/0'/0'"
+    account = "0",
+    change = "0",
+    address = "1"
   ) {
     const { CoinType, HDWallet, Base64, HexCoding } = window.WalletCore;
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
-    const coinNear = CoinType.near;
-    //getDerivedKey(coin: CoinType, account: number, change: number, address: number): PrivateKey;
-    const privateKey = wallet.getDerivedKey(coinNear, 0, 0, 1);
-    // const privateKey = wallet.getKeyForCoin(coinNear);
+    const privateKey = wallet.getDerivedKey(
+      CoinType.near,
+      parseInt(account),
+      parseInt(change),
+      parseInt(address)
+    );
     const privateKeyString = Base64.encode(privateKey.data());
     const hexString = HexCoding.encode(privateKey.getPublicKeyEd25519().data());
 
     return JSON.stringify({
       mnemonic: wallet.mnemonic(),
       publicKey: hexString.substring(2),
-      // publicKey: wallet.getAddressForCoin(coinNear),
       privateKey: privateKeyString,
       passphrase: passphrase,
-      derivationPath: derivationPath,
+      derivationPath: {
+        accountNumber: account,
+        change: change,
+        address: address,
+      },
     });
-
-    // const { CoinType, HDWallet, Base64, HexCoding } = window.WalletCore;
-    // const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
-    // console.log(`derivationPath ${derivationPath}`);
-    // console.log(`derivationPath ${"44'/397'/0'/0'/0'" === derivationPath}`);
-    // console.log(`passphrase ${passphrase}`);
-
-    // const privateKeyDerivedWallet = wallet.getKey(
-    //   CoinType.near,
-    //   `44'/397'/0'/0'/0'`
-    // );
-    // const privateKeyString = Base64.encode(privateKeyDerivedWallet.data());
-    // const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
-    // const hexString = HexCoding.encode(publicKey.data());
-    // return JSON.stringify({
-    //   mnemonic: wallet.mnemonic(),
-    //   publicKey: hexString.slice(2),
-    //   privateKey: privateKeyString,
-    //   passphrase: passphrase,
-    //   derivationPath: derivationPath,
-    // });
   }
 
   signNearActions(
@@ -138,12 +124,12 @@ export class NearBlockchain {
 
     const mnemonic = action.data.mnemonic;
     const passphrase = action.data.passphrase;
-    const index = action.data.indexOfTheDerivationPath;
+    const accountIndex = action.data.indexOfTheDerivationAccount;
 
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
     const privateKeyDerivedWallet = wallet.getKey(
       CoinType.near,
-      `44'/397'/0'/0'/${index}'`
+      `44'/397'/${accountIndex}'/0'/1`
     );
     const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
     const permission = action.data.permission;
@@ -153,7 +139,6 @@ export class NearBlockchain {
     const mappedAction = {
       addKey: TW.NEAR.Proto.AddKey.create({
         publicKey: {
-          // keyType: 0,
           data: publicKey.data(),
         },
         accessKey: {

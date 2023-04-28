@@ -8,7 +8,7 @@ class Wallet {
   final String name;
   final String mnemonic;
   final String? passphrase;
-  final Map<String, List<BlockChainData>>? blockchainsData;
+  final Map<String, Set<BlockChainData>>? blockchainsData;
   Wallet({
     required this.id,
     required this.name,
@@ -47,6 +47,23 @@ class BlockChainData {
   Map<String, dynamic> toJson() => _$BlockChainDataToJson(this);
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BlockChainData &&
+          // runtimeType == other.runtimeType &&
+          publicKey == other.publicKey &&
+          privateKey == other.privateKey &&
+          derivationPath == other.derivationPath &&
+          passphrase == other.passphrase;
+
+  @override
+  int get hashCode =>
+      publicKey.hashCode ^
+      privateKey.hashCode ^
+      derivationPath.hashCode ^
+      passphrase.hashCode;
+
+  @override
   String toString() {
     return "{publicKey $publicKey , privateKey $privateKey }";
   }
@@ -54,11 +71,11 @@ class BlockChainData {
 
 @JsonSerializable()
 class DerivationPath {
-  int accountNumber;
-  int change;
-  int address;
+  final String accountNumber;
+  final String change;
+  final String address;
 
-  DerivationPath({
+  const DerivationPath({
     required this.accountNumber,
     required this.change,
     required this.address,

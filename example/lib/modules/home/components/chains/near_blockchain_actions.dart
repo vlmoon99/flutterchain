@@ -7,8 +7,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
-import 'package:flutterchain_example/modules/home/vm/home_vm.dart';
-import 'package:flutterchain_example/modules/home/vm/near_vm.dart';
+import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
+import 'package:flutterchain_example/modules/home/vms/chains/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 
@@ -111,8 +111,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     stakeValidatorAccountIDController.text = 'sevennines-t0.pool.f863973.m0';
     stakeAmountController.text = "1";
 
-    //Create Adress by derivation path
-    createBlockchainDataDerivationPath.text = "m/44'/397'/0'/0'/0'";
+    //Create Address by derivation path
+    createBlockchainDataDerivationPath.text = "m/44'/397'/0'/0'/1'";
   }
 
   @override
@@ -129,31 +129,32 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           blockchainType: BlockChains.near,
         ),
         CryptoActionCard(
-          title: 'Create Adress by derivation path',
+          title: 'Create New BlockChainData by derivation path',
           height: 350,
           icon: Icons.wallet,
           color: nearColors.nearGreen,
           onTap: () {
-            final walletID = homeVM.walletIdStream.value;
+            final walletID = homeVM.userStore.walletIdStream.value;
             final derivationPath = createBlockchainDataDerivationPath.text
                 .replaceAll("'", "")
                 .split('/')
                 .toList();
 
             final derivationModel = DerivationPath(
-              accountNumber: int.tryParse(derivationPath[2]) ?? 0,
-              change: int.tryParse(derivationPath[3]) ?? 0,
-              address: int.tryParse(derivationPath[4]) ?? 0,
+              accountNumber: derivationPath[3],
+              change: derivationPath[4],
+              address: derivationPath[5],
             );
             nearVM
                 .addBlockChainDataByDerivationPath(
-              blockchainType: BlockChains.near,
               derivationPath: derivationModel,
               walletID: walletID,
             )
                 .then(
               (value) {
                 setState(() {
+                  nearVM.nearBlockchainStore.currentDerivationPath
+                      .add(value.derivationPath);
                   blockchainsDataCreatedByDerivationPath =
                       value.toJson().toString();
                   log("Generated blockchainData ${value.toJson()}");
@@ -188,9 +189,12 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           onTap: () {
             final recipient = recipientEditingController.text;
             final amount = transferDepositController.text;
-            final walletID = homeVM.walletIdStream.value;
+            final walletID = homeVM.userStore.walletIdStream.value;
+            final derivationPath =
+                nearVM.nearBlockchainStore.currentDerivationPath.value;
             nearVM
                 .sendNativeCoinTransferByWalletId(
+              derivationPath: derivationPath,
               toAddress: recipient,
               transferAmount: amount,
               walletId: walletID,
@@ -247,13 +251,15 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final deposit = amountOfDepositOnSmartContractController.text;
             final smartContractAddress = smartContractAddressController.text;
             final methodName = smartContractMethodNameController.text;
+            final derivationPath =
+                nearVM.nearBlockchainStore.currentDerivationPath.value;
 
-            final walletID = homeVM.walletIdStream.value;
+            final walletID = homeVM.userStore.walletIdStream.value;
             nearVM
                 .callSmartContractFunction(
+              derivationPath: derivationPath,
               args: arguments,
               amountOfDeposit: deposit,
-              blockchainType: BlockChains.near,
               walletId: walletID,
               smartContractAddress: smartContractAddress,
               method: methodName,
@@ -337,7 +343,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final indexOfDerivationPath =
                 addKeyIndexOfTheDerivationPathController.text;
             final permissionType = addKeyPermissionTypeController.text;
-            final walletID = homeVM.walletIdStream.value;
+            final walletID = homeVM.userStore.walletIdStream.value;
             final methodsNames =
                 addKeyMethodsNamesController.text.split(',').toList();
             final allowanceAmount = addKeyAllowanceAmountController.text;
@@ -345,15 +351,19 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 addKeySmartContractAddressController.text;
 
             final derivationModel = DerivationPath(
-              accountNumber: 0,
-              change: 0,
-              address: 0,
+              accountNumber: indexOfDerivationPath,
+              change: '0',
+              address: '1',
             );
+
+            final currentDerivationPath =
+                nearVM.nearBlockchainStore.currentDerivationPath.value;
+
             nearVM
                 .addKeyNearBlockChain(
-              blockchainType: BlockChains.near,
               allowance: allowanceAmount,
-              derivationPath: derivationModel,
+              derivationPathOfNewGeneratedAccount: derivationModel,
+              derivationPathOfCurrentWallet: currentDerivationPath,
               methodNames: methodsNames,
               permission: permissionType,
               smartContractId: smartContractAddress,
@@ -395,7 +405,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 controller: addKeyIndexOfTheDerivationPathController,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  labelText: 'Derivation index',
+                  labelText: 'Derivation Account index',
                   labelStyle: nearTextStyles.bodyCopy!.copyWith(
                     color: nearColors.nearBlack,
                   ),
@@ -434,25 +444,23 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           onTap: () {
             final deleteKeyPublicKeyAddress =
                 deleteKeyPublicKeyAddressController.text;
-            final walletID = homeVM.walletIdStream.value;
-            final derivationModel = DerivationPath(
-              accountNumber: 0,
-              change: 0,
-              address: 0,
-            );
+            final walletID = homeVM.userStore.walletIdStream.value;
+            final currentDerivationPath =
+                nearVM.nearBlockchainStore.currentDerivationPath.value;
+
             final currentPublicAddress = nearVM
                     .cryptoLibrary.walletsStream.value
                     .firstWhere((element) => element.id == walletID)
                     .blockchainsData![BlockChains.near]
-                    ?.firstWhereOrNull(
-                        (element) => element.derivationPath == derivationModel)
+                    ?.firstWhereOrNull((element) =>
+                        element.derivationPath == currentDerivationPath)
                     ?.publicKey ??
                 'no pub key';
+
             nearVM
                 .deleteKeyNearBlockChain(
-              blockchainType: BlockChains.near,
               walletID: walletID,
-              derivationPath: derivationModel,
+              derivationPath: currentDerivationPath,
               publicKey: deleteKeyPublicKeyAddress,
               fromAddress: currentPublicAddress,
             )
@@ -540,144 +548,149 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
     final homeVM = Modular.get<HomeVM>();
     final nearVM = Modular.get<NearVM>();
 
-    final derivationModel = DerivationPath(
-      accountNumber: 0,
-      change: 0,
-      address: 0,
-    );
-    final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
-        .firstWhere((element) => element.id == homeVM.walletIdStream.value)
-        .blockchainsData![BlockChains.near]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationModel)
-        ?.publicKey;
+    return StreamBuilder<DerivationPath>(
+        stream: nearVM.nearBlockchainStore.currentDerivationPath,
+        builder: (context, snapshot) {
+          final derivationModel =
+              nearVM.nearBlockchainStore.currentDerivationPath.value;
 
-    final derivationPath = homeVM.cryptoLibrary.walletsStream.value
-        .firstWhere((element) => element.id == homeVM.walletIdStream.value)
-        .blockchainsData![BlockChains.near]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationModel)
-        ?.derivationPath;
+          final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
+              .firstWhere((element) =>
+                  element.id == homeVM.userStore.walletIdStream.value)
+              .blockchainsData![BlockChains.near]
+              ?.firstWhereOrNull(
+                  (element) => element.derivationPath == derivationModel)
+              ?.publicKey;
 
-    log("currentPublicAddress $currentPublicAddress");
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Text(
-            'Your Derivation Path :$derivationPath',
-            style: nearTextStyles.headline!.copyWith(
-              fontWeight: FontWeight.bold,
-              color: nearColors.nearBlack,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Text(
-            'Your Address :$currentPublicAddress',
-            style: nearTextStyles.headline!.copyWith(
-              fontWeight: FontWeight.bold,
-              color: nearColors.nearBlack,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        FutureBuilder(
-          future: nearVM.getWalletBalanceByPublicKey(
-            walletId: homeVM.walletIdStream.value,
-            blockchainType: widget.blockchainType,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Padding(
+          final derivationPath = homeVM.cryptoLibrary.walletsStream.value
+              .firstWhere((element) =>
+                  element.id == homeVM.userStore.walletIdStream.value)
+              .blockchainsData![BlockChains.near]
+              ?.firstWhereOrNull(
+                  (element) => element.derivationPath == derivationModel)
+              ?.derivationPath;
+          // log("currentPublicAddress $currentPublicAddress");
+
+          return Column(
+            children: [
+              Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
-                  'Total Amount of ${widget.blockchainType} :${double.parse(snapshot.data.toString()).toStringAsFixed(2)}',
+                  'Your Derivation Path :$derivationPath',
                   style: nearTextStyles.headline!.copyWith(
                     fontWeight: FontWeight.bold,
                     color: nearColors.nearBlack,
                     fontSize: 20,
                   ),
                 ),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          },
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Network:',
-          style: nearTextStyles.bodyCopy!.copyWith(
-            color: nearColors.nearGray,
-          ),
-        ),
-        const SizedBox(height: 8),
-        DropdownButton<String>(
-          value: selectedUrl,
-          onChanged: (String? value) {
-            setState(() {
-              selectedUrl = value!;
-              final nearVM = Modular.get<NearVM>();
-              nearVM.cryptoLibrary.cryptoService
-                  .setBlockchainNetworkEnvironment(
-                      blockchainType: BlockChains.near, newUrl: selectedUrl);
-            });
-          },
-          items: networkUrls
-              .map((url) => DropdownMenuItem<String>(
-                    value: url,
-                    child: Text(
-                      url,
-                      style: nearTextStyles.bodyCopy!.copyWith(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'Your Address :$currentPublicAddress',
+                  style: nearTextStyles.headline!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: nearColors.nearBlack,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              FutureBuilder(
+                future: nearVM.getBalanceByDerivationPath(
+                  walletId: homeVM.userStore.walletIdStream.value,
+                  derivationPath: derivationModel,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        'Total Amount of ${widget.blockchainType} :${double.parse(snapshot.data.toString()).toStringAsFixed(2)}',
+                        style: nearTextStyles.headline!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: nearColors.nearBlack,
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Network:',
+                style: nearTextStyles.bodyCopy!.copyWith(
+                  color: nearColors.nearGray,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: selectedUrl,
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedUrl = value!;
+                    final nearVM = Modular.get<NearVM>();
+                    nearVM.cryptoLibrary.cryptoService
+                        .setBlockchainNetworkEnvironment(
+                            blockchainType: BlockChains.near,
+                            newUrl: selectedUrl);
+                  });
+                },
+                items: networkUrls
+                    .map((url) => DropdownMenuItem<String>(
+                          value: url,
+                          child: Text(
+                            url,
+                            style: nearTextStyles.bodyCopy!.copyWith(
+                              color: nearColors.nearGray,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: 150,
+                child: TextField(
+                  controller: _customUrlController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
                         color: nearColors.nearGray,
+                        width: 1,
                       ),
                     ),
-                  ))
-              .toList(),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: 150,
-          child: TextField(
-            controller: _customUrlController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: nearColors.nearGray,
-                  width: 1,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: nearColors.nearPurple,
+                        width: 2,
+                      ),
+                    ),
+                    hintText: 'Custom URL',
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    hintStyle: nearTextStyles.bodyCopy!.copyWith(
+                      color: nearColors.nearGray,
+                    ),
+                  ),
+                  style: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearGray,
+                  ),
+                  onEditingComplete: () {
+                    FocusScope.of(context).unfocus();
+                    _handleCustomUrlChanged(_customUrlController.text);
+                  },
                 ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: nearColors.nearPurple,
-                  width: 2,
-                ),
-              ),
-              hintText: 'Custom URL',
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 12,
-              ),
-              hintStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearGray,
-              ),
-            ),
-            style: nearTextStyles.bodyCopy!.copyWith(
-              color: nearColors.nearGray,
-            ),
-            onEditingComplete: () {
-              FocusScope.of(context).unfocus();
-              _handleCustomUrlChanged(_customUrlController.text);
-            },
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+              const SizedBox(height: 16),
+            ],
+          );
+        });
   }
 }

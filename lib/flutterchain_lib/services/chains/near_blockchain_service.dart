@@ -173,8 +173,8 @@ class NearBlockChainService implements BlockChainService {
         "data": {
           "mnemonic": mnemonic,
           "passphrase": passphrase,
-          "indexOfTheDerivationPath":
-              derivationPathOfNewGeneratedAccount.address,
+          "indexOfTheDerivationAccount":
+              derivationPathOfNewGeneratedAccount.accountNumber,
           "permission": permission,
           "receiverId": smartContractId,
           "methodNames": methodNames,
@@ -291,11 +291,12 @@ class NearBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockChainData> getBlockChainDataFromMnemonic(
+  Future<NearBlockChainData> getBlockChainDataFromMnemonic(
       String mnemonic, String passphrase) async {
     final res = await jsVMService.callJS(
         "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
-    final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
+    final decodedRes = jsonDecode(res);
+    final blockChainData = NearBlockChainData.fromJson(decodedRes);
     return blockChainData;
   }
 
@@ -310,13 +311,13 @@ class NearBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockChainData> getBlockChainDataByDerivationPath({
+  Future<NearBlockChainData> getBlockChainDataByDerivationPath({
     required String mnemonic,
     required String? passphrase,
     required DerivationPath derivationPath,
   }) async {
     final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase',String.raw`$derivationPath`)");
+        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase','${derivationPath.accountNumber}','${derivationPath.change}','${derivationPath.address}')");
     final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
     return blockChainData;
   }

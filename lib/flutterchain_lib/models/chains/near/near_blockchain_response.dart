@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:json_annotation/json_annotation.dart';

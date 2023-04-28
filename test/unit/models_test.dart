@@ -26,7 +26,8 @@ void main() {
       final nearData = NearBlockChainData(
         publicKey: 'near public key',
         privateKey: 'near private key',
-        derivationPath: DerivationPath(accountNumber: 0, change: 0, address: 1),
+        derivationPath:
+            const DerivationPath(accountNumber: '0', change: '0', address: '1'),
         passphrase: 'passphrase',
       );
 
@@ -35,7 +36,7 @@ void main() {
         name: 'Test Wallet',
         mnemonic: 'test mnemonic',
         blockchainsData: {
-          BlockChains.near: [nearData],
+          BlockChains.near: {nearData},
         },
       );
 

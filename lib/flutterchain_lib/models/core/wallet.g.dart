@@ -16,7 +16,7 @@ Wallet _$WalletFromJson(Map<String, dynamic> json) => Wallet(
             k,
             (e as List<dynamic>)
                 .map((e) => BlockChainData.fromJson(e as Map<String, dynamic>))
-                .toList()),
+                .toSet()),
       ),
     );
 
@@ -25,7 +25,8 @@ Map<String, dynamic> _$WalletToJson(Wallet instance) => <String, dynamic>{
       'name': instance.name,
       'mnemonic': instance.mnemonic,
       'passphrase': instance.passphrase,
-      'blockchainsData': instance.blockchainsData,
+      'blockchainsData':
+          instance.blockchainsData?.map((k, e) => MapEntry(k, e.toList())),
     };
 
 BlockChainData _$BlockChainDataFromJson(Map<String, dynamic> json) =>
@@ -47,9 +48,9 @@ Map<String, dynamic> _$BlockChainDataToJson(BlockChainData instance) =>
 
 DerivationPath _$DerivationPathFromJson(Map<String, dynamic> json) =>
     DerivationPath(
-      accountNumber: json['accountNumber'] as int,
-      change: json['change'] as int,
-      address: json['address'] as int,
+      accountNumber: json['accountNumber'] as String,
+      change: json['change'] as String,
+      address: json['address'] as String,
     );
 
 Map<String, dynamic> _$DerivationPathToJson(DerivationPath instance) =>

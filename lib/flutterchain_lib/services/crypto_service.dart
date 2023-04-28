@@ -80,12 +80,12 @@ class CryptoService {
     return res;
   }
 
-  Future<Map<String, List<BlockChainData>>>
+  Future<Map<String, Set<BlockChainData>>>
       createBlockchainsDataFromTheMnemonic({
     required String mnemonic,
     required String passphrase,
   }) async {
-    final Map<String, List<BlockChainData>> blockchainsData = {};
+    final Map<String, Set<BlockChainData>> blockchainsData = {};
     await Future.forEach(BlockChains.supportedBlockChains, (chain) async {
       final chainService = blockchainServices[chain];
       if (chainService == null) {
@@ -94,7 +94,7 @@ class CryptoService {
       final blockChainData = await blockchainServices[chain]!
           .getBlockChainDataFromMnemonic(mnemonic, passphrase);
 
-      blockchainsData.putIfAbsent(chain, () => [blockChainData]);
+      blockchainsData.putIfAbsent(chain, () => {blockChainData});
     });
 
     return blockchainsData;
