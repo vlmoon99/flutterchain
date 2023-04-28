@@ -2,21 +2,52 @@ import * as BN from "bn.js";
 import Long from "long";
 
 export class NearBlockchain {
-  getBlockChainDataFromMnemonic(mnemonic, passphrase = "", index = "0") {
-    const { CoinType, HDWallet, Base64 } = window.WalletCore;
+  getBlockChainDataFromMnemonic(
+    mnemonic,
+    passphrase = "",
+    derivationPath = "44'/397'/0'/0'/0'"
+  ) {
+    const { CoinType, HDWallet, Base64, HexCoding } = window.WalletCore;
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
     const coinNear = CoinType.near;
-    const privateKeyString = Base64.encode(
-      wallet.getKeyForCoin(coinNear).data()
+    //getDerivedKey(coin: CoinType, account: number, change: number, address: number): PrivateKey;
+    const privateKey = wallet.getDerivedKey(coinNear, 0, 0, 1);
+    console.log(
+      `derivationPath ${JSON.stringify(derivationPath == "44'/397'/0'/0'/0'")}`
     );
+    // const privateKey = wallet.getKeyForCoin(coinNear);
+    const privateKeyString = Base64.encode(privateKey.data());
+    const hexString = HexCoding.encode(privateKey.getPublicKeyEd25519().data());
 
     return JSON.stringify({
       mnemonic: wallet.mnemonic(),
-      publicKey: wallet.getAddressForCoin(coinNear),
+      publicKey: hexString.substring(2),
+      // publicKey: wallet.getAddressForCoin(coinNear),
       privateKey: privateKeyString,
       passphrase: passphrase,
-      derivationPath: `44'/397'/0'/0'/${index}'`,
+      derivationPath: derivationPath,
     });
+
+    // const { CoinType, HDWallet, Base64, HexCoding } = window.WalletCore;
+    // const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
+    // console.log(`derivationPath ${derivationPath}`);
+    // console.log(`derivationPath ${"44'/397'/0'/0'/0'" === derivationPath}`);
+    // console.log(`passphrase ${passphrase}`);
+
+    // const privateKeyDerivedWallet = wallet.getKey(
+    //   CoinType.near,
+    //   `44'/397'/0'/0'/0'`
+    // );
+    // const privateKeyString = Base64.encode(privateKeyDerivedWallet.data());
+    // const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
+    // const hexString = HexCoding.encode(publicKey.data());
+    // return JSON.stringify({
+    //   mnemonic: wallet.mnemonic(),
+    //   publicKey: hexString.slice(2),
+    //   privateKey: privateKeyString,
+    //   passphrase: passphrase,
+    //   derivationPath: derivationPath,
+    // });
   }
 
   signNearActions(

@@ -28,4 +28,10 @@ abstract class BlockChainService {
   Future<void> setBlockchainNetworkEnvironment({required String newUrl});
 
   Set<String> getBlockchainsUrlsByBlockchainType();
+
+  Future<BlockChainData> getBlockChainDataByDerivationPath({
+    required String mnemonic,
+    required String? passphrase,
+    required String derivationPath,
+  });
 }

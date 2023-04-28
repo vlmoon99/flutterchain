@@ -59,7 +59,7 @@ class AppWidget extends StatelessWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Near Wallet',
+      title: 'Flutterchain Wallet',
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
       localizationsDelegates: context.localizationDelegates,

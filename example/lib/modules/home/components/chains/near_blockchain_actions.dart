@@ -69,7 +69,12 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   final TextEditingController unstakeValidatorAccountIDController =
       TextEditingController();
 
+  final TextEditingController createBlockchainDataDerivationPath =
+      TextEditingController();
+
   dynamic resultOfSmartContractCall;
+  dynamic blockchainsDataCreatedByDerivationPath;
+
   @override
   void initState() {
     super.initState();
@@ -103,6 +108,9 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     //UnStake
     stakeValidatorAccountIDController.text = 'sevennines-t0.pool.f863973.m0';
     stakeAmountController.text = "1";
+
+    //Create Adress by derivation path
+    createBlockchainDataDerivationPath.text = "m/44'/397'/0'/0'/0'";
   }
 
   @override
@@ -114,8 +122,51 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
 
     return Column(
       children: [
-        const NetworkSelector(
+        const CryptoActionHeader(
           blockchainType: BlockChains.near,
+        ),
+        CryptoActionCard(
+          title: 'Create Adress by derivation path',
+          height: 350,
+          icon: Icons.wallet,
+          color: nearColors.nearGreen,
+          onTap: () {
+            final walletID = homeVM.walletIdStream.value;
+            final derivationPath = createBlockchainDataDerivationPath.text;
+            homeVM
+                .addBlockChainDataByDerivationPath(
+              blockchainType: BlockChains.near,
+              derivationPath: derivationPath,
+              walletID: walletID,
+            )
+                .then(
+              (value) {
+                setState(() {
+                  blockchainsDataCreatedByDerivationPath =
+                      value.toJson().toString();
+                  log("Generated blockchainData ${value.toJson()}");
+                });
+              },
+            );
+          },
+          child: Form(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: createBlockchainDataDerivationPath,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: 'Derivation Path',
+                    labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                      color: nearColors.nearBlack,
+                    ),
+                  ),
+                ),
+                Text(blockchainsDataCreatedByDerivationPath ?? ''),
+              ],
+            ),
+          ),
         ),
         CryptoActionCard(
           title: 'Transfer',
@@ -142,7 +193,6 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             );
           },
           child: Form(
-            key: formKey,
             child: Column(
               children: [
                 const SizedBox(height: 20),
@@ -551,16 +601,16 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   }
 }
 
-class NetworkSelector extends StatefulWidget {
-  const NetworkSelector({Key? key, required this.blockchainType})
+class CryptoActionHeader extends StatefulWidget {
+  const CryptoActionHeader({Key? key, required this.blockchainType})
       : super(key: key);
   final String blockchainType;
   @override
   // ignore: library_private_types_in_public_api
-  _NetworkSelectorState createState() => _NetworkSelectorState();
+  _CryptoActionHeaderState createState() => _CryptoActionHeaderState();
 }
 
-class _NetworkSelectorState extends State<NetworkSelector> {
+class _CryptoActionHeaderState extends State<CryptoActionHeader> {
   // String selectedUrl = 'https://rpc.nearprotocol.com';
   String selectedUrl = '';
 
@@ -593,7 +643,9 @@ class _NetworkSelectorState extends State<NetworkSelector> {
     networkUrls.addAll(preDefinedUrls);
     selectedUrl = networkUrls.first;
     homeVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
-        blockchainType: BlockChains.near, newUrl: selectedUrl);
+      blockchainType: BlockChains.near,
+      newUrl: selectedUrl,
+    );
   }
 
   @override
@@ -602,15 +654,35 @@ class _NetworkSelectorState extends State<NetworkSelector> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final homeVM = Modular.get<HomeVM>();
+
     final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == homeVM.walletIdStream.value)
         .blockchainsData![BlockChains.near]
         ?.firstWhereOrNull((element) =>
             element.derivationPath.replaceAll("'", '').split('/').last == '0')
         ?.publicKey;
+
+    final derivationPath = homeVM.cryptoLibrary.walletsStream.value
+        .firstWhere((element) => element.id == homeVM.walletIdStream.value)
+        .blockchainsData![BlockChains.near]
+        ?.firstWhereOrNull((element) =>
+            element.derivationPath.replaceAll("'", '').split('/').last == '0')
+        ?.derivationPath;
+
     log("currentPublicAddress $currentPublicAddress");
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Text(
+            'Your Derivation Path :$derivationPath',
+            style: nearTextStyles.headline!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: nearColors.nearBlack,
+              fontSize: 20,
+            ),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Text(

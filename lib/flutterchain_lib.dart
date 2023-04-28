@@ -309,4 +309,36 @@ class FlutterChainCryptoLibrary {
       validatorId: validatorId,
     );
   }
+
+  Future<BlockChainData> addNearBlockChainDataByDerivationPath({
+    required String derivationPath,
+    required String blockchainType,
+    required String walletID,
+  }) async {
+    final wallet = walletsStream.valueOrNull
+        ?.firstWhereOrNull((element) => element.id == walletID);
+    if (wallet == null) {
+      throw Exception('Does not exist wallet with this name');
+    }
+    final blockChainService = cryptoService.blockchainServices[blockchainType];
+
+    if (blockChainService == null) {
+      throw Exception('Does not exist blockchain service with this name');
+    }
+
+    final blockChainData =
+        await blockChainService.getBlockChainDataByDerivationPath(
+      derivationPath: derivationPath,
+      mnemonic: wallet.mnemonic,
+      passphrase: wallet.passphrase,
+    );
+    wallet.blockchainsData![blockchainType] = [
+      ...wallet.blockchainsData![blockchainType] ?? [],
+      blockChainData
+    ];
+    walletsStream.value[walletsStream.value
+        .indexWhere((element) => element.id == walletID)] = wallet;
+    walletsStream.add(walletsStream.value);
+    return blockChainData;
+  }
 }

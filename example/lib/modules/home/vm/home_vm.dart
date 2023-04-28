@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeVM {
@@ -34,6 +35,18 @@ class HomeVM {
     } else {
       cryptoLibrary.createWallet(mnemonic: mnemonic!, walletName: walletName);
     }
+  }
+
+  Future<BlockChainData> addBlockChainDataByDerivationPath({
+    required String derivationPath,
+    required String blockchainType,
+    required String walletID,
+  }) async {
+    return cryptoLibrary.addNearBlockChainDataByDerivationPath(
+      derivationPath: derivationPath,
+      blockchainType: blockchainType,
+      walletID: walletID,
+    );
   }
 
   Future<BlockchainResponse> addKeyNearBlockChain({

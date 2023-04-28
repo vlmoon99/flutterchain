@@ -25,10 +25,10 @@ class _CryptoListPageState extends State<CryptoListPage> {
     super.initState();
     final cryptoLibrary = Modular.get<HomeVM>().cryptoLibrary;
 
-    selectedWallet =
-        cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false
-            ? cryptoLibrary.walletsStream.valueOrNull?.first.id ?? 'not founded'
-            : 'not founded';
+    selectedWallet = cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ??
+            false
+        ? cryptoLibrary.walletsStream.valueOrNull?.first.name ?? 'not founded'
+        : 'not founded';
   }
 
   @override
@@ -177,8 +177,22 @@ class _CryptoListPageState extends State<CryptoListPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.only(
+                                  bottom: 10.0,
+                                ),
+                                child: Text(
+                                  'Blockchain data card',
+                                  style: nearTextStyles.headline!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: nearColors.nearPurple,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
                               Text(
-                                "Index of Blockchain ->  $index\nname of crypto is -> ${currentWallet?.blockchainsData?.keys.toList()[index]} \nAmount: \$${" Not getTotalAmount() yet"}",
+                                "Blockchain -> ${currentWallet?.blockchainsData?.keys.toList()[index]} \nAmount: \$${" Not getTotalAmount() yet"}",
                                 style: nearTextStyles.headline!.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: nearColors.nearPurple,
@@ -195,17 +209,6 @@ class _CryptoListPageState extends State<CryptoListPage> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class BrowserTab extends StatelessWidget {
-  const BrowserTab({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Browser Tab'),
     );
   }
 }
@@ -235,7 +238,6 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = const [
     CryptoListPage(),
-    BrowserTab(),
     SettingsTab(),
   ];
 
@@ -268,10 +270,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             label: 'Wallet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.web_stories),
-            label: 'Browser',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

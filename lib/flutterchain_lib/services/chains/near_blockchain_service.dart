@@ -307,4 +307,16 @@ class NearBlockChainService implements BlockChainService {
   Set<String> getBlockchainsUrlsByBlockchainType() {
     return NearBlockChainNetworkUrls.listOfUrls;
   }
+
+  @override
+  Future<BlockChainData> getBlockChainDataByDerivationPath({
+    required String mnemonic,
+    required String? passphrase,
+    required String derivationPath,
+  }) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase',String.raw`$derivationPath`)");
+    final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
+    return blockChainData;
+  }
 }
