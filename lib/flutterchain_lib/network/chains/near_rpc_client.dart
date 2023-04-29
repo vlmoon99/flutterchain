@@ -4,7 +4,8 @@ import 'dart:typed_data';
 import 'package:bs58/bs58.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
-import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
@@ -89,14 +90,14 @@ class NearRpcClient {
     if (res.isSuccess) {
       return BlockchainResponse(
         data: res.data['result'],
-        status: 'success',
+        status: BlockchainResponses.success,
       );
     } else {
       return BlockchainResponse(
         data: {
           "error": "'Error while sending transaction'",
         },
-        status: 'error',
+        status: BlockchainResponses.error,
       );
     }
   }
@@ -111,14 +112,14 @@ class NearRpcClient {
     if (res.isSuccess) {
       return BlockchainResponse(
         data: res.data['result'],
-        status: 'success',
+        status: BlockchainResponses.success,
       );
     } else {
       return BlockchainResponse(
         data: {
           "error": "'Error while sending transaction'",
         },
-        status: 'error',
+        status: BlockchainResponses.error,
       );
     }
   }

@@ -4,9 +4,8 @@ import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near_vm.dart';

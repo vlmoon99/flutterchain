@@ -18,6 +18,17 @@ class NearTransactionInfoModel {
   Map<String, dynamic> toJson() => _$NearTransactionInfoModelToJson(this);
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NearTransactionInfoModel &&
+          runtimeType == other.runtimeType &&
+          nonce == other.nonce &&
+          blockHash == other.blockHash;
+
+  @override
+  int get hashCode => nonce.hashCode ^ blockHash.hashCode;
+
+  @override
   String toString() {
     return "{nonce $nonce , blockHash $blockHash }";
   }

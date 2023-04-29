@@ -194,8 +194,6 @@ class FlutterChainLibrary {
     );
   }
 
-  //Need to be refactored
-
   Future<BlockchainResponse> callSmartContractFunction({
     required String walletId,
     required String typeOfBlockchain,

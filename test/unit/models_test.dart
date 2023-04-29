@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
-import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_gas.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_specific_arguments_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
@@ -48,13 +48,16 @@ void main() {
       expect(wallet.blockchainsData, isNotNull);
       expect(wallet.blockchainsData!.length, 1);
       expect(
-          wallet.blockchainsData![BlockChains.near]!.firstWhere(
-              (element) => element.derivationPath == nearData.derivationPath),
+          wallet.blockchainsData![BlockChains.near]!
+              .firstWhere((element) =>
+                  element.derivationPath == nearData.derivationPath)
+              .publicKey,
           'near public key');
       expect(
           wallet.blockchainsData![BlockChains.near]!
-            ..firstWhere((element) =>
-                element.derivationPath == nearData.derivationPath).privateKey,
+              .firstWhere((element) =>
+                  element.derivationPath == nearData.derivationPath)
+              .privateKey,
           'near private key');
     });
   });

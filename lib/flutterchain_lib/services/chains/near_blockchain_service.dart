@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
-import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_gas.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_specific_arguments_data.dart';
@@ -31,6 +31,110 @@ class NearBlockChainService implements BlockChainService {
       jsVMService: getJsVM(),
       nearRpcClient: NearRpcClient.defaultInstance(),
     );
+  }
+
+  @override
+  Future<NearBlockChainData> getBlockChainDataFromMnemonic(
+      String mnemonic, String passphrase) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
+    final decodedRes = jsonDecode(res);
+    final blockChainData = NearBlockChainData.fromJson(decodedRes);
+    return blockChainData;
+  }
+
+  @override
+  Future<BlockchainResponse> sendTransferNativeCoin(
+    String toAdress,
+    String fromAdress,
+    String transferAmount,
+    String privateKey,
+  ) async {
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+    final actions = [
+      {
+        "type": "transfer",
+        "data": {"amount": transferAmount}
+      }
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: toAdress,
+      transferAmount: transferAmount,
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
+  @override
+  Future<BlockchainResponse> callSmartContractFunction(
+    String toAdress,
+    String fromAdress,
+    String privateKey,
+    BlockChainSmartContractArguments arguments,
+  ) async {
+    if (arguments is! NearBlockChainSmartContractArguments) {
+      throw Exception('Incorrect Blockchain Smart Contract Arguments');
+    }
+    final transactionInfo =
+        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final gas = BlockchainGas.gas[BlockChains.near];
+    if (gas == null) {
+      throw Exception('Incorrect Blockchain Gas');
+    }
+    final List<Map<String, dynamic>> actions = [
+      {
+        "type": "functionCall",
+        "data": {
+          "methodName": arguments.method,
+          "args": arguments.args,
+        },
+      },
+    ];
+    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
+      actions: actions,
+      blockHash: transactionInfo.blockHash,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      privateKey: privateKey,
+    );
+
+    final signedAction = await signNearActions(
+      fromAddress: fromAdress,
+      toAddress: toAdress,
+      transferAmount: arguments.transferAmount,
+      privateKey: blockChainSpecificArgumentsData.privateKey,
+      gas: blockChainSpecificArgumentsData.gas,
+      nonce: blockChainSpecificArgumentsData.nonce,
+      blockHash: blockChainSpecificArgumentsData.blockHash,
+      actions: blockChainSpecificArgumentsData.actions,
+    );
+    final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
+  @override
+  Future<String> getWalletBalance(String accountId) async {
+    final res = await nearRpcClient.getAccountBalance(accountId);
+    return res;
   }
 
   Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
@@ -207,110 +311,6 @@ class NearBlockChainService implements BlockChainService {
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
     return res;
-  }
-
-  @override
-  Future<String> getWalletBalance(String accountId) async {
-    final res = await nearRpcClient.getAccountBalance(accountId);
-    return res;
-  }
-
-  @override
-  Future<BlockchainResponse> callSmartContractFunction(
-    String toAdress,
-    String fromAdress,
-    String privateKey,
-    BlockChainSmartContractArguments arguments,
-  ) async {
-    if (arguments is! NearBlockChainSmartContractArguments) {
-      throw Exception('Incorrect Blockchain Smart Contract Arguments');
-    }
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
-    final gas = BlockchainGas.gas[BlockChains.near];
-    if (gas == null) {
-      throw Exception('Incorrect Blockchain Gas');
-    }
-    final List<Map<String, dynamic>> actions = [
-      {
-        "type": "functionCall",
-        "data": {
-          "methodName": arguments.method,
-          "args": arguments.args,
-        },
-      },
-    ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
-
-    final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: toAdress,
-      transferAmount: arguments.transferAmount,
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
-    );
-    final res = await nearRpcClient.sendSyncTx([signedAction]);
-    return res;
-  }
-
-  @override
-  Future<BlockchainResponse> sendTransferNativeCoin(
-    String toAdress,
-    String fromAdress,
-    String transferAmount,
-    String privateKey,
-  ) async {
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
-    final gas = BlockchainGas.gas[BlockChains.near];
-    if (gas == null) {
-      throw Exception('Incorrect Blockchain Gas');
-    }
-    final actions = [
-      {
-        "type": "transfer",
-        "data": {"amount": transferAmount}
-      }
-    ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
-
-    final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: toAdress,
-      transferAmount: transferAmount,
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
-    );
-    final res = await nearRpcClient.sendSyncTx([signedAction]);
-    return res;
-  }
-
-  @override
-  Future<NearBlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
-    final decodedRes = jsonDecode(res);
-    final blockChainData = NearBlockChainData.fromJson(decodedRes);
-    return blockChainData;
   }
 
   @override

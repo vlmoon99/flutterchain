@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutterchain/flutterchain_lib/constants/storage_keys.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/storage_keys.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/core/core_repository.dart';
 import 'package:collection/collection.dart';

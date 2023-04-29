@@ -1,5 +1,5 @@
+import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
-import 'package:flutterchain/flutterchain_lib/constants/webview_constants.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 JsVMService getJsVM() {
