@@ -16,6 +16,13 @@ class FlutterChainLibrary {
     initCryptoLib();
   }
 
+  factory FlutterChainLibrary.defaultInstance() {
+    return FlutterChainLibrary(
+      FlutterChainService.defaultInstance(),
+      WalletRepository.defaultInstance(),
+    );
+  }
+
   Future<bool> initCryptoLib() async {
     await walletRepository.readAll().then((wallets) {
       walletsStream.add(wallets);

@@ -20,6 +20,7 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_e
 class NearBlockChainService implements BlockChainService {
   final JsVMService jsVMService;
   final NearRpcClient nearRpcClient;
+
   NearBlockChainService({
     required this.jsVMService,
     required this.nearRpcClient,

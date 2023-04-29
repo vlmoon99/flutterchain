@@ -11,6 +11,11 @@ class WalletRepository extends Repository<Wallet> {
 
   WalletRepository({required this.secureStorage});
 
+  factory WalletRepository.defaultInstance() {
+    return WalletRepository(
+      secureStorage: const FlutterSecureStorage(),
+    );
+  }
   @override
   Future<void> delete(String id) async {
     final wallets =
