@@ -55,8 +55,4 @@ class NearFormatter {
     final decodedRes = utf8.decode(base64.decode(successValue));
     return decodedRes.substring(1, decodedRes.length - 1);
   }
-
-  static String getDerivationPath(String index) {
-    return "44'/397'/0'/0'/$index'";
-  }
 }

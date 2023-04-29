@@ -4,7 +4,7 @@ import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 
 class HomeVM {
-  final FlutterChainCryptoLibrary cryptoLibrary;
+  final FlutterChainLibrary cryptoLibrary;
   final UserStore userStore;
   HomeVM(
     this.cryptoLibrary,

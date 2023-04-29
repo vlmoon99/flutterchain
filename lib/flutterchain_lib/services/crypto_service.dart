@@ -6,13 +6,13 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 
-class CryptoService {
+class FlutterChainService {
   final JsVMService jsVMService;
   final Map<String, BlockChainService> blockchainServices = {};
 
-  CryptoService(
+  FlutterChainService(
       {required this.jsVMService,
       required final NearBlockChainService nearBlockchainService}) {
     //Add blockChainServices

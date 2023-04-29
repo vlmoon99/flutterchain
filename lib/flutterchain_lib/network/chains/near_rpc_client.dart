@@ -6,7 +6,7 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/network/network_core.dart';
+import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 import 'dart:async';
 
 import 'package:hex/hex.dart';
@@ -121,7 +121,7 @@ class NearNetworkClient extends NetworkClient {
       logPrint: log,
       retries: 5,
       retryDelays: const [
-        Duration(seconds: 1),
+        Duration(seconds: 2),
         Duration(seconds: 1),
         Duration(seconds: 1),
         Duration(seconds: 1),

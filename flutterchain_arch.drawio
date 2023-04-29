@@ -1,0 +1,111 @@
+<mxfile host="app.diagrams.net" modified="2023-04-29T10:59:21.875Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0" etag="A5BMPIPnamtavLuULFsz" version="21.2.3" type="device">
+  <diagram name="Page-1" id="xYnI6xa1wOAg2UJ0YVqq">
+    <mxGraphModel dx="3500" dy="4218" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-1" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="210" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-3" value="&lt;h1&gt;FlutterChainLibrary&lt;br&gt;&lt;/h1&gt;&lt;p&gt;FlutterChainLibrary is a class that provides top-level functions to manage your cryptocurrency assets. This class also includes a wallet storage feature that allows you to create, read, update, and delete wallets.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="220" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="vHMya00ToIqsoJ4eIDJd-4" target="vHMya00ToIqsoJ4eIDJd-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-4" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="20" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-5" value="&lt;h1&gt;FlutterChainService&lt;br&gt;&lt;/h1&gt;&lt;p&gt;FlutterChainService is a class that handles all cryptocurrency operations, including transferring native tokens, calling smart-contract functions, and more. This class contains all blockchain-related services, including cryptography functions and RPC calls to the blockchain.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="620" y="30" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" target="vHMya00ToIqsoJ4eIDJd-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="565" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="vHMya00ToIqsoJ4eIDJd-16" target="vHMya00ToIqsoJ4eIDJd-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="vHMya00ToIqsoJ4eIDJd-16" target="vHMya00ToIqsoJ4eIDJd-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-16" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="-45" width="1570" height="470" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-17" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1890" y="-580" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-18" value="&lt;h1&gt;BlockchainService&lt;br&gt;&lt;/h1&gt;&lt;p&gt;BlockchainService is an abstract class that needs to be implemented for each cryptocurrency that you want to add. It contains all the necessary functions for operating with the blockchain. Any class that implements this class must also inject a JS VM engine and a network client into itself.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1910" y="-570" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-19" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1410" y="30" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-20" value="&lt;h1&gt;NearBlockChainService&lt;br&gt;&lt;/h1&gt;&lt;p&gt;NearBlockChainService is an implementation of the BlockchainService class, designed to make it easy to operate with the Near Blockchain. This class provides convenient methods for interacting with the Near Blockchain.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt; &lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="40" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-21" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="20" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-22" value="&lt;h1&gt;ETC.. &lt;br&gt;&lt;/h1&gt;&lt;p&gt;...&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="2010" y="160" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-24" value="&lt;b&gt;&lt;font style=&quot;font-size: 23px;&quot;&gt;Implements&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="-170" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-27" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="1330" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-28" value="&lt;h1&gt;Repositories&lt;br&gt;&lt;/h1&gt;&lt;p&gt;Repositories are used for storing data in a library. They provide a way to manage data and perform CRUD (create, read, update, delete) operations on it.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="1340" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.466;entryY=0.005;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="vHMya00ToIqsoJ4eIDJd-31" target="vHMya00ToIqsoJ4eIDJd-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-31" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="480" width="1570" height="470" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-32" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="570" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-33" value="&lt;h1&gt;WalletRepository&lt;br&gt;&lt;/h1&gt;&lt;p&gt;provide CRUD operation for wallets&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="700" y="580" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-35" value="&lt;b&gt;&lt;font style=&quot;font-size: 23px;&quot;&gt;Implements&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="1100" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-36" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="570" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-37" value="&lt;h1&gt;ETC.. &lt;br&gt;&lt;/h1&gt;&lt;p&gt;...&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="710" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-42" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="-1240" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="vHMya00ToIqsoJ4eIDJd-43" target="vHMya00ToIqsoJ4eIDJd-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-43" value="&lt;h1&gt;JavaScript VM engine&lt;br&gt;&lt;/h1&gt;&lt;p&gt;All BlockchainServices will inject a JavaScript VM engine as a dependency. This is because this library uses wallet-core as the core of all cryptographic operations, and it&#39;s compiled in C++ to WebAssembly (WASM), which the library executes in a webview (on iOS and Android) or natively on the web.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="2280" y="-1230" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-44" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2880" y="-780" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="vHMya00ToIqsoJ4eIDJd-45" target="vHMya00ToIqsoJ4eIDJd-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-45" value="&lt;h1&gt;Blockchain network client&lt;br&gt;&lt;/h1&gt;&lt;p&gt;All Blockchain services will have their own network client for making calls on the blockchain. For example, for Near, we have NearRpcClient, which makes calls to the Near Blockchain.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="2900" y="-770" width="310" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-48" value="&lt;font size=&quot;1&quot;&gt;&lt;b style=&quot;font-size: 25px;&quot;&gt;Injects&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1940" y="-880" width="305" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="vHMya00ToIqsoJ4eIDJd-49" value="&lt;font size=&quot;1&quot;&gt;&lt;b style=&quot;font-size: 25px;&quot;&gt;Injects&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="2420" y="-720" width="305" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

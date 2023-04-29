@@ -7,7 +7,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/near_blockchain_store.dart';
 
 class NearVM {
-  final FlutterChainCryptoLibrary cryptoLibrary;
+  final FlutterChainLibrary cryptoLibrary;
   final NearBlockchainStore nearBlockchainStore;
   NearVM(
     this.cryptoLibrary,

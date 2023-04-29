@@ -518,7 +518,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
       final nearVM = Modular.get<NearVM>();
       networkUrls.add(url);
       selectedUrl = url;
-      nearVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
+      nearVM.cryptoLibrary.blockchainService.setBlockchainNetworkEnvironment(
           blockchainType: BlockChains.near, newUrl: selectedUrl);
     });
   }
@@ -527,12 +527,12 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
   void initState() {
     super.initState();
     final nearVM = Modular.get<NearVM>();
-    final preDefinedUrls = nearVM
-        .cryptoLibrary.cryptoService.blockchainServices[widget.blockchainType]!
+    final preDefinedUrls = nearVM.cryptoLibrary.blockchainService
+        .blockchainServices[widget.blockchainType]!
         .getBlockchainsUrlsByBlockchainType();
     networkUrls.addAll(preDefinedUrls);
     selectedUrl = networkUrls.first;
-    nearVM.cryptoLibrary.cryptoService.setBlockchainNetworkEnvironment(
+    nearVM.cryptoLibrary.blockchainService.setBlockchainNetworkEnvironment(
       blockchainType: BlockChains.near,
       newUrl: selectedUrl,
     );
@@ -655,7 +655,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                   setState(() {
                     selectedUrl = value!;
                     final nearVM = Modular.get<NearVM>();
-                    nearVM.cryptoLibrary.cryptoService
+                    nearVM.cryptoLibrary.blockchainService
                         .setBlockchainNetworkEnvironment(
                             blockchainType: BlockChains.near,
                             newUrl: selectedUrl);

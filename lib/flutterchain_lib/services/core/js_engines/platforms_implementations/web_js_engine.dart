@@ -1,4 +1,4 @@
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 
 import 'dart:js' as js;
 import 'dart:async';

@@ -7,13 +7,13 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
 
-class FlutterChainCryptoLibrary {
+class FlutterChainLibrary {
   final BehaviorSubject<List<Wallet>> walletsStream =
       BehaviorSubject<List<Wallet>>();
-  final CryptoService cryptoService;
+  final FlutterChainService blockchainService;
   final WalletRepository walletRepository;
 
-  FlutterChainCryptoLibrary(this.cryptoService, this.walletRepository) {
+  FlutterChainLibrary(this.blockchainService, this.walletRepository) {
     initCryptoLib();
   }
 
@@ -22,6 +22,35 @@ class FlutterChainCryptoLibrary {
       walletsStream.add(wallets);
     });
   }
+
+  Future<void> deleteWalletById({
+    required String walletId,
+  }) async {
+    walletsStream.add(walletsStream.valueOrNull
+            ?.where((element) => element.id != walletId)
+            .toList() ??
+        []);
+    walletRepository.saveAll(walletsStream.value);
+  }
+
+  Future<void> deleteAllWallets() async {
+    walletsStream.add([]);
+    walletRepository.deleteAll();
+  }
+
+  Future<void> setBlockchainNetworkEnvironment(
+      {required String blockchainType, required String newUrl}) async {
+    await blockchainService.setBlockchainNetworkEnvironment(
+      blockchainType: blockchainType,
+      newUrl: newUrl,
+    );
+  }
+
+  Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
+    return blockchainService.getBlockchainsUrlsByBlockchainType(blockchainType);
+  }
+
+//Need to be refactored
 
   Future<dynamic> getBalanceOfAddressOnSpecificBlockchain({
     required String walletId,
@@ -35,7 +64,7 @@ class FlutterChainCryptoLibrary {
             (element) => element.derivationPath == derivationPath)
         ?.publicKey;
     if (publicKey != null) {
-      return cryptoService.getWalletBalance(
+      return blockchainService.getWalletBalance(
           accountId: publicKey, blockchainType: blockchainType);
     } else {
       throw Exception("Public key is null");
@@ -46,7 +75,7 @@ class FlutterChainCryptoLibrary {
     required String walletName,
     String passphrase = '',
   }) async {
-    final mnemonicData = await cryptoService.generateNewWallet(
+    final mnemonicData = await blockchainService.generateNewWallet(
         walletName: walletName, passphrase: passphrase);
     await createWallet(mnemonic: mnemonicData.mnemonic, walletName: walletName);
   }
@@ -65,7 +94,7 @@ class FlutterChainCryptoLibrary {
     }
 
     final blockchainsData =
-        await cryptoService.createBlockchainsDataFromTheMnemonic(
+        await blockchainService.createBlockchainsDataFromTheMnemonic(
             mnemonic: mnemonic, passphrase: passphrase);
 
     final id = int.tryParse(
@@ -83,21 +112,6 @@ class FlutterChainCryptoLibrary {
     walletsStream.value.add(wallet);
     walletsStream.add(walletsStream.value);
     walletRepository.saveAll(walletsStream.value);
-  }
-
-  Future<void> deleteWalletById({
-    required String walletId,
-  }) async {
-    walletsStream.add(walletsStream.valueOrNull
-            ?.where((element) => element.id != walletId)
-            .toList() ??
-        []);
-    walletRepository.saveAll(walletsStream.value);
-  }
-
-  Future<void> deleteAllWallets() async {
-    walletsStream.add([]);
-    walletRepository.deleteAll();
   }
 
   Future<dynamic> sendTransferNativeCoin({
@@ -128,7 +142,7 @@ class FlutterChainCryptoLibrary {
     if (privateKey == null) {
       throw Exception('Private key is null');
     }
-    return cryptoService.sendTransferNativeCoin(
+    return blockchainService.sendTransferNativeCoin(
       toAdress: toAdress,
       fromAdress: publicKey,
       transferAmount: transferAmount,
@@ -170,7 +184,7 @@ class FlutterChainCryptoLibrary {
       throw Exception('Public key is null');
     }
 
-    return cryptoService.callSmartContractFunction(
+    return blockchainService.callSmartContractFunction(
       toAdress: toAdress,
       fromAdress: publicKey,
       transferAmount: transferAmount,
@@ -181,17 +195,7 @@ class FlutterChainCryptoLibrary {
     );
   }
 
-  Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
-    await cryptoService.setBlockchainNetworkEnvironment(
-      blockchainType: blockchainType,
-      newUrl: newUrl,
-    );
-  }
-
-  Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
-    return cryptoService.getBlockchainsUrlsByBlockchainType(blockchainType);
-  }
+//Need to be deleted
 
   Future<BlockchainResponse> addKeyNearBlockChain({
     required String permission,
@@ -228,7 +232,7 @@ class FlutterChainCryptoLibrary {
       throw Exception('Public key is null');
     }
 
-    final nearBlockChainService = cryptoService
+    final nearBlockChainService = blockchainService
         .blockchainServices[blockchainType] as NearBlockChainService;
 
     return nearBlockChainService.addKey(
@@ -266,7 +270,7 @@ class FlutterChainCryptoLibrary {
       throw Exception('Private key is null');
     }
 
-    final nearBlockChainService = cryptoService
+    final nearBlockChainService = blockchainService
         .blockchainServices[blockchainType] as NearBlockChainService;
 
     return nearBlockChainService.deleteKey(
@@ -298,7 +302,7 @@ class FlutterChainCryptoLibrary {
       throw Exception('Private key is null');
     }
 
-    final nearBlockChainService = cryptoService
+    final nearBlockChainService = blockchainService
         .blockchainServices[blockchainType] as NearBlockChainService;
 
     return nearBlockChainService.stake(
@@ -319,7 +323,8 @@ class FlutterChainCryptoLibrary {
     if (wallet == null) {
       throw Exception('Does not exist wallet with this name');
     }
-    final blockChainService = cryptoService.blockchainServices[blockchainType];
+    final blockChainService =
+        blockchainService.blockchainServices[blockchainType];
 
     if (blockChainService == null) {
       throw Exception('Does not exist blockchain service with this name');
