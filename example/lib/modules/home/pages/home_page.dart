@@ -19,6 +19,7 @@ class CryptoListPage extends StatefulWidget {
 
 class _CryptoListPageState extends State<CryptoListPage> {
   String? selectedWallet;
+  String? mnemonic;
 
   @override
   void initState() {
@@ -29,6 +30,11 @@ class _CryptoListPageState extends State<CryptoListPage> {
             false
         ? cryptoLibrary.walletsStream.valueOrNull?.first.name ?? 'not founded'
         : 'not founded';
+
+    mnemonic = cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false
+        ? cryptoLibrary.walletsStream.valueOrNull?.first.mnemonic ??
+            'not founded'
+        : 'not founded';
   }
 
   @override
@@ -37,6 +43,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
+    // log("mnemonic $mnemonic");
 
     return Column(
       children: [
@@ -55,6 +62,14 @@ class _CryptoListPageState extends State<CryptoListPage> {
           children: [
             Text(
               'Selected wallet: ${selectedWallet!.length > 30 ? '${selectedWallet!.substring(0, 30)}...' : selectedWallet!}',
+              style: nearTextStyles.subhead!.copyWith(
+                color: nearColors.nearPurple,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Your mnemonic: $mnemonic',
               style: nearTextStyles.subhead!.copyWith(
                 color: nearColors.nearPurple,
                 fontSize: 20,
