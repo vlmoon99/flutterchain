@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
@@ -14,6 +13,9 @@ import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
+    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
+    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 
 class NearBlockChainService implements BlockChainService {
   final JsVMService jsVMService;
@@ -23,10 +25,11 @@ class NearBlockChainService implements BlockChainService {
     required this.nearRpcClient,
   });
 
-  @override
-  Future<String> getWalletBalance(String accountId) async {
-    final res = await nearRpcClient.getAccountBalance(accountId);
-    return res;
+  factory NearBlockChainService.defaultInstance() {
+    return NearBlockChainService(
+      jsVMService: getJsVM(),
+      nearRpcClient: NearRpcClient.defaultInstance(),
+    );
   }
 
   Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
@@ -45,7 +48,7 @@ class NearBlockChainService implements BlockChainService {
   Future<BlockchainResponse> sendTransactionNearAsync({
     required String tx,
   }) =>
-      nearRpcClient.sendSyncTx([tx]);
+      nearRpcClient.sendAsyncTx([tx]);
 
   Future<String> signNearActions({
     required String fromAddress,
@@ -62,8 +65,8 @@ class NearBlockChainService implements BlockChainService {
         "window.NearBlockchain.signNearActions('$fromAddress','$toAddress','$transferAmount', '$gas' , '$privateKey','$nonce','$blockHash','${jsonEncode(actions)}')");
 
     final decodedRes = jsonDecode(res);
-    log("decodedRes ${decodedRes.toString()}");
-    return decodedRes['signedTransaction'].toString();
+    final signedTx = decodedRes['signedTransaction'].toString();
+    return signedTx;
   }
 
   Future<BlockchainResponse> stake({
@@ -202,6 +205,12 @@ class NearBlockChainService implements BlockChainService {
       actions: blockChainSpecificArgumentsData.actions,
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
+  @override
+  Future<String> getWalletBalance(String accountId) async {
+    final res = await nearRpcClient.getAccountBalance(accountId);
     return res;
   }
 

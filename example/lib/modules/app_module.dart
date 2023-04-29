@@ -26,11 +26,14 @@ class AppModule extends Module {
     Bind.singleton(
       (i) => const FlutterSecureStorage(),
     ),
-    Bind.singleton(
-      (i) => getJsVM(),
-    ),
+
     Bind.singleton(
       (i) => Dio(),
+    ),
+
+    //Inject JS Engine
+    Bind.singleton(
+      (i) => getJsVM(),
     ),
     //Inject Blockchain Code
 

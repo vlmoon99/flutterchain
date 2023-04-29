@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:bs58/bs58.dart';
+import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
@@ -14,6 +16,14 @@ import 'package:hex/hex.dart';
 class NearRpcClient {
   final NearNetworkClient networkClient;
 
+  factory NearRpcClient.defaultInstance() {
+    return NearRpcClient(
+      networkClient: NearNetworkClient(
+        baseUrl: NearBlockChainNetworkUrls.listOfUrls.first,
+        dio: Dio(),
+      ),
+    );
+  }
   NearRpcClient({required this.networkClient});
 
   Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
@@ -116,17 +126,19 @@ class NearRpcClient {
 
 class NearNetworkClient extends NetworkClient {
   NearNetworkClient({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(RetryInterceptor(
-      dio: dio,
-      logPrint: log,
-      retries: 5,
-      retryDelays: const [
-        Duration(seconds: 2),
-        Duration(seconds: 1),
-        Duration(seconds: 1),
-        Duration(seconds: 1),
-        Duration(seconds: 1),
-      ],
-    ));
+    dio.interceptors.add(
+      RetryInterceptor(
+        dio: dio,
+        logPrint: log,
+        retries: 5,
+        retryDelays: const [
+          Duration(seconds: 2),
+          Duration(seconds: 1),
+          Duration(seconds: 1),
+          Duration(seconds: 1),
+          Duration(seconds: 1),
+        ],
+      ),
+    );
   }
 }
