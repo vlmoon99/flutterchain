@@ -149,7 +149,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             );
             nearVM
                 .addBlockChainDataByDerivationPath(
-              derivationPath: derivationModel,
+              currentDerivationPath: derivationModel,
               walletID: walletID,
             )
                 .then(
@@ -196,7 +196,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 nearVM.nearBlockchainStore.currentDerivationPath.value;
             nearVM
                 .sendNativeCoinTransferByWalletId(
-              derivationPath: derivationPath,
+              currentDerivationPath: derivationPath,
               toAddress: recipient,
               transferAmount: amount,
               walletId: walletID,
@@ -259,7 +259,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final walletID = homeVM.userStore.walletIdStream.value;
             nearVM
                 .callSmartContractFunction(
-              derivationPath: derivationPath,
+              currentDerivationPath: derivationPath,
               args: arguments,
               amountOfDeposit: deposit,
               walletId: walletID,
@@ -367,7 +367,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 .addKeyNearBlockChain(
               allowance: allowanceAmount,
               derivationPathOfNewGeneratedAccount: derivationModel,
-              derivationPathOfCurrentWallet: currentDerivationPath,
+              currentDerivationPath: currentDerivationPath,
               methodNames: methodsNames,
               permission: permissionType,
               smartContractId: smartContractAddress,
@@ -452,21 +452,11 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             final currentDerivationPath =
                 nearVM.nearBlockchainStore.currentDerivationPath.value;
 
-            final currentPublicAddress = nearVM
-                    .cryptoLibrary.walletsStream.value
-                    .firstWhere((element) => element.id == walletID)
-                    .blockchainsData![BlockChains.near]
-                    ?.firstWhereOrNull((element) =>
-                        element.derivationPath == currentDerivationPath)
-                    ?.publicKey ??
-                'no pub key';
-
             nearVM
                 .deleteKeyNearBlockChain(
               walletID: walletID,
-              derivationPath: currentDerivationPath,
+              currentDerivationPath: currentDerivationPath,
               publicKey: deleteKeyPublicKeyAddress,
-              fromAddress: currentPublicAddress,
             )
                 .then(
               (value) {
@@ -621,7 +611,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
               FutureBuilder(
                 future: nearVM.getBalanceByDerivationPath(
                   walletId: homeVM.userStore.walletIdStream.value,
-                  derivationPath: derivationModel,
+                  currentDerivationPath: derivationModel,
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {

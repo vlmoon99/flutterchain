@@ -1,9 +1,8 @@
-import 'package:flutterchain/flutterchain_lib/constants/derivation_paths.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -17,13 +16,14 @@ class FlutterChainLibrary {
     initCryptoLib();
   }
 
-  Future<void> initCryptoLib() async {
-    walletRepository.readAll().then((wallets) {
+  Future<bool> initCryptoLib() async {
+    await walletRepository.readAll().then((wallets) {
       walletsStream.add(wallets);
     });
+    return true;
   }
 
-  Future<void> deleteWalletById({
+  Future<bool> deleteWalletById({
     required String walletId,
   }) async {
     walletsStream.add(walletsStream.valueOrNull
@@ -31,11 +31,13 @@ class FlutterChainLibrary {
             .toList() ??
         []);
     walletRepository.saveAll(walletsStream.value);
+    return true;
   }
 
-  Future<void> deleteAllWallets() async {
+  Future<bool> deleteAllWallets() async {
     walletsStream.add([]);
     walletRepository.deleteAll();
+    return true;
   }
 
   Future<void> setBlockchainNetworkEnvironment(
@@ -50,18 +52,50 @@ class FlutterChainLibrary {
     return blockchainService.getBlockchainsUrlsByBlockchainType(blockchainType);
   }
 
-//Need to be refactored
+  Future<BlockChainData> addBlockChainDataByDerivationPath({
+    required DerivationPath currentDerivationPath,
+    required String blockchainType,
+    required String walletID,
+  }) async {
+    final wallet = walletsStream.valueOrNull
+        ?.firstWhereOrNull((element) => element.id == walletID);
+    if (wallet == null) {
+      throw Exception('Does not exist wallet with this name');
+    }
+    final blockChainService =
+        blockchainService.blockchainServices[blockchainType];
 
-  Future<dynamic> getBalanceOfAddressOnSpecificBlockchain({
+    if (blockChainService == null) {
+      throw Exception('Does not exist blockchain service with this name');
+    }
+
+    final blockChainData =
+        await blockChainService.getBlockChainDataByDerivationPath(
+      derivationPath: currentDerivationPath,
+      mnemonic: wallet.mnemonic,
+      passphrase: wallet.passphrase,
+    );
+    wallet.blockchainsData![blockchainType] = {
+      ...wallet.blockchainsData![blockchainType] ?? {},
+      blockChainData
+    };
+    walletsStream.value[walletsStream.value
+        .indexWhere((element) => element.id == walletID)] = wallet;
+    walletsStream.add(walletsStream.value);
+    await walletRepository.saveAll(walletsStream.value);
+    return blockChainData;
+  }
+
+  Future<String> getBalanceOfAddressOnSpecificBlockchain({
     required String walletId,
     required String blockchainType,
-    DerivationPath derivationPath = BlockChainsDerivationPaths.near,
+    required DerivationPath currentDerivationPath,
   }) async {
     final wallet = walletsStream.value
         .firstWhereOrNull((element) => element.id == walletId);
     final publicKey = wallet?.blockchainsData?[blockchainType]
         ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
+            (element) => element.derivationPath == currentDerivationPath)
         ?.publicKey;
     if (publicKey != null) {
       return blockchainService.getWalletBalance(
@@ -71,16 +105,17 @@ class FlutterChainLibrary {
     }
   }
 
-  Future<void> createWalletWithGeneratedMnemonic({
+  Future<Wallet> createWalletWithGeneratedMnemonic({
     required String walletName,
     String passphrase = '',
   }) async {
     final mnemonicData = await blockchainService.generateNewWallet(
         walletName: walletName, passphrase: passphrase);
-    await createWallet(mnemonic: mnemonicData.mnemonic, walletName: walletName);
+    return await createWalletByImportedMnemonic(
+        mnemonic: mnemonicData.mnemonic, walletName: walletName);
   }
 
-  Future<void> createWallet({
+  Future<Wallet> createWalletByImportedMnemonic({
     required String mnemonic,
     required String walletName,
     String passphrase = '',
@@ -112,14 +147,15 @@ class FlutterChainLibrary {
     walletsStream.value.add(wallet);
     walletsStream.add(walletsStream.value);
     walletRepository.saveAll(walletsStream.value);
+    return wallet;
   }
 
-  Future<dynamic> sendTransferNativeCoin({
+  Future<BlockchainResponse> sendTransferNativeCoin({
     required String walletId,
     required String typeOfBlockchain,
-    required String toAdress,
+    required String toAddress,
     required String transferAmount,
-    DerivationPath derivationPath = BlockChainsDerivationPaths.near,
+    required DerivationPath currentDerivationPath,
   }) async {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletId);
@@ -129,12 +165,12 @@ class FlutterChainLibrary {
 
     final privateKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
+            (element) => element.derivationPath == currentDerivationPath)
         ?.privateKey;
 
     final publicKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
+            (element) => element.derivationPath == currentDerivationPath)
         ?.publicKey;
     if (publicKey == null) {
       throw Exception('Public key is null');
@@ -143,22 +179,22 @@ class FlutterChainLibrary {
       throw Exception('Private key is null');
     }
     return blockchainService.sendTransferNativeCoin(
-      toAdress: toAdress,
-      fromAdress: publicKey,
+      toAddress: toAddress,
+      fromAddress: publicKey,
       transferAmount: transferAmount,
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
     );
   }
 
+  //Need to be refactored
+
   Future<BlockchainResponse> callSmartContractFunction({
     required String walletId,
-    required String method,
-    required Map<String, dynamic> args,
     required String typeOfBlockchain,
-    required String toAdress,
-    required String transferAmount,
-    DerivationPath derivationPath = BlockChainsDerivationPaths.near,
+    required DerivationPath currentDerivationPath,
+    required String toAddress,
+    required BlockChainSmartContractArguments arguments,
   }) async {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletId);
@@ -168,12 +204,12 @@ class FlutterChainLibrary {
 
     final privateKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
+            (element) => element.derivationPath == currentDerivationPath)
         ?.privateKey;
 
     final publicKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
+            (element) => element.derivationPath == currentDerivationPath)
         ?.publicKey;
 
     if (privateKey == null) {
@@ -185,165 +221,11 @@ class FlutterChainLibrary {
     }
 
     return blockchainService.callSmartContractFunction(
-      toAdress: toAdress,
-      fromAdress: publicKey,
-      transferAmount: transferAmount,
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
-      arguments: args,
-      methodName: method,
+      fromAddress: publicKey,
+      toAddress: toAddress,
+      arguments: arguments,
     );
-  }
-
-//Need to be deleted
-
-  Future<BlockchainResponse> addKeyNearBlockChain({
-    required String permission,
-    required String allowance,
-    required String smartContractId,
-    required List<String> methodNames,
-    required String blockchainType,
-    required String walletID,
-    required DerivationPath derivationPathOfNewGeneratedAccount,
-    required DerivationPath derivationPathOfCurrentWallet,
-  }) {
-    final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == walletID);
-    if (wallet == null) {
-      throw Exception('Does not exist wallet with this name');
-    }
-
-    final privateKey = wallet.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath == derivationPathOfCurrentWallet)
-        ?.privateKey;
-
-    final publicKey = wallet.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath == derivationPathOfCurrentWallet)
-        ?.publicKey;
-    final mnemonic = wallet.mnemonic;
-
-    if (privateKey == null) {
-      throw Exception('Private key is null');
-    }
-
-    if (publicKey == null) {
-      throw Exception('Public key is null');
-    }
-
-    final nearBlockChainService = blockchainService
-        .blockchainServices[blockchainType] as NearBlockChainService;
-
-    return nearBlockChainService.addKey(
-        permission: permission,
-        allowance: allowance,
-        smartContractId: smartContractId,
-        methodNames: methodNames,
-        privateKey: privateKey,
-        fromAdress: publicKey,
-        mnemonic: mnemonic,
-        derivationPathOfNewGeneratedAccount:
-            derivationPathOfNewGeneratedAccount);
-  }
-
-  Future<BlockchainResponse> deleteKeyNearBlockChain({
-    required String fromAdress,
-    required String publicKey,
-    required String blockchainType,
-    required String walletID,
-    required DerivationPath derivationPath,
-    // String derivationIndex = '0',
-  }) {
-    final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == walletID);
-    if (wallet == null) {
-      throw Exception('Does not exist wallet with this name');
-    }
-
-    final privateKey = wallet.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
-        ?.privateKey;
-
-    if (privateKey == null) {
-      throw Exception('Private key is null');
-    }
-
-    final nearBlockChainService = blockchainService
-        .blockchainServices[blockchainType] as NearBlockChainService;
-
-    return nearBlockChainService.deleteKey(
-      publicKey: publicKey,
-      privateKey: privateKey,
-      fromAdress: fromAdress,
-    );
-  }
-
-  Future<BlockchainResponse> stakeNearBlockChain({
-    required String fromAdress,
-    required String validatorId,
-    required String blockchainType,
-    required String amount,
-    required String walletID,
-    required DerivationPath derivationPath,
-  }) {
-    final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == walletID);
-    if (wallet == null) {
-      throw Exception('Does not exist wallet with this name');
-    }
-
-    final privateKey = wallet.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == derivationPath)
-        ?.privateKey;
-    if (privateKey == null) {
-      throw Exception('Private key is null');
-    }
-
-    final nearBlockChainService = blockchainService
-        .blockchainServices[blockchainType] as NearBlockChainService;
-
-    return nearBlockChainService.stake(
-      privateKey: privateKey,
-      fromAdress: fromAdress,
-      amount: amount,
-      validatorId: validatorId,
-    );
-  }
-
-  Future<BlockChainData> addNearBlockChainDataByDerivationPath({
-    required DerivationPath derivationPath,
-    required String blockchainType,
-    required String walletID,
-  }) async {
-    final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == walletID);
-    if (wallet == null) {
-      throw Exception('Does not exist wallet with this name');
-    }
-    final blockChainService =
-        blockchainService.blockchainServices[blockchainType];
-
-    if (blockChainService == null) {
-      throw Exception('Does not exist blockchain service with this name');
-    }
-
-    final blockChainData =
-        await blockChainService.getBlockChainDataByDerivationPath(
-      derivationPath: derivationPath,
-      mnemonic: wallet.mnemonic,
-      passphrase: wallet.passphrase,
-    );
-    wallet.blockchainsData![blockchainType] = {
-      ...wallet.blockchainsData![blockchainType] ?? {},
-      blockChainData
-    };
-    walletsStream.value[walletsStream.value
-        .indexWhere((element) => element.id == walletID)] = wallet;
-    walletsStream.add(walletsStream.value);
-    await walletRepository.saveAll(walletsStream.value);
-    return blockChainData;
   }
 }

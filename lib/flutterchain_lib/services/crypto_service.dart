@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -26,17 +27,17 @@ class FlutterChainService {
         ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
   }
 
-  Future<dynamic> getWalletBalance(
+  Future<String> getWalletBalance(
       {required String accountId, required String blockchainType}) async {
     log("accountId $accountId");
     final res =
         await blockchainServices[blockchainType]?.getWalletBalance(accountId);
-    return res;
+    return res ?? 'Error : no balance result';
   }
 
-  Future<dynamic> sendTransferNativeCoin({
-    required String toAdress,
-    required String fromAdress,
+  Future<BlockchainResponse> sendTransferNativeCoin({
+    required String toAddress,
+    required String fromAddress,
     required String transferAmount,
     required String typeOfBlockchain,
     required String privateKey,
@@ -46,18 +47,21 @@ class FlutterChainService {
     }
 
     final blockchainService = blockchainServices[typeOfBlockchain];
-    return blockchainService?.sendTransferNativeCoin(
-        toAdress, fromAdress, transferAmount, privateKey);
+    final res = blockchainService?.sendTransferNativeCoin(
+        toAddress, fromAddress, transferAmount, privateKey);
+
+    if (res == null) {
+      throw Exception('Incorrect Transfer');
+    }
+    return res;
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required String toAdress,
-    required String fromAdress,
-    required String transferAmount,
+    required String fromAddress,
     required String typeOfBlockchain,
     required String privateKey,
-    required String methodName,
-    required Map<String, dynamic> arguments,
+    required String toAddress,
+    required BlockChainSmartContractArguments arguments,
   }) async {
     if (blockchainServices[typeOfBlockchain] == null) {
       throw Exception('Incorrect Blockchain');
@@ -65,11 +69,9 @@ class FlutterChainService {
 
     final res =
         await blockchainServices[typeOfBlockchain]?.callSmartContractFunction(
-      toAdress,
-      fromAdress,
-      transferAmount,
+      toAddress,
+      fromAddress,
       privateKey,
-      methodName,
       arguments,
     );
 

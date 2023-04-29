@@ -2,8 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/near_blockchain_store.dart';
 
 class NearVM {
@@ -15,11 +17,11 @@ class NearVM {
   );
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
-    required DerivationPath derivationPath,
+    required DerivationPath currentDerivationPath,
     required String walletID,
   }) async {
-    return cryptoLibrary.addNearBlockChainDataByDerivationPath(
-      derivationPath: derivationPath,
+    return cryptoLibrary.addBlockChainDataByDerivationPath(
+      currentDerivationPath: currentDerivationPath,
       blockchainType: BlockChains.near,
       walletID: walletID,
     );
@@ -32,18 +34,43 @@ class NearVM {
     required List<String> methodNames,
     required String walletID,
     required DerivationPath derivationPathOfNewGeneratedAccount,
-    required DerivationPath derivationPathOfCurrentWallet,
+    required DerivationPath currentDerivationPath,
   }) {
     final yoctoNearAllowance = NearFormatter.nearToYoctoNear(allowance);
-    final response = cryptoLibrary.addKeyNearBlockChain(
+    final nearBlockChainService = cryptoLibrary.blockchainService
+        .blockchainServices[BlockChains.near] as NearBlockChainService?;
+    if (nearBlockChainService == null) {
+      throw Exception("didn't found near blockchain service");
+    }
+    final currentWallet = cryptoLibrary.walletsStream.value
+        .firstWhere((element) => element.id == walletID);
+
+    final fromAddress = currentWallet.blockchainsData?[BlockChains.near]!
+        .firstWhereOrNull(
+            (element) => element.derivationPath == currentDerivationPath)
+        ?.publicKey;
+    if (fromAddress == null) {
+      throw Exception('Incorrect User public key is null');
+    }
+
+    final privateKey = currentWallet.blockchainsData?[BlockChains.near]
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == currentDerivationPath)
+        ?.privateKey;
+
+    if (privateKey == null) {
+      throw Exception('Incorrect User private key is null');
+    }
+
+    final response = nearBlockChainService.addKey(
       permission: permission,
       allowance: yoctoNearAllowance,
-      derivationPathOfCurrentWallet: derivationPathOfCurrentWallet,
       smartContractId: smartContractId,
       methodNames: methodNames,
-      blockchainType: BlockChains.near,
-      walletID: walletID,
       derivationPathOfNewGeneratedAccount: derivationPathOfNewGeneratedAccount,
+      fromAddress: fromAddress,
+      mnemonic: currentWallet.mnemonic,
+      privateKey: privateKey,
     );
 
     return response;
@@ -52,34 +79,37 @@ class NearVM {
   Future<BlockchainResponse> deleteKeyNearBlockChain({
     required String walletID,
     required String publicKey,
-    required String fromAddress,
-    required DerivationPath derivationPath,
+    required DerivationPath currentDerivationPath,
   }) {
-    final response = cryptoLibrary.deleteKeyNearBlockChain(
-      blockchainType: BlockChains.near,
-      walletID: walletID,
+    final nearBlockChainService = cryptoLibrary.blockchainService
+        .blockchainServices[BlockChains.near] as NearBlockChainService?;
+    if (nearBlockChainService == null) {
+      throw Exception("didn't found near blockchain service");
+    }
+    final currentWallet = cryptoLibrary.walletsStream.value
+        .firstWhere((element) => element.id == walletID);
+
+    final fromAddress = currentWallet.blockchainsData?[BlockChains.near]!
+        .firstWhereOrNull(
+            (element) => element.derivationPath == currentDerivationPath)
+        ?.publicKey;
+    if (fromAddress == null) {
+      throw Exception('Incorrect User public key is null');
+    }
+
+    final privateKey = currentWallet.blockchainsData?[BlockChains.near]
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == currentDerivationPath)
+        ?.privateKey;
+
+    if (privateKey == null) {
+      throw Exception('Incorrect User private key is null');
+    }
+
+    final response = nearBlockChainService.deleteKey(
       publicKey: publicKey,
       fromAdress: fromAddress,
-      derivationPath: derivationPath,
-    );
-
-    return response;
-  }
-
-  Future<BlockchainResponse> stakeNearBlockChain({
-    required String walletID,
-    required String amount,
-    required String validatorId,
-    required String fromAdress,
-    required DerivationPath derivationPath,
-  }) {
-    final response = cryptoLibrary.stakeNearBlockChain(
-      blockchainType: BlockChains.near,
-      walletID: walletID,
-      amount: NearFormatter.nearToYoctoNear(amount),
-      validatorId: validatorId,
-      fromAdress: fromAdress,
-      derivationPath: derivationPath,
+      privateKey: privateKey,
     );
 
     return response;
@@ -91,37 +121,38 @@ class NearVM {
     required String walletId,
     required String smartContractAddress,
     required String method,
-    required DerivationPath derivationPath,
+    required DerivationPath currentDerivationPath,
   }) {
     final response = cryptoLibrary.callSmartContractFunction(
-      derivationPath: derivationPath,
-      walletId: walletId,
-      typeOfBlockchain: BlockChains.near,
-      toAdress: smartContractAddress,
-      transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
-      args: args,
-      method: method,
-    );
+        currentDerivationPath: currentDerivationPath,
+        walletId: walletId,
+        typeOfBlockchain: BlockChains.near,
+        toAddress: smartContractAddress,
+        arguments: NearBlockChainSmartContractArguments(
+          method: method,
+          args: args,
+          transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
+        ));
     return response;
   }
 
   Future<dynamic> getBalanceByDerivationPath({
     required String walletId,
-    required DerivationPath derivationPath,
+    required DerivationPath currentDerivationPath,
   }) async =>
       cryptoLibrary.getBalanceOfAddressOnSpecificBlockchain(
         walletId: walletId,
         blockchainType: BlockChains.near,
-        derivationPath: derivationPath,
+        currentDerivationPath: currentDerivationPath,
       );
 
   Future<String> getWalletPublicKeyAddressByWalletId(
-          String walletName, DerivationPath derivationPath) async =>
+          String walletName, DerivationPath currentDerivationPath) async =>
       cryptoLibrary.walletsStream.value
           .firstWhere((element) => element.name == walletName)
           .blockchainsData?[BlockChains.near]!
           .firstWhereOrNull(
-              (element) => element.derivationPath == derivationPath)
+              (element) => element.derivationPath == currentDerivationPath)
           ?.publicKey ??
       'not founded';
 
@@ -137,13 +168,13 @@ class NearVM {
     required String transferAmount,
     required String walletId,
     required String typeOfBlockchain,
-    required DerivationPath derivationPath,
+    required DerivationPath currentDerivationPath,
   }) async {
     final response = cryptoLibrary.sendTransferNativeCoin(
       walletId: walletId,
       typeOfBlockchain: typeOfBlockchain,
-      toAdress: toAddress,
-      derivationPath: derivationPath,
+      toAddress: toAddress,
+      currentDerivationPath: currentDerivationPath,
       transferAmount: NearFormatter.nearToYoctoNear(transferAmount),
     );
     return response;

@@ -5,9 +5,11 @@ import 'package:flutterchain/flutterchain_lib/constants/blockchains_gas.dart';
 import 'package:flutterchain/flutterchain_lib/constants/blockchains_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_specific_arguments_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -150,7 +152,7 @@ class NearBlockChainService implements BlockChainService {
   }
 
   Future<BlockchainResponse> addKey({
-    required String fromAdress,
+    required String fromAddress,
     required String mnemonic,
     String passphrase = '',
     required DerivationPath derivationPathOfNewGeneratedAccount,
@@ -161,7 +163,7 @@ class NearBlockChainService implements BlockChainService {
     required String privateKey,
   }) async {
     final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+        await getNonceAndBlockHashInfo(fromAddress, fromAddress);
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
@@ -190,8 +192,8 @@ class NearBlockChainService implements BlockChainService {
     );
 
     final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: fromAdress,
+      fromAddress: fromAddress,
+      toAddress: fromAddress,
       transferAmount: allowance,
       privateKey: blockChainSpecificArgumentsData.privateKey,
       gas: blockChainSpecificArgumentsData.gas,
@@ -207,11 +209,12 @@ class NearBlockChainService implements BlockChainService {
   Future<BlockchainResponse> callSmartContractFunction(
     String toAdress,
     String fromAdress,
-    String transferAmount,
     String privateKey,
-    String methodName,
-    Map<String, dynamic> arguments,
+    BlockChainSmartContractArguments arguments,
   ) async {
+    if (arguments is! NearBlockChainSmartContractArguments) {
+      throw Exception('Incorrect Blockchain Smart Contract Arguments');
+    }
     final transactionInfo =
         await getNonceAndBlockHashInfo(fromAdress, fromAdress);
     final gas = BlockchainGas.gas[BlockChains.near];
@@ -222,8 +225,8 @@ class NearBlockChainService implements BlockChainService {
       {
         "type": "functionCall",
         "data": {
-          "methodName": methodName,
-          "args": arguments,
+          "methodName": arguments.method,
+          "args": arguments.args,
         },
       },
     ];
@@ -238,7 +241,7 @@ class NearBlockChainService implements BlockChainService {
     final signedAction = await signNearActions(
       fromAddress: fromAdress,
       toAddress: toAdress,
-      transferAmount: transferAmount,
+      transferAmount: arguments.transferAmount,
       privateKey: blockChainSpecificArgumentsData.privateKey,
       gas: blockChainSpecificArgumentsData.gas,
       nonce: blockChainSpecificArgumentsData.nonce,

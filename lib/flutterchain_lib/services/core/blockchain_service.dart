@@ -1,4 +1,5 @@
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 abstract class BlockChainService {
@@ -15,12 +16,10 @@ abstract class BlockChainService {
   );
 
   Future<BlockchainResponse> callSmartContractFunction(
-    String toAdress,
-    String fromAdress,
-    String transferAmount,
+    String toAddress,
+    String fromAddress,
     String privateKey,
-    String methodName,
-    Map<String, dynamic> arguments,
+    BlockChainSmartContractArguments arguments,
   );
 
   Future<String> getWalletBalance(String accountId);

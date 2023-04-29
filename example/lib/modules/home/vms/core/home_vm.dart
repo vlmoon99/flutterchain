@@ -30,7 +30,8 @@ class HomeVM {
     if (mnemonic?.isEmpty ?? true) {
       cryptoLibrary.createWalletWithGeneratedMnemonic(walletName: walletName);
     } else {
-      cryptoLibrary.createWallet(mnemonic: mnemonic!, walletName: walletName);
+      cryptoLibrary.createWalletByImportedMnemonic(
+          mnemonic: mnemonic!, walletName: walletName);
     }
   }
 }
