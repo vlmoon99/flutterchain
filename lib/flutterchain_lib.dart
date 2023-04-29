@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/constants/derivation_paths.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
@@ -25,8 +26,7 @@ class FlutterChainCryptoLibrary {
   Future<dynamic> getBalanceOfAddressOnSpecificBlockchain({
     required String walletId,
     required String blockchainType,
-    DerivationPath derivationPath =
-        const DerivationPath(accountNumber: '0', change: '0', address: '1'),
+    DerivationPath derivationPath = BlockChainsDerivationPaths.near,
   }) async {
     final wallet = walletsStream.value
         .firstWhereOrNull((element) => element.id == walletId);
@@ -105,8 +105,7 @@ class FlutterChainCryptoLibrary {
     required String typeOfBlockchain,
     required String toAdress,
     required String transferAmount,
-    DerivationPath derivationPath =
-        const DerivationPath(accountNumber: '0', change: '0', address: '1'),
+    DerivationPath derivationPath = BlockChainsDerivationPaths.near,
   }) async {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletId);
@@ -145,8 +144,7 @@ class FlutterChainCryptoLibrary {
     required String typeOfBlockchain,
     required String toAdress,
     required String transferAmount,
-    DerivationPath derivationPath =
-        const DerivationPath(accountNumber: '0', change: '0', address: '1'),
+    DerivationPath derivationPath = BlockChainsDerivationPaths.near,
   }) async {
     final wallet = walletsStream.valueOrNull
         ?.firstWhereOrNull((element) => element.id == walletId);
@@ -340,6 +338,7 @@ class FlutterChainCryptoLibrary {
     walletsStream.value[walletsStream.value
         .indexWhere((element) => element.id == walletID)] = wallet;
     walletsStream.add(walletsStream.value);
+    await walletRepository.saveAll(walletsStream.value);
     return blockChainData;
   }
 }

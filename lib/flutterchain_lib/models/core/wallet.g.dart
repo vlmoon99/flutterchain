@@ -48,6 +48,8 @@ Map<String, dynamic> _$BlockChainDataToJson(BlockChainData instance) =>
 
 DerivationPath _$DerivationPathFromJson(Map<String, dynamic> json) =>
     DerivationPath(
+      purpose: json['purpose'] as String,
+      coinType: json['coinType'] as String,
       accountNumber: json['accountNumber'] as String,
       change: json['change'] as String,
       address: json['address'] as String,
@@ -55,6 +57,8 @@ DerivationPath _$DerivationPathFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$DerivationPathToJson(DerivationPath instance) =>
     <String, dynamic>{
+      'purpose': instance.purpose,
+      'coinType': instance.coinType,
       'accountNumber': instance.accountNumber,
       'change': instance.change,
       'address': instance.address,

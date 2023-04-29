@@ -141,6 +141,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 .toList();
 
             final derivationModel = DerivationPath(
+              purpose: derivationPath[1],
+              coinType: derivationPath[2],
               accountNumber: derivationPath[3],
               change: derivationPath[4],
               address: derivationPath[5],
@@ -351,6 +353,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 addKeySmartContractAddressController.text;
 
             final derivationModel = DerivationPath(
+              purpose: '44',
+              coinType: '397',
               accountNumber: indexOfDerivationPath,
               change: '0',
               address: '1',
@@ -503,17 +507,11 @@ class CryptoActionHeader extends StatefulWidget {
 }
 
 class _CryptoActionHeaderState extends State<CryptoActionHeader> {
-  // String selectedUrl = 'https://rpc.nearprotocol.com';
   String selectedUrl = '';
 
   final TextEditingController _customUrlController = TextEditingController();
 
-  final Set<String> networkUrls = {
-    // 'https://rpc.nearprotocol.com',
-    // 'https://rpc.testnet.near.org',
-    // 'https://rpc.betanet.near.org',
-    // 'https://rpc.mainnet.near.org',
-  };
+  final Set<String> networkUrls = {};
 
   void _handleCustomUrlChanged(String url) {
     setState(() {
@@ -553,7 +551,10 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
         builder: (context, snapshot) {
           final derivationModel =
               nearVM.nearBlockchainStore.currentDerivationPath.value;
-
+          final listOfBlockChainData = homeVM.cryptoLibrary.walletsStream.value
+              .firstWhere((element) =>
+                  element.id == homeVM.userStore.walletIdStream.value)
+              .blockchainsData![BlockChains.near];
           final currentPublicAddress = homeVM.cryptoLibrary.walletsStream.value
               .firstWhere((element) =>
                   element.id == homeVM.userStore.walletIdStream.value)
@@ -584,6 +585,28 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                   ),
                 ),
               ),
+              DropdownButton<DerivationPath>(
+                value: derivationModel,
+                onChanged: (DerivationPath? value) {
+                  setState(() {
+                    final nearVM = Modular.get<NearVM>();
+                    nearVM.nearBlockchainStore.currentDerivationPath
+                        .add(value!);
+                  });
+                },
+                items: listOfBlockChainData
+                    ?.map((blockChainData) => DropdownMenuItem<DerivationPath>(
+                          value: blockChainData.derivationPath,
+                          child: Text(
+                            blockChainData.derivationPath.toString(),
+                            style: nearTextStyles.bodyCopy!.copyWith(
+                              color: nearColors.nearGray,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
@@ -614,7 +637,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                       ),
                     );
                   } else {
-                    return const SizedBox.shrink();
+                    return const SizedBox();
                   }
                 },
               ),

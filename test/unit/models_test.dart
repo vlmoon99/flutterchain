@@ -26,8 +26,13 @@ void main() {
       final nearData = NearBlockChainData(
         publicKey: 'near public key',
         privateKey: 'near private key',
-        derivationPath:
-            const DerivationPath(accountNumber: '0', change: '0', address: '1'),
+        derivationPath: const DerivationPath(
+          purpose: '44',
+          coinType: '397',
+          accountNumber: '0',
+          change: '0',
+          address: '1',
+        ),
         passphrase: 'passphrase',
       );
 

@@ -71,11 +71,16 @@ class BlockChainData {
 
 @JsonSerializable()
 class DerivationPath {
+  // m’ / purpose’ / coin_type’ / accountNumber / change / address
+  final String purpose;
+  final String coinType;
   final String accountNumber;
   final String change;
   final String address;
 
   const DerivationPath({
+    required this.purpose,
+    required this.coinType,
     required this.accountNumber,
     required this.change,
     required this.address,
@@ -88,7 +93,7 @@ class DerivationPath {
 
   @override
   String toString() {
-    return "{Account Number $accountNumber , Change $change, Address $address }";
+    return "m'/$purpose'/$coinType'/$accountNumber'/$change'/$address'";
   }
 
   @override
@@ -96,11 +101,17 @@ class DerivationPath {
       identical(this, other) ||
       other is DerivationPath &&
           runtimeType == other.runtimeType &&
+          purpose == other.purpose &&
+          coinType == other.coinType &&
           accountNumber == other.accountNumber &&
           change == other.change &&
           address == other.address;
 
   @override
   int get hashCode =>
-      accountNumber.hashCode ^ change.hashCode ^ address.hashCode;
+      purpose.hashCode ^
+      coinType.hashCode ^
+      accountNumber.hashCode ^
+      change.hashCode ^
+      address.hashCode;
 }

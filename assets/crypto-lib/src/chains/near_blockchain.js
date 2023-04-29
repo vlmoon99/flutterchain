@@ -26,6 +26,8 @@ export class NearBlockchain {
       privateKey: privateKeyString,
       passphrase: passphrase,
       derivationPath: {
+        purpose: "44",
+        coinType: "397",
         accountNumber: account,
         change: change,
         address: address,
