@@ -14,20 +14,13 @@ export class NearBlockchain {
 
   getPublicKeyFromSecretKeyFromNearApiJSFormat(secretKey) {
     const { HexCoding } = window.WalletCore;
-
     const decodedSecretKey = bs58.decode(secretKey);
     const keyPair = nacl.sign.keyPair.fromSecretKey(decodedSecretKey);
-    const base58PublicKey = bs58.encode(keyPair.publicKey);
-    console.log(
-      `HexCoding.encode(keyPair.publicKey) ${HexCoding.encode(
-        keyPair.publicKey
-      )}`
-    );
     return HexCoding.encode(keyPair.publicKey).substring(2);
   }
 
   getPrivateKeyFromSecretKeyFromNearApiJSFormat(secretKey) {
-    const { Base58, PrivateKey, Curve } = window.WalletCore;
+    const { Base58, Base64, PrivateKey, Curve } = window.WalletCore;
 
     const decodedSecretKey = Base58.decodeNoCheck(secretKey);
     const privateKeyData = decodedSecretKey.subarray(0, 32);
@@ -35,51 +28,9 @@ export class NearBlockchain {
       throw new Error("Invalid private key");
     }
     const privKey = PrivateKey.createWithData(privateKeyData);
-    const privateKeyString = Base58.encode(privKey.data());
+    const privateKeyString = Base64.encode(privKey.data());
 
     return privateKeyString;
-  }
-
-  getPublicKeyFromPrivateKeyEncodedInBase58(secretKey) {
-    const { Base58, HexCoding, PrivateKey, Curve } = window.WalletCore;
-    try {
-      const decodedSecretKey = Base58.decodeNoCheck(secretKey);
-      // console.log(`secretKey ${secretKey}`);
-      // console.log(
-      //   `test pub key ${this.getPublicKeyFromSecretKeyFromNearApiJSFormat(
-      //     secretKey
-      //   )}`
-      // );
-      // console.log(
-      //   `test priv key ${this.getPrivateKeyFromSecretKeyFromNearApiJSFormat(
-      //     secretKey
-      //   )}`
-      // );
-      const privateKeyData = decodedSecretKey.subarray(0, 32);
-      if (!PrivateKey.isValid(privateKeyData, Curve.ed25519)) {
-        throw new Error("Invalid private key");
-      }
-
-      const privKey = PrivateKey.createWithData(privateKeyData);
-      const publicKeyData = privKey.getPublicKeyEd25519().data();
-      const hexString = HexCoding.encode(publicKeyData);
-      console.log(`Bs58 pub key ${Base58.encode(publicKeyData)}`);
-      console.log(`Bs58 privKey key ${Base58.encode(privKey.data())}`);
-
-      // Concatenate private key and public key in Uint8Array format
-      const concatenatedKeyData = this.concatenateUint8Arrays(
-        privKey.data(),
-        publicKeyData
-      );
-      // Encode the concatenated Uint8Array into Base58 format
-      console.log(
-        `Bs58 concatenated key ${Base58.encodeNoCheck(concatenatedKeyData)}`
-      );
-
-      return hexString.substring(2);
-    } catch (e) {
-      console.error(`Error: ${e}`);
-    }
   }
 
   getBlockChainDataFromMnemonic(
@@ -89,7 +40,7 @@ export class NearBlockchain {
     change = "0",
     address = "1"
   ) {
-    const { CoinType, HDWallet, Base58, HexCoding } = window.WalletCore;
+    const { CoinType, HDWallet, Base64, HexCoding } = window.WalletCore;
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
     const privateKey = wallet.getDerivedKey(
       CoinType.near,
@@ -97,8 +48,9 @@ export class NearBlockchain {
       parseInt(change),
       parseInt(address)
     );
-    const privateKeyString = Base58.encode(privateKey.data());
+    const privateKeyString = Base64.encode(privateKey.data());
     const hexString = HexCoding.encode(privateKey.getPublicKeyEd25519().data());
+
     return JSON.stringify({
       mnemonic: wallet.mnemonic(),
       publicKey: hexString.substring(2),
@@ -135,27 +87,23 @@ export class NearBlockchain {
       const twActions = parsedActions.map((action) =>
         this.getActionObject(action, amountBytes, nonce, gas)
       );
-      console.log(
-        `Long.fromString ${JSON.stringify(Long.fromString("125429386000001"))}`
-      );
+
       const input = TW.NEAR.Proto.SigningInput.create({
         signerId: fromAddress,
         nonce: Long.fromString(nonce),
         receiverId: toAddress,
         blockHash: Base58.decodeNoCheck(blockHash),
         actions: twActions,
-        privateKey: Base58.decodeNoCheck(privateKey),
+        privateKey: Uint8Array.from(Buffer.from(privateKey, "base64")),
       });
-      console.log(`Step 2 ${JSON.stringify(input)}`);
 
       const encoded = TW.NEAR.Proto.SigningInput.encode(input).finish();
       const outputData = AnySigner.sign(encoded, CoinType.near);
       const output = TW.NEAR.Proto.SigningOutput.decode(outputData);
-      console.log(`Step 3 ${JSON.stringify(output)}`);
 
       return JSON.stringify(output);
     } catch (error) {
-      console.error(`Error ${JSON.stringify(error)}`);
+      console.error(JSON.stringify(error));
       return JSON.stringify({ error: error.message });
     }
   }

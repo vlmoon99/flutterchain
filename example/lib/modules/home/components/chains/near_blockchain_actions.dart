@@ -130,7 +130,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     //Make action with injected private Key
     makeActionWithInjectedPrivateKey.text =
         // 'ed25519:NCxWyrNBcNQeyURfZbPzEKNcrg2qhNiEhZqrTEjyUKUE2Tj38';
-        'ed25519:5d1Mk5JG4mAhGURcc8QhmPT9W9y912f8xJn5mnLCZpeVrKT3jX3CHGLzhfdb6mUXSv3V1WQa1A1Z9DxypkRwUy7L';
+        'ed25519:47cKsBDRfkJJ9JZLfECbpXYrj87oPFY21kfgwAG3ku8SW713ctmU99zCKiMjEk3KQJ1BmRVgnUMMVoMRBgW9n1bi';
   }
 
   @override
@@ -526,10 +526,10 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
 
             final res = await nearService.sendTransferNativeCoin(
               recipient,
-              '182d4169286af0c8b21e36ea7b15d11f037d184722b22a5c67f86b67895a7746',
+              'e4a66cf64783a7287331af706ae81900d18a3502da496f7db1a3f3006efd1cf7',
               NearFormatter.nearToYoctoNear(amount),
-              'NCxWyrNBcNQeyURfZbPzEKNcrg2qhNiEhZqrTEjyUKUE2Tj38',
-              '182d4169286af0c8b21e36ea7b15d11f037d184722b22a5c67f86b67895a7746',
+              privKeyFromSecretKeyNearApiJsFormat,
+              pubKeyFromSecretKeyNearApiJsFormat,
             );
             log('Transfer is ${res.status}');
           },
