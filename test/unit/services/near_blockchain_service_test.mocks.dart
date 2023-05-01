@@ -112,6 +112,16 @@ class MockNearBlockChainService extends _i1.Mock
         ),
       ) as _i3.NearRpcClient);
   @override
+  _i8.Future<String> getPublicKeyFromPrivateKeyEncodedInBase58(
+          String? base58PrivateKey) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPublicKeyFromPrivateKeyEncodedInBase58,
+          [base58PrivateKey],
+        ),
+        returnValue: _i8.Future<String>.value(''),
+      ) as _i8.Future<String>);
+  @override
   _i8.Future<_i4.NearBlockChainData> getBlockChainDataFromMnemonic(
     String? mnemonic,
     String? passphrase,
@@ -139,7 +149,7 @@ class MockNearBlockChainService extends _i1.Mock
   @override
   _i8.Future<_i5.BlockchainResponse> sendTransferNativeCoin(
     String? toAdress,
-    String? fromAdress,
+    String? fromAddress,
     String? transferAmount,
     String? privateKey,
   ) =>
@@ -148,7 +158,7 @@ class MockNearBlockChainService extends _i1.Mock
           #sendTransferNativeCoin,
           [
             toAdress,
-            fromAdress,
+            fromAddress,
             transferAmount,
             privateKey,
           ],
@@ -160,7 +170,7 @@ class MockNearBlockChainService extends _i1.Mock
             #sendTransferNativeCoin,
             [
               toAdress,
-              fromAdress,
+              fromAddress,
               transferAmount,
               privateKey,
             ],
@@ -207,27 +217,29 @@ class MockNearBlockChainService extends _i1.Mock
         returnValue: _i8.Future<String>.value(''),
       ) as _i8.Future<String>);
   @override
-  _i8.Future<_i6.NearTransactionInfoModel> getNonceAndBlockHashInfo(
-    String? accountId,
-    dynamic publicKey,
-  ) =>
+  _i8.Future<_i6.NearTransactionInfoModel> getNonceAndBlockHashInfo({
+    required String? accountId,
+    required String? publicKey,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getNonceAndBlockHashInfo,
-          [
-            accountId,
-            publicKey,
-          ],
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+          },
         ),
         returnValue: _i8.Future<_i6.NearTransactionInfoModel>.value(
             _FakeNearTransactionInfoModel_4(
           this,
           Invocation.method(
             #getNonceAndBlockHashInfo,
-            [
-              accountId,
-              publicKey,
-            ],
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+            },
           ),
         )),
       ) as _i8.Future<_i6.NearTransactionInfoModel>);

@@ -50,6 +50,7 @@ class FlutterChainService {
     required String transferAmount,
     required String typeOfBlockchain,
     required String privateKey,
+    required String publicKey,
   }) async {
     if (blockchainServices[typeOfBlockchain] == null) {
       throw Exception('Incorrect Blockchain');
@@ -57,7 +58,7 @@ class FlutterChainService {
 
     final blockchainService = blockchainServices[typeOfBlockchain];
     final res = blockchainService?.sendTransferNativeCoin(
-        toAddress, fromAddress, transferAmount, privateKey);
+        toAddress, fromAddress, transferAmount, privateKey, publicKey);
 
     if (res == null) {
       throw Exception('Incorrect Transfer');

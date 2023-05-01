@@ -33,6 +33,20 @@ class NearBlockChainService implements BlockChainService {
     );
   }
 
+  Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
+      String base58PrivateKey) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getPublicKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
+    return res.toString();
+  }
+
+  Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+      String base58PrivateKey) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getPrivateKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
+    return res.toString();
+  }
+
   @override
   Future<NearBlockChainData> getBlockChainDataFromMnemonic(
       String mnemonic, String passphrase) async {
@@ -46,12 +60,15 @@ class NearBlockChainService implements BlockChainService {
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
     String toAdress,
-    String fromAdress,
+    String fromAddress,
     String transferAmount,
     String privateKey,
+    String publicKey,
   ) async {
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final transactionInfo = await getNonceAndBlockHashInfo(
+      accountId: fromAddress,
+      publicKey: publicKey,
+    );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
@@ -71,7 +88,7 @@ class NearBlockChainService implements BlockChainService {
     );
 
     final signedAction = await signNearActions(
-      fromAddress: fromAdress,
+      fromAddress: fromAddress,
       toAddress: toAdress,
       transferAmount: transferAmount,
       privateKey: blockChainSpecificArgumentsData.privateKey,
@@ -94,8 +111,10 @@ class NearBlockChainService implements BlockChainService {
     if (arguments is! NearBlockChainSmartContractArguments) {
       throw Exception('Incorrect Blockchain Smart Contract Arguments');
     }
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final transactionInfo = await getNonceAndBlockHashInfo(
+      accountId: fromAdress,
+      publicKey: fromAdress,
+    );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
@@ -138,7 +157,7 @@ class NearBlockChainService implements BlockChainService {
   }
 
   Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
-      String accountId, publicKey) async {
+      {required String accountId, required String publicKey}) async {
     final res =
         await nearRpcClient.getNonceAndBlockHashInfo(accountId, publicKey);
 
@@ -180,8 +199,10 @@ class NearBlockChainService implements BlockChainService {
     required String validatorId,
     required String amount,
   }) async {
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final transactionInfo = await getNonceAndBlockHashInfo(
+      accountId: fromAdress,
+      publicKey: fromAdress,
+    );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
@@ -222,8 +243,10 @@ class NearBlockChainService implements BlockChainService {
     required String privateKey,
     required String publicKey,
   }) async {
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAdress, fromAdress);
+    final transactionInfo = await getNonceAndBlockHashInfo(
+      accountId: fromAdress,
+      publicKey: fromAdress,
+    );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
@@ -270,8 +293,10 @@ class NearBlockChainService implements BlockChainService {
     required List<String> methodNames,
     required String privateKey,
   }) async {
-    final transactionInfo =
-        await getNonceAndBlockHashInfo(fromAddress, fromAddress);
+    final transactionInfo = await getNonceAndBlockHashInfo(
+      accountId: fromAddress,
+      publicKey: fromAddress,
+    );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');

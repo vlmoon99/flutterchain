@@ -5,7 +5,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near_vm.dart';
@@ -74,8 +76,19 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   final TextEditingController createBlockchainDataDerivationPath =
       TextEditingController();
 
+  //Make action with injected private Key
+  final TextEditingController makeActionWithInjectedPrivateKey =
+      TextEditingController();
+
   dynamic resultOfSmartContractCall;
   dynamic blockchainsDataCreatedByDerivationPath;
+
+  // final nearBlockChainSupportedActions = [
+  //   'transfer',
+  //   'smartContractCall',
+  //   'addKey',
+  //   'deleteKey',
+  // ];
 
   @override
   void initState() {
@@ -113,6 +126,11 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
 
     //Create Address by derivation path
     createBlockchainDataDerivationPath.text = "m/44'/397'/0'/0'/1'";
+
+    //Make action with injected private Key
+    makeActionWithInjectedPrivateKey.text =
+        // 'ed25519:NCxWyrNBcNQeyURfZbPzEKNcrg2qhNiEhZqrTEjyUKUE2Tj38';
+        'ed25519:5d1Mk5JG4mAhGURcc8QhmPT9W9y912f8xJn5mnLCZpeVrKT3jX3CHGLzhfdb6mUXSv3V1WQa1A1Z9DxypkRwUy7L';
   }
 
   @override
@@ -482,6 +500,78 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             ],
           ),
         ),
+        CryptoActionCard(
+          title: 'Make Transfer with injected private key',
+          height: 500,
+          icon: Icons.key_off,
+          color: nearColors.nearGreen,
+          onTap: () async {
+            //Imagine that we have
+            final privateKey = makeActionWithInjectedPrivateKey.text;
+            final recipient = recipientEditingController.text;
+            final amount = transferDepositController.text;
+
+            final nearService = nearVM.cryptoLibrary.blockchainService
+                .blockchainServices[BlockChains.near] as NearBlockChainService;
+            final pubKeyFromSecretKeyNearApiJsFormat =
+                await nearService.getPublicKeyFromSecretKeyFromNearApiJSFormat(
+              privateKey.split(":").last,
+            );
+            log('pubKeyFromPrivateKey is $pubKeyFromSecretKeyNearApiJsFormat');
+            final privKeyFromSecretKeyNearApiJsFormat =
+                await nearService.getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+              privateKey.split(":").last,
+            );
+            log('privKeyFromSecretKeyNearApiJsFormat is $privKeyFromSecretKeyNearApiJsFormat');
+
+            final res = await nearService.sendTransferNativeCoin(
+              recipient,
+              '182d4169286af0c8b21e36ea7b15d11f037d184722b22a5c67f86b67895a7746',
+              NearFormatter.nearToYoctoNear(amount),
+              'NCxWyrNBcNQeyURfZbPzEKNcrg2qhNiEhZqrTEjyUKUE2Tj38',
+              '182d4169286af0c8b21e36ea7b15d11f037d184722b22a5c67f86b67895a7746',
+            );
+            log('Transfer is ${res.status}');
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: makeActionWithInjectedPrivateKey,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Injected Private Key',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: recipientEditingController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Recipient',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: transferDepositController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: 'Amount',
+                  labelStyle: nearTextStyles.bodyCopy!.copyWith(
+                    color: nearColors.nearBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -552,6 +642,13 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
               ?.firstWhereOrNull(
                   (element) => element.derivationPath == derivationModel)
               ?.publicKey;
+          final currentPrivAddress = homeVM.cryptoLibrary.walletsStream.value
+              .firstWhere((element) =>
+                  element.id == homeVM.userStore.walletIdStream.value)
+              .blockchainsData![BlockChains.near]
+              ?.firstWhereOrNull(
+                  (element) => element.derivationPath == derivationModel)
+              ?.privateKey;
 
           final derivationPath = homeVM.cryptoLibrary.walletsStream.value
               .firstWhere((element) =>
@@ -560,7 +657,9 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
               ?.firstWhereOrNull(
                   (element) => element.derivationPath == derivationModel)
               ?.derivationPath;
-          // log("currentPublicAddress $currentPublicAddress");
+          log("currentPublicAddress $currentPublicAddress");
+          log("currentPrivAddress $currentPrivAddress");
+          log("mnemonic ${homeVM.cryptoLibrary.walletsStream.value.firstWhere((element) => element.id == homeVM.userStore.walletIdStream.value).mnemonic}");
 
           return Column(
             children: [

@@ -191,6 +191,7 @@ class FlutterChainLibrary {
       transferAmount: transferAmount,
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
+      publicKey: publicKey,
     );
   }
 

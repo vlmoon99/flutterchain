@@ -13,6 +13,7 @@ abstract class BlockChainService {
     String fromAdress,
     String transferAmount,
     String privateKey,
+    String publicKey,
   );
 
   Future<BlockchainResponse> callSmartContractFunction(
