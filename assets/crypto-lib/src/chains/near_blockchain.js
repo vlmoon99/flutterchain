@@ -33,6 +33,17 @@ export class NearBlockchain {
     return privateKeyString;
   }
 
+  exportSecretKeyToNearApiJSFormat(privateKey, publicKey) {
+    const { Base64, HexCoding } = window.WalletCore;
+    const publicKeyDecoded = HexCoding.decode(`0x${publicKey}`);
+    const decodedPrivateKey = Base64.decode(privateKey);
+    const secretKeyBytes = this.concatenateUint8Arrays(
+      decodedPrivateKey,
+      publicKeyDecoded
+    );
+    return `ed25519:${bs58.encode(secretKeyBytes)}`;
+  }
+
   getBlockChainDataFromMnemonic(
     mnemonic,
     passphrase = "",

@@ -82,7 +82,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
 
   dynamic resultOfSmartContractCall;
   dynamic blockchainsDataCreatedByDerivationPath;
-
+  dynamic exportSecretKeyToTheNearApiJsFormat;
   // final nearBlockChainSupportedActions = [
   //   'transfer',
   //   'smartContractCall',
@@ -129,8 +129,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
 
     //Make action with injected private Key
     makeActionWithInjectedPrivateKey.text =
-        // 'ed25519:NCxWyrNBcNQeyURfZbPzEKNcrg2qhNiEhZqrTEjyUKUE2Tj38';
-        'ed25519:47cKsBDRfkJJ9JZLfECbpXYrj87oPFY21kfgwAG3ku8SW713ctmU99zCKiMjEk3KQJ1BmRVgnUMMVoMRBgW9n1bi';
+        // works 'ed25519:w6iUJ6uLt1crmMcYMqeWXk3UVAzXzmgTibcsno639PCUfAQtxvbysXyxeeKja6BuwcA7B8gcMDXm4WiHAo6UgfF';
+        'ed25519:2WB6k8p1RWXYYcnyP3aqCZRqmr7iXW2oRCaoFpuWtkPqi1C9DrSFGWEheik3CYQVqVE2aQpaVBsXuTHdCchyUm8z';
   }
 
   @override
@@ -501,9 +501,10 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           ),
         ),
         CryptoActionCard(
-          title: 'Make Transfer with injected private key',
+          title:
+              'Make Transfer with injected private key\n(from near api js format)',
           height: 500,
-          icon: Icons.key_off,
+          icon: Icons.key_rounded,
           color: nearColors.nearGreen,
           onTap: () async {
             //Imagine that we have
@@ -569,6 +570,47 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 ),
               ),
               const SizedBox(height: 20),
+            ],
+          ),
+        ),
+        CryptoActionCard(
+          title: 'Export private key to (near api js format)',
+          height: 500,
+          icon: Icons.storage,
+          color: nearColors.nearGreen,
+          onTap: () async {
+            exportSecretKeyToTheNearApiJsFormat;
+            final nearService = nearVM.cryptoLibrary.blockchainService
+                .blockchainServices[BlockChains.near] as NearBlockChainService;
+            final walletID = homeVM.userStore.walletIdStream.value;
+            final currentDerevationPath =
+                nearVM.nearBlockchainStore.currentDerivationPath.value;
+            final currentWallet = homeVM.cryptoLibrary.walletsStream.value
+                .firstWhere((element) => element.id == walletID);
+            final curerntBlockchainData = currentWallet
+                .blockchainsData?[BlockChains.near]
+                ?.firstWhere((element) =>
+                    element.derivationPath == currentDerevationPath);
+            final secretKey =
+                await nearService.exportPrivateKeyToTheNearApiJsFormat(
+              currentBlockchainData: curerntBlockchainData,
+            );
+            setState(() {
+              exportSecretKeyToTheNearApiJsFormat = secretKey;
+              log(exportSecretKeyToTheNearApiJsFormat.toString());
+            });
+          },
+          child: Column(
+            children: [
+              Center(
+                child: Text(
+                  'Exported private key in near api js format is -> :\n $exportSecretKeyToTheNearApiJsFormat',
+                  style: nearTextStyles.bodyCopy!.copyWith(
+                      fontWeight: FontWeight.w300,
+                      color: nearColors.nearBlack,
+                      fontSize: 30),
+                ),
+              ),
             ],
           ),
         ),

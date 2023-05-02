@@ -359,4 +359,14 @@ class NearBlockChainService implements BlockChainService {
     final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
     return blockChainData;
   }
+
+  Future<String> exportPrivateKeyToTheNearApiJsFormat(
+      {BlockChainData? currentBlockchainData}) async {
+    if (currentBlockchainData == null) {
+      throw Exception('currentBlockchainData is incorrect');
+    }
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.exportSecretKeyToNearApiJSFormat('${currentBlockchainData.privateKey}','${currentBlockchainData.publicKey}')");
+    return res.toString();
+  }
 }
