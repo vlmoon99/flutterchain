@@ -83,6 +83,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
   dynamic resultOfSmartContractCall;
   dynamic blockchainsDataCreatedByDerivationPath;
   dynamic exportSecretKeyToTheNearApiJsFormat;
+  dynamic creatingNearAccount;
   // final nearBlockChainSupportedActions = [
   //   'transfer',
   //   'smartContractCall',
@@ -97,11 +98,17 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     recipientEditingController.text = "pay4result_business.testnet";
     transferDepositController.text = "1";
     //Smart contract call
+    // argumentsSmartContractController.text =
+    //     r'{"message": "Hello From FlutterChain"}';
+    // smartContractAddressController.text = "dev-1679756367837-29230485683009";
+    // smartContractMethodNameController.text = "set_greeting";
+    // amountOfDepositOnSmartContractController.text = "0";
     argumentsSmartContractController.text =
-        r'{"message": "Hello From FlutterChain"}';
-    smartContractAddressController.text = "dev-1679756367837-29230485683009";
-    smartContractMethodNameController.text = "set_greeting";
-    amountOfDepositOnSmartContractController.text = "0";
+        r'{"new_account_id": "test12wqq.testnet","new_public_key": "ed25519:GPZ9HFmtvbBweLpXUQ3cJEHvDr39dfJN9aNEn1G9nsoU"}';
+    smartContractAddressController.text = "testnet";
+    smartContractMethodNameController.text = "create_account";
+    amountOfDepositOnSmartContractController.text = '0.00182';
+
     //Add key
     //47926de662240fd5488434cb7d1c6c8ab5f0c708c6b247b5ccd04baed4475463
     //dev-1679756367837-29230485683009
@@ -524,15 +531,17 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               privateKey.split(":").last,
             );
             log('privKeyFromSecretKeyNearApiJsFormat is $privKeyFromSecretKeyNearApiJsFormat');
-
-            final res = await nearService.sendTransferNativeCoin(
-              recipient,
-              'e4a66cf64783a7287331af706ae81900d18a3502da496f7db1a3f3006efd1cf7',
-              NearFormatter.nearToYoctoNear(amount),
-              privKeyFromSecretKeyNearApiJsFormat,
-              pubKeyFromSecretKeyNearApiJsFormat,
-            );
-            log('Transfer is ${res.status}');
+            log('pubKeyBase58 ${await nearService.getBase58PubKeyFromHexValue(
+              hexEncodedPubKey: pubKeyFromSecretKeyNearApiJsFormat,
+            )}');
+            // final res = await nearService.sendTransferNativeCoin(
+            //   recipient,
+            //   'e4a66cf64783a7287331af706ae81900d18a3502da496f7db1a3f3006efd1cf7',
+            //   NearFormatter.nearToYoctoNear(amount),
+            //   privKeyFromSecretKeyNearApiJsFormat,
+            //   pubKeyFromSecretKeyNearApiJsFormat,
+            // );
+            // log('Transfer is ${res.status}');
           },
           child: Column(
             children: [
@@ -579,7 +588,6 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           icon: Icons.storage,
           color: nearColors.nearGreen,
           onTap: () async {
-            exportSecretKeyToTheNearApiJsFormat;
             final nearService = nearVM.cryptoLibrary.blockchainService
                 .blockchainServices[BlockChains.near] as NearBlockChainService;
             final walletID = homeVM.userStore.walletIdStream.value;
@@ -609,6 +617,60 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                       fontWeight: FontWeight.w300,
                       color: nearColors.nearBlack,
                       fontSize: 30),
+                ),
+              ),
+            ],
+          ),
+        ),
+        CryptoActionCard(
+          title: 'Creating near Account',
+          height: 500,
+          icon: Icons.account_box,
+          color: nearColors.nearGreen,
+          onTap: () async {
+            final blockChainService = nearVM.cryptoLibrary.blockchainService;
+            final nearService = nearVM.cryptoLibrary.blockchainService
+                .blockchainServices[BlockChains.near] as NearBlockChainService;
+            final exampleWallet = await blockChainService.generateNewWallet(
+                walletName: 'Example Wallet');
+
+            final nearBlockChainData = await nearService
+                .getBlockChainDataFromMnemonic(exampleWallet.mnemonic, '');
+
+            exampleWallet.blockchainsData?[BlockChains.near] = {}
+              ..add(nearBlockChainData);
+
+            final walletID = homeVM.userStore.walletIdStream.value;
+            final currentDerevationPath =
+                nearVM.nearBlockchainStore.currentDerivationPath.value;
+            final currentWallet = homeVM.cryptoLibrary.walletsStream.value
+                .firstWhere((element) => element.id == walletID);
+            final curerntBlockchainData = currentWallet
+                .blockchainsData?[BlockChains.near]
+                ?.firstWhere((element) =>
+                    element.derivationPath == currentDerevationPath);
+
+            final encodedBase58PubKeyOfNewWallet =
+                await nearService.getBase58PubKeyFromHexValue(
+              hexEncodedPubKey: curerntBlockchainData?.publicKey,
+            );
+
+            setState(() {
+              creatingNearAccount = exampleWallet.toJson().toString();
+              log("creatingNearAccount $creatingNearAccount");
+              log("encodedBase58PubKeyOfNewWallet $encodedBase58PubKeyOfNewWallet");
+            });
+          },
+          child: Column(
+            children: [
+              Center(
+                child: Text(
+                  'Creating near Account, result of operation execution -> : \n $creatingNearAccount',
+                  style: nearTextStyles.bodyCopy!.copyWith(
+                    fontWeight: FontWeight.w300,
+                    color: nearColors.nearBlack,
+                    fontSize: 15,
+                  ),
                 ),
               ),
             ],

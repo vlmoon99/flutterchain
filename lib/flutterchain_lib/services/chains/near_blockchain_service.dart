@@ -369,4 +369,14 @@ class NearBlockChainService implements BlockChainService {
         "window.NearBlockchain.exportSecretKeyToNearApiJSFormat('${currentBlockchainData.privateKey}','${currentBlockchainData.publicKey}')");
     return res.toString();
   }
+
+  Future<String> getBase58PubKeyFromHexValue(
+      {required String? hexEncodedPubKey}) async {
+    if (hexEncodedPubKey == null) {
+      throw Exception('hexEncodedPubKey is incorrect');
+    }
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getBase58PubKeyFromHexValue('${hexEncodedPubKey}')");
+    return res.toString();
+  }
 }

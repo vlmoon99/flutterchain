@@ -44,6 +44,12 @@ export class NearBlockchain {
     return `ed25519:${bs58.encode(secretKeyBytes)}`;
   }
 
+  getBase58PubKeyFromHexValue(publicKey) {
+    const { HexCoding } = window.WalletCore;
+    const publicKeyDecoded = HexCoding.decode(`0x${publicKey}`);
+    return `ed25519:${bs58.encode(publicKeyDecoded)}`;
+  }
+
   getBlockChainDataFromMnemonic(
     mnemonic,
     passphrase = "",
