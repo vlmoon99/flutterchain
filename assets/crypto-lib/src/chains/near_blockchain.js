@@ -11,14 +11,12 @@ export class NearBlockchain {
     concatenated.set(arr2, arr1.length);
     return concatenated;
   }
-
   getPublicKeyFromSecretKeyFromNearApiJSFormat(secretKey) {
     const { HexCoding } = window.WalletCore;
     const decodedSecretKey = bs58.decode(secretKey);
     const keyPair = nacl.sign.keyPair.fromSecretKey(decodedSecretKey);
     return HexCoding.encode(keyPair.publicKey).substring(2);
   }
-
   getPrivateKeyFromSecretKeyFromNearApiJSFormat(secretKey) {
     const { Base58, Base64, PrivateKey, Curve } = window.WalletCore;
 
@@ -32,7 +30,6 @@ export class NearBlockchain {
 
     return privateKeyString;
   }
-
   exportSecretKeyToNearApiJSFormat(privateKey, publicKey) {
     const { Base64, HexCoding } = window.WalletCore;
     const publicKeyDecoded = HexCoding.decode(`0x${publicKey}`);
@@ -43,13 +40,11 @@ export class NearBlockchain {
     );
     return `ed25519:${bs58.encode(secretKeyBytes)}`;
   }
-
   getBase58PubKeyFromHexValue(publicKey) {
     const { HexCoding } = window.WalletCore;
     const publicKeyDecoded = HexCoding.decode(`0x${publicKey}`);
     return `ed25519:${bs58.encode(publicKeyDecoded)}`;
   }
-
   getBlockChainDataFromMnemonic(
     mnemonic,
     passphrase = "",
@@ -124,7 +119,6 @@ export class NearBlockchain {
       return JSON.stringify({ error: error.message });
     }
   }
-
   getActionObject(action, amountBytes, nonce, gas) {
     const actionHandlers = {
       transfer: () => this.transferAction(amountBytes),
@@ -145,7 +139,6 @@ export class NearBlockchain {
 
     return handler();
   }
-
   transferAction(amountBytes) {
     return {
       transfer: TW.NEAR.Proto.Transfer.create({
@@ -153,7 +146,6 @@ export class NearBlockchain {
       }),
     };
   }
-
   functionCallAction(action, gas, amountBytes) {
     const encoder = new TextEncoder();
     const utf8BytesArgs = encoder.encode(JSON.stringify(action.data.args));
@@ -168,7 +160,6 @@ export class NearBlockchain {
     };
     return mappedAction;
   }
-
   addKeyAction(action, amountBytes, nonce) {
     const { HDWallet, CoinType } = window.WalletCore;
 
@@ -211,7 +202,6 @@ export class NearBlockchain {
     };
     return mappedAction;
   }
-
   deleteKeyAction(action) {
     const publicKey = action.data.publicKey;
     const byteArray = Buffer.from(publicKey, "hex");
@@ -226,21 +216,18 @@ export class NearBlockchain {
     };
     return mappedAction;
   }
-
   stakeAction(action) {
     throw new Error(`Unsupported action type: ${action.type}`);
   }
   unstakeAction(action) {
     throw new Error(`Unsupported action type: ${action.type}`);
   }
-
   createAccountAction() {
     const mappedAction = {
       createAccount: TW.NEAR.Proto.CreateAccount.create({}),
     };
     return mappedAction;
   }
-
   deleteAccountAction(action) {
     const beneficiaryId = action.data.beneficiaryId;
     const mappedAction = {
@@ -250,7 +237,6 @@ export class NearBlockchain {
     };
     return mappedAction;
   }
-
   deployContractAction(action) {
     const wasmByteCode = action.data.wasmByteCode;
     const mappedAction = {

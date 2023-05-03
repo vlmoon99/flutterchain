@@ -112,11 +112,21 @@ class MockNearBlockChainService extends _i1.Mock
         ),
       ) as _i3.NearRpcClient);
   @override
-  _i8.Future<String> getPublicKeyFromPrivateKeyEncodedInBase58(
+  _i8.Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
           String? base58PrivateKey) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getPublicKeyFromPrivateKeyEncodedInBase58,
+          #getPublicKeyFromSecretKeyFromNearApiJSFormat,
+          [base58PrivateKey],
+        ),
+        returnValue: _i8.Future<String>.value(''),
+      ) as _i8.Future<String>);
+  @override
+  _i8.Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+          String? base58PrivateKey) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
         returnValue: _i8.Future<String>.value(''),
@@ -152,6 +162,7 @@ class MockNearBlockChainService extends _i1.Mock
     String? fromAddress,
     String? transferAmount,
     String? privateKey,
+    String? publicKey,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -161,6 +172,7 @@ class MockNearBlockChainService extends _i1.Mock
             fromAddress,
             transferAmount,
             privateKey,
+            publicKey,
           ],
         ),
         returnValue:
@@ -173,6 +185,7 @@ class MockNearBlockChainService extends _i1.Mock
               fromAddress,
               transferAmount,
               privateKey,
+              publicKey,
             ],
           ),
         )),
@@ -471,4 +484,26 @@ class MockNearBlockChainService extends _i1.Mock
           ),
         )),
       ) as _i8.Future<_i4.NearBlockChainData>);
+  @override
+  _i8.Future<String> exportPrivateKeyToTheNearApiJsFormat(
+          {_i10.BlockChainData? currentBlockchainData}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #exportPrivateKeyToTheNearApiJsFormat,
+          [],
+          {#currentBlockchainData: currentBlockchainData},
+        ),
+        returnValue: _i8.Future<String>.value(''),
+      ) as _i8.Future<String>);
+  @override
+  _i8.Future<String> getBase58PubKeyFromHexValue(
+          {required String? hexEncodedPubKey}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getBase58PubKeyFromHexValue,
+          [],
+          {#hexEncodedPubKey: hexEncodedPubKey},
+        ),
+        returnValue: _i8.Future<String>.value(''),
+      ) as _i8.Future<String>);
 }

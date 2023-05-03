@@ -33,30 +33,9 @@ class NearBlockChainService implements BlockChainService {
     );
   }
 
-  Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
-      String base58PrivateKey) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getPublicKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
-    return res.toString();
-  }
+  //Core
 
-  Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
-      String base58PrivateKey) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getPrivateKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
-    return res.toString();
-  }
-
-  @override
-  Future<NearBlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
-    final decodedRes = jsonDecode(res);
-    final blockChainData = NearBlockChainData.fromJson(decodedRes);
-    return blockChainData;
-  }
-
+  //Send Near tokens thought near blockchain
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
     String toAdress,
@@ -101,6 +80,7 @@ class NearBlockChainService implements BlockChainService {
     return res;
   }
 
+  //Call smart contract function
   @override
   Future<BlockchainResponse> callSmartContractFunction(
     String toAdress,
@@ -150,12 +130,57 @@ class NearBlockChainService implements BlockChainService {
     return res;
   }
 
+  //Get wallet balance by account ID (hex representation of near account)
   @override
   Future<String> getWalletBalance(String accountId) async {
     final res = await nearRpcClient.getAccountBalance(accountId);
     return res;
   }
 
+  //Setting new blockchain network environment on another url
+
+  @override
+  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
+    nearRpcClient.networkClient.setUrl(newUrl);
+  }
+
+  //Getting official blockchain's urls
+  @override
+  Set<String> getBlockchainsUrlsByBlockchainType() {
+    return NearBlockChainNetworkUrls.listOfUrls;
+  }
+
+  //Getting private , public key and other information from mnemonic passphrase, and derivation path
+  @override
+  Future<NearBlockChainData> getBlockChainDataByDerivationPath({
+    required String mnemonic,
+    required String? passphrase,
+    required DerivationPath derivationPath,
+  }) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase','${derivationPath.accountNumber}','${derivationPath.change}','${derivationPath.address}')");
+    final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
+    return blockChainData;
+  }
+
+  //Getting private , public key and other information from mnemonic and passphrase
+  //this method will give you first standard wallet generated from this mnemonic and passphrase
+  @override
+  Future<NearBlockChainData> getBlockChainDataFromMnemonic(
+      String mnemonic, String passphrase) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
+    final decodedRes = jsonDecode(res);
+    final blockChainData = NearBlockChainData.fromJson(decodedRes);
+    return blockChainData;
+  }
+
+  //Platform specifics methods
+
+  //When you wanna make any transaction -
+  //first of all you will need to get nonce and block hash from the Near blockchain
+  //this method will give you nonce and block hash
+  //from accountId and publicKey
   Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
       {required String accountId, required String publicKey}) async {
     final res =
@@ -164,15 +189,20 @@ class NearBlockChainService implements BlockChainService {
     return res;
   }
 
+  //This method helps sending transactions in sync way
   Future<BlockchainResponse> sendTransactionNearSync({
-    required String tx,
+    required List<String> params,
   }) =>
-      nearRpcClient.sendSyncTx([tx]);
+      nearRpcClient.sendSyncTx(params);
 
+  //This method helps sending transactions in async way
   Future<BlockchainResponse> sendTransactionNearAsync({
-    required String tx,
+    required List<String> params,
   }) =>
-      nearRpcClient.sendAsyncTx([tx]);
+      nearRpcClient.sendAsyncTx(params);
+
+  //This method helps sign near actions , you can find this actions description here -> https://nomicon.io/RuntimeSpec/Actions
+  //This is a core method to got signed transaction from your list of actions
 
   Future<String> signNearActions({
     required String fromAddress,
@@ -193,50 +223,7 @@ class NearBlockChainService implements BlockChainService {
     return signedTx;
   }
 
-  Future<BlockchainResponse> stake({
-    required String fromAdress,
-    required String privateKey,
-    required String validatorId,
-    required String amount,
-  }) async {
-    final transactionInfo = await getNonceAndBlockHashInfo(
-      accountId: fromAdress,
-      publicKey: fromAdress,
-    );
-    final gas = BlockchainGas.gas[BlockChains.near];
-    if (gas == null) {
-      throw Exception('Incorrect Blockchain Gas');
-    }
-
-    final List<Map<String, dynamic>> actions = [
-      {
-        "type": "stake",
-        "data": {
-          "publicKey": validatorId,
-        },
-      },
-    ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
-
-    final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: validatorId,
-      transferAmount: amount,
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
-    );
-    final res = await nearRpcClient.sendSyncTx([signedAction]);
-    return res;
-  }
+  //This method will delete any type of key from your account
 
   Future<BlockchainResponse> deleteKey({
     required String fromAdress,
@@ -245,7 +232,7 @@ class NearBlockChainService implements BlockChainService {
   }) async {
     final transactionInfo = await getNonceAndBlockHashInfo(
       accountId: fromAdress,
-      publicKey: fromAdress,
+      publicKey: publicKey,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
@@ -282,6 +269,8 @@ class NearBlockChainService implements BlockChainService {
     return res;
   }
 
+  //This method add key to the account
+  //This method also need mnemonic and derivationPath for generating a new key
   Future<BlockchainResponse> addKey({
     required String fromAddress,
     required String mnemonic,
@@ -338,28 +327,7 @@ class NearBlockChainService implements BlockChainService {
     return res;
   }
 
-  @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    nearRpcClient.networkClient.setUrl(newUrl);
-  }
-
-  @override
-  Set<String> getBlockchainsUrlsByBlockchainType() {
-    return NearBlockChainNetworkUrls.listOfUrls;
-  }
-
-  @override
-  Future<NearBlockChainData> getBlockChainDataByDerivationPath({
-    required String mnemonic,
-    required String? passphrase,
-    required DerivationPath derivationPath,
-  }) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase','${derivationPath.accountNumber}','${derivationPath.change}','${derivationPath.address}')");
-    final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
-    return blockChainData;
-  }
-
+  //This method export private key from Flutterchain to the near-api-js format
   Future<String> exportPrivateKeyToTheNearApiJsFormat(
       {BlockChainData? currentBlockchainData}) async {
     if (currentBlockchainData == null) {
@@ -370,6 +338,7 @@ class NearBlockChainService implements BlockChainService {
     return res.toString();
   }
 
+  //This method will transform Near public key (which in hex format) to Base58 format with "ed25519:" prefix
   Future<String> getBase58PubKeyFromHexValue(
       {required String? hexEncodedPubKey}) async {
     if (hexEncodedPubKey == null) {
@@ -377,6 +346,22 @@ class NearBlockChainService implements BlockChainService {
     }
     final res = await jsVMService.callJS(
         "window.NearBlockchain.getBase58PubKeyFromHexValue('${hexEncodedPubKey}')");
+    return res.toString();
+  }
+
+  //This method getting Public Key in hex format from Secret key (which was generated on near-api-js)
+  Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
+      String base58PrivateKey) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getPublicKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
+    return res.toString();
+  }
+
+  //This method getting Private Key in base64 format from Secret key (which was generated on near-api-js)
+  Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+      String base58PrivateKey) async {
+    final res = await jsVMService.callJS(
+        "window.NearBlockchain.getPrivateKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
     return res.toString();
   }
 }

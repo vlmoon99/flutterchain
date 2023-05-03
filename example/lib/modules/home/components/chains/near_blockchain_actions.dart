@@ -534,14 +534,14 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
             log('pubKeyBase58 ${await nearService.getBase58PubKeyFromHexValue(
               hexEncodedPubKey: pubKeyFromSecretKeyNearApiJsFormat,
             )}');
-            // final res = await nearService.sendTransferNativeCoin(
-            //   recipient,
-            //   'e4a66cf64783a7287331af706ae81900d18a3502da496f7db1a3f3006efd1cf7',
-            //   NearFormatter.nearToYoctoNear(amount),
-            //   privKeyFromSecretKeyNearApiJsFormat,
-            //   pubKeyFromSecretKeyNearApiJsFormat,
-            // );
-            // log('Transfer is ${res.status}');
+            final res = await nearService.sendTransferNativeCoin(
+              recipient,
+              'vladddddd.testnet',
+              NearFormatter.nearToYoctoNear(amount),
+              privKeyFromSecretKeyNearApiJsFormat,
+              pubKeyFromSecretKeyNearApiJsFormat,
+            );
+            log('Transfer is ${res.status}');
           },
           child: Column(
             children: [
