@@ -23,6 +23,7 @@ void main() {
       const fromAddress = 'pubkey2';
       final nearToYoctoNear = NearFormatter.nearToYoctoNear('1');
       const privateKey = 'privateKey in Base64';
+      const publicKey = 'publicKey in hex';
 
       when(
         service.sendTransferNativeCoin(
@@ -30,6 +31,7 @@ void main() {
           fromAddress,
           nearToYoctoNear,
           privateKey,
+          publicKey,
         ),
       ).thenAnswer((_) async =>
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
@@ -39,6 +41,7 @@ void main() {
         fromAddress,
         nearToYoctoNear,
         privateKey,
+        publicKey,
       );
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
@@ -49,6 +52,8 @@ void main() {
       const toAddress = 'to_address';
       const fromAddress = 'from_address';
       const privateKey = 'privateKey in Base64';
+      const publicKey = 'publicKey in hex';
+
       final arguments = NearBlockChainSmartContractArguments(
         method: 'exampleMethod',
         args: {'exampleArg': 'exampleValue'},
@@ -59,6 +64,7 @@ void main() {
         toAddress,
         fromAddress,
         privateKey,
+        publicKey,
         arguments,
       )).thenAnswer((_) async =>
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
@@ -67,6 +73,7 @@ void main() {
         toAddress,
         fromAddress,
         privateKey,
+        publicKey,
         arguments,
       );
       expect(res,
@@ -162,14 +169,20 @@ void main() {
       const accountId = 'test_account_id';
       const publicKey = 'test_public_key';
 
-      when(service.getNonceAndBlockHashInfo(accountId, publicKey)).thenAnswer(
+      when(service.getNonceAndBlockHashInfo(
+        accountId: accountId,
+        publicKey: publicKey,
+      )).thenAnswer(
         (_) async => NearTransactionInfoModel(
           nonce: 1,
           blockHash: 'example_block_hash',
         ),
       );
 
-      final res = await service.getNonceAndBlockHashInfo(accountId, publicKey);
+      final res = await service.getNonceAndBlockHashInfo(
+        accountId: accountId,
+        publicKey: publicKey,
+      );
       expect(
         res,
         NearTransactionInfoModel(
@@ -183,10 +196,11 @@ void main() {
       final service = MockNearBlockChainService();
       const tx = 'example_tx';
 
-      when(service.sendTransactionNearSync(tx: tx)).thenAnswer((_) async =>
-          BlockchainResponse(data: {}, status: BlockchainResponses.success));
+      when(service.sendTransactionNearSync(params: [tx])).thenAnswer(
+          (_) async => BlockchainResponse(
+              data: {}, status: BlockchainResponses.success));
 
-      final res = await service.sendTransactionNearSync(tx: tx);
+      final res = await service.sendTransactionNearSync(params: [tx]);
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });
@@ -195,10 +209,11 @@ void main() {
       final service = MockNearBlockChainService();
       const tx = 'example_tx';
 
-      when(service.sendTransactionNearAsync(tx: tx)).thenAnswer((_) async =>
-          BlockchainResponse(data: {}, status: BlockchainResponses.success));
+      when(service.sendTransactionNearAsync(params: [tx])).thenAnswer(
+          (_) async => BlockchainResponse(
+              data: {}, status: BlockchainResponses.success));
 
-      final res = await service.sendTransactionNearAsync(tx: tx);
+      final res = await service.sendTransactionNearAsync(params: [tx]);
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });

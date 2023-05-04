@@ -1,3 +1,5 @@
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'wallet.g.dart';
@@ -29,20 +31,32 @@ class Wallet {
 
 @JsonSerializable()
 class BlockChainData {
+  final String identifier;
   final String publicKey;
   final String privateKey;
   final DerivationPath derivationPath;
   final String passphrase;
 
   BlockChainData({
+    required this.identifier,
     required this.publicKey,
     required this.privateKey,
     required this.derivationPath,
     required this.passphrase,
   });
 
-  factory BlockChainData.fromJson(Map<String, dynamic> json) =>
-      _$BlockChainDataFromJson(json);
+  // factory BlockChainData.fromJson(Map<String, dynamic> json) =>
+  //     _$BlockChainDataFromJson(json);
+  factory BlockChainData.fromJson(Map<String, dynamic> json) {
+    String identifier = json['identifier'] as String;
+    switch (identifier) {
+      case BlockChains.near:
+        return NearBlockChainData.fromJson(json);
+      // Add more cases for other supported blockchains
+      default:
+        throw Exception('Unsupported blockchain data type');
+    }
+  }
 
   Map<String, dynamic> toJson() => _$BlockChainDataToJson(this);
 

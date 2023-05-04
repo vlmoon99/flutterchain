@@ -395,6 +395,7 @@ class MockNearBlockChainService extends _i1.Mock
     required String? smartContractId,
     required List<String>? methodNames,
     required String? privateKey,
+    required String? publicKey,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -411,6 +412,7 @@ class MockNearBlockChainService extends _i1.Mock
             #smartContractId: smartContractId,
             #methodNames: methodNames,
             #privateKey: privateKey,
+            #publicKey: publicKey,
           },
         ),
         returnValue:
@@ -430,6 +432,7 @@ class MockNearBlockChainService extends _i1.Mock
               #smartContractId: smartContractId,
               #methodNames: methodNames,
               #privateKey: privateKey,
+              #publicKey: publicKey,
             },
           ),
         )),

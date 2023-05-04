@@ -31,6 +31,7 @@ Map<String, dynamic> _$WalletToJson(Wallet instance) => <String, dynamic>{
 
 BlockChainData _$BlockChainDataFromJson(Map<String, dynamic> json) =>
     BlockChainData(
+      identifier: json['identifier'] as String,
       publicKey: json['publicKey'] as String,
       privateKey: json['privateKey'] as String,
       derivationPath: DerivationPath.fromJson(
@@ -40,6 +41,7 @@ BlockChainData _$BlockChainDataFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$BlockChainDataToJson(BlockChainData instance) =>
     <String, dynamic>{
+      'identifier': instance.identifier,
       'publicKey': instance.publicKey,
       'privateKey': instance.privateKey,
       'derivationPath': instance.derivationPath,

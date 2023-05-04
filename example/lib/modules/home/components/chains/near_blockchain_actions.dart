@@ -101,16 +101,16 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
     recipientEditingController.text = "pay4result_business.testnet";
     transferDepositController.text = "1";
     //Smart contract call
-    argumentsSmartContractController.text =
-        r'{"message": "Hello From FlutterChain"}';
-    smartContractAddressController.text = "dev-1679756367837-29230485683009";
-    smartContractMethodNameController.text = "set_greeting";
-    amountOfDepositOnSmartContractController.text = "0";
     // argumentsSmartContractController.text =
-    //     r'{"new_account_id": "test12wqq.testnet","new_public_key": "ed25519:GPZ9HFmtvbBweLpXUQ3cJEHvDr39dfJN9aNEn1G9nsoU"}';
-    // smartContractAddressController.text = "testnet";
-    // smartContractMethodNameController.text = "create_account";
-    // amountOfDepositOnSmartContractController.text = '0.00182';
+    //     r'{"message": "Hello From FlutterChain"}';
+    // smartContractAddressController.text = "dev-1679756367837-29230485683009";
+    // smartContractMethodNameController.text = "set_greeting";
+    // amountOfDepositOnSmartContractController.text = "0";
+    argumentsSmartContractController.text =
+        r'{"new_account_id": "flutterchain.testnet","new_public_key": "ed25519:BXMGyxk2QkrqRb4vxZqaxBNbDEtMZ7p6Y1gChkR9nHyf"}';
+    smartContractAddressController.text = "testnet";
+    smartContractMethodNameController.text = "create_account";
+    amountOfDepositOnSmartContractController.text = '0.00182';
 
     //Add key
     //47926de662240fd5488434cb7d1c6c8ab5f0c708c6b247b5ccd04baed4475463
@@ -724,6 +724,14 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
           log("currentPublicAddress $currentPublicAddress");
           log("currentPrivAddress $currentPrivAddress");
           log("mnemonic ${homeVM.cryptoLibrary.walletsStream.value.firstWhere((element) => element.id == homeVM.userStore.walletIdStream.value).mnemonic}");
+          (nearVM.cryptoLibrary.blockchainService
+                      .blockchainServices[BlockChains.near]
+                  as NearBlockChainService)
+              .getBase58PubKeyFromHexValue(
+                  hexEncodedPubKey: currentPublicAddress)
+              .then((base58PubKey) {
+            log("base58 pub key of near Account $base58PubKey");
+          });
 
           return Column(
             children: [

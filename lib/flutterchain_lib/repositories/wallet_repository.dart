@@ -50,9 +50,10 @@ class WalletRepository extends Repository<Wallet> {
 
   @override
   Future<List<Wallet>> readAll() async {
-    return (jsonDecode(
-                await secureStorage.read(key: StorageKeys.wallets) ?? '[]')
-            as List<dynamic>)
+    final decodedData =
+        (jsonDecode(await secureStorage.read(key: StorageKeys.wallets) ?? '[]')
+            as List<dynamic>);
+    return decodedData
         .map((e) => Wallet.fromJson(e as Map<String, dynamic>))
         .toList();
   }

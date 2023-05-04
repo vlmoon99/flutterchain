@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -16,7 +17,9 @@ class NearBlockChainData extends BlockChainData {
     required String privateKey,
     required DerivationPath derivationPath,
     required String passphrase,
+    String identifier = BlockChains.near,
   }) : super(
+          identifier: identifier,
           publicKey: publicKey,
           privateKey: privateKey,
           derivationPath: derivationPath,

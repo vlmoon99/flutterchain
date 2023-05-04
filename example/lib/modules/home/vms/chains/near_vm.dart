@@ -46,7 +46,9 @@ class NearVM {
     final currentWallet = cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == walletID);
 
-    final fromTheAddress = (currentWallet.blockchainsData?[BlockChains.near]
+    final fromTheAddress = ((currentWallet.blockchainsData?[BlockChains.near])
+                    ?.firstWhereOrNull((element) =>
+                        element.derivationPath == currentDerivationPath)
                 as NearBlockChainData)
             .accountId ??
         (currentWallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
