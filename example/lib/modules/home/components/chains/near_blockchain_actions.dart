@@ -613,8 +613,8 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                 .blockchainsData?[BlockChains.near]
                 ?.firstWhere((element) =>
                     element.derivationPath == currentDerivationPath);
-            final secretKey =
-                await nearService.exportPrivateKeyToTheNearApiJsFormat(
+            final secretKey = await NearBlockChainService.defaultInstance()
+                .exportPrivateKeyToTheNearApiJsFormat(
               currentBlockchainData: currentBlockchainData,
             );
             setState(() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -7,8 +9,10 @@ JsVMService getJsVM() {
 }
 
 class WebviewJsVMService implements JsVMService {
-  HeadlessInAppWebView? _headlessWebView;
-  InAppWebViewController? _webViewMobileController;
+  late HeadlessInAppWebView _headlessWebView;
+  late InAppWebViewController _webViewMobileController;
+  final _readyCompleter = Completer<void>();
+
   WebviewJsVMService() {
     init();
   }
@@ -37,16 +41,20 @@ class WebviewJsVMService implements JsVMService {
         );
         _webViewMobileController = controller;
       },
-      onConsoleMessage: (controller, consoleMessage) {},
+      onConsoleMessage: (controller, consoleMessage) {
+        if (consoleMessage.message == 'Flutterchain lib initialized') {
+          _readyCompleter.complete();
+        }
+      },
       onLoadStart: (controller, url) async {},
       onLoadStop: (controller, url) async {},
     );
-    await _headlessWebView?.run();
+    await _headlessWebView.run();
   }
 
   @override
   Future<dynamic> callJS(String function) async {
-    return _webViewMobileController?.evaluateJavascript(source: function) ??
-        "{}";
+    await _readyCompleter.future;
+    return _webViewMobileController.evaluateJavascript(source: function);
   }
 }
