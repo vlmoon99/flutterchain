@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 
 class HomeVM {
@@ -27,11 +29,14 @@ class HomeVM {
     String? mnemonic,
     String walletName,
   ) async {
+    Wallet? wallet;
     if (mnemonic?.isEmpty ?? true) {
-      cryptoLibrary.createWalletWithGeneratedMnemonic(walletName: walletName);
+      wallet = await cryptoLibrary.createWalletWithGeneratedMnemonic(
+          walletName: walletName);
     } else {
-      cryptoLibrary.createWalletByImportedMnemonic(
+      wallet = await cryptoLibrary.createWalletByImportedMnemonic(
           mnemonic: mnemonic!, walletName: walletName);
     }
+    userStore.walletIdStream.add(wallet.id);
   }
 }

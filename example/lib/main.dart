@@ -53,10 +53,10 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    !isAuthorized
-        ? Modular.setInitialRoute(Routes.auth.getModule())
-        : Modular.setInitialRoute(Routes.home.getModule());
-
+    // !isAuthorized
+    //     ? Modular.setInitialRoute(Routes.auth.getModule())
+    //     : Modular.setInitialRoute(Routes.home.getModule());
+    Modular.setInitialRoute(Routes.home.getModule());
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Flutterchain Wallet',

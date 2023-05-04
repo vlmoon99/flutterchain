@@ -20,6 +20,7 @@ abstract class BlockChainService {
     String toAddress,
     String fromAddress,
     String privateKey,
+    String publicKey,
     BlockChainSmartContractArguments arguments,
   );
 

@@ -86,6 +86,7 @@ class NearBlockChainService implements BlockChainService {
     String toAdress,
     String fromAdress,
     String privateKey,
+    String publicKey,
     BlockChainSmartContractArguments arguments,
   ) async {
     if (arguments is! NearBlockChainSmartContractArguments) {
@@ -93,7 +94,7 @@ class NearBlockChainService implements BlockChainService {
     }
     final transactionInfo = await getNonceAndBlockHashInfo(
       accountId: fromAdress,
-      publicKey: fromAdress,
+      publicKey: publicKey,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
@@ -281,10 +282,11 @@ class NearBlockChainService implements BlockChainService {
     required String smartContractId,
     required List<String> methodNames,
     required String privateKey,
+    required String publicKey,
   }) async {
     final transactionInfo = await getNonceAndBlockHashInfo(
       accountId: fromAddress,
-      publicKey: fromAddress,
+      publicKey: publicKey,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {

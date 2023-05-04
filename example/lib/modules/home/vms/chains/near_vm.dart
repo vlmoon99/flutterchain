@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -45,11 +46,17 @@ class NearVM {
     final currentWallet = cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == walletID);
 
-    final fromAddress = currentWallet.blockchainsData?[BlockChains.near]!
+    final fromTheAddress = (currentWallet.blockchainsData?[BlockChains.near]
+                as NearBlockChainData)
+            .accountId ??
+        (currentWallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
+            .publicKey;
+
+    final publicKey = currentWallet.blockchainsData?[BlockChains.near]!
         .firstWhereOrNull(
             (element) => element.derivationPath == currentDerivationPath)
         ?.publicKey;
-    if (fromAddress == null) {
+    if (publicKey == null) {
       throw Exception('Incorrect User public key is null');
     }
 
@@ -68,9 +75,10 @@ class NearVM {
       smartContractId: smartContractId,
       methodNames: methodNames,
       derivationPathOfNewGeneratedAccount: derivationPathOfNewGeneratedAccount,
-      fromAddress: fromAddress,
+      fromAddress: fromTheAddress,
       mnemonic: currentWallet.mnemonic,
       privateKey: privateKey,
+      publicKey: publicKey,
     );
 
     return response;
@@ -123,16 +131,25 @@ class NearVM {
     required String method,
     required DerivationPath currentDerivationPath,
   }) {
+    final wallet = cryptoLibrary.walletsStream.value
+        .firstWhereOrNull((element) => element.id == walletId);
+    final fromTheAddress =
+        (wallet?.blockchainsData?[BlockChains.near] as NearBlockChainData)
+                .accountId ??
+            (wallet?.blockchainsData?[BlockChains.near] as NearBlockChainData)
+                .publicKey;
     final response = cryptoLibrary.callSmartContractFunction(
-        currentDerivationPath: currentDerivationPath,
-        walletId: walletId,
-        typeOfBlockchain: BlockChains.near,
-        toAddress: smartContractAddress,
-        arguments: NearBlockChainSmartContractArguments(
-          method: method,
-          args: args,
-          transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
-        ));
+      currentDerivationPath: currentDerivationPath,
+      walletId: walletId,
+      typeOfBlockchain: BlockChains.near,
+      toAddress: smartContractAddress,
+      arguments: NearBlockChainSmartContractArguments(
+        method: method,
+        args: args,
+        transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
+      ),
+      fromAddress: fromTheAddress,
+    );
     return response;
   }
 

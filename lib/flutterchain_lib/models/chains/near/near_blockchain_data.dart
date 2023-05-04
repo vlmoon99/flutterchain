@@ -7,7 +7,9 @@ part 'near_blockchain_data.g.dart';
 
 @JsonSerializable()
 class NearBlockChainData extends BlockChainData {
+  String? accountId;
   NearBlockChainData({
+    this.accountId,
     //Standard near ed25519 public key
     required String publicKey,
     //Base 64 encoded

@@ -84,10 +84,10 @@ class AppModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    ModuleRoute(
-      Routes.auth.module,
-      module: AuthModule(),
-    ),
+    // ModuleRoute(
+    //   Routes.auth.module,
+    //   module: AuthModule(),
+    // ),
     ModuleRoute(
       Routes.home.module,
       module: HomeModule(),

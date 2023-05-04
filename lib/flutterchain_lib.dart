@@ -200,6 +200,7 @@ class FlutterChainLibrary {
     required String typeOfBlockchain,
     required DerivationPath currentDerivationPath,
     required String toAddress,
+    required String fromAddress,
     required BlockChainSmartContractArguments arguments,
   }) async {
     final wallet = walletsStream.valueOrNull
@@ -229,7 +230,8 @@ class FlutterChainLibrary {
     return blockchainService.callSmartContractFunction(
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
-      fromAddress: publicKey,
+      fromAddress: fromAddress,
+      publicKey: publicKey,
       toAddress: toAddress,
       arguments: arguments,
     );

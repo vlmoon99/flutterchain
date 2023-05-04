@@ -66,6 +66,7 @@ export class NearBlockchain {
     return JSON.stringify({
       mnemonic: wallet.mnemonic(),
       publicKey: hexString.substring(2),
+      accountId: hexString.substring(2),
       privateKey: privateKeyString,
       passphrase: passphrase,
       derivationPath: {

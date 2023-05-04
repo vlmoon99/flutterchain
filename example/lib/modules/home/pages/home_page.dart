@@ -43,189 +43,219 @@ class _CryptoListPageState extends State<CryptoListPage> {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
-    // log("mnemonic $mnemonic");
+    final cryptoLibrary = Modular.get<HomeVM>().cryptoLibrary;
 
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        Text(
-          'Total Amount: \$" Not getTotalAmount() yet"',
-          style: nearTextStyles.headline!.copyWith(
-            fontWeight: FontWeight.bold,
-            color: nearColors.nearPurple,
-            fontSize: 15,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              'Selected wallet: ${selectedWallet!.length > 30 ? '${selectedWallet!.substring(0, 30)}...' : selectedWallet!}',
-              style: nearTextStyles.subhead!.copyWith(
-                color: nearColors.nearPurple,
-                fontSize: 20,
+    return StreamBuilder<String>(
+        stream: homeVM.userStore.walletIdStream,
+        builder: (context, snapshot) {
+          final currentWalletID = snapshot.data ?? 'not found';
+          log("currentWalletID $currentWalletID");
+          selectedWallet =
+              cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false
+                  ? cryptoLibrary.walletsStream.valueOrNull
+                          ?.firstWhereOrNull(
+                              (element) => element.id == currentWalletID)
+                          ?.name ??
+                      'not found'
+                  : 'not found';
+
+          mnemonic =
+              cryptoLibrary.walletsStream.valueOrNull?.isNotEmpty ?? false
+                  ? cryptoLibrary.walletsStream.valueOrNull
+                          ?.firstWhereOrNull(
+                              (element) => element.id == currentWalletID)
+                          ?.mnemonic ??
+                      'not found'
+                  : 'not found';
+
+          return Column(
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Total Amount: \$" Not getTotalAmount() yet"',
+                style: nearTextStyles.headline!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: nearColors.nearPurple,
+                  fontSize: 15,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Your mnemonic: $mnemonic',
-              style: nearTextStyles.subhead!.copyWith(
-                color: nearColors.nearPurple,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ListView.builder(
-                      itemCount: homeVM.cryptoLibrary.walletsStream.valueOrNull
-                              ?.length ??
-                          0,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            homeVM
-                                .cryptoLibrary.walletsStream.value[index].name,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              final chosenWallet = homeVM
-                                  .cryptoLibrary.walletsStream.value[index];
-                              selectedWallet = chosenWallet.name;
-                              homeVM.userStore.walletIdStream.add(
-                                chosenWallet.id,
+              const SizedBox(height: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    'Selected wallet: ${selectedWallet!.length > 30 ? '${selectedWallet!.substring(0, 30)}...' : selectedWallet!}',
+                    style: nearTextStyles.subhead!.copyWith(
+                      color: nearColors.nearPurple,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Your mnemonic: $mnemonic',
+                    style: nearTextStyles.subhead!.copyWith(
+                      color: nearColors.nearPurple,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ListView.builder(
+                            itemCount: homeVM.cryptoLibrary.walletsStream
+                                    .valueOrNull?.length ??
+                                0,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(
+                                  homeVM.cryptoLibrary.walletsStream
+                                      .value[index].name,
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    final chosenWallet = homeVM.cryptoLibrary
+                                        .walletsStream.value[index];
+                                    selectedWallet = chosenWallet.name;
+                                    homeVM.userStore.walletIdStream.add(
+                                      chosenWallet.id,
+                                    );
+                                    log("Current Wallet ID ${homeVM.userStore.walletIdStream.value}");
+                                  });
+                                  Navigator.pop(context);
+                                },
                               );
-                              log("Current Wallet ID ${homeVM.userStore.walletIdStream.value}");
-                            });
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: nearColors.nearPurple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text(
-                'Switch Wallet',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return LoginPage(
-                      onLoginAction: () {
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: nearColors.nearPurple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text(
-                'Create Wallet',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: StreamBuilder<List<Wallet>>(
-                stream: homeVM.cryptoLibrary.walletsStream,
-                builder: (context, snapshot) {
-                  final currentWallet = (snapshot.data ?? []).firstWhereOrNull(
-                      (element) => element.name == selectedWallet);
-                  return ListView.builder(
-                    itemCount: currentWallet?.blockchainsData?.keys.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        splashColor: nearColors.nearPurple.withOpacity(0.2),
-                        highlightColor: Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                        onTap: () {
-                          // homeVM.userStore.walletIdStream.add(homeVM.cryptoLibrary
-                          //         .walletsStream.valueOrNull?.first.id ??
-                          //     'not founded');
-
-                          Modular.to.pushNamed(
-                            Routes.home.getRoute(Routes.home.actions),
-                            arguments: currentWallet?.blockchainsData?.keys
-                                .toList()[index],
+                            },
                           );
                         },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: nearColors.nearPurple,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.only(
-                                  bottom: 10.0,
-                                ),
-                                child: Text(
-                                  'Blockchain data card',
-                                  style: nearTextStyles.headline!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: nearColors.nearPurple,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                "Blockchain -> ${currentWallet?.blockchainsData?.keys.toList()[index]} \nAmount: \$${" Not getTotalAmount() yet"}",
-                                style: nearTextStyles.headline!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: nearColors.nearPurple,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       );
                     },
-                  );
-                }),
-          ),
-        ),
-      ],
-    );
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: nearColors.nearPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Switch Wallet',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return LoginPage(
+                            onLoginAction: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: nearColors.nearPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Create Wallet',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: StreamBuilder<List<Wallet>>(
+                      stream: homeVM.cryptoLibrary.walletsStream,
+                      builder: (context, snapshot) {
+                        final currentWallet = (snapshot.data ?? [])
+                            .firstWhereOrNull(
+                                (element) => element.name == selectedWallet);
+                        return ListView.builder(
+                          itemCount:
+                              currentWallet?.blockchainsData?.keys.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              splashColor:
+                                  nearColors.nearPurple.withOpacity(0.2),
+                              highlightColor: Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () {
+                                // homeVM.userStore.walletIdStream.add(homeVM.cryptoLibrary
+                                //         .walletsStream.valueOrNull?.first.id ??
+                                //     'not founded');
+
+                                Modular.to.pushNamed(
+                                  Routes.home.getRoute(Routes.home.actions),
+                                  arguments: currentWallet
+                                      ?.blockchainsData?.keys
+                                      .toList()[index],
+                                );
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: nearColors.nearPurple,
+                                    width: 2.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.only(
+                                        bottom: 10.0,
+                                      ),
+                                      child: Text(
+                                        'Blockchain data card',
+                                        style:
+                                            nearTextStyles.headline!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: nearColors.nearPurple,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      "Blockchain -> ${currentWallet?.blockchainsData?.keys.toList()[index]} \nAmount: \$${" Not getTotalAmount() yet"}",
+                                      style: nearTextStyles.headline!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: nearColors.nearPurple,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }
 

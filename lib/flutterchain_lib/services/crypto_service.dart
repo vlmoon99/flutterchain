@@ -70,6 +70,7 @@ class FlutterChainService {
     required String fromAddress,
     required String typeOfBlockchain,
     required String privateKey,
+    required String publicKey,
     required String toAddress,
     required BlockChainSmartContractArguments arguments,
   }) async {
@@ -82,6 +83,7 @@ class FlutterChainService {
       toAddress,
       fromAddress,
       privateKey,
+      publicKey,
       arguments,
     );
 
