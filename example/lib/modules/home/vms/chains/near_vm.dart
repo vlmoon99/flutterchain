@@ -131,13 +131,6 @@ class NearVM {
     required String method,
     required DerivationPath currentDerivationPath,
   }) {
-    final wallet = cryptoLibrary.walletsStream.value
-        .firstWhereOrNull((element) => element.id == walletId);
-    final fromTheAddress =
-        (wallet?.blockchainsData?[BlockChains.near] as NearBlockChainData)
-                .accountId ??
-            (wallet?.blockchainsData?[BlockChains.near] as NearBlockChainData)
-                .publicKey;
     final response = cryptoLibrary.callSmartContractFunction(
       currentDerivationPath: currentDerivationPath,
       walletId: walletId,
@@ -148,7 +141,6 @@ class NearVM {
         args: args,
         transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
       ),
-      fromAddress: fromTheAddress,
     );
     return response;
   }

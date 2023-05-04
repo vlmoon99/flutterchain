@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -5,6 +6,8 @@ import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
 import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
+
+import 'flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 
 class FlutterChainLibrary {
   final BehaviorSubject<List<Wallet>> walletsStream =
@@ -200,7 +203,6 @@ class FlutterChainLibrary {
     required String typeOfBlockchain,
     required DerivationPath currentDerivationPath,
     required String toAddress,
-    required String fromAddress,
     required BlockChainSmartContractArguments arguments,
   }) async {
     final wallet = walletsStream.valueOrNull
@@ -208,6 +210,12 @@ class FlutterChainLibrary {
     if (wallet == null) {
       throw Exception('Does not exist wallet with this name');
     }
+
+    final fromTheAddress =
+        (wallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
+                .accountId ??
+            (wallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
+                .publicKey;
 
     final privateKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
@@ -230,7 +238,7 @@ class FlutterChainLibrary {
     return blockchainService.callSmartContractFunction(
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
-      fromAddress: fromAddress,
+      fromAddress: fromTheAddress,
       publicKey: publicKey,
       toAddress: toAddress,
       arguments: arguments,
