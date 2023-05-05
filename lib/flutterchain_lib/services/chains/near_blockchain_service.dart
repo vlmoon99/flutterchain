@@ -347,7 +347,7 @@ class NearBlockChainService implements BlockChainService {
       throw Exception('hexEncodedPubKey is incorrect');
     }
     final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBase58PubKeyFromHexValue('${hexEncodedPubKey}')");
+        "window.NearBlockchain.getBase58PubKeyFromHexValue('$hexEncodedPubKey')");
     return res.toString();
   }
 
