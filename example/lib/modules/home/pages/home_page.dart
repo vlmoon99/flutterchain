@@ -83,7 +83,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
+                  SelectableText(
                     'Selected wallet: ${selectedWallet!.length > 30 ? '${selectedWallet!.substring(0, 30)}...' : selectedWallet!}',
                     style: nearTextStyles.subhead!.copyWith(
                       color: nearColors.nearPurple,
@@ -91,7 +91,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(
+                  SelectableText(
                     'Your mnemonic: $mnemonic',
                     style: nearTextStyles.subhead!.copyWith(
                       color: nearColors.nearPurple,

@@ -14,7 +14,7 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-    <base href="$FLUTTER_BASE_HREF" />
+    <base href="/" />
 
     <meta charset="UTF-8" />
     <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
@@ -37,7 +37,7 @@
       var serviceWorkerVersion = null;
     </script>
     <!-- This script adds the flutter initialization JS code -->
-    <script src="flutter.js" defer></script>
+    <script type="application/javascript" src="flutter.js" defer></script>
     <script
       type="application/javascript"
       src="/assets/packages/flutter_inappwebview/assets/web/web_support.js"
@@ -51,7 +51,19 @@
   </head>
   <body>
     <script>
-      window.addEventListener("load", function (ev) {
+      // Create a Promise that resolves when _flutter is defined
+      const flutterReady = new Promise((resolve) => {
+        const intervalId = setInterval(() => {
+          if (typeof _flutter !== "undefined") {
+            clearInterval(intervalId);
+            resolve();
+          }
+        }, 100);
+      });
+      // Use the Promise to wait for _flutter to be defined
+      window.addEventListener("load", async function (ev) {
+        await flutterReady;
+
         // Download main.dart.js
         _flutter.loader.loadEntrypoint({
           serviceWorker: {

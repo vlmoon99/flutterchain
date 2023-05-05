@@ -207,7 +207,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
                     ),
                   ),
                 ),
-                Text(blockchainsDataCreatedByDerivationPath ?? ''),
+                SelectableText(blockchainsDataCreatedByDerivationPath ?? ''),
               ],
             ),
           ),
@@ -351,7 +351,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
+                child: SelectableText(
                   'Result of SM call : ${resultOfSmartContractCall.toString().length > 50 ? "${resultOfSmartContractCall.toString().substring(0, 50)}..." : resultOfSmartContractCall.toString()}',
                   style: nearTextStyles.headline!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -625,7 +625,7 @@ class _NearBlockchainActionsState extends State<NearBlockchainActions> {
           child: Column(
             children: [
               Center(
-                child: Text(
+                child: SelectableText(
                   'Exported private key in near api js format is -> :\n $exportSecretKeyToTheNearApiJsFormat',
                   style: nearTextStyles.bodyCopy!.copyWith(
                       fontWeight: FontWeight.w300,
@@ -737,7 +737,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
+                child: SelectableText(
                   'Your Derivation Path :$derivationPath',
                   style: nearTextStyles.headline!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -758,7 +758,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                 items: listOfBlockChainData
                     ?.map((blockChainData) => DropdownMenuItem<DerivationPath>(
                           value: blockChainData.derivationPath,
-                          child: Text(
+                          child: SelectableText(
                             blockChainData.derivationPath.toString(),
                             style: nearTextStyles.bodyCopy!.copyWith(
                               color: nearColors.nearGray,
@@ -770,7 +770,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
+                child: SelectableText(
                   'Your Address :$currentPublicAddress',
                   style: nearTextStyles.headline!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -788,7 +788,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                   if (snapshot.hasData) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20),
-                      child: Text(
+                      child: SelectableText(
                         'Total Amount of ${widget.blockchainType} :${double.parse(snapshot.data.toString()).toStringAsFixed(2)}',
                         style: nearTextStyles.headline!.copyWith(
                           fontWeight: FontWeight.bold,
@@ -803,7 +803,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                 },
               ),
               const SizedBox(height: 16),
-              Text(
+              SelectableText(
                 'Network:',
                 style: nearTextStyles.bodyCopy!.copyWith(
                   color: nearColors.nearGray,
@@ -825,7 +825,7 @@ class _CryptoActionHeaderState extends State<CryptoActionHeader> {
                 items: networkUrls
                     .map((url) => DropdownMenuItem<String>(
                           value: url,
-                          child: Text(
+                          child: SelectableText(
                             url,
                             style: nearTextStyles.bodyCopy!.copyWith(
                               color: nearColors.nearGray,

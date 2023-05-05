@@ -8,7 +8,6 @@ import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dar
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/modules/auth/auth_module.dart';
 import 'package:flutterchain_example/modules/home/home_module.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
