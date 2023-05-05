@@ -20,8 +20,10 @@ Instructions for building the library from source code.
 1. Clone this repository: `git clone https://github.com/vlmoon99/flutterchain`
 2. Navigate to the project root directory: `cd flutterchain`
 3. Run `bash dev_build.sh` or `bash prod_build.sh` for building flutterchain lib
-4. After that go to the example folder with `cd example`
-5. Add This code to the head tag For Web project
+
+## How to use
+
+1. Add This code to the head tag For Web project
 
 ```
  <script
@@ -37,22 +39,17 @@ Instructions for building the library from source code.
 ></script>
 ```
 
-6.  Set minSdkVersion 19 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest
-7.  Add this to android manifest <uses-permission android:name="android.permission.INTERNET"/>
-8.  Init flutterchain lib after WidgetsFlutterBinding.ensureInitialized()
+2.  Set minSdkVersion 19 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest
+3.  Add this to android manifest <uses-permission android:name="android.permission.INTERNET"/>
+4.  Inject all dependencies as in a example with Modular or Get it , etc.
+    or use default constructor in provided classes (Not recommended)
+5.  Init flutterchain lib after WidgetsFlutterBinding.ensureInitialized()
     in main function()
 
     ```
      WidgetsFlutterBinding.ensureInitialized();
      await initFlutterChainLib();
     ```
-
-9.  Run `flutter pub get` to get the necessary dependencies.
-10. Run `flutter run` to run the example.
-
-## Example of code
-
-`wdq`
 
 ## Running Examples
 
