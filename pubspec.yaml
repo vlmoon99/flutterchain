@@ -1,5 +1,5 @@
 name: flutterchain
-description: A new Flutter plugin project.
+description: Multi-chain library for communication with blockchain systems. Based on WalletCore. 
 version: 1.0.0-beta
 repository: https://github.com/vlmoon99/flutterchain
 

@@ -40,7 +40,10 @@ Instructions for building the library from source code.
 ```
 
 2.  Set minSdkVersion 19 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest
-3.  Add this to android manifest <uses-permission android:name="android.permission.INTERNET"/>
+3.  Add network permission to android manifest -
+    ```
+    <uses-permission android:name="android.permission.INTERNET"/>
+    ```
 4.  Inject all dependencies as in a example with Modular or Get it , etc.
     or use default constructor in provided classes (Not recommended)
 5.  Init flutterchain lib after WidgetsFlutterBinding.ensureInitialized()
