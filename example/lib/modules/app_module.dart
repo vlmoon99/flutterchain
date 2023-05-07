@@ -6,8 +6,8 @@ import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_network
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:flutterchain_example/modules/home/home_module.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -83,10 +83,6 @@ class AppModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    // ModuleRoute(
-    //   Routes.auth.module,
-    //   module: AuthModule(),
-    // ),
     ModuleRoute(
       Routes.home.module,
       module: HomeModule(),

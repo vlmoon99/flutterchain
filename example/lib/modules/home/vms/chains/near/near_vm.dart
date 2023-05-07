@@ -1,20 +1,27 @@
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/near_blockchain_store.dart';
+import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
+import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
+import 'package:rxdart/rxdart.dart';
 
 class NearVM {
   final FlutterChainLibrary cryptoLibrary;
   final NearBlockchainStore nearBlockchainStore;
+  final UserStore userStore;
+  final BehaviorSubject<NearState> nearState = BehaviorSubject<NearState>()
+    ..add(SuccessNearBlockchainState());
   NearVM(
     this.cryptoLibrary,
     this.nearBlockchainStore,
+    this.userStore,
   );
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
@@ -174,7 +181,7 @@ class NearVM {
           .firstWhere((element) => element.name == walletName)
           .mnemonic;
 
-  Future<dynamic> sendNativeCoinTransferByWalletId({
+  Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
     required String toAddress,
     required String transferAmount,
     required String walletId,

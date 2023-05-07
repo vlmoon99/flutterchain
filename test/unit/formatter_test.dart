@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterchain/flutterchain_lib/formaters/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 
 void main() {
   group('NearFormatter tests', () {

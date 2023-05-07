@@ -15,10 +15,6 @@ dependencies:
   plugin_platform_interface: ^2.0.2
   flutter_secure_storage: ^8.0.0
   rxdart: ^0.27.7
-  easy_localization: ^3.0.1
-  tap_debouncer: ^2.0.2
-  cupertino_icons: ^1.0.2
-  connectivity_plus: ^3.0.3
   dio: ^5.0.1
   bs58: ^1.0.2
   hex: ^0.2.0

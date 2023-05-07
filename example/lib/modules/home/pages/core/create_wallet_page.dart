@@ -4,14 +4,14 @@ import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key, this.onLoginAction}) : super(key: key);
+class CreateWalletPage extends StatefulWidget {
+  const CreateWalletPage({Key? key, this.onLoginAction}) : super(key: key);
   final VoidCallback? onLoginAction;
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<CreateWalletPage> createState() => _CreateWalletPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _CreateWalletPageState extends State<CreateWalletPage> {
   final TextEditingController mnemonicTextEditingController =
       TextEditingController();
   final TextEditingController walletNameTextEditingController =
@@ -173,7 +173,7 @@ class CreateWalletComponent extends StatelessWidget {
     final theme = Modular.get<AppTheme>();
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
 
-    final authVM = Modular.get<HomeVM>();
+    final homeVM = Modular.get<HomeVM>();
 
     return SizedBox(
       width: 200,
@@ -181,7 +181,7 @@ class CreateWalletComponent extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isActive
             ? () async {
-                authVM.createWallet(mnemonic, walletName).then(
+                homeVM.createWallet(mnemonic, walletName).then(
                   (value) {
                     // Modular.to.navigate(Routes.home.getModule());
                     onLoginAction();

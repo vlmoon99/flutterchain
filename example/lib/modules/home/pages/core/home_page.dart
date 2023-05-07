@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
-import 'package:flutterchain_example/modules/home/pages/login_page.dart';
+import 'package:flutterchain_example/modules/home/pages/core/create_wallet_page.dart';
 import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -152,7 +152,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                       showModalBottomSheet(
                         context: context,
                         builder: (BuildContext context) {
-                          return LoginPage(
+                          return CreateWalletPage(
                             onLoginAction: () {
                               Navigator.pop(context);
                             },
