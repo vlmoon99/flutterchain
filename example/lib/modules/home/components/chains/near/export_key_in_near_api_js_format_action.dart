@@ -50,8 +50,8 @@ class _ExportKeyInNearApiJsFormatState
           SnackBar(
             content: Text(
               secretKey.isNotEmpty
-                  ? 'Success exporting BlockchainData to the NearAPI-JS format'
-                  : 'Failed exporting BlockchainData to the NearAPI-JS format',
+                  ? 'Success export BlockchainData to the NearAPI-JS format'
+                  : 'Failed export BlockchainData to the NearAPI-JS format',
             ),
           ),
         );

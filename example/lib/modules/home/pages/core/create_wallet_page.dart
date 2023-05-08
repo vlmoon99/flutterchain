@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
+import 'package:flutterchain_example/modules/home/components/core/create_wallet_component.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
@@ -31,10 +31,8 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
-    // final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearColors = theme.getTheme().extension<NearColors>()!;
 
-    // final authVM = Modular.get<AuthVM>();
     final inputDecorationOfTheWalletName = getInputDecoration(
       nearColors: nearColors,
       hintText: 'Write your multi-wallet name',
@@ -44,6 +42,9 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
       hintText: 'Write your mnemonic using space as a separator',
     );
 
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
@@ -52,10 +53,10 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 300,
-                margin: const EdgeInsets.only(
-                  bottom: 50,
-                  top: 25,
+                width: width * 0.8,
+                margin: EdgeInsets.only(
+                  bottom: width * 0.045,
+                  top: height * 0.026,
                 ),
                 child: TextField(
                   controller: walletNameTextEditingController,
@@ -74,7 +75,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                     },
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 50),
+                padding: EdgeInsets.only(top: width * 0.045),
                 child: Column(
                   children: [
                     CreateWalletComponent(
@@ -89,8 +90,8 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                           },
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      width: 300,
+                      margin: EdgeInsets.only(top: width * 0.05),
+                      width: width * 0.8,
                       child: Column(
                         children: [
                           TextField(
@@ -148,62 +149,6 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
         fontFamily: 'Manrope',
         fontWeight: FontWeight.w500,
         letterSpacing: 0.02,
-      ),
-    );
-  }
-}
-
-class CreateWalletComponent extends StatelessWidget {
-  const CreateWalletComponent({
-    super.key,
-    this.mnemonic,
-    required this.title,
-    required this.walletName,
-    this.isActive = false,
-    required this.onLoginAction,
-  });
-
-  final String? mnemonic;
-  final String title;
-  final String walletName;
-  final bool isActive;
-  final VoidCallback onLoginAction;
-  @override
-  Widget build(BuildContext context) {
-    final theme = Modular.get<AppTheme>();
-    final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
-
-    final homeVM = Modular.get<HomeVM>();
-
-    return SizedBox(
-      width: 200,
-      height: 80,
-      child: ElevatedButton(
-        onPressed: isActive
-            ? () async {
-                homeVM.createWallet(mnemonic, walletName).then(
-                  (value) {
-                    // Modular.to.navigate(Routes.home.getModule());
-                    onLoginAction();
-                  },
-                );
-              }
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: theme.getTheme().extension<NearColors>()!.nearPurple,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: nearTextStyles.label!.fontSize,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
       ),
     );
   }
