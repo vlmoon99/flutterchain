@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
-import 'package:flutterchain_example/modules/home/pages/login_page.dart';
+import 'package:flutterchain_example/modules/home/pages/core/create_wallet_page.dart';
 import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -44,6 +44,8 @@ class _CryptoListPageState extends State<CryptoListPage> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final cryptoLibrary = Modular.get<HomeVM>().cryptoLibrary;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
     return StreamBuilder<String>(
         stream: homeVM.userStore.walletIdStream,
@@ -70,16 +72,16 @@ class _CryptoListPageState extends State<CryptoListPage> {
 
           return Column(
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: width * 0.06),
               Text(
-                'Total Amount: \$" Not getTotalAmount() yet"',
+                'Total Amount: \$" Not yet implemented"',
                 style: nearTextStyles.headline!.copyWith(
                   fontWeight: FontWeight.bold,
                   color: nearColors.nearPurple,
-                  fontSize: 15,
+                  fontSize: height * 0.022,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: width * 0.06),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -87,18 +89,23 @@ class _CryptoListPageState extends State<CryptoListPage> {
                     'Selected wallet: ${selectedWallet!.length > 30 ? '${selectedWallet!.substring(0, 30)}...' : selectedWallet!}',
                     style: nearTextStyles.subhead!.copyWith(
                       color: nearColors.nearPurple,
-                      fontSize: 20,
+                      fontSize: height * 0.022,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  SelectableText(
-                    'Your mnemonic: $mnemonic',
-                    style: nearTextStyles.subhead!.copyWith(
-                      color: nearColors.nearPurple,
-                      fontSize: 20,
+                  SizedBox(height: width * 0.06),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width * 0.1,
+                    ),
+                    child: SelectableText(
+                      'Your mnemonic: $mnemonic',
+                      style: nearTextStyles.subhead!.copyWith(
+                        color: nearColors.nearPurple,
+                        fontSize: height * 0.022,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: width * 0.06),
                   ElevatedButton(
                     onPressed: () {
                       showModalBottomSheet(
@@ -138,24 +145,30 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Switch Wallet',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: height * 0.022,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: width * 0.06),
                   ElevatedButton(
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
+                        isScrollControlled: true,
                         builder: (BuildContext context) {
-                          return LoginPage(
-                            onLoginAction: () {
-                              Navigator.pop(context);
-                            },
+                          return SingleChildScrollView(
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.8,
+                              child: CreateWalletPage(
+                                onLoginAction: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
                           );
                         },
                       );
@@ -166,20 +179,20 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Create Wallet',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: height * 0.022,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: width * 0.06),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(width * 0.06),
                   child: StreamBuilder<List<Wallet>>(
                       stream: homeVM.cryptoLibrary.walletsStream,
                       builder: (context, snapshot) {
@@ -232,7 +245,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                                             nearTextStyles.headline!.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: nearColors.nearPurple,
-                                          fontSize: 18,
+                                          fontSize: height * 0.018,
                                         ),
                                       ),
                                     ),
@@ -241,7 +254,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                                       style: nearTextStyles.headline!.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: nearColors.nearPurple,
-                                        fontSize: 18,
+                                        fontSize: height * 0.02,
                                       ),
                                     ),
                                   ],

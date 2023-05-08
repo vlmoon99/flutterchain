@@ -4,7 +4,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contr
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
-import 'package:flutterchain/flutterchain_lib/services/crypto_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'flutterchain_lib/models/chains/near/near_blockchain_data.dart';
