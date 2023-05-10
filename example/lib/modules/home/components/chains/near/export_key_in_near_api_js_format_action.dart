@@ -46,6 +46,7 @@ class _ExportKeyInNearApiJsFormatState
         nearVM.nearState.add(
           currentState.copyWith(exportSecretKeyToTheNearApiJsFormat: secretKey),
         );
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

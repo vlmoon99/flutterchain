@@ -169,7 +169,7 @@ void main() {
       const accountId = 'test_account_id';
       const publicKey = 'test_public_key';
 
-      when(service.getNonceAndBlockHashInfo(
+      when(service.getTransactionInfo(
         accountId: accountId,
         publicKey: publicKey,
       )).thenAnswer(
@@ -179,7 +179,7 @@ void main() {
         ),
       );
 
-      final res = await service.getNonceAndBlockHashInfo(
+      final res = await service.getTransactionInfo(
         accountId: accountId,
         publicKey: publicKey,
       );

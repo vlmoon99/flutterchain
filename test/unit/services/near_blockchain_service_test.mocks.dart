@@ -262,13 +262,13 @@ class MockNearBlockChainService extends _i1.Mock
         )),
       ) as _i8.Future<_i5.NearBlockChainData>);
   @override
-  _i8.Future<_i6.NearTransactionInfoModel> getNonceAndBlockHashInfo({
+  _i8.Future<_i6.NearTransactionInfoModel> getTransactionInfo({
     required String? accountId,
     required String? publicKey,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getNonceAndBlockHashInfo,
+          #getTransactionInfo,
           [],
           {
             #accountId: accountId,
@@ -279,7 +279,7 @@ class MockNearBlockChainService extends _i1.Mock
             _FakeNearTransactionInfoModel_4(
           this,
           Invocation.method(
-            #getNonceAndBlockHashInfo,
+            #getTransactionInfo,
             [],
             {
               #accountId: accountId,
