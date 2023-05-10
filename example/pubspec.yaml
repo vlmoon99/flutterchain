@@ -38,6 +38,7 @@ dependencies:
   bs58: 1.0.2
   hex: 0.2.0
   collection: 1.17.0
+  flutter_screenutil: ^5.7.0
 
 dev_dependencies:
   flutter_test:

@@ -27,7 +27,7 @@ class NearRpcClient {
   }
   NearRpcClient({required this.networkClient});
 
-  Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
+  Future<NearTransactionInfoModel> getTransactionInfo(
     String accountId,
     String publicKey,
   ) async {

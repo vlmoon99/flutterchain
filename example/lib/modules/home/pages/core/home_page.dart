@@ -8,6 +8,7 @@ import 'package:flutterchain_example/modules/home/pages/core/create_wallet_page.
 import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CryptoListPage extends StatefulWidget {
   const CryptoListPage({Key? key}) : super(key: key);
@@ -72,16 +73,20 @@ class _CryptoListPageState extends State<CryptoListPage> {
 
           return Column(
             children: [
-              SizedBox(height: width * 0.06),
+              SizedBox(
+                height: 10.w,
+              ),
               Text(
                 'Total Amount: \$" Not yet implemented"',
                 style: nearTextStyles.headline!.copyWith(
                   fontWeight: FontWeight.bold,
                   color: nearColors.nearPurple,
-                  fontSize: height * 0.022,
+                  fontSize: 14.sp,
                 ),
               ),
-              SizedBox(height: width * 0.06),
+              SizedBox(
+                height: 2.h,
+              ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -89,107 +94,122 @@ class _CryptoListPageState extends State<CryptoListPage> {
                     'Selected wallet: ${selectedWallet!.length > 30 ? '${selectedWallet!.substring(0, 30)}...' : selectedWallet!}',
                     style: nearTextStyles.subhead!.copyWith(
                       color: nearColors.nearPurple,
-                      fontSize: height * 0.022,
+                      fontSize: 14.sp,
                     ),
                   ),
-                  SizedBox(height: width * 0.06),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.1,
+                      horizontal: 2.w,
                     ),
                     child: SelectableText(
                       'Your mnemonic: $mnemonic',
                       style: nearTextStyles.subhead!.copyWith(
                         color: nearColors.nearPurple,
-                        fontSize: height * 0.022,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
-                  SizedBox(height: width * 0.06),
-                  ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return ListView.builder(
-                            itemCount: homeVM.cryptoLibrary.walletsStream
-                                    .valueOrNull?.length ??
-                                0,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(
-                                  homeVM.cryptoLibrary.walletsStream
-                                      .value[index].name,
+                  SizedBox(
+                    height: 10.w,
+                  ),
+                  SizedBox(
+                    width: 300,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ListView.builder(
+                              itemCount: homeVM.cryptoLibrary.walletsStream
+                                      .valueOrNull?.length ??
+                                  0,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                    homeVM.cryptoLibrary.walletsStream
+                                        .value[index].name,
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      final chosenWallet = homeVM.cryptoLibrary
+                                          .walletsStream.value[index];
+                                      selectedWallet = chosenWallet.name;
+                                      homeVM.userStore.walletIdStream.add(
+                                        chosenWallet.id,
+                                      );
+                                      log("Current Wallet ID ${homeVM.userStore.walletIdStream.value}");
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: nearColors.nearPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text(
+                        'Switch Wallet',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.w,
+                  ),
+                  SizedBox(
+                    width: 300,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return SingleChildScrollView(
+                              child: SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                child: CreateWalletPage(
+                                  onLoginAction: () {
+                                    Navigator.pop(context);
+                                  },
                                 ),
-                                onTap: () {
-                                  setState(() {
-                                    final chosenWallet = homeVM.cryptoLibrary
-                                        .walletsStream.value[index];
-                                    selectedWallet = chosenWallet.name;
-                                    homeVM.userStore.walletIdStream.add(
-                                      chosenWallet.id,
-                                    );
-                                    log("Current Wallet ID ${homeVM.userStore.walletIdStream.value}");
-                                  });
-                                  Navigator.pop(context);
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: nearColors.nearPurple,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      'Switch Wallet',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: height * 0.022,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: width * 0.06),
-                  ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (BuildContext context) {
-                          return SingleChildScrollView(
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.8,
-                              child: CreateWalletPage(
-                                onLoginAction: () {
-                                  Navigator.pop(context);
-                                },
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: nearColors.nearPurple,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: nearColors.nearPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Create Wallet',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: height * 0.022,
+                      child: Text(
+                        'Create Wallet',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: width * 0.06),
+              SizedBox(height: 2.w),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(width * 0.06),

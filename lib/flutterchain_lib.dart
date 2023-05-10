@@ -3,6 +3,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
+import 'package:flutterchain/flutterchain_lib/repositories/core/core_repository.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,7 +14,7 @@ class FlutterChainLibrary {
   final BehaviorSubject<List<Wallet>> walletsStream =
       BehaviorSubject<List<Wallet>>();
   final FlutterChainService blockchainService;
-  final WalletRepository walletRepository;
+  final Repository<Wallet> walletRepository;
 
   FlutterChainLibrary(this.blockchainService, this.walletRepository) {
     initCryptoLib();

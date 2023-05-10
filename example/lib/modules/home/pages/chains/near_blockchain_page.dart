@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/export_key_in_near_api_js_format_action.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_activate_testnet_account.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_add_key_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_insert_new_blockchaindata_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_crypto_action_header.dart';
@@ -19,17 +20,26 @@ class NearBlockchainPage extends StatelessWidget {
     return StreamBuilder<NearState>(
       stream: nearVM.nearState,
       builder: (context, snapshot) {
-        return Column(
-          key: UniqueKey(),
-          children: const [
-            NearCryptoActionHeader(),
-            NearInsertNewBlockchainDataInsideWallet(),
-            NearTransferAction(),
-            NearAddKeyAction(),
-            NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
-            ExportKeyInNearApiJsFormat(),
-          ],
-        );
+        final state = snapshot.data;
+
+        if (state is ErrorNearBlockchainState) {
+          return Text('Error, error message ${state.message}');
+        }
+        if (state is SuccessNearBlockchainState) {
+          return Column(
+            key: UniqueKey(),
+            children: const [
+              NearCryptoActionHeader(),
+              NearActivateTestNetAccount(),
+              NearInsertNewBlockchainDataInsideWallet(),
+              NearTransferAction(),
+              NearAddKeyAction(),
+              NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
+              ExportKeyInNearApiJsFormat(),
+            ],
+          );
+        }
+        return const Text("Undefined  state");
       },
     );
   }
