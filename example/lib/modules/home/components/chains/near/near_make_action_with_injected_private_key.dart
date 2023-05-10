@@ -36,11 +36,8 @@ class _NearMakeActionWithInjectedPrivateKeyInNearApiJsFormatState
     super.initState();
     recipientEditingController.text = "pay4result_business.testnet";
     transferDepositController.text = "1";
-    //Make action with injected private Key
-    makeActionWithInjectedPrivateKey.text =
-        'ed25519:w6iUJ6uLt1crmMcYMqeWXk3UVAzXzmgTibcsno639PCUfAQtxvbysXyxeeKja6BuwcA7B8gcMDXm4WiHAo6UgfF';
-    // 'ed25519:2WB6k8p1RWXYYcnyP3aqCZRqmr7iXW2oRCaoFpuWtkPqi1C9DrSFGWEheik3CYQVqVE2aQpaVBsXuTHdCchyUm8z';
-    makeActionWithInjectedAccountId.text = "vladddddd.testnet";
+    makeActionWithInjectedPrivateKey.text = 'ed25519:your_secret_key';
+    makeActionWithInjectedAccountId.text = "your.testnet";
   }
 
   @override

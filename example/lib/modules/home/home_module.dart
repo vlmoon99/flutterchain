@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/modules/home/pages/core/crypto_actions_page.dart';
 import 'package:flutterchain_example/modules/home/pages/core/home_page.dart';
 import 'package:flutterchain_example/modules/home/pages/core/create_wallet_page.dart';
+import 'package:flutterchain_example/modules/home/services/helper_service.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/near_blockchain_store.dart';
 import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 import 'package:flutterchain_example/modules/home/vms/core/home_vm.dart';
@@ -24,6 +25,7 @@ class HomeModule extends Module {
     ),
     Bind.singleton(
       (i) => NearVM(
+        i(),
         i(),
         i(),
         i(),

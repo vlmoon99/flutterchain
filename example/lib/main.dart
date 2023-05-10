@@ -8,6 +8,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/assets/localizations/localizations_strings.dart';
 import 'package:flutterchain_example/modules/app_module.dart';
 import 'package:flutterchain_example/routes/routes.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   runZonedGuarded(() async {
@@ -53,18 +54,35 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Modular.setInitialRoute(Routes.home.getModule());
+
+    return ScreenUtilInit(
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutterchain Wallet',
+            routeInformationParser: Modular.routeInformationParser,
+            routerDelegate: Modular.routerDelegate,
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+          );
+        });
     // !isAuthorized
     //     ? Modular.setInitialRoute(Routes.auth.getModule())
     //     : Modular.setInitialRoute(Routes.home.getModule());
-    Modular.setInitialRoute(Routes.home.getModule());
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutterchain Wallet',
-      routeInformationParser: Modular.routeInformationParser,
-      routerDelegate: Modular.routerDelegate,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-    );
+    // Modular.setInitialRoute(Routes.home.getModule());
+    // return MaterialApp.router(
+    //   debugShowCheckedModeBanner: false,
+    //   title: 'Flutterchain Wallet',
+    //   routeInformationParser: Modular.routeInformationParser,
+    //   routerDelegate: Modular.routerDelegate,
+    //   localizationsDelegates: context.localizationDelegates,
+    //   supportedLocales: context.supportedLocales,
+    //   locale: context.locale,
+    // );
   }
 }

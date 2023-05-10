@@ -9,6 +9,8 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:flutterchain_example/modules/home/home_module.dart';
+import 'package:flutterchain_example/modules/home/services/helper_service.dart';
+import 'package:flutterchain_example/network/helper_network_client.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
@@ -26,10 +28,6 @@ class AppModule extends Module {
       (i) => const FlutterSecureStorage(),
     ),
 
-    Bind.singleton(
-      (i) => Dio(),
-    ),
-
     //Inject JS Engine
     Bind.singleton(
       (i) => getJsVM(),
@@ -40,7 +38,7 @@ class AppModule extends Module {
     Bind.singleton(
       (i) => NearNetworkClient(
         baseUrl: NearBlockChainNetworkUrls.listOfUrls.first,
-        dio: i(),
+        dio: Dio(),
       ),
     ),
     Bind.singleton(
@@ -54,10 +52,17 @@ class AppModule extends Module {
         nearRpcClient: i(),
       ),
     ),
-    //
-
-    //
-
+    Bind.singleton(
+      (i) => NearHelperNetworkClient(
+        baseUrl: 'https://stark-everglades-95819.herokuapp.com',
+        dio: Dio(),
+      ),
+    ),
+    Bind.singleton(
+      (i) => NearHelperService(
+        i(),
+      ),
+    ),
     //Inject Main Services for Main File of Crypto Library
     Bind.singleton(
       (i) => FlutterChainService(

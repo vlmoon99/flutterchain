@@ -7,6 +7,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain_example/modules/home/services/helper_service.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/near_blockchain_store.dart';
 import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
@@ -15,6 +16,7 @@ import 'package:rxdart/rxdart.dart';
 class NearVM {
   final FlutterChainLibrary cryptoLibrary;
   final NearBlockchainStore nearBlockchainStore;
+  final NearHelperService nearHelperService;
   final UserStore userStore;
   final BehaviorSubject<NearState> nearState = BehaviorSubject<NearState>()
     ..add(SuccessNearBlockchainState());
@@ -22,6 +24,7 @@ class NearVM {
     this.cryptoLibrary,
     this.nearBlockchainStore,
     this.userStore,
+    this.nearHelperService,
   );
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
@@ -196,5 +199,9 @@ class NearVM {
       transferAmount: NearFormatter.nearToYoctoNear(transferAmount),
     );
     return response;
+  }
+
+  Future<bool> activateAccount(String accountId) async {
+    return nearHelperService.activateTestNetAccountID(accountId);
   }
 }

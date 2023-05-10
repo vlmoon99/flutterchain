@@ -44,7 +44,7 @@ class NearBlockChainService implements BlockChainService {
     String privateKey,
     String publicKey,
   ) async {
-    final transactionInfo = await getNonceAndBlockHashInfo(
+    final transactionInfo = await getTransactionInfo(
       accountId: fromAddress,
       publicKey: publicKey,
     );
@@ -58,23 +58,16 @@ class NearBlockChainService implements BlockChainService {
         "data": {"amount": transferAmount}
       }
     ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
 
     final signedAction = await signNearActions(
       fromAddress: fromAddress,
       toAddress: toAdress,
       transferAmount: transferAmount,
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
+      privateKey: privateKey,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      blockHash: transactionInfo.blockHash,
+      actions: actions,
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
     return res;
@@ -92,7 +85,7 @@ class NearBlockChainService implements BlockChainService {
     if (arguments is! NearBlockChainSmartContractArguments) {
       throw Exception('Incorrect Blockchain Smart Contract Arguments');
     }
-    final transactionInfo = await getNonceAndBlockHashInfo(
+    final transactionInfo = await getTransactionInfo(
       accountId: fromAdress,
       publicKey: publicKey,
     );
@@ -109,23 +102,16 @@ class NearBlockChainService implements BlockChainService {
         },
       },
     ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
 
     final signedAction = await signNearActions(
       fromAddress: fromAdress,
       toAddress: toAdress,
       transferAmount: arguments.transferAmount,
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
+      privateKey: privateKey,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      blockHash: transactionInfo.blockHash,
+      actions: actions,
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
     return res;
@@ -182,10 +168,9 @@ class NearBlockChainService implements BlockChainService {
   //first of all you will need to get nonce and block hash from the Near blockchain
   //this method will give you nonce and block hash
   //from accountId and publicKey
-  Future<NearTransactionInfoModel> getNonceAndBlockHashInfo(
+  Future<NearTransactionInfoModel> getTransactionInfo(
       {required String accountId, required String publicKey}) async {
-    final res =
-        await nearRpcClient.getNonceAndBlockHashInfo(accountId, publicKey);
+    final res = await nearRpcClient.getTransactionInfo(accountId, publicKey);
 
     return res;
   }
@@ -231,7 +216,7 @@ class NearBlockChainService implements BlockChainService {
     required String privateKey,
     required String publicKey,
   }) async {
-    final transactionInfo = await getNonceAndBlockHashInfo(
+    final transactionInfo = await getTransactionInfo(
       accountId: fromAdress,
       publicKey: publicKey,
     );
@@ -248,23 +233,16 @@ class NearBlockChainService implements BlockChainService {
         },
       },
     ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
 
     final signedAction = await signNearActions(
       fromAddress: fromAdress,
       toAddress: fromAdress,
       transferAmount: "0",
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
+      privateKey: privateKey,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      blockHash: transactionInfo.blockHash,
+      actions: actions,
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
     return res;
@@ -284,7 +262,7 @@ class NearBlockChainService implements BlockChainService {
     required String privateKey,
     required String publicKey,
   }) async {
-    final transactionInfo = await getNonceAndBlockHashInfo(
+    final transactionInfo = await getTransactionInfo(
       accountId: fromAddress,
       publicKey: publicKey,
     );
@@ -307,23 +285,16 @@ class NearBlockChainService implements BlockChainService {
         },
       },
     ];
-    final blockChainSpecificArgumentsData = NearBlockChainSpecificArgumentsData(
-      actions: actions,
-      blockHash: transactionInfo.blockHash,
-      gas: gas,
-      nonce: transactionInfo.nonce,
-      privateKey: privateKey,
-    );
 
     final signedAction = await signNearActions(
       fromAddress: fromAddress,
       toAddress: fromAddress,
       transferAmount: allowance,
-      privateKey: blockChainSpecificArgumentsData.privateKey,
-      gas: blockChainSpecificArgumentsData.gas,
-      nonce: blockChainSpecificArgumentsData.nonce,
-      blockHash: blockChainSpecificArgumentsData.blockHash,
-      actions: blockChainSpecificArgumentsData.actions,
+      privateKey: privateKey,
+      gas: gas,
+      nonce: transactionInfo.nonce,
+      blockHash: transactionInfo.blockHash,
+      actions: actions,
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
     return res;
