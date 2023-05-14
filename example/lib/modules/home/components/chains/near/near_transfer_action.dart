@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
@@ -37,7 +38,7 @@ class _NearTransferActionState extends State<NearTransferAction> {
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
     return CryptoActionCard(
       title: 'Transfer',
-      height: 350,
+      height: 380,
       icon: Icons.send,
       color: nearColors.nearGreen,
       onTap: () {
@@ -76,26 +77,14 @@ class _NearTransferActionState extends State<NearTransferAction> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            TextFormField(
-              controller: recipientEditingController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: 'Recipient',
-                labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                  color: nearColors.nearBlack,
-                ),
-              ),
+            NearActionTextField(
+              labelText: 'Recipient',
+              textEditingController: recipientEditingController,
             ),
             const SizedBox(height: 20),
-            TextFormField(
-              controller: transferDepositController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: 'Amount',
-                labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                  color: nearColors.nearBlack,
-                ),
-              ),
+            NearActionTextField(
+              labelText: 'Amount',
+              textEditingController: transferDepositController,
             ),
             const SizedBox(height: 20),
           ],

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/see_the_last_tx_near_component.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
@@ -30,6 +32,8 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
   final TextEditingController addKeyPermissionTypeController =
       TextEditingController();
 
+  dynamic txHash;
+
   @override
   void initState() {
     super.initState();
@@ -49,10 +53,12 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
     return CryptoActionCard(
       title: 'Add Key',
-      height: 700,
+      height: height * 0.70,
       icon: Icons.key_rounded,
       color: nearColors.nearPurple,
       onTap: () {
@@ -89,8 +95,9 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
           walletID: walletID,
         )
             .then((value) {
-          nearVM.nearState
-              .add(currentState.copyWith(addKeyResult: value.nearSuccessValue));
+          final tx = value.data['txHash'];
+
+          nearVM.nearState.add(currentState.copyWith(addKeyResult: tx));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -106,59 +113,24 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          TextField(
-            controller: addKeySmartContractAddressController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Smart contract address',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Method names',
+            textEditingController: addKeyMethodsNamesController,
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: addKeyMethodsNamesController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Method names',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Derivation Account index',
+            textEditingController: addKeyIndexOfTheDerivationPathController,
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: addKeyIndexOfTheDerivationPathController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Derivation Account index',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Amount of Allowance',
+            textEditingController: addKeyAllowanceAmountController,
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: addKeyAllowanceAmountController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Amount of Allowance',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: addKeyPermissionTypeController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'functionCall | fullAccess',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'functionCall | fullAccess',
+            textEditingController: addKeyPermissionTypeController,
           ),
         ],
       ),

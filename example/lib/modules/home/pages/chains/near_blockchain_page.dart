@@ -6,6 +6,7 @@ import 'package:flutterchain_example/modules/home/components/chains/near/near_ad
 import 'package:flutterchain_example/modules/home/components/chains/near/near_insert_new_blockchaindata_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_crypto_action_header.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_make_action_with_injected_private_key.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_smart_contract_call_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_transfer_action.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
@@ -32,6 +33,7 @@ class NearBlockchainPage extends StatelessWidget {
               NearCryptoActionHeader(),
               NearActivateTestNetAccount(),
               NearInsertNewBlockchainDataInsideWallet(),
+              NearSmartContractCall(),
               NearTransferAction(),
               NearAddKeyAction(),
               NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),

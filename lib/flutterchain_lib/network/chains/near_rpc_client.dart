@@ -5,13 +5,13 @@ import 'package:bs58/bs58.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 import 'dart:async';
-
 import 'package:hex/hex.dart';
 
 class NearRpcClient {
@@ -88,14 +88,18 @@ class NearRpcClient {
       "params": params
     });
     if (res.isSuccess) {
+      String transactionHash = res.data['result']['transaction']['hash'];
+
       return BlockchainResponse(
-        data: res.data['result'],
+        data: {
+          "txHash": transactionHash,
+        },
         status: BlockchainResponses.success,
       );
     } else {
       return BlockchainResponse(
         data: {
-          "error": "'Error while sending transaction'",
+          "error": "Error while sending transaction",
         },
         status: BlockchainResponses.error,
       );
@@ -110,8 +114,16 @@ class NearRpcClient {
       "params": params
     });
     if (res.isSuccess) {
+      String transactionHash = res.data['result']['transaction']['hash'];
+      String successValue = res.data['result']['status']['SuccessValue']
+          .toString()
+          .nearSuccessValue;
+
       return BlockchainResponse(
-        data: res.data['result'],
+        data: {
+          "txHash": transactionHash,
+          "success": successValue,
+        },
         status: BlockchainResponses.success,
       );
     } else {

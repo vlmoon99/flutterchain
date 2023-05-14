@@ -2,7 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';

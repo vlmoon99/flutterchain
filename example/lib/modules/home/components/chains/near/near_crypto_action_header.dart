@@ -125,7 +125,7 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
                         ))
                     .toList(),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: SelectableText(
@@ -160,7 +160,7 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
                   }
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               SelectableText(
                 'Network:',
                 style: nearTextStyles.bodyCopy!.copyWith(
@@ -193,7 +193,7 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
                         ))
                     .toList(),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               SizedBox(
                 width: 150,
                 child: TextField(
@@ -231,7 +231,7 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
                   },
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
             ],
           );
         });

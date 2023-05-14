@@ -24,7 +24,7 @@ class LoggingInterceptor extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) {
     log(
       'Get error status code(${err.response?.statusCode})'
-      'Response body (${err.response!.data.toString()})',
+      'Response body (${err.response?.data.toString()})',
     );
     return super.onError(err, handler);
   }

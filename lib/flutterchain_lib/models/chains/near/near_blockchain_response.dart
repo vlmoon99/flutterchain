@@ -80,3 +80,13 @@ extension BlockchainResponseExtension on BlockchainResponse {
     return decodedResponse;
   }
 }
+
+extension DecodeNearBlockchainRpcResponse on String? {
+  String get nearSuccessValue {
+    final successValue = this;
+    final decodedResponse = successValue != null
+        ? NearFormatter.decodeResultOfResponse(successValue)
+        : 'No data in response';
+    return decodedResponse;
+  }
+}

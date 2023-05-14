@@ -5,6 +5,7 @@ import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
@@ -99,49 +100,38 @@ class _NearMakeActionWithInjectedPrivateKeyInNearApiJsFormatState
       child: Column(
         children: [
           const SizedBox(height: 20),
-          TextFormField(
-            controller: makeActionWithInjectedPrivateKey,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Injected Private Key',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Injected Private Key',
+            textEditingController: makeActionWithInjectedPrivateKey,
           ),
+          // TextFormField(
+          //   controller: makeActionWithInjectedPrivateKey,
+          //   decoration: InputDecoration(
+          //     border: const OutlineInputBorder(),
+          //     labelText: 'Injected Private Key',
+          //     labelStyle: nearTextStyles.bodyCopy!.copyWith(
+          //       color: nearColors.nearBlack,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 20),
-          TextFormField(
-            controller: makeActionWithInjectedAccountId,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Public ID in near blockchain',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Public ID in near blockchain',
+            textEditingController: makeActionWithInjectedAccountId,
           ),
+
           const SizedBox(height: 20),
-          TextFormField(
-            controller: recipientEditingController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Recipient',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Recipient',
+            textEditingController: recipientEditingController,
           ),
+
           const SizedBox(height: 20),
-          TextFormField(
-            controller: transferDepositController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Amount',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Amount',
+            textEditingController: transferDepositController,
           ),
+
           const SizedBox(height: 20),
         ],
       ),

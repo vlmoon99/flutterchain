@@ -23,7 +23,7 @@ class CryptoActionsPage extends StatelessWidget {
     final blockchainKey = ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: nearColors.nearPurple,
+        backgroundColor: nearColors.nearAqua,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -35,6 +35,7 @@ class CryptoActionsPage extends StatelessWidget {
           'Crypto Actions on $blockchainKey',
           style: nearTextStyles.headline!.copyWith(
             color: Colors.white,
+            fontWeight: FontWeight.w500,
             fontSize: 20,
           ),
         ),

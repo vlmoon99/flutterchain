@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_gas.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
@@ -335,5 +335,10 @@ class NearBlockChainService implements BlockChainService {
     final res = await jsVMService.callJS(
         "window.NearBlockchain.getPrivateKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
     return res.toString();
+  }
+
+  @override
+  Future<String> getBlockchainNetworkEnvironment() async {
+    return nearRpcClient.networkClient.dio.options.baseUrl;
   }
 }
