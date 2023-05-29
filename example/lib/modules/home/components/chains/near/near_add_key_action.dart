@@ -5,6 +5,7 @@ import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/see_the_last_tx_near_component.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
@@ -95,9 +96,7 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
           walletID: walletID,
         )
             .then((value) {
-          final tx = value.data['txHash'];
-
-          nearVM.nearState.add(currentState.copyWith(addKeyResult: tx));
+          nearVM.nearState.add(currentState.copyWith(addKeyResult: value.data));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -131,6 +130,10 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
           NearActionTextField(
             labelText: 'functionCall | fullAccess',
             textEditingController: addKeyPermissionTypeController,
+          ),
+          const SizedBox(height: 20),
+          SeeTransactionInfoNearBlockchain(
+            tx: currentState.addKeyResult?['txHash'].toString(),
           ),
         ],
       ),

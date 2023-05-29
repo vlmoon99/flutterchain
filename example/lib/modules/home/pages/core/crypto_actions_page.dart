@@ -44,9 +44,7 @@ class CryptoActionsPage extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
           Expanded(
-            child: SingleChildScrollView(
-              child: getBlockchainActionsPage(blockchainKey),
-            ),
+            child: getBlockchainActionsPage(blockchainKey),
           ),
         ],
       ),

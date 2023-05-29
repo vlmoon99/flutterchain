@@ -30,7 +30,7 @@ class _NearInsertNewBlockchainDataInsideWalletState
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
-    final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
+    // final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
 
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
@@ -56,7 +56,7 @@ class _NearInsertNewBlockchainDataInsideWalletState
         );
         nearVM
             .addBlockChainDataByDerivationPath(
-          currentDerivationPath: derivationModel,
+          derivationPath: derivationModel,
           walletID: walletID,
         )
             .then(

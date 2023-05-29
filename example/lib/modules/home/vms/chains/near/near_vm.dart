@@ -28,11 +28,11 @@ class NearVM {
   );
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
-    required DerivationPath currentDerivationPath,
+    required DerivationPath derivationPath,
     required String walletID,
   }) async {
     return cryptoLibrary.addBlockChainDataByDerivationPath(
-      currentDerivationPath: currentDerivationPath,
+      derivationPath: derivationPath,
       blockchainType: BlockChains.near,
       walletID: walletID,
     );

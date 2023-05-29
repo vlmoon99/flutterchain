@@ -26,7 +26,7 @@ class CryptoActionCard extends StatelessWidget {
         Modular.get<AppTheme>().getTheme().extension<NearColors>()!;
     final nearTextStyles =
         Modular.get<AppTheme>().getTheme().extension<NearTextStyles>()!;
-
+    final width = MediaQuery.of(context).size.width;
     return Container(
       margin: const EdgeInsets.all(16.0),
       height: height,
@@ -36,13 +36,13 @@ class CryptoActionCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
             blurRadius: 4,
             spreadRadius: 0,
           ),
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
             blurRadius: 2,
             spreadRadius: -1,
           ),

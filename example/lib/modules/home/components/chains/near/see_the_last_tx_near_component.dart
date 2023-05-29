@@ -25,26 +25,26 @@ class SeeTheLastTxNearBlockchainComponent extends StatelessWidget {
     return InkWell(
       onTap: () async {
         log("tx $tx");
-        final currentEnvironment = await nearVM.cryptoLibrary.blockchainService
-            .getBlockchainNetworkEnvironment(
-          blockchainType: BlockChains.near,
-        );
+        // final currentEnvironment = await nearVM.cryptoLibrary.blockchainService
+        //     .getBlockchainNetworkEnvironment(
+        //   blockchainType: BlockChains.near,
+        // );
 
-        if (tx == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Please execute action \nAfter you can see the transaction',
-              ),
-            ),
-          );
+        // if (tx == null) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(
+        //       content: Text(
+        //         'Please execute action \nAfter you can see the transaction',
+        //       ),
+        //     ),
+        //   );
 
-          return;
-        }
-        await nearVM.nearHelperService.launchInBrowser(
-          Uri.parse(
-              'https://explorer.${currentEnvironment.split('.').sublist(1).join('.')}/transactions/$tx'),
-        );
+        //   return;
+        // }
+        // await nearVM.nearHelperService.launchInBrowser(
+        //   Uri.parse(
+        //       'https://explorer.${currentEnvironment.split('.').sublist(1).join('.')}/transactions/$tx'),
+        // );
       },
       child: Container(
         margin: const EdgeInsets.only(

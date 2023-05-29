@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
@@ -33,12 +34,11 @@ class _NearTransferActionState extends State<NearTransferAction> {
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
-    final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
     return CryptoActionCard(
       title: 'Transfer',
-      height: 380,
+      height: 450,
       icon: Icons.send,
       color: nearColors.nearGreen,
       onTap: () {
@@ -58,7 +58,7 @@ class _NearTransferActionState extends State<NearTransferAction> {
             .then(
           (value) {
             nearVM.nearState.add(
-              currentState.copyWith(transferResult: value),
+              currentState.copyWith(transferResult: value.data),
             );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -87,6 +87,9 @@ class _NearTransferActionState extends State<NearTransferAction> {
               textEditingController: transferDepositController,
             ),
             const SizedBox(height: 20),
+            // SeeTransactionInfoNearBlockchain(
+            //   tx: currentState.transferResult?['txHash'].toString(),
+            // ),
           ],
         ),
       ),

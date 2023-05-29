@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/export_key_in_near_api_js_format_action.dart';
@@ -11,9 +13,15 @@ import 'package:flutterchain_example/modules/home/components/chains/near/near_tr
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 
-class NearBlockchainPage extends StatelessWidget {
+class NearBlockchainPage extends StatefulWidget {
   const NearBlockchainPage({super.key});
 
+  @override
+  State<NearBlockchainPage> createState() => _NearBlockchainPageState();
+}
+
+class _NearBlockchainPageState extends State<NearBlockchainPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     final nearVM = Modular.get<NearVM>();
@@ -27,22 +35,48 @@ class NearBlockchainPage extends StatelessWidget {
           return Text('Error, error message ${state.message}');
         }
         if (state is SuccessNearBlockchainState) {
-          return Column(
-            key: UniqueKey(),
-            children: const [
-              NearCryptoActionHeader(),
-              NearActivateTestNetAccount(),
-              NearInsertNewBlockchainDataInsideWallet(),
-              NearSmartContractCall(),
-              NearTransferAction(),
-              NearAddKeyAction(),
-              NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
-              ExportKeyInNearApiJsFormat(),
-            ],
-          );
+          final isPortrait =
+              MediaQuery.of(context).orientation == Orientation.portrait;
+          log("isPortrait $isPortrait");
+          return isPortrait
+              ? SingleChildScrollView(
+                  child: Column(
+                    // key: UniqueKey(),
+                    children: [
+                      NearCryptoActionHeader(),
+                      NearActivateTestNetAccount(),
+                      NearInsertNewBlockchainDataInsideWallet(),
+                      NearSmartContractCall(),
+                      NearTransferAction(),
+                      NearAddKeyAction(),
+                      NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
+                      ExportKeyInNearApiJsFormat(),
+                    ],
+                  ),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 1,
+                  child: GridView.count(
+                    crossAxisCount: isPortrait ? 1 : 2,
+                    children: [
+                      NearCryptoActionHeader(),
+                      NearActivateTestNetAccount(),
+                      NearInsertNewBlockchainDataInsideWallet(),
+                      NearSmartContractCall(),
+                      NearTransferAction(),
+                      NearAddKeyAction(),
+                      NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
+                      ExportKeyInNearApiJsFormat(),
+                    ],
+                  ),
+                );
         }
         return const Text("Undefined  state");
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
