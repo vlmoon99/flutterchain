@@ -29,6 +29,7 @@ Map<String, dynamic> _$WalletToJson(Wallet instance) => <String, dynamic>{
           instance.blockchainsData?.map((k, e) => MapEntry(k, e.toList())),
     };
 
+// ignore: unused_element
 BlockChainData _$BlockChainDataFromJson(Map<String, dynamic> json) =>
     BlockChainData(
       identifier: json['identifier'] as String,
