@@ -35,4 +35,5 @@ abstract class BlockChainService {
     required String? passphrase,
     required DerivationPath derivationPath,
   });
+  Future<String> getBlockchainNetworkEnvironment();
 }

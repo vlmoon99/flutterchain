@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
@@ -29,13 +30,13 @@ class _NearInsertNewBlockchainDataInsideWalletState
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
-    final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
+    // final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
 
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
 
     return CryptoActionCard(
-      title: 'Create New BlockChainData by derivation path',
+      title: 'Add New BlockChainData by path',
       height: 350,
       icon: Icons.wallet,
       color: nearColors.nearGreen,
@@ -55,7 +56,7 @@ class _NearInsertNewBlockchainDataInsideWalletState
         );
         nearVM
             .addBlockChainDataByDerivationPath(
-          currentDerivationPath: derivationModel,
+          derivationPath: derivationModel,
           walletID: walletID,
         )
             .then(
@@ -87,16 +88,11 @@ class _NearInsertNewBlockchainDataInsideWalletState
       child: Column(
         children: [
           const SizedBox(height: 20),
-          TextField(
-            controller: createBlockchainDataDerivationPath,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Derivation Path',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Derivation Path',
+            textEditingController: createBlockchainDataDerivationPath,
           ),
+          const SizedBox(height: 20),
           SelectableText(
             currentState.blockchainsDataCreatedByDerivationPath ?? '',
           ),

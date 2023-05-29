@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 
 class NearSmartContractCall extends StatefulWidget {
   const NearSmartContractCall({super.key});
@@ -50,7 +52,7 @@ class _NearSmartContractCallState extends State<NearSmartContractCall> {
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
     return CryptoActionCard(
       title: 'Smart Contract Call',
-      height: 600,
+      height: 700,
       icon: Icons.functions_rounded,
       color: nearColors.nearPurple,
       onTap: () {
@@ -77,7 +79,8 @@ class _NearSmartContractCallState extends State<NearSmartContractCall> {
             .then((value) {
           nearVM.nearState.add(
             currentState.copyWith(
-                resultOfSmartContractCall: value.nearSuccessValue),
+              resultOfSmartContractCall: value.data,
+            ),
           );
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -88,65 +91,53 @@ class _NearSmartContractCallState extends State<NearSmartContractCall> {
               ),
             ),
           );
-          log('resultOfSmartContractCall ${value.nearSuccessValue}');
+          log('resultOfSmartContractCall ${value.data.toString()}');
         });
       },
       child: Column(
         children: [
           const SizedBox(height: 20),
-          TextField(
-            controller: smartContractAddressController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Smart contract address',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Smart contract address',
+            textEditingController: smartContractAddressController,
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: smartContractMethodNameController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Method name',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Method name',
+            textEditingController: smartContractMethodNameController,
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: argumentsSmartContractController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: '{"key(argument name)":"value"}',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: '{"key(argument name)":"value"}',
+            textEditingController: argumentsSmartContractController,
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: amountOfDepositOnSmartContractController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Amount of Deposit',
-              labelStyle: nearTextStyles.bodyCopy!.copyWith(
-                color: nearColors.nearBlack,
-              ),
-            ),
+          NearActionTextField(
+            labelText: 'Amount of Deposit',
+            textEditingController: amountOfDepositOnSmartContractController,
           ),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: SelectableText(
-              'Result of SM call : ${currentState.resultOfSmartContractCall.toString().length > 50 ? "${currentState.resultOfSmartContractCall.toString().substring(0, 50)}..." : currentState.resultOfSmartContractCall.toString()}',
-              style: nearTextStyles.headline!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: nearColors.nearBlack,
-                fontSize: 20,
-              ),
+          // SeeTheLastTxNearBlockchainComponent(tx: '',),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SelectableText(
+                  'Result: ${(currentState.resultOfSmartContractCall?['success'].toString().length ?? 0) > 50 ? "${currentState.resultOfSmartContractCall?['success'].toString().substring(0, 50)}..." : currentState.resultOfSmartContractCall?['success'].toString()}',
+                  style: nearTextStyles.headline!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: nearColors.nearBlack,
+                    fontSize: 13.sp,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SeeTransactionInfoNearBlockchain(
+                  tx: currentState.resultOfSmartContractCall?['txHash']
+                      .toString(),
+                ),
+              ],
             ),
           ),
         ],

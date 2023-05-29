@@ -25,9 +25,11 @@ class _ExportKeyInNearApiJsFormatState
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
+    final height = MediaQuery.of(context).size.height;
+
     return CryptoActionCard(
-      title: 'Export private key to (near api js format)',
-      height: 500,
+      title: 'Export pk to (near api js format)',
+      height: height * 0.75,
       icon: Icons.storage,
       color: nearColors.nearGreen,
       onTap: () async {

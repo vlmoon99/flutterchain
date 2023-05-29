@@ -36,6 +36,14 @@ class FlutterChainService {
         ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
   }
 
+  Future<String> getBlockchainNetworkEnvironment({
+    required String blockchainType,
+  }) async {
+    return await blockchainServices[blockchainType]
+            ?.getBlockchainNetworkEnvironment() ??
+        "no link";
+  }
+
   Future<String> getWalletBalance(
       {required String accountId, required String blockchainType}) async {
     log("accountId $accountId");

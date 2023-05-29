@@ -27,8 +27,8 @@ void main() {
       //TODO add catcher
     };
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
+      // DeviceOrientation.portraitUp,
+      // DeviceOrientation.portraitDown,
     ]).then((value) => runApp(EasyLocalization(
           supportedLocales: const [
             Locale('en'),

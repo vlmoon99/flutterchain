@@ -64,7 +64,7 @@ class FlutterChainLibrary {
   }
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
-    required DerivationPath currentDerivationPath,
+    required DerivationPath derivationPath,
     required String blockchainType,
     required String walletID,
   }) async {
@@ -82,7 +82,7 @@ class FlutterChainLibrary {
 
     final blockChainData =
         await blockChainService.getBlockChainDataByDerivationPath(
-      derivationPath: currentDerivationPath,
+      derivationPath: derivationPath,
       mnemonic: wallet.mnemonic,
       passphrase: wallet.passphrase,
     );
