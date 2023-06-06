@@ -54,14 +54,23 @@ class NearVM {
     if (nearBlockChainService == null) {
       throw Exception("didn't found near blockchain service");
     }
+    const randomWalletDerivationPath = DerivationPath(
+      purpose: '44',
+      coinType: '397',
+      accountNumber: '0',
+      change: '0',
+      address: '1',
+    );
     final generatedWallet = await cryptoLibrary.blockchainService
         .generateNewWallet(walletName: "GeneratedRandom ${DateTime.now()}");
-    final generatedBlockchainData = await cryptoLibrary.blockchainService
-        .createBlockchainsDataFromTheMnemonic(
+    final randomBlockchainData = await cryptoLibrary
+        .blockchainService.blockchainServices[BlockChains.near]!
+        .getBlockChainDataByDerivationPath(
+      derivationPath: randomWalletDerivationPath,
       mnemonic: generatedWallet.mnemonic,
       passphrase: '',
     );
-    log("New Public Key ${generatedBlockchainData[BlockChains.near]!.first.publicKey}");
+    log("New Public Key ${randomBlockchainData.publicKey}");
     final currentWallet = cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == walletID);
 
@@ -95,13 +104,7 @@ class NearVM {
       allowance: yoctoNearAllowance,
       smartContractId: smartContractId,
       methodNames: methodNames,
-      derivationPathOfNewGeneratedAccount: const DerivationPath(
-        purpose: '44',
-        coinType: '397',
-        accountNumber: '0',
-        change: '0',
-        address: '1',
-      ),
+      derivationPathOfNewGeneratedAccount: randomWalletDerivationPath,
       fromAddress: fromTheAddress,
       mnemonic: generatedWallet.mnemonic,
       privateKey: privateKey,

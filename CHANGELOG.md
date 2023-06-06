@@ -17,3 +17,7 @@ UI WEb interface refactored for better UI/UX
 ## 1.0.0-beta.5
 
 Fix add/delete key functionality
+
+## 1.0.0-beta.6
+
+Fix Example and Near Keys functionality

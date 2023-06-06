@@ -169,11 +169,16 @@ export class NearBlockchain {
     const accountIndex = action.data.indexOfTheDerivationAccount;
 
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
-    const privateKeyDerivedWallet = wallet.getKey(
+
+    const privateKeyDerivedWallet = wallet.getDerivedKey(
       CoinType.near,
-      `44'/397'/${accountIndex}'/0'/1`
+      parseInt(accountIndex),
+      parseInt("0"),
+      parseInt("1")
     );
+
     const publicKey = privateKeyDerivedWallet.getPublicKeyEd25519();
+
     const permission = action.data.permission;
     const receiverId = action.data.receiverId;
     const methodNames = action.data.methodNames;
