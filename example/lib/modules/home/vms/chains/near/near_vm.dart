@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
@@ -44,15 +46,22 @@ class NearVM {
     required String smartContractId,
     required List<String> methodNames,
     required String walletID,
-    required DerivationPath derivationPathOfNewGeneratedAccount,
     required DerivationPath currentDerivationPath,
-  }) {
+  }) async {
     final yoctoNearAllowance = NearFormatter.nearToYoctoNear(allowance);
     final nearBlockChainService = cryptoLibrary.blockchainService
         .blockchainServices[BlockChains.near] as NearBlockChainService?;
     if (nearBlockChainService == null) {
       throw Exception("didn't found near blockchain service");
     }
+    final generatedWallet = await cryptoLibrary.blockchainService
+        .generateNewWallet(walletName: "GeneratedRandom ${DateTime.now()}");
+    final generatedBlockchainData = await cryptoLibrary.blockchainService
+        .createBlockchainsDataFromTheMnemonic(
+      mnemonic: generatedWallet.mnemonic,
+      passphrase: '',
+    );
+    log("New Public Key ${generatedBlockchainData[BlockChains.near]!.first.publicKey}");
     final currentWallet = cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == walletID);
 
@@ -86,9 +95,15 @@ class NearVM {
       allowance: yoctoNearAllowance,
       smartContractId: smartContractId,
       methodNames: methodNames,
-      derivationPathOfNewGeneratedAccount: derivationPathOfNewGeneratedAccount,
+      derivationPathOfNewGeneratedAccount: const DerivationPath(
+        purpose: '44',
+        coinType: '397',
+        accountNumber: '0',
+        change: '0',
+        address: '1',
+      ),
       fromAddress: fromTheAddress,
-      mnemonic: currentWallet.mnemonic,
+      mnemonic: generatedWallet.mnemonic,
       privateKey: privateKey,
       publicKey: publicKey,
     );
@@ -98,7 +113,7 @@ class NearVM {
 
   Future<BlockchainResponse> deleteKeyNearBlockChain({
     required String walletID,
-    required String publicKey,
+    required String deletedPublicKey,
     required DerivationPath currentDerivationPath,
   }) {
     final nearBlockChainService = cryptoLibrary.blockchainService
@@ -109,11 +124,18 @@ class NearVM {
     final currentWallet = cryptoLibrary.walletsStream.value
         .firstWhere((element) => element.id == walletID);
 
-    final fromAddress = currentWallet.blockchainsData?[BlockChains.near]!
+    final accountId = ((currentWallet.blockchainsData?[BlockChains.near])
+                    ?.firstWhereOrNull((element) =>
+                        element.derivationPath == currentDerivationPath)
+                as NearBlockChainData)
+            .accountId ??
+        (currentWallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
+            .publicKey;
+    final publicKey = currentWallet.blockchainsData?[BlockChains.near]!
         .firstWhereOrNull(
             (element) => element.derivationPath == currentDerivationPath)
         ?.publicKey;
-    if (fromAddress == null) {
+    if (publicKey == null) {
       throw Exception('Incorrect User public key is null');
     }
 
@@ -128,8 +150,9 @@ class NearVM {
 
     final response = nearBlockChainService.deleteKey(
       publicKey: publicKey,
-      fromAdress: fromAddress,
+      accountId: accountId,
       privateKey: privateKey,
+      deletedPublicKey: deletedPublicKey,
     );
 
     return response;

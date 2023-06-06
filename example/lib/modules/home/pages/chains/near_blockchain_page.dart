@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/export_key_in_near_api_js_format_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_activate_testnet_account.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_add_key_action.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/near_delete_key_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_insert_new_blockchaindata_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_crypto_action_header.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_make_action_with_injected_private_key.dart';
@@ -49,6 +50,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
                       NearSmartContractCall(),
                       NearTransferAction(),
                       NearAddKeyAction(),
+                      NearDeleteKeyAction(),
                       NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
                       ExportKeyInNearApiJsFormat(),
                     ],
@@ -66,6 +68,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
                       NearSmartContractCall(),
                       NearTransferAction(),
                       NearAddKeyAction(),
+                      NearDeleteKeyAction(),
                       NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
                       ExportKeyInNearApiJsFormat(),
                     ],

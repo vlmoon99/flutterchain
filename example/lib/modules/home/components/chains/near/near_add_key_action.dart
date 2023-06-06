@@ -65,8 +65,6 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
       onTap: () {
         // ignore: unused_local_variable
         final passPhrase = addKeyPassPhraseController.text;
-        final indexOfDerivationPath =
-            addKeyIndexOfTheDerivationPathController.text;
         final permissionType = addKeyPermissionTypeController.text;
         final walletID = nearVM.userStore.walletIdStream.value;
         final methodsNames =
@@ -74,21 +72,12 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
         final allowanceAmount = addKeyAllowanceAmountController.text;
         final smartContractAddress = addKeySmartContractAddressController.text;
 
-        final derivationModel = DerivationPath(
-          purpose: '44',
-          coinType: '397',
-          accountNumber: indexOfDerivationPath,
-          change: '0',
-          address: '1',
-        );
-
         final currentDerivationPath =
             nearVM.nearBlockchainStore.currentDerivationPath.value;
 
         nearVM
             .addKeyNearBlockChain(
           allowance: allowanceAmount,
-          derivationPathOfNewGeneratedAccount: derivationModel,
           currentDerivationPath: currentDerivationPath,
           methodNames: methodsNames,
           permission: permissionType,

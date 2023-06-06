@@ -50,7 +50,7 @@ class _NearDeleteKeyActionState extends State<NearDeleteKeyAction> {
             .deleteKeyNearBlockChain(
           walletID: walletID,
           currentDerivationPath: currentDerivationPath,
-          publicKey: deleteKeyPublicKeyAddress,
+          deletedPublicKey: deleteKeyPublicKeyAddress,
         )
             .then(
           (value) {

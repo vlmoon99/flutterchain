@@ -356,7 +356,8 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i8.Future<String>);
   @override
   _i8.Future<_i4.BlockchainResponse> deleteKey({
-    required String? fromAdress,
+    required String? accountId,
+    required String? deletedPublicKey,
     required String? privateKey,
     required String? publicKey,
   }) =>
@@ -365,7 +366,8 @@ class MockNearBlockChainService extends _i1.Mock
           #deleteKey,
           [],
           {
-            #fromAdress: fromAdress,
+            #accountId: accountId,
+            #deletedPublicKey: deletedPublicKey,
             #privateKey: privateKey,
             #publicKey: publicKey,
           },
@@ -377,7 +379,8 @@ class MockNearBlockChainService extends _i1.Mock
             #deleteKey,
             [],
             {
-              #fromAdress: fromAdress,
+              #accountId: accountId,
+              #deletedPublicKey: deletedPublicKey,
               #privateKey: privateKey,
               #publicKey: publicKey,
             },
@@ -476,6 +479,14 @@ class MockNearBlockChainService extends _i1.Mock
         Invocation.method(
           #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
+        ),
+        returnValue: _i8.Future<String>.value(''),
+      ) as _i8.Future<String>);
+  @override
+  _i8.Future<String> getBlockchainNetworkEnvironment() => (super.noSuchMethod(
+        Invocation.method(
+          #getBlockchainNetworkEnvironment,
+          [],
         ),
         returnValue: _i8.Future<String>.value(''),
       ) as _i8.Future<String>);

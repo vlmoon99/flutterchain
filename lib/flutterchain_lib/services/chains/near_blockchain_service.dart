@@ -211,12 +211,13 @@ class NearBlockChainService implements BlockChainService {
   //This method will delete any type of key from your account
 
   Future<BlockchainResponse> deleteKey({
-    required String fromAdress,
+    required String accountId,
+    required String deletedPublicKey,
     required String privateKey,
     required String publicKey,
   }) async {
     final transactionInfo = await getTransactionInfo(
-      accountId: fromAdress,
+      accountId: accountId,
       publicKey: publicKey,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
@@ -228,14 +229,14 @@ class NearBlockChainService implements BlockChainService {
       {
         "type": "deleteKey",
         "data": {
-          "publicKey": publicKey,
+          "publicKey": deletedPublicKey,
         },
       },
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: fromAdress,
+      fromAddress: accountId,
+      toAddress: accountId,
       transferAmount: "0",
       privateKey: privateKey,
       gas: gas,
