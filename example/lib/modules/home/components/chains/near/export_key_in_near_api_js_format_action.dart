@@ -9,7 +9,9 @@ import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class ExportKeyInNearApiJsFormat extends StatefulWidget {
-  const ExportKeyInNearApiJsFormat({super.key});
+  const ExportKeyInNearApiJsFormat({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ExportKeyInNearApiJsFormat> createState() =>

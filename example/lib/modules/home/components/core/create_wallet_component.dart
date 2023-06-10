@@ -5,13 +5,13 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 
 class CreateWalletComponent extends StatelessWidget {
   const CreateWalletComponent({
-    super.key,
+    Key? key,
     this.mnemonic,
     required this.title,
     required this.walletName,
     this.isActive = false,
     required this.onLoginAction,
-  });
+  }) : super(key: key);
 
   final String? mnemonic;
   final String title;

@@ -6,7 +6,8 @@ import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class SeeTransactionInfoNearBlockchain extends StatefulWidget {
-  const SeeTransactionInfoNearBlockchain({super.key, required this.tx});
+  const SeeTransactionInfoNearBlockchain({Key? key, required this.tx})
+      : super(key: key);
 
   final String? tx;
 

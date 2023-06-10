@@ -14,7 +14,9 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 
 class NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat
     extends StatefulWidget {
-  const NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat({super.key});
+  const NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat> createState() =>

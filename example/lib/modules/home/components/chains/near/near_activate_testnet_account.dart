@@ -7,7 +7,9 @@ import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class NearActivateTestNetAccount extends StatefulWidget {
-  const NearActivateTestNetAccount({super.key});
+  const NearActivateTestNetAccount({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NearActivateTestNetAccount> createState() =>

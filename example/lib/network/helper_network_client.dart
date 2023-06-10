@@ -1,11 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 
 class NearHelperNetworkClient extends NetworkClient {
-  NearHelperNetworkClient({required super.baseUrl, required super.dio}) {
+  NearHelperNetworkClient({required Dio dio, required String baseUrl})
+      : super(dio: dio, baseUrl: baseUrl) {
     dio.options.headers[HttpHeaders.accessControlAllowOriginHeader] = '*';
     dio.options.headers[HttpHeaders.accessControlAllowMethodsHeader] =
         'GET, POST, OPTIONS';

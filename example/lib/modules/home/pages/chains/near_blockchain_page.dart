@@ -14,7 +14,9 @@ import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart'
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 
 class NearBlockchainPage extends StatefulWidget {
-  const NearBlockchainPage({super.key});
+  const NearBlockchainPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NearBlockchainPage> createState() => _NearBlockchainPageState();

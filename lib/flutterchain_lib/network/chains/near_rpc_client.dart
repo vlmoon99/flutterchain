@@ -138,7 +138,8 @@ class NearRpcClient {
 }
 
 class NearNetworkClient extends NetworkClient {
-  NearNetworkClient({required super.baseUrl, required super.dio}) {
+  NearNetworkClient({required Dio dio, required String baseUrl})
+      : super(dio: dio, baseUrl: baseUrl) {
     dio.interceptors.add(
       RetryInterceptor(
         dio: dio,

@@ -8,9 +8,9 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 
 class SeeTheLastTxNearBlockchainComponent extends StatelessWidget {
   const SeeTheLastTxNearBlockchainComponent({
-    super.key,
+    Key? key,
     required this.tx,
-  });
+  }) : super(key: key);
   final String tx;
 
   @override

@@ -13,7 +13,9 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 
 class NearAddKeyAction extends StatefulWidget {
-  const NearAddKeyAction({super.key});
+  const NearAddKeyAction({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NearAddKeyAction> createState() => _NearAddKeyActionState();

@@ -11,7 +11,9 @@ import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart'
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class NearTransferAction extends StatefulWidget {
-  const NearTransferAction({super.key});
+  const NearTransferAction({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NearTransferAction> createState() => _NearTransferActionState();

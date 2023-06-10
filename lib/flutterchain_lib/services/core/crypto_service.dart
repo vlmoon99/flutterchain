@@ -108,7 +108,9 @@ class FlutterChainService {
     required String passphrase,
   }) async {
     final Map<String, Set<BlockChainData>> blockchainsData = {};
-    await Future.forEach(BlockChains.supportedBlockChains, (chain) async {
+    await Future.forEach(BlockChains.supportedBlockChains,
+        (chainNetwork) async {
+      final String chain = chainNetwork.toString();
       final chainService = blockchainServices[chain];
       if (chainService == null) {
         throw Exception('Incorrect Blockchain');

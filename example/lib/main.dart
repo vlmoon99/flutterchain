@@ -27,8 +27,8 @@ void main() {
       //TODO add catcher
     };
     SystemChrome.setPreferredOrientations([
-      // DeviceOrientation.portraitUp,
-      // DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
     ]).then((value) => runApp(EasyLocalization(
           supportedLocales: const [
             Locale('en'),
@@ -56,33 +56,18 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Modular.setInitialRoute(Routes.home.getModule());
 
-    return ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutterchain Wallet',
-            routeInformationParser: Modular.routeInformationParser,
-            routerDelegate: Modular.routerDelegate,
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-          );
-        });
-    // !isAuthorized
-    //     ? Modular.setInitialRoute(Routes.auth.getModule())
-    //     : Modular.setInitialRoute(Routes.home.getModule());
-    // Modular.setInitialRoute(Routes.home.getModule());
-    // return MaterialApp.router(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'Flutterchain Wallet',
-    //   routeInformationParser: Modular.routeInformationParser,
-    //   routerDelegate: Modular.routerDelegate,
-    //   localizationsDelegates: context.localizationDelegates,
-    //   supportedLocales: context.supportedLocales,
-    //   locale: context.locale,
-    // );
+    ScreenUtil.init(
+      context,
+      designSize: const Size(390, 800),
+    );
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Multi-chain Wallet',
+      routeInformationParser: Modular.routeInformationParser,
+      routerDelegate: Modular.routerDelegate,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+    );
   }
 }

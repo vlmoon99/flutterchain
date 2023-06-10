@@ -5,10 +5,10 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 
 class NearActionTextField extends StatefulWidget {
   const NearActionTextField({
-    super.key,
+    Key? key,
     required this.textEditingController,
     required this.labelText,
-  });
+  }) : super(key: key);
   final TextEditingController textEditingController;
   final String labelText;
 

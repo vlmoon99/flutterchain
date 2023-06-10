@@ -6,7 +6,8 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 
 class TransactionResult extends StatefulWidget {
   const TransactionResult(
-      {super.key, required this.response, required this.txHash});
+      {Key? key, required this.response, required this.txHash})
+      : super(key: key);
   final String response;
   final String txHash;
 

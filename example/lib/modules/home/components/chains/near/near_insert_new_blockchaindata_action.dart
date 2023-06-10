@@ -9,7 +9,9 @@ import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class NearInsertNewBlockchainDataInsideWallet extends StatefulWidget {
-  const NearInsertNewBlockchainDataInsideWallet({super.key});
+  const NearInsertNewBlockchainDataInsideWallet({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NearInsertNewBlockchainDataInsideWallet> createState() =>
