@@ -53,6 +53,6 @@ class NearFormatter {
       return 'none data in response';
     }
     final decodedRes = utf8.decode(base64.decode(successValue));
-    return decodedRes.substring(1, decodedRes.length - 1);
+    return decodedRes;
   }
 }

@@ -21,3 +21,7 @@ Fix add/delete key functionality
 ## 1.0.0-beta.6
 
 Fix Example and Near Keys functionality
+
+## 1.0.0-beta.7
+
+Fix Example UI and smart contract response decoding

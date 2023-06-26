@@ -33,7 +33,7 @@ class _NearSmartContractCallState extends State<NearSmartContractCall> {
     //Smart contract call
     argumentsSmartContractController.text =
         r'{"message": "Hello From FlutterChain"}';
-    smartContractAddressController.text = "dev-1679756367837-29230485683009";
+    smartContractAddressController.text = "dev-1687089474176-80791139926242";
     smartContractMethodNameController.text = "set_greeting";
     amountOfDepositOnSmartContractController.text = "0";
     // argumentsSmartContractController.text =
@@ -50,6 +50,15 @@ class _NearSmartContractCallState extends State<NearSmartContractCall> {
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
+    final result = (currentState.resultOfSmartContractCall?['success']
+                    .toString()
+                    .length ??
+                0) >
+            50
+        ? "${currentState.resultOfSmartContractCall?['success'].toString().substring(0, 50)}..."
+        : currentState.resultOfSmartContractCall?['success'].toString();
+    final error =
+        currentState.resultOfSmartContractCall?['error'] ?? 'No error';
     return CryptoActionCard(
       title: 'Smart Contract Call',
       height: 700,
@@ -125,7 +134,7 @@ class _NearSmartContractCallState extends State<NearSmartContractCall> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SelectableText(
-                  'Result: ${(currentState.resultOfSmartContractCall?['success'].toString().length ?? 0) > 50 ? "${currentState.resultOfSmartContractCall?['success'].toString().substring(0, 50)}..." : currentState.resultOfSmartContractCall?['success'].toString()}',
+                  'Result: ${result == 'null' ? error : result}',
                   style: nearTextStyles.headline!.copyWith(
                     fontWeight: FontWeight.bold,
                     color: nearColors.nearBlack,

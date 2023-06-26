@@ -37,7 +37,7 @@ dependencies:
   json_serializable: 6.6.1
   bs58: 1.0.2
   hex: 0.2.0
-  collection: 1.17.1
+  collection: ^1.17.1
   flutter_screenutil: ^5.7.0
   dio_smart_retry: ^5.0.0
   url_launcher: ^6.1.11
