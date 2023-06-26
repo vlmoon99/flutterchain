@@ -7,7 +7,6 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
@@ -87,19 +86,27 @@ class NearRpcClient {
       "method": "broadcast_tx_async",
       "params": params
     });
-    if (res.isSuccess) {
-      String transactionHash = res.data['result']['transaction']['hash'];
+    String? transactionHash = res.data['result']['transaction']['hash'];
+    String response = res.data['result']['status']['SuccessValue'] != null
+        ? NearFormatter.decodeResultOfResponse(
+            res.data['result']['status']['SuccessValue'].toString())
+        : "no data in response";
+    final String? functionCallError = res.data['result']['status']['Failure']
+        ['ActionError']['kind']['FunctionCallError']['ExecutionError'];
 
+    if (res.isSuccess && functionCallError == null) {
       return BlockchainResponse(
         data: {
           "txHash": transactionHash,
+          "response": response,
         },
         status: BlockchainResponses.success,
       );
     } else {
       return BlockchainResponse(
         data: {
-          "error": "Error while sending transaction",
+          "txHash": transactionHash,
+          "error": functionCallError,
         },
         status: BlockchainResponses.error,
       );
@@ -113,23 +120,29 @@ class NearRpcClient {
       "method": "broadcast_tx_commit",
       "params": params
     });
-    if (res.isSuccess) {
-      String transactionHash = res.data['result']['transaction']['hash'];
-      String successValue = res.data['result']['status']['SuccessValue']
-          .toString()
-          .nearSuccessValue;
+    String? transactionHash = res.data['result']['transaction']['hash'];
+    String response = res.data['result']['status']['SuccessValue'] != null
+        ? NearFormatter.decodeResultOfResponse(
+            res.data['result']['status']['SuccessValue'].toString())
+        : "no data in response";
+    final String? functionCallError = res.data?['result']?['status']?['Failure']
+        ?['ActionError']?['kind']?['FunctionCallError']?['ExecutionError'];
+    final String? executionError = res.data?['result']?['status']?['Failure']
+        ?['ActionError']?['kind']?['FunctionCallError']?['MethodResolveError'];
 
+    if (res.isSuccess && functionCallError == null && executionError == null) {
       return BlockchainResponse(
         data: {
           "txHash": transactionHash,
-          "success": successValue,
+          "success": response,
         },
         status: BlockchainResponses.success,
       );
     } else {
       return BlockchainResponse(
         data: {
-          "error": "'Error while sending transaction'",
+          "txHash": transactionHash,
+          "error": functionCallError ?? executionError,
         },
         status: BlockchainResponses.error,
       );

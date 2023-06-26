@@ -46,30 +46,41 @@ Instructions for building the library from source code.
     ```
 4.  Inject all dependencies as in a example with Modular or Get it , etc.
     or use default constructor in provided classes (Not recommended)
-5.  Init flutterchain lib after WidgetsFlutterBinding.ensureInitialized()
-    in main function()
+5.  Initialize the flutterchain library after WidgetsFlutterBinding.ensureInitialized() in the main function.
 
           WidgetsFlutterBinding.ensureInitialized();
           await initFlutterChainLib();
 
-          You can use my libary i na few ways - first of all you can use my libary just for sign transactions
-          To make any sign of tx you need to use BlockchainServices
-          Currently I have only Near blockchain.
+          To perform all operations with the blockchain, you need to create a private and public key.
+          For this task, you have two options:
+
+          1.Creating the wallet with generated mnemonic (Using Trust Wallet Core) :
+          Wallet wallet = await cryptoLibrary.createWalletWithGeneratedMnemonic(walletName: walletName);
+          Alternatively, if you want to import a mnemonic from somewhere, you can use the following code:
+          Wallet wallet = await cryptoLibrary.createWalletByImportedMnemonic(mnemonic: mnemonic!, walletName: walletName);
+
+          2.If you are only using services for signing and sending transactions, you can generate blockchainData using the following methods (In this example, I will be using the Near Blockchain):
+          final nearBlockChainService  = NearBlockChainService.defaultInstance();
+          NearBlockChainData blockchainData = nearBlockChainService.getBlockChainDataFromMnemonic(your_mnemonic,your_passphrase);
+
+          Once you have obtained the blockchainData containing the private and public key, you can easily communicate with the blockchain.
+
+          You can use my library in a few ways. First of all, you can use it just for signing transactions. To sign any transaction, you need to use BlockchainServices. Currently, I only have support for the Near blockchain.
 
           final nearBlockChainService  = NearBlockChainService.defaultInstance();
 
 
-          //Take all info for making the signed tx
-          // 1. Get Nonce and Blockhash information from he near blockchain(or you can use your own impl of this method )
+          Retrieve all the necessary information for making a signed transaction:
+          // 1. Get Nonce and Blockhash information from the Near blockchain (or you can use your own implementation of this method).
               final transactionInfo = await nearBlockChainService.getNonceAndBlockHashInfo(
               accountId: fromAddress,
               publicKey: publicKey,
               );
 
-          //2.Taking gas
+          //2.Retrieve gas information.
           final gas = BlockchainGas.gas[BlockChains.near];
 
-          //3.Define actions (All possible action you can find in my assets/crypto-lib (js project inside my libary) NearBlockchain class)
+          //3.Define actions. All possible actions can be found in my assets/crypto-lib (JS project inside my library) NearBlockchain class
           final actions = [
           {
           "type": "transfer",
@@ -77,7 +88,7 @@ Instructions for building the library from source code.
           }
           ];
 
-          //4.Sign action
+          //4.Sign the action
 
         final signedAction = await nearBlockChainService.signNearActions(
         fromAddress: fromAddress,
@@ -92,19 +103,20 @@ Instructions for building the library from source code.
 
         log("Result of signed the tx ${signedAction}");
 
-        //5.Send it tx to the Near Blockchain and get response (Or use your own near rpc network client)
+        //5.Send the transaction to the Near Blockchain and get the response (or use your own Near RPC network client).
         final res = await nearBlockChainService.nearRpcClient.sendSyncTx([signedAction]);
         log("Result of transaction executing ->  ${res.toJson().toString()}");
 
-        Or you can use all library together.
-        You can see my architecture in draw.io using flutterchain_arch.drawio file inside the library.
+        Alternatively, you can use the entire library together. You can see the architecture in the draw.io file flutterchain_arch.drawio inside the library.
 
-        (Important)To use my library together make sure that you know DI principles .
-        First of all you can see an example inside my example folder at modules folder(example/lib/modules).
+        (Important) To use my library together, make sure you are familiar with the DI (Dependency Injection) principles.
+        First, you can see an example inside my example folder at modules folder (example/lib/modules).
+        You can see how I initialized my dependencies in the .module.dart files.
+        After this, you can go to the components and pages (example/lib/modules/home/components/chains/near) and see how I use my library.
 
-        You can see how I initialized my dependencies(in .module.dart files) and after this you can go to the components and pages(example/lib/modules/home/components/chains/near)and see how I use my library.
-
-        If in two words I have library which contains BlockchainServices and some Repositories(For now just for Wallet model). I also have a stream with a current wallets. FlutterChainLibrary class provides high level of api to using WEB 3.0 ethernet. you can send transfer in native tokens , make smart contract call, and etc.
+        In a nutshell, I have a library that contains BlockchainServices and some Repositories (currently only for the Wallet model).
+        I also have a stream with the current wallets.
+        The FlutterChainLibrary class provides a high level of API for using WEB 3.0. You can send transfers in native tokens, make smart contract calls, and more.
 
         For Example :
         final response = cryptoLibrary.sendTransferNativeCoin(
@@ -117,9 +129,9 @@ Instructions for building the library from source code.
 
         log(response.toJson().toString());
 
-        //Wallet id its a wallet ID of wallets inside a walletsStream.
-        You take from there some wallet and also provide blockchain type,
-        and derivation path of the wallet (https://github.com/satoshilabs/slips/blob/master/slip-0044.md ,
+        //The walletId is the wallet ID of wallets inside a walletsStream.
+        You take a wallet from there and also provide the blockchain
+        type and derivation path of the wallet (https://github.com/satoshilabs/slips/blob/master/slip-0044.md ,
         https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki).
         If you need some specific functionality for some blockchains - take it from FlutterChainService :
 

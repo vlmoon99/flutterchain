@@ -2,15 +2,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
-import 'package:flutterchain_example/modules/home/components/chains/near/see_the_last_tx_near_component.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/ui_state.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_response.dart';
 
 class NearAddKeyAction extends StatefulWidget {
   const NearAddKeyAction({super.key});
@@ -65,8 +62,6 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
       onTap: () {
         // ignore: unused_local_variable
         final passPhrase = addKeyPassPhraseController.text;
-        final indexOfDerivationPath =
-            addKeyIndexOfTheDerivationPathController.text;
         final permissionType = addKeyPermissionTypeController.text;
         final walletID = nearVM.userStore.walletIdStream.value;
         final methodsNames =
@@ -74,21 +69,12 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
         final allowanceAmount = addKeyAllowanceAmountController.text;
         final smartContractAddress = addKeySmartContractAddressController.text;
 
-        final derivationModel = DerivationPath(
-          purpose: '44',
-          coinType: '397',
-          accountNumber: indexOfDerivationPath,
-          change: '0',
-          address: '1',
-        );
-
         final currentDerivationPath =
             nearVM.nearBlockchainStore.currentDerivationPath.value;
 
         nearVM
             .addKeyNearBlockChain(
           allowance: allowanceAmount,
-          derivationPathOfNewGeneratedAccount: derivationModel,
           currentDerivationPath: currentDerivationPath,
           methodNames: methodsNames,
           permission: permissionType,
@@ -106,11 +92,19 @@ class _NearAddKeyActionState extends State<NearAddKeyAction> {
               ),
             ),
           );
-          log("result of Adding Key ${value.nearSuccessValue}");
+          log("result of Adding Key ${value.data['response']}");
         });
       },
       child: Column(
         children: [
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 1,
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
           NearActionTextField(
             labelText: 'Method names',

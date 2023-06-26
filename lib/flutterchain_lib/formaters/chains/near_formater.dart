@@ -49,10 +49,10 @@ class NearFormatter {
   }
 
   static String decodeResultOfResponse(String successValue) {
-    if (successValue.isEmpty) {
+    if (successValue.isEmpty || successValue == 'null') {
       return 'none data in response';
     }
     final decodedRes = utf8.decode(base64.decode(successValue));
-    return decodedRes.substring(1, decodedRes.length - 1);
+    return decodedRes;
   }
 }
