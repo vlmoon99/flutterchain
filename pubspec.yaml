@@ -1,6 +1,6 @@
 name: flutterchain
 description: Multi-chain library for communication with blockchain systems. Based on WalletCore.
-version: 1.0.0-beta.7
+version: 1.0.0-beta.8
 repository: https://github.com/vlmoon99/flutterchain
 
 environment:
@@ -19,7 +19,7 @@ dependencies:
   bs58: ^1.0.2
   hex: ^0.2.0
   collection: ^1.17.0
-  flutter_inappwebview: ^6.0.0-beta.22
+  flutter_inappwebview: ^6.0.0-beta.24
   dio_smart_retry: ^5.0.0
   path_provider: ^2.0.14
   json_annotation: ^4.8.1
