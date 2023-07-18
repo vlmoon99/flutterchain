@@ -1,7 +1,6 @@
 import * as BN from "bn.js";
 import Long from "long";
 import bs58 from "bs58";
-// import * as nearAPI from "near-api-js";
 import nacl from "tweetnacl";
 
 export class NearBlockchain {
@@ -168,7 +167,7 @@ export class NearBlockchain {
     const passphrase = action.data.passphrase;
     const accountIndex = action.data.indexOfTheDerivationAccount;
 
-    const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase ?? "");
+    const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase || "");
 
     const privateKeyDerivedWallet = wallet.getDerivedKey(
       CoinType.near,

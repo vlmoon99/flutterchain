@@ -10,6 +10,7 @@ const config = {
     libraryTarget: "commonjs2",
   },
   target: "node",
+  devtool: "inline-source-map", // This option controls if and how source maps are generated.
   module: {
     rules: [
       {
@@ -20,7 +21,7 @@ const config = {
           // requireInclude: false, // disable require.include
           // requireEnsure: false, // disable require.ensure
           // requireContext: true, // disable require.context
-          // browserify: true, // disable special handling of Browserify bundles
+          browserify: true, // disable special handling of Browserify bundles
           // requireJs: true, // disable requirejs.*
           node: true, // disable __dirname, __filename, module, require.extensions, require.main, etc.
           // commonjsMagicComments: false, // disable magic comments support for CommonJS
