@@ -3,22 +3,20 @@ import 'dart:convert';
 class NearFormatter {
   static String yoctoNearToNear(String yoctoNearAmount) {
     BigInt yoctoNear = BigInt.parse(yoctoNearAmount);
-    String yoctoNearString = yoctoNear.toString();
+    String yoctoNearString = yoctoNear
+        .toString()
+        .padLeft(25, '0'); // pad with leading zeroes if needed
+
     String integerPart =
         yoctoNearString.substring(0, yoctoNearString.length - 24);
     String decimalPart = yoctoNearString.substring(yoctoNearString.length - 24);
 
-    if (decimalPart == '0') {
+    decimalPart =
+        decimalPart.replaceAll(RegExp(r'0*$'), ''); // remove trailing zeros
+
+    if (decimalPart.isEmpty) {
       return integerPart;
     } else {
-      int endIndex = decimalPart.length;
-      for (int i = decimalPart.length - 1; i >= 0; i--) {
-        if (decimalPart[i] != '0') {
-          endIndex = i + 1;
-          break;
-        }
-      }
-      decimalPart = decimalPart.substring(0, endIndex);
       return double.tryParse('$integerPart.$decimalPart')?.toStringAsFixed(5) ??
           '0';
     }
