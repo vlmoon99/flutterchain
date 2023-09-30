@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Near Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/near-api-js@0.44.2/dist/near-api-js.min.js"
+        integrity="sha256-W5o4c5DRZZXMKjuL41jsaoBpE/UHMkrGvIxN9HcjNSY=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <script>
+
+        const addNewFullAcseesKeyToTheNearBlockchain = async (key) => {
+            const { keyStores, KeyPair, connect, WalletConnection } = nearApi;
+            const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
+            const connectionConfig = {
+                networkId: "mainnet",
+                keyStore: myKeyStore,
+                nodeUrl: "https://rpc.mainnet.near.org",
+                walletUrl: "https://app.mynearwallet.com",
+                helperUrl: "https://helper.mainnet.near.org",
+                explorerUrl: "https://explorer.mainnet.near.org",
+            };
+            const nearConnection = await connect(connectionConfig);
+            const wallet = new WalletConnection(nearConnection);
+
+            const PENDING_ACCESS_KEY_PREFIX = "pending_key";
+
+            const loginFullAccess = async (options) => {
+                const currentUrl = new URL(window.location.href);
+                const newUrl = new URL(wallet._walletBaseUrl + "/login/");
+                // newUrl.searchParams.set("success_url", "http://localhost:8081/crypto/near/index.html");
+                // newUrl.searchParams.set("failure_url", "http://localhost:8081/crypto/near/index.html");
+
+                const accessKey = KeyPair.fromString(key);
+                newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
+                await wallet._keyStore.setKey(
+                    wallet._networkId,
+                    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
+                    accessKey
+                );
+
+                window.location.assign(newUrl.toString());
+            };
+
+
+            loginFullAccess();
+
+
+        };
+
+        window.addNewFullAcseesKeyToTheNearBlockchain = addNewFullAcseesKeyToTheNearBlockchain;
+
+
+        function getAccountId() {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                if (!value.startsWith("{") && value.includes(".near")) {
+                    console.log(`Key: ${key}, Value: ${value}`);
+                    return value;
+                }
+            }
+            return 'no_Account';
+        }
+
+        getAccountId();
+
+    </script>
+
+</body>
+
+</html>

@@ -20,7 +20,7 @@ class CryptoActionsPage extends StatelessWidget {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
 
-    final blockchainKey = ModalRoute.of(context)!.settings.arguments as String;
+    final blockchainKey = ModalRoute.of(context)!.settings.arguments as String?;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: nearColors.nearAqua,
@@ -44,7 +44,7 @@ class CryptoActionsPage extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
           Expanded(
-            child: getBlockchainActionsPage(blockchainKey),
+            child: getBlockchainActionsPage(blockchainKey ?? BlockChains.near),
           ),
         ],
       ),

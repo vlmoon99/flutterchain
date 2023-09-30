@@ -1,6 +1,6 @@
 name: flutterchain
 description: Multi-chain library for communication with blockchain systems. Based on WalletCore.
-version: 1.0.0-beta.9
+version: 1.0.0-beta.10
 repository: https://github.com/vlmoon99/flutterchain
 
 environment:
@@ -67,7 +67,8 @@ flutter:
   # To add assets to your plugin package, add an assets section, like this:
   assets:
     - assets/crypto-lib/dist/
-  #
+    - assets/helpers/crypto/near/
+
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages
   #

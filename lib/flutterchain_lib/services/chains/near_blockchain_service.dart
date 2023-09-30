@@ -1,8 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_gas.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
@@ -341,5 +346,150 @@ class NearBlockChainService implements BlockChainService {
   @override
   Future<String> getBlockchainNetworkEnvironment() async {
     return nearRpcClient.networkClient.dio.options.baseUrl;
+  }
+
+  //Login with Near Wallets
+
+  Future<void> authWithNearWalletsWeb(String privateNearAPIjsFormat,
+      [String? successUrlCallBackWeb, String? failureUrlCallBackWeb]) async {
+    final currentUrl = await jsVMService.callJS("window.location.href");
+    await jsVMService.callJS('''
+    // Create a script element
+    var script = document.createElement('script');
+
+    // Set the script source, integrity, and crossorigin attributes
+    script.src = 'https://cdn.jsdelivr.net/npm/near-api-js@0.44.2/dist/near-api-js.min.js';
+    script.integrity = 'sha256-W5o4c5DRZZXMKjuL41jsaoBpE/UHMkrGvIxN9HcjNSY=';
+    script.crossOrigin = 'anonymous';
+
+    // Add an event listener to execute code when the script has loaded
+    script.onload = function() {
+        // Your code to run after the script has loaded
+        console.log('Near API JS has loaded!');
+                const addNewFullAcseesKeyToTheNearBlockchain = async (key) => {
+            const { keyStores, KeyPair, connect, WalletConnection } = nearApi;
+            const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
+            const connectionConfig = {
+                networkId: "mainnet",
+                keyStore: myKeyStore,
+                nodeUrl: "https://rpc.mainnet.near.org",
+                walletUrl: "https://app.mynearwallet.com",
+                helperUrl: "https://helper.mainnet.near.org",
+                explorerUrl: "https://explorer.mainnet.near.org",
+            };
+            const nearConnection = await connect(connectionConfig);
+            const wallet = new WalletConnection(nearConnection);
+
+            const PENDING_ACCESS_KEY_PREFIX = "pending_key";
+
+            const loginFullAccess = async (options) => {
+                const currentUrl = new URL(window.location.href);
+                const newUrl = new URL(wallet._walletBaseUrl + "/login/");
+                newUrl.searchParams.set("success_url", "${successUrlCallBackWeb ?? currentUrl}");
+                newUrl.searchParams.set("failure_url", "${failureUrlCallBackWeb ?? currentUrl}");
+
+                const accessKey = KeyPair.fromString(key);
+                newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
+                await wallet._keyStore.setKey(
+                    wallet._networkId,
+                    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
+                    accessKey
+                );
+
+                window.location.assign(newUrl.toString());
+            };
+
+
+            loginFullAccess();
+
+
+        };
+
+        window.addNewFullAcseesKeyToTheNearBlockchain = addNewFullAcseesKeyToTheNearBlockchain;
+
+    };
+
+    // Append the script element to the head of the document
+    document.head.appendChild(script);
+
+    window.addNewFullAcseesKeyToTheNearBlockchain('$privateNearAPIjsFormat');
+
+''');
+  }
+
+  String? getAccountIdFromWalletRedirectOnTheWeb() {
+    if (!kIsWeb) {
+      return 'no_web_env';
+    }
+    String? accountId = Uri.base.queryParameters["account_id"];
+    return accountId;
+  }
+
+  Future<String> authWithNearWallets(
+    BuildContext context,
+    String privateNearAPIjsFormat,
+  ) async {
+    InAppWebViewSettings settings = InAppWebViewSettings(
+      useShouldOverrideUrlLoading: true,
+      mediaPlaybackRequiresUserGesture: false,
+      allowsInlineMediaPlayback: true,
+      iframeAllowFullscreen: true,
+    );
+
+    final accountID = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(),
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(
+              url: WebUri(WebViewConstants.nearLoginThroughtWebView),
+            ),
+            initialSettings: settings,
+            onWebViewCreated: (controller) {},
+            onLoadStart: (controller, url) {},
+            onPermissionRequest: (controller, request) async {
+              return PermissionResponse(
+                  resources: request.resources,
+                  action: PermissionResponseAction.GRANT);
+            },
+            shouldOverrideUrlLoading: (controller, navigationAction) async {
+              return NavigationActionPolicy.ALLOW;
+            },
+            onLoadStop: (controller, url) async {
+              controller.evaluateJavascript(source: '''
+          window.addNewFullAcseesKeyToTheNearBlockchain("$privateNearAPIjsFormat").then((res) => {
+                console.log('Key was added suscessfuly');
+              });
+        ''');
+            },
+            onReceivedError: (controller, request, error) {},
+            onProgressChanged: (controller, progress) {},
+            onUpdateVisitedHistory: (controller, url, androidIsReload) async {
+              if (url?.rawValue ==
+                  'https://app.mynearwallet.com/authorized-apps') {
+                final accountId = (await controller.webStorage.localStorage
+                        .getItems())
+                    .where(
+                        (element) => element.value.toString().contains('.near'))
+                    .toList()
+                    .firstWhere(
+                        (element) => !element.value.toString().startsWith("{"))
+                    .value;
+
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context, accountId);
+              }
+            },
+            onConsoleMessage: (controller, consoleMessage) {
+              // log(consoleMessage.toString());
+            },
+          ),
+        );
+      },
+    );
+    return accountID ?? 'no_account_id';
   }
 }

@@ -1,8 +1,14 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/export_key_in_near_api_js_format_action.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/login_with_mynear_wallet.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_activate_testnet_account.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_add_key_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_delete_key_action.dart';
@@ -24,6 +30,20 @@ class NearBlockchainPage extends StatefulWidget {
 class _NearBlockchainPageState extends State<NearBlockchainPage>
     with AutomaticKeepAliveClientMixin {
   @override
+  void initState() {
+    super.initState();
+    final nearVM = Modular.get<NearVM>();
+    String? accountId = (nearVM.cryptoLibrary.blockchainService
+                .blockchainServices[BlockChains.near] as NearBlockChainService)
+            .getAccountIdFromWalletRedirectOnTheWeb() ??
+        '';
+
+    if (accountId.isNotEmpty) {
+      log("accountId was sucsessfuly added $accountId from The Flutter WEB Enviroment");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final nearVM = Modular.get<NearVM>();
 
@@ -44,6 +64,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
                   child: Column(
                     // key: UniqueKey(),
                     children: [
+                      LoginWithMyNearWallets(),
                       NearCryptoActionHeader(),
                       NearActivateTestNetAccount(),
                       NearInsertNewBlockchainDataInsideWallet(),

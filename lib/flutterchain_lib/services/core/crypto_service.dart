@@ -46,7 +46,6 @@ class FlutterChainService {
 
   Future<String> getWalletBalance(
       {required String accountId, required String blockchainType}) async {
-    log("accountId $accountId");
     final res =
         await blockchainServices[blockchainType]?.getWalletBalance(accountId);
     return res ?? 'Error : no balance result';
