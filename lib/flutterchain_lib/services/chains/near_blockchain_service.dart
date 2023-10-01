@@ -366,7 +366,7 @@ class NearBlockChainService implements BlockChainService {
     script.onload = function() {
         // Your code to run after the script has loaded
         console.log('Near API JS has loaded!');
-                const addNewFullAcseesKeyToTheNearBlockchain = async (key) => {
+        const addNewFullAccessKeyToTheNearBlockchain = async (key) => {
             const { keyStores, KeyPair, connect, WalletConnection } = nearApi;
             const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
             const connectionConfig = {
@@ -405,14 +405,14 @@ class NearBlockChainService implements BlockChainService {
 
         };
 
-        window.addNewFullAcseesKeyToTheNearBlockchain = addNewFullAcseesKeyToTheNearBlockchain;
-
+        window.addNewFullAccessKeyToTheNearBlockchain = addNewFullAccessKeyToTheNearBlockchain;
+       addNewFullAccessKeyToTheNearBlockchain('$privateNearAPIjsFormat');
     };
 
     // Append the script element to the head of the document
     document.head.appendChild(script);
 
-    window.addNewFullAcseesKeyToTheNearBlockchain('$privateNearAPIjsFormat');
+   // window.addNewFullAccessKeyToTheNearBlockchain('$privateNearAPIjsFormat');
 
 ''');
   }
