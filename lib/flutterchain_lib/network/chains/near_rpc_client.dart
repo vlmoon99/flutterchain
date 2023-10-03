@@ -86,6 +86,13 @@ class NearRpcClient {
       "method": "broadcast_tx_async",
       "params": params
     });
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    }
+
     String? transactionHash = res.data['result']['transaction']['hash'];
     String response = res.data['result']['status']['SuccessValue'] != null
         ? NearFormatter.decodeResultOfResponse(
@@ -120,6 +127,13 @@ class NearRpcClient {
       "method": "broadcast_tx_commit",
       "params": params
     });
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    }
+
     String? transactionHash = res.data['result']['transaction']['hash'];
     String response = res.data['result']['status']['SuccessValue'] != null
         ? NearFormatter.decodeResultOfResponse(
