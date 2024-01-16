@@ -21,7 +21,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     log(
       'Get error status code(${err.response?.statusCode})'
       'Response body (${err.response?.data.toString()})',
