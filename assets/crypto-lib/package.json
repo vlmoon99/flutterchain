@@ -21,19 +21,11 @@
     "bn.js": "^5.2.1",
     "browserify": "^17.0.0",
     "bs58": "^5.0.0",
-    "buffer": "^6.0.3",
     "fs": "npm:empty-npm-package@1.0.0",
-    "fs-extra": "^10.1.0",
-    "i": "^0.3.7",
     "long": "5.2.1",
-    "near-api-js": "^2.1.3",
     "npm": "^10.3.0",
-    "npm-watch": "^0.11.0",
-    "path-browserify": "^1.0.1",
-    "protobufjs": "^7.2.2",
     "tweetnacl": "^1.0.3",
-    "watchify": "^4.0.0",
-    "web-vitals": "^2.1.4"
+    "watchify": "^4.0.0"
   },
   "devDependencies": {
     "esmify": "^2.1.1"
