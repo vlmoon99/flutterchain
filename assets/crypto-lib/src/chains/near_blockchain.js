@@ -1,4 +1,4 @@
-import * as BN from "bn.js";
+import BN from "bn.js";
 import Long from "long";
 import bs58 from "bs58";
 import nacl from "tweetnacl";

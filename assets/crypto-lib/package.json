@@ -11,14 +11,15 @@
   },
   "scripts": {
     "clean": "rm dist/bundle.js",
-    "build-dev": "webpack --mode development",
-    "build-prod": "webpack --mode production ",
-    "watch": "npm-watch"
+    "build-dev": "browserify ./src/index.js -p esmify -o ./dist/bundle.js",
+    "build-prod": "browserify ./src/index.js -p esmify -o ./dist/bundle.js",
+    "watch": "watchify ./src/index.js -p esmify -o ./dist/bundle.js"
   },
   "private": true,
   "dependencies": {
-    "@trustwallet/wallet-core": "3.0.1",
+    "@trustwallet/wallet-core": "4.0.18",
     "bn.js": "^5.2.1",
+    "browserify": "^17.0.0",
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "fs": "npm:empty-npm-package@1.0.0",
@@ -26,17 +27,15 @@
     "i": "^0.3.7",
     "long": "5.2.1",
     "near-api-js": "^2.1.3",
-    "node-polyfill-webpack-plugin": "^1.1.4",
-    "npm": "^9.6.5",
+    "npm": "^10.3.0",
     "npm-watch": "^0.11.0",
     "path-browserify": "^1.0.1",
     "protobufjs": "^7.2.2",
     "tweetnacl": "^1.0.3",
+    "watchify": "^4.0.0",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^11.0.0",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.1.4"
+    "esmify": "^2.1.1"
   }
 }
