@@ -10,10 +10,9 @@
     "build-dev": "*.js"
   },
   "scripts": {
-    "clean": "rm dist/bundle.js",
-    "build-dev": "browserify ./src/index.js -p esmify -o ./dist/bundle.js",
-    "build-prod": "browserify ./src/index.js -p esmify -o ./dist/bundle.js",
-    "watch": "watchify ./src/index.js -p esmify -o ./dist/bundle.js"
+    "clean": "rm -r dist/bundle.js package-lock.json node_modules",
+    "build": "node ./scripts/wallet_core_fix.js && browserify ./src/index.js -p esmify -o ./dist/bundle.js",
+    "watch": "node ./scripts/wallet_core_fix.js && watchify ./src/index.js -p esmify -o ./dist/bundle.js"
   },
   "private": true,
   "dependencies": {
