@@ -26,11 +26,10 @@ Instructions for building the library from source code.
 1. Add This code to the head tag For Web project
 
 ```
- <script
-      type="application/javascript"
-      src="/assets/packages/flutter_inappwebview/assets/web/web_support.js"
-      defer
-   ></script>
+  <script type="application/javascript" 
+    src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" 
+    defer
+  ></script>
 
   <script
       type="application/javascript"
