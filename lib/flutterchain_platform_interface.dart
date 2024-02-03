@@ -19,7 +19,7 @@ abstract class FlutterchainPlatform extends PlatformInterface {
   /// platform-specific class that extends [FlutterchainPlatform] when
   /// they register themselves.
   static set instance(FlutterchainPlatform instance) {
-    PlatformInterface.verifyToken(instance, _token);
+    PlatformInterface.verify(instance, _token);
     _instance = instance;
   }
 

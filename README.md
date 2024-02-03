@@ -26,11 +26,10 @@ Instructions for building the library from source code.
 1. Add This code to the head tag For Web project
 
 ```
- <script
-      type="application/javascript"
-      src="/assets/packages/flutter_inappwebview/assets/web/web_support.js"
-      defer
-   ></script>
+  <script type="application/javascript" 
+    src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" 
+    defer
+  ></script>
 
   <script
       type="application/javascript"
@@ -39,7 +38,7 @@ Instructions for building the library from source code.
 ></script>
 ```
 
-2.  Set minSdkVersion 19 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest
+2.  Set Android: minSdkVersion >= 19, compileSdk >= 34, AGP version >= 7.3.0 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest
 3.  Add network permission to android manifest -
     ```
     <uses-permission android:name="android.permission.INTERNET"/>

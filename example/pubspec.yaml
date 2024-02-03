@@ -14,47 +14,31 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bs58: 1.0.2
+  collection: ^1.17.1
+  connectivity_plus: 3.0.3
+  cupertino_icons: ^1.0.2
+  dio: ^5.4.0
+  dio_smart_retry: ^6.0.0
+  easy_localization: ^3.0.1
   flutter:
     sdk: flutter
-
-  flutterchain:
-    # When depending on this package from a real application you should use:
-    #   flutterchain: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    path: ../
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
   flutter_modular: 5.0.3
-  rxdart: 0.27.7
-  easy_localization: ^3.0.1
-  tap_debouncer: 2.0.2
-  connectivity_plus: 3.0.3
-  dio: 5.0.1
-  json_serializable: 6.6.1
-  bs58: 1.0.2
-  hex: 0.2.0
-  collection: ^1.17.1
   flutter_screenutil: ^5.7.0
-  dio_smart_retry: ^5.0.0
+  flutterchain:
+    path: ../
+  hex: 0.2.0
+  json_serializable: 6.6.1
+  rxdart: 0.27.7
+  tap_debouncer: 2.0.2
   url_launcher: ^6.1.11
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^2.0.0
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -69,10 +53,8 @@ flutter:
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -95,6 +77,5 @@ flutter:
           weight: 400
         - asset: assets/fonts/manrope/static/Manrope-SemiBold.ttf
           weight: 600
-
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

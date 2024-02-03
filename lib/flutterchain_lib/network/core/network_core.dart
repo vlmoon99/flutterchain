@@ -19,7 +19,7 @@ class NetworkClient {
     dio.options.baseUrl = newUrl;
   }
 
-  AppExceptions _handleError(DioError e) {
+  AppExceptions _handleError(DioException e) {
     final details = jsonDecode(e.response?.data)['detail'];
     final exception = AppExceptions(
         messageForUser: details,
@@ -33,7 +33,7 @@ class NetworkClient {
     try {
       Response response = await dio.get(url);
       return ApiResponse.success(response.data, response.statusCode!, true);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       appExceptions = _handleError(e);
     }
     return ApiResponse.error(
@@ -49,7 +49,7 @@ class NetworkClient {
         data: data,
       );
       return ApiResponse.success(response.data, response.statusCode!, true);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       appExceptions = _handleError(e);
     }
     return ApiResponse.error(
@@ -62,7 +62,7 @@ class NetworkClient {
     try {
       Response response = await dio.put(url, data: data);
       return ApiResponse.success(response.data, response.statusCode!, true);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       appExceptions = _handleError(e);
     }
     return ApiResponse.error(
@@ -75,7 +75,7 @@ class NetworkClient {
     try {
       Response response = await dio.delete(url, data: data);
       return ApiResponse.success(response.data, response.statusCode!, true);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       appExceptions = _handleError(e);
     }
 

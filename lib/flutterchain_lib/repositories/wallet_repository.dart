@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/storage_keys.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/core/core_repository.dart';
@@ -12,8 +13,17 @@ class WalletRepository extends Repository<Wallet> {
   WalletRepository({required this.secureStorage});
 
   factory WalletRepository.defaultInstance() {
+    late final FlutterSecureStorage secureStorage;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      const androidOptions = AndroidOptions(
+        encryptedSharedPreferences: true,
+      );
+      secureStorage = const FlutterSecureStorage(aOptions: androidOptions);
+    } else {
+      secureStorage = const FlutterSecureStorage();
+    }
     return WalletRepository(
-      secureStorage: const FlutterSecureStorage(),
+      secureStorage: secureStorage,
     );
   }
   @override
