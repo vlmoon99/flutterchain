@@ -16,11 +16,10 @@
   },
   "private": true,
   "dependencies": {
-    "@trustwallet/wallet-core": "4.0.18",
+    "@trustwallet/wallet-core": "^4.0.24",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
-    "fs": "npm:empty-npm-package@1.0.0",
-    "long": "5.2.1",
+    "long": "5.2.3",
     "npm": "^10.3.0",
     "tweetnacl": "^1.0.3",
     "watchify": "^4.0.0"
