@@ -81,6 +81,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                     CreateWalletComponent(
                       title: 'Import wallet with mnemonic phrase',
                       walletName: walletNameTextEditingController.text,
+                      mnemonic: mnemonicTextEditingController.text,
                       isActive:
                           walletNameTextEditingController.text.isNotEmpty &&
                               mnemonicTextEditingController.text.isNotEmpty,
