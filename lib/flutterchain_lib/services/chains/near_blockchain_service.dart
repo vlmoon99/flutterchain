@@ -281,8 +281,9 @@ class NearBlockChainService implements BlockChainService {
         "data": {
           "mnemonic": mnemonic,
           "passphrase": passphrase,
-          "indexOfTheDerivationAccount":
-              derivationPathOfNewGeneratedAccount.accountNumber,
+          "indexOfTheDerivationAccount": derivationPathOfNewGeneratedAccount
+              .accountNumber
+              .replaceAll("'", ""),
           "permission": permission,
           "receiverId": smartContractId,
           "methodNames": methodNames,
