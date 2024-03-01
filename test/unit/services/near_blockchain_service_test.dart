@@ -91,11 +91,11 @@ void main() {
           publicKey: 'examplePublicKey',
           privateKey: 'examplePrivateKey',
           derivationPath: const DerivationPath(
-            accountNumber: '0',
-            change: '0',
-            address: '0',
-            coinType: '397',
-            purpose: '44',
+            purpose: "44'",
+            coinType: "397'",
+            accountNumber: "0'",
+            change: "0'",
+            address: "1'",
           ),
           passphrase: passphrase,
         ),
@@ -109,11 +109,11 @@ void main() {
             publicKey: 'examplePublicKey',
             privateKey: 'examplePrivateKey',
             derivationPath: const DerivationPath(
-              accountNumber: '0',
-              change: '0',
-              address: '0',
-              coinType: '397',
-              purpose: '44',
+              purpose: "44'",
+              coinType: "397'",
+              accountNumber: "0'",
+              change: "0'",
+              address: "1'",
             ),
             passphrase: passphrase,
           ));
@@ -124,11 +124,11 @@ void main() {
       const mnemonic = 'some_mnemonic';
       const passphrase = 'some_passphrase';
       const derivationPath = DerivationPath(
-        accountNumber: '0',
-        change: '0',
-        address: '0',
-        coinType: '397',
-        purpose: '44',
+        purpose: "44'",
+        coinType: "397'",
+        accountNumber: "0'",
+        change: "0'",
+        address: "1'",
       );
 
       final expectedResult = NearBlockChainData(

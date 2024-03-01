@@ -85,9 +85,13 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
               .firstWhere((element) =>
                   element.id == nearVM.userStore.walletIdStream.value)
               .blockchainsData![BlockChains.near]
-              ?.firstWhereOrNull(
-                  (element) => element.derivationPath == derivationModel)
-              ?.derivationPath;
+              ?.firstWhereOrNull((element) {
+            if (element.derivationPath == derivationModel) {
+              return true;
+            } else {
+              return false;
+            }
+          })?.derivationPath;
           log("currentPublicAddress $currentPublicAddress");
           log("currentPrivAddress $currentPrivAddress");
           log("mnemonic ${nearVM.cryptoLibrary.walletsStream.value.firstWhere((element) => element.id == nearVM.userStore.walletIdStream.value).mnemonic}");
