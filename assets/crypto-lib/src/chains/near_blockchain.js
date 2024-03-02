@@ -47,18 +47,14 @@ export class NearBlockchain {
   getBlockChainDataFromMnemonic(
     mnemonic,
     passphrase = "",
-    account = "0",
-    change = "0",
-    address = "1"
+    account = "0'",
+    change = "0'",
+    address = "1'"
   ) {
     const { CoinType, HDWallet, Base64, HexCoding } = window.WalletCore;
     const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
-    const privateKey = wallet.getDerivedKey(
-      CoinType.near,
-      parseInt(account),
-      parseInt(change),
-      parseInt(address)
-    );
+    const derivationPath = `m/44'/397'/${account}/${change}/${address}`;
+    const privateKey = wallet.getKey(CoinType.near, derivationPath);
     const privateKeyString = Base64.encode(privateKey.data());
     const hexString = HexCoding.encode(privateKey.getPublicKeyEd25519().data());
 
@@ -69,8 +65,8 @@ export class NearBlockchain {
       privateKey: privateKeyString,
       passphrase: passphrase,
       derivationPath: {
-        purpose: "44",
-        coinType: "397",
+        purpose: "44'",
+        coinType: "397'",
         accountNumber: account,
         change: change,
         address: address,

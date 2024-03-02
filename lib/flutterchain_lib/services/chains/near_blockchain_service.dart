@@ -148,7 +148,7 @@ class NearBlockChainService implements BlockChainService {
     required DerivationPath derivationPath,
   }) async {
     final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase','${derivationPath.accountNumber}','${derivationPath.change}','${derivationPath.address}')");
+        """window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${derivationPath.accountNumber}","${derivationPath.change}","${derivationPath.address}")""");
     final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
     return blockChainData;
   }
@@ -281,8 +281,9 @@ class NearBlockChainService implements BlockChainService {
         "data": {
           "mnemonic": mnemonic,
           "passphrase": passphrase,
-          "indexOfTheDerivationAccount":
-              derivationPathOfNewGeneratedAccount.accountNumber,
+          "indexOfTheDerivationAccount": derivationPathOfNewGeneratedAccount
+              .accountNumber
+              .replaceAll("'", ""),
           "permission": permission,
           "receiverId": smartContractId,
           "methodNames": methodNames,

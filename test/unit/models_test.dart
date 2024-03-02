@@ -27,11 +27,11 @@ void main() {
         publicKey: 'near public key',
         privateKey: 'near private key',
         derivationPath: const DerivationPath(
-          purpose: '44',
-          coinType: '397',
-          accountNumber: '0',
-          change: '0',
-          address: '1',
+          purpose: "44'",
+          coinType: "397'",
+          accountNumber: "0'",
+          change: "0'",
+          address: "1'",
         ),
         passphrase: 'passphrase',
       );

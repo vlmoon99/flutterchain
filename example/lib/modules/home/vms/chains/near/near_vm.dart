@@ -55,11 +55,11 @@ class NearVM {
       throw Exception("didn't found near blockchain service");
     }
     const randomWalletDerivationPath = DerivationPath(
-      purpose: '44',
-      coinType: '397',
-      accountNumber: '0',
-      change: '0',
-      address: '1',
+      purpose: "44'",
+      coinType: "397'",
+      accountNumber: "0'",
+      change: "0'",
+      address: "1'",
     );
     final generatedWallet = await cryptoLibrary.blockchainService
         .generateNewWallet(walletName: "GeneratedRandom ${DateTime.now()}");

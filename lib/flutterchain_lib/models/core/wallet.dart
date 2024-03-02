@@ -85,7 +85,7 @@ class BlockChainData {
 
 @JsonSerializable()
 class DerivationPath {
-  // m’ / purpose’ / coin_type’ / accountNumber / change / address
+  // m / purpose’ / coin_type’ / accountNumber / change / address
   final String purpose;
   final String coinType;
   final String accountNumber;
@@ -107,7 +107,7 @@ class DerivationPath {
 
   @override
   String toString() {
-    return "m'/$purpose'/$coinType'/$accountNumber'/$change'/$address'";
+    return "m/$purpose/$coinType/$accountNumber/$change/$address";
   }
 
   @override

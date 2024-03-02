@@ -43,7 +43,7 @@ class _NearInsertNewBlockchainDataInsideWalletState
       onTap: () {
         final walletID = nearVM.userStore.walletIdStream.value;
         final derivationPath = createBlockchainDataDerivationPath.text
-            .replaceAll("'", "")
+            // .replaceAll("'", "")
             .split('/')
             .toList();
 
