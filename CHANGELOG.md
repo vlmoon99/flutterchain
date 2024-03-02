@@ -29,3 +29,8 @@ Fix Example UI and smart contract response decoding
 ## 1.0.0-beta.13
 
 Update wallet core package
+
+
+## 1.0.0-beta.14
+
+Fix derivation path in addKey for Near Blockchain
