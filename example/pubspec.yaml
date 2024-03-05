@@ -29,6 +29,7 @@ dependencies:
     path: ../
   hex: 0.2.0
   json_serializable: 6.6.1
+  mockito: ^5.4.4
   rxdart: 0.27.7
   tap_debouncer: 2.0.2
   url_launcher: ^6.1.11
