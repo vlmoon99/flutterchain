@@ -203,7 +203,7 @@ class NearVM {
           ?.publicKey ??
       'not founded';
 
-  Future<String> getMnemonicPhraseByWalletId(
+  Future<String> getMnemonicPhraseByWalletName(
     String walletName,
   ) async =>
       cryptoLibrary.walletsStream.value
