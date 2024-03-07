@@ -1,14 +1,13 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
-import 'package:flutterchain_example/modules/home/services/helper_service.dart';
-import 'package:flutterchain_example/modules/home/stores/chains/near_blockchain_store.dart';
-import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:mockito/mockito.dart';
 import 'package:rxdart/rxdart.dart';
@@ -46,6 +45,36 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   final FlutterChainService blockchainService = MockFlutterChainService();
+
+  @override
+  Future<bool> initCryptoLib() async {
+    final wallet = MockWallet(
+      id: '2',
+      name: "wallet from store",
+      mnemonic: "mnemonic",
+      passphrase: "passphrase",
+      blockchainsData: {
+        BlockChains.near: {
+          NearBlockChainData(
+            publicKey: 'publicKey',
+            privateKey: 'privateKey',
+            accountId: 'accountId',
+            derivationPath: const DerivationPath(
+              purpose: "44'",
+              coinType: "397'",
+              accountNumber: "0'",
+              change: "0'",
+              address: '1',
+            ),
+            passphrase: "passphrase",
+          )
+        }
+      },
+    );
+    walletsStream.value.add(wallet);
+    walletsStream.add(walletsStream.value);
+    return true;
+  }
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType(String blockchainType) {
@@ -152,6 +181,12 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
       required String toAddress,
       required String transferAmount,
       required DerivationPath currentDerivationPath}) async {
+    if (transferAmount == '-1') {
+      return BlockchainResponse(
+        status: 'failure',
+        data: {'message': 'Server error'},
+      );
+    }
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},
@@ -166,17 +201,25 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
   }) async {
     return '100';
   }
-}
 
-class MockUserStore extends Mock implements UserStore {
   @override
-  final BehaviorSubject<String> walletIdStream = BehaviorSubject<String>.seeded(
-      '0'); // Встановлюємо початкове значення для walletIdStream
+  Future<void> setBlockchainNetworkEnvironment(
+      {required String blockchainType, required String newUrl}) async {
+    await blockchainService.setBlockchainNetworkEnvironment(
+      blockchainType: blockchainType,
+      newUrl: newUrl,
+    );
+  }
+
+  @override
+  Future<bool> deleteWalletById({required String walletId}) async {
+    walletsStream.add(walletsStream.valueOrNull
+            ?.where((element) => element.id != walletId)
+            .toList() ??
+        []);
+    return true;
+  }
 }
-
-class MockNearBlockchainStore extends Mock implements NearBlockchainStore {}
-
-class MockNearHelperService extends Mock implements NearHelperService {}
 
 class MockWallet extends Wallet {
   MockWallet({
@@ -221,9 +264,70 @@ class MockFlutterChainService extends Mock implements FlutterChainService {
       ),
     );
   }
+
+  @override
+  Future<void> setBlockchainNetworkEnvironment(
+      {required String blockchainType, required String newUrl}) async {
+    await blockchainServices[blockchainType]
+        ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
+  }
 }
 
 class MockNearBlockChainService extends Mock implements NearBlockChainService {
+  @override
+  NearRpcClient get nearRpcClient => MockNearRpcClient();
+
+  @override
+  Future<NearTransactionInfoModel> getTransactionInfo(
+      {required String accountId, required String publicKey}) async {
+    return NearTransactionInfoModel(
+      nonce: 125149053000037,
+      blockHash: 'blockHash',
+    );
+  }
+
+  @override
+  Future<String> exportPrivateKeyToTheNearApiJsFormat(
+      {BlockChainData? currentBlockchainData}) async {
+    return 'privateKeyInNearApiJsFormat';
+  }
+
+  @override
+  Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
+      String base58PrivateKey) async {
+    return 'publicKeyInNearApiJsFormat';
+  }
+
+  @override
+  Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+      String base58PrivateKey) async {
+    return "privateKeyInNearApiJsFormat";
+  }
+
+  @override
+  Future<String> getBase58PubKeyFromHexValue(
+      {required String? hexEncodedPubKey}) async {
+    return "base58PubKey with 'ed25519:' prefix";
+  }
+
+  @override
+  Future<String> getBlockchainNetworkEnvironment() async {
+    return "url";
+  }
+
+  @override
+  Future<String> signNearActions(
+      {required String fromAddress,
+      required String toAddress,
+      required String transferAmount,
+      required String privateKey,
+      required String gas,
+      required int nonce,
+      required String blockHash,
+      required List<Map<String, dynamic>> actions}) async {
+    return 'signedTx';
+  }
+
   @override
   Future<BlockchainResponse> addKey({
     required String fromAddress,
@@ -280,5 +384,70 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
       status: 'success',
       data: {'txhash': 'some hash'},
     );
+  }
+
+  @override
+  Future<BlockchainResponse> callSmartContractFunction(
+      String toAdress,
+      String fromAdress,
+      String privateKey,
+      String publicKey,
+      BlockChainSmartContractArguments arguments) async {
+    return BlockchainResponse(
+      status: 'success',
+      data: {'txhash': 'some hash'},
+    );
+  }
+
+  @override
+  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
+    nearRpcClient.networkClient.setUrl(newUrl);
+  }
+
+  @override
+  Future<BlockchainResponse> sendTransferNativeCoin(
+      String toAdress,
+      String fromAddress,
+      String transferAmount,
+      String privateKey,
+      String publicKey) async {
+    if (transferAmount == '-1') {
+      return BlockchainResponse(
+        status: 'failure',
+        data: {'message': 'Server error'},
+      );
+    }
+    return BlockchainResponse(
+      status: 'success',
+      data: {'txhash': 'some hash'},
+    );
+  }
+
+  @override
+  Future<String> getWalletBalance(String accountId) async {
+    return '100';
+  }
+
+  @override
+  Set<String> getBlockchainsUrlsByBlockchainType() {
+    return {'url1', 'url2'};
+  }
+}
+
+class MockNearRpcClient extends Mock implements NearRpcClient {
+  @override
+  final NearNetworkClient networkClient = MockNearNetworkClient();
+}
+
+class MockNearNetworkClient extends Mock implements NearNetworkClient {
+  String dioBaseUrl = "new_url";
+
+  @override
+  void setUrl(String newUrl) {
+    dioBaseUrl = newUrl;
+  }
+
+  String getUrl() {
+    return dioBaseUrl;
   }
 }
