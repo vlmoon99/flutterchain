@@ -212,13 +212,14 @@ class FlutterChainLibrary {
       throw Exception('Does not exist wallet with this name');
     }
 
-    final fromTheAddress = ((wallet.blockchainsData?[BlockChains.near])
-                    ?.firstWhereOrNull((element) =>
-                        element.derivationPath == currentDerivationPath)
-                as NearBlockChainData)
-            .accountId ??
-        (wallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
-            .publicKey;
+    final fromTheAddress = wallet.blockchainsData?[typeOfBlockchain]
+            ?.firstWhereOrNull(
+                (element) => element.derivationPath == currentDerivationPath)
+            ?.identifier ??
+        wallet.blockchainsData?[typeOfBlockchain]
+            ?.firstWhereOrNull(
+                (element) => element.derivationPath == currentDerivationPath)
+            ?.publicKey;
 
     final privateKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
@@ -229,6 +230,10 @@ class FlutterChainLibrary {
         ?.firstWhereOrNull(
             (element) => element.derivationPath == currentDerivationPath)
         ?.publicKey;
+
+    if (fromTheAddress == null) {
+      throw Exception('The address from is null');
+    }
 
     if (privateKey == null) {
       throw Exception('Private key is null');
