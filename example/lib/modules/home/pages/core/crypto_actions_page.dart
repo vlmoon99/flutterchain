@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain_example/modules/home/pages/chains/bitcoin_blockchain_page.dart';
 import 'package:flutterchain_example/modules/home/pages/chains/near_blockchain_page.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
@@ -10,6 +11,8 @@ class CryptoActionsPage extends StatelessWidget {
   Widget getBlockchainActionsPage(String blockchainKey) {
     if (blockchainKey == BlockChains.near) {
       return const NearBlockchainPage();
+    } else if (blockchainKey == BlockChains.bitcoin) {
+      return const BitcoinBlockchainPage();
     }
     return const NearBlockchainPage();
   }

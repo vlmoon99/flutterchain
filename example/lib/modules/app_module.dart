@@ -3,8 +3,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/bitcoin_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
@@ -63,11 +66,32 @@ class AppModule extends Module {
         i(),
       ),
     ),
+
+    //1. Bitcoin Blockchain
+    Bind.singleton(
+      (i) => BitcoinNetworkClient(
+        baseUrl: BitcoinBlockChainNetworkUrls.listOfUrls.first,
+        dio: Dio(),
+      ),
+    ),
+    Bind.singleton(
+      (i) => BitcoinRpcClient(
+        networkClient: i(),
+      ),
+    ),
+    Bind.singleton(
+      (i) => BitcoinBlockChainService(
+        jsVMService: i(),
+        bitcoinRpcClient: i(),
+      ),
+    ),
+
     //Inject Main Services for Main File of Crypto Library
     Bind.singleton(
       (i) => FlutterChainService(
         jsVMService: i(),
         nearBlockchainService: i(),
+        bitcoinBlockchainService: i(),
       ),
     ),
     Bind.singleton(

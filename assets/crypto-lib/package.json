@@ -17,6 +17,7 @@
   "private": true,
   "dependencies": {
     "@trustwallet/wallet-core": "^4.0.24",
+    "bitcoinjs-lib": "^6.1.5",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
     "long": "5.2.3",
@@ -25,7 +26,7 @@
     "watchify": "^4.0.0"
   },
   "devDependencies": {
-    "esmify": "^2.1.1",
-    "browserify": "^17.0.0"
+    "browserify": "^17.0.0",
+    "esmify": "^2.1.1"
   }
 }

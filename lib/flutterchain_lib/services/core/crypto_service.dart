@@ -5,6 +5,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
@@ -17,15 +18,20 @@ class FlutterChainService {
 
   FlutterChainService(
       {required this.jsVMService,
-      required final NearBlockChainService nearBlockchainService}) {
+      required final NearBlockChainService nearBlockchainService,
+      required final BitcoinBlockChainService bitcoinBlockchainService}) {
     //Add blockChainServices
     blockchainServices.putIfAbsent(
         BlockChains.near, () => nearBlockchainService);
+    blockchainServices.putIfAbsent(
+        BlockChains.bitcoin, () => bitcoinBlockchainService);
   }
+
   factory FlutterChainService.defaultInstance() {
     return FlutterChainService(
       jsVMService: getJsVM(),
       nearBlockchainService: NearBlockChainService.defaultInstance(),
+      bitcoinBlockchainService: BitcoinBlockChainService.defaultInstance(),
     );
   }
 

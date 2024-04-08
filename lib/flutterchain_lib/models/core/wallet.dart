@@ -1,4 +1,5 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -52,6 +53,8 @@ class BlockChainData {
     switch (identifier) {
       case BlockChains.near:
         return NearBlockChainData.fromJson(json);
+      case BlockChains.bitcoin:
+        return BitcoinBlockChainData.fromJson(json);
       // Add more cases for other supported blockchains
       default:
         throw Exception('Unsupported blockchain data type');
