@@ -124,6 +124,15 @@ class BitcoinBlockChainService implements BlockChainService {
     return blockChainData;
   }
 
+  Future<BitcoinBlockChainData> getBlockChainDataFromMnemonicTest(
+      String mnemonic, String passphrase) async {
+    final res = await jsVMService.callJS(
+        "window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
+    final decodedRes = jsonDecode(res);
+    final blockChainData = BitcoinBlockChainData.fromJson(decodedRes);
+    return blockChainData;
+  }
+
   Future<String> signBitcoinTransfer(
       String toAddress,
       String accountID,

@@ -20,7 +20,7 @@ class BitcoinBlockChainData extends BlockChainData {
     String identifier = BlockChains.bitcoin,
   }) : super(
           identifier: identifier,
-          publicKey: publicKey,
+          publicKey: accountId!,
           privateKey: privateKey,
           derivationPath: derivationPath,
           passphrase: passphrase,
@@ -35,5 +35,9 @@ class BitcoinBlockChainData extends BlockChainData {
   @override
   String toString() {
     return "{publicKey $publicKey , privateKey $privateKey }";
+  }
+
+  String get() {
+    return this.accountId!;
   }
 }

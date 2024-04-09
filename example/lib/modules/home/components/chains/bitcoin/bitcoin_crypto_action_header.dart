@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -73,6 +74,18 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
               .firstWhere((element) =>
                   element.id == bitcoinVM.userStore.walletIdStream.value)
               .blockchainsData![BlockChains.bitcoin];
+          final bitcoinBlockChainData = bitcoinVM
+                  .cryptoLibrary.walletsStream.value
+                  .firstWhere((element) =>
+                      element.id == bitcoinVM.userStore.walletIdStream.value)
+                  .blockchainsData![BlockChains.bitcoin]
+                  ?.firstWhereOrNull(
+                      (element) => element.derivationPath == derivationModel)
+              as BitcoinBlockChainData;
+          // if (bitcoinBlocchanData is BitcoinBlockChainData) {
+          // bitcoinBlocchanData = bitcoinBlocchanData as BitcoinBlockChainData;
+          // log(bitcoinBlocchanData.toString());
+          // }
           final currentPublicAddress = bitcoinVM
               .cryptoLibrary.walletsStream.value
               .firstWhere((element) =>
@@ -81,6 +94,7 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
               ?.firstWhereOrNull(
                   (element) => element.derivationPath == derivationModel)
               ?.publicKey;
+
           final currentPrivAddress = bitcoinVM.cryptoLibrary.walletsStream.value
               .firstWhere((element) =>
                   element.id == bitcoinVM.userStore.walletIdStream.value)
@@ -88,6 +102,10 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
               ?.firstWhereOrNull(
                   (element) => element.derivationPath == derivationModel)
               ?.privateKey;
+          // final test = bitcoinVM.cryptoLibrary.walletsStream.value
+          //     .firstWhere((element) =>
+          //         element.id == bitcoinVM.userStore.walletIdStream.value)
+          //     .blockchainsData;
           final derivationPath = bitcoinVM.cryptoLibrary.walletsStream.value
               .firstWhere((element) =>
                   element.id == bitcoinVM.userStore.walletIdStream.value)
@@ -106,6 +124,12 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
 
           return Column(
             children: [
+              Text('${derivationModel}'),
+              Text('${listOfBlockChainData}'),
+              Text('${currentPublicAddress}'),
+              Text('${currentPrivAddress}'),
+              Text('${derivationPath}'),
+              Text('${bitcoinBlockChainData.accountId}'),
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
