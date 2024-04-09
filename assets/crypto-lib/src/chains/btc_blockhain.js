@@ -120,7 +120,7 @@ getBlockChainDataFromMnemonic(
   return JSON.stringify({
     mnemonic: wallet.mnemonic(),
     publicKey: publicKey.description(),
-    accountId: [adressBTC.description(),AddressBTC],
+    accountId: AddressBTC,
     privateKey: privateKeyString,
     passphrase: passphrase,
     derivationPath: {
