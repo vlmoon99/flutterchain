@@ -9,10 +9,10 @@ class BlockChainsDerivationPaths {
     address: "1'",
   );
   static const DerivationPath bitcoin = DerivationPath(
-    purpose: "44'",
-    coinType: "1'",
+    purpose: "84'",
+    coinType: "0'",
     accountNumber: "0'",
-    change: "0'",
-    address: "0'",
+    change: "0",
+    address: "0",
   );
 }
