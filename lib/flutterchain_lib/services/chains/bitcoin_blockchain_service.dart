@@ -87,7 +87,6 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //Setting new blockchain network environment on another url
-
   @override
   Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
     bitcoinRpcClient.networkClient.setUrl(newUrl);

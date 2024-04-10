@@ -86,37 +86,13 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
           // bitcoinBlocchanData = bitcoinBlocchanData as BitcoinBlockChainData;
           // log(bitcoinBlocchanData.toString());
           // }
-          final currentPublicAddress = bitcoinVM
-              .cryptoLibrary.walletsStream.value
-              .firstWhere((element) =>
-                  element.id == bitcoinVM.userStore.walletIdStream.value)
-              .blockchainsData![BlockChains.bitcoin]
-              ?.firstWhereOrNull(
-                  (element) => element.derivationPath == derivationModel)
-              ?.publicKey;
+          final currentPublicAddress = bitcoinBlockChainData.publicKey;
 
-          final currentPrivAddress = bitcoinVM.cryptoLibrary.walletsStream.value
-              .firstWhere((element) =>
-                  element.id == bitcoinVM.userStore.walletIdStream.value)
-              .blockchainsData![BlockChains.bitcoin]
-              ?.firstWhereOrNull(
-                  (element) => element.derivationPath == derivationModel)
-              ?.privateKey;
+          final currentPrivAddress = bitcoinBlockChainData.privateKey;
           // final test = bitcoinVM.cryptoLibrary.walletsStream.value
           //     .firstWhere((element) =>
           //         element.id == bitcoinVM.userStore.walletIdStream.value)
           //     .blockchainsData;
-          final derivationPath = bitcoinVM.cryptoLibrary.walletsStream.value
-              .firstWhere((element) =>
-                  element.id == bitcoinVM.userStore.walletIdStream.value)
-              .blockchainsData![BlockChains.bitcoin]
-              ?.firstWhereOrNull((element) {
-            if (element.derivationPath == derivationModel) {
-              return true;
-            } else {
-              return false;
-            }
-          })?.derivationPath;
 
           log("currentPublicAddress $currentPublicAddress");
           log("currentPrivAddress $currentPrivAddress");
@@ -124,12 +100,6 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
 
           return Column(
             children: [
-              Text('${derivationModel}'),
-              Text('${listOfBlockChainData}'),
-              Text('${currentPublicAddress}'),
-              Text('${currentPrivAddress}'),
-              Text('${derivationPath}'),
-              Text('${bitcoinBlockChainData.accountId}'),
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -145,7 +115,7 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                         bottom: 20,
                       ),
                       child: SelectableText(
-                        'Your Derivation Path :$derivationPath',
+                        'Your Derivation Path :${bitcoinBlockChainData.derivationPath}',
                         style: nearTextStyles.headline!.copyWith(
                           fontWeight: FontWeight.bold,
                           color: nearColors.nearBlack,
@@ -194,48 +164,38 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                       padding: const EdgeInsets.only(
                         bottom: 20,
                       ),
-                      child: FutureBuilder(
-                          future: BitcoinBlockChainService.defaultInstance()
-                              .getAdressBTCP2PKHFomat(
-                                  currentPublicAddress!, false),
-                          builder: ((context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SelectableText(
-                                'Your Address : ${snapshot.data}',
-                                style: nearTextStyles.headline!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: nearColors.nearBlack,
-                                  fontSize: 15.sp,
-                                ),
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          })),
-                    ),
-                    FutureBuilder(
-                      future: bitcoinVM.getBalanceByDerivationPath(
-                        walletId: bitcoinVM.userStore.walletIdStream.value,
-                        currentDerivationPath: derivationModel,
+                      child: SelectableText(
+                        'Your Address : ${bitcoinBlockChainData.accountId}',
+                        style: nearTextStyles.headline!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: nearColors.nearBlack,
+                          fontSize: 15.sp,
+                        ),
                       ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: SelectableText(
-                              'Total Amount of ${BlockChains.bitcoin} :${double.parse(snapshot.data.toString()).toStringAsFixed(5)}',
-                              style: nearTextStyles.headline!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: nearColors.nearBlack,
-                                fontSize: 20,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      },
                     ),
+                    // FutureBuilder(
+                    // future: bitcoinVM.getBalanceByDerivationPath(
+                    //     walletId: bitcoinVM.userStore.walletIdStream.value,
+                    //     currentDerivationPath: derivationModel,
+                    //   ),
+                    //   builder: (context, snapshot) {
+                    //     if (snapshot.hasData) {
+                    //       return Padding(
+                    //         padding: const EdgeInsets.only(bottom: 20),
+                    //         child: SelectableText(
+                    //           'Total Amount of ${BlockChains.bitcoin} :${double.parse(snapshot.data.toString()).toStringAsFixed(5)}',
+                    //           style: nearTextStyles.headline!.copyWith(
+                    //             fontWeight: FontWeight.bold,
+                    //             color: nearColors.nearBlack,
+                    //             fontSize: 20,
+                    //           ),
+                    //         ),
+                    //       );
+                    //     } else {
+                    //       return const SizedBox();
+                    //     }
+                    //   },
+                    // ),
                   ],
                 ),
               ),

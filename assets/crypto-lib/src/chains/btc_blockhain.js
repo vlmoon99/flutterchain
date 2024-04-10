@@ -41,15 +41,7 @@ export class BitcoinBlockchain {
     return publicKeyDecoded;
   }
 
-
-  // getAdressBTCFromHexPublicKeyDescription(publicKeyHEX){
-  //   const { BitcoinAddress, HexCoding, PublicKey, PublicKeyType} = window.WalletCore;
-  //   const publicKeyDecode = PublicKey.createWithData(HexCoding.decode(`0x${publicKeyHEX}`), PublicKeyType.secp256k1);
-  //   const adressBTC = BitcoinAddress.createWithPublicKey(publicKeyDecode, 0x6f);
-  //   return adressBTC.keyhash();
-  // }
-
-  getAdressBTCFromHexPublicKeyMain(publicKeyHEX, needKeyHash){
+  getAdressBTCFromHexPublicKeyP2PKH(publicKeyHEX, needKeyHash){
     const { BitcoinAddress, HexCoding, PublicKey, PublicKeyType} = window.WalletCore;
     const publicKeyDecode = PublicKey.createWithData(HexCoding.decode(`0x${publicKeyHEX}`), PublicKeyType.secp256k1);
     const adressBTC = BitcoinAddress.createWithPublicKey(publicKeyDecode, 0x00);
@@ -60,67 +52,66 @@ export class BitcoinBlockchain {
     }
   }
 
-  // getAdressBTCFromHexPublicKeyDescription1(publicKeyHEX){
-  //   const { BitcoinAddress, HexCoding, PublicKey, PublicKeyType} = window.WalletCore;
-  //   const publicKeyDecode = PublicKey.createWithData(HexCoding.decode(`0x${publicKeyHEX}`), PublicKeyType.secp256k1);
-  //   const adressBTC = BitcoinAddress.createWithPublicKey(publicKeyDecode, 0x6f);
-  //   const hexString = HexCoding.encode(adressBTC.keyhash());
-  //   return hexString;
-  // }
 
+  getAdressBTCFromHexPublicKeySegWit(publicKeyHEX){
+  const { PublicKey, HexCoding, PublicKeyType, AnyAddress, CoinType } = window.WalletCore;
+  const publicKeyDecode = PublicKey.createWithData(HexCoding.decode(publicKeyHEX), PublicKeyType.secp256k1);
+  const address = AnyAddress.createBech32WithPublicKey(publicKeyDecode, CoinType.bitcoin, 'bc');
 
- 
-
-// getBlockChainDataFromMnemonicTest(
-//   mnemonic,
-//   passphrase = "",
-//   account = "0'",
-//   change = "0'",
-//   address = "0'"
-// ) {
-//   const { CoinType, HDWallet, HexCoding, BitcoinAddress } = window.WalletCore;
-//   const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
-//   const derivationPath = `m/44'/1'/${account}/${change}/${address}`;
-//   const privateKey = wallet.getKey(CoinType.bitcoin, derivationPath);
-//   // const AddressBTC = wallet.getAddressForCoin(CoinType.bitcoin) for SegWit mainnet
-//   const privateKeyString = bs58.encode(privateKey.data());
-//   const publicKey = privateKey.getPublicKeySecp256k1(true);
-//   const adressBTC = BitcoinAddress.createWithPublicKey(publicKey, 0x6f);
-//   return JSON.stringify({
-//     mnemonic: wallet.mnemonic(),
-//     publicKey: publicKey.description(),
-//     accountId: adressBTC.description(),
-//     privateKey: privateKeyString,
-//     passphrase: passphrase,
-//     derivationPath: {
-//       purpose: "44'",
-//       coinType: "0'",
-//       accountNumber: account,
-//       change: change,
-//       address: address,
-//     },
-//   });
-// }
+  return address.description()
+}
 
 getBlockChainDataFromMnemonic(
   mnemonic,
   passphrase = "",
   account = "0'",
-  change = "0'",
-  address = "0'"
+  change = "0",
+  address = "0"
 ) {
-  const { CoinType, HDWallet, HexCoding, BitcoinAddress } = window.WalletCore;
+  const { CoinType, HDWallet, BitcoinAddress } = window.WalletCore;
   const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
-  const derivationPath = `m/44'/0'/${account}/${change}/${address}`;
+  const derivationPath = `m/84'/0'/${account}/${change}/${address}`;// m/44 - legacy
   const privateKey = wallet.getKey(CoinType.bitcoin, derivationPath);
-  const AddressBTC = wallet.getAddressForCoin(CoinType.bitcoin) //for SegWit mainnet
+  const AddressBTC = wallet.getAddressForCoin(CoinType.bitcoin) //adress for SegWit 
   const privateKeyString = bs58.encode(privateKey.data());
   const publicKey = privateKey.getPublicKeySecp256k1(true);
-  const adressBTC = BitcoinAddress.createWithPublicKey(publicKey, 0x00);
+  // const adressBTC = BitcoinAddress.createWithPublicKey(publicKey, 0x00);// adress for p2pkh
   return JSON.stringify({
     mnemonic: wallet.mnemonic(),
     publicKey: publicKey.description(),
     accountId: AddressBTC,
+    privateKey: privateKeyString,
+    passphrase: passphrase,
+    derivationPath: {
+      purpose: "84'",
+      coinType: "0'",
+      accountNumber: account,
+      change: change,
+      address: address,
+    },
+  });
+}
+
+
+getBlockChainDataFromMnemonicLegaceP2PKH(
+  mnemonic,
+  passphrase = "",
+  account = "0'",
+  change = "0",
+  address = "0"
+) {
+  const { CoinType, HDWallet, BitcoinAddress } = window.WalletCore;
+  const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
+  const derivationPath = `m/44'/0'/${account}/${change}/${address}`;// m/44 - legacy
+  const privateKey = wallet.getKey(CoinType.bitcoin, derivationPath);
+  // const AddressBTC = wallet.getAddressForCoin(CoinType.bitcoin) //adress for SegWit 
+  const privateKeyString = bs58.encode(privateKey.data());
+  const publicKey = privateKey.getPublicKeySecp256k1(true);
+  const adressBTC = BitcoinAddress.createWithPublicKey(publicKey, 0x00);// adress for p2pkh
+  return JSON.stringify({
+    mnemonic: wallet.mnemonic(),
+    publicKey: publicKey.description(),
+    accountId: adressBTC.description(),
     privateKey: privateKeyString,
     passphrase: passphrase,
     derivationPath: {
@@ -133,56 +124,17 @@ getBlockChainDataFromMnemonic(
   });
 }
 
-// buildPayToPublicKey(publicKeyHEX){
-//   const { BitcoinScript, BitcoinAddress,HexCoding, PublicKey, PublicKeyType, CoinType} = window.WalletCore;
-//     const publicKeyDecode = PublicKey.createWithData(HexCoding.decode(`0x${publicKeyHEX}`), PublicKeyType.secp256k1);
-//     // const adressBTC = BitcoinAddress.createWithPublicKey(publicKeyDecode, 0x6f);
-//     // const res =  BitcoinScript.buildPayToPublicKeyHash(publicKeyDecode.data());
-//     const res =  BitcoinScript.buildPayToPublicKey(publicKeyDecode.data()).data();
-//     const hexString = HexCoding.encode(res);
-//     const Stringhex = HexCoding.decode(hexString.substring(2));
-//     return hexString;
-// }
-
-// buildPayToPublicKeyHash1(publicKeyHEX){
-//   const { BitcoinScript,HexCoding, PublicKey, PublicKeyType, Hash} = window.WalletCore;
-//   const publicKeyData = HexCoding.decode(publicKeyHEX);
-//   const utxoPubkeyHash = Hash.ripemd(Hash.sha256(publicKeyData));
-//   const test = this.getAdressBTCFromHexPublicKeyDescription1(publicKeyHEX);
-//   // const utxoPubkeyHash = this.getAdressBTCFromHexPublicKeyDescription1(publicKeyHEX);
-//   // const res = BitcoinScript.buildPayToPublicKeyHash(utxoPubkeyHash);
-//   const hexString = HexCoding.encode(utxoPubkeyHash);
-//   // const Stringhex = HexCoding.decode(hexString.substring(2));
-//   if (test == hexString){
-//     return {hexString:hexString, test: test };    
-//   }
-//   return  test;
-// }
-
-
-// buildPayToPublicKeyHashTest(publicKeyHEX){
-//   const { BitcoinScript,HexCoding, PublicKey, PublicKeyType, Hash} = window.WalletCore;
-//     const utxoPubkeyHash = this.getAdressBTCFromHexPublicKeyDescription(publicKeyHEX);
-//     const buildPayToPublicKeyHash = BitcoinScript.buildPayToPublicKeyHash(utxoPubkeyHash);
-    
-//     return buildPayToPublicKeyHash.data();
-// }
 
 buildPayToPublicKeyHash(publicKeyHEX){
   const { BitcoinScript } = window.WalletCore;
   const needKeyHash = true;
-  const utxoPubkeyHash = this.getAdressBTCFromHexPublicKeyMain(publicKeyHEX, needKeyHash);
+  const utxoPubkeyHash = this.getAdressBTCFromHexPublicKeyP2PKH(publicKeyHEX, needKeyHash);
   const buildPayToPublicKeyHash = BitcoinScript.buildPayToPublicKeyHash(utxoPubkeyHash);
     
   return buildPayToPublicKeyHash.data();
 }
 
-// buildPayToWeetnesPublicKeyHash(publicKeyHEX){
-//   const { BitcoinScript, CoinType, HexCoding } = window.WalletCore;
-//   const buildPayToWeetnesPublicKeyHash = BitcoinScript.lockScriptForAddress(publicKeyHEX, CoinType.bitcoin);
-//   // const stringHex = HexCoding.encode(buildPayToWeetnesPublicKeyHash.data());
-//   return buildPayToWeetnesPublicKeyHash.data();
-// }
+
 buildPayToWeetnesPublicKeyHash(publicKeyHEX){
   const { BitcoinScript, CoinType, HexCoding, Hash } = window.WalletCore;
   const hexString = HexCoding.decode(publicKeyHEX);
@@ -192,80 +144,6 @@ buildPayToWeetnesPublicKeyHash(publicKeyHEX){
   return buildPayToWeetnesPublicKeyHash.data();
 }
 
-// buildPayToPublicKeyHash2(publicKeyHEX){
-//   const { BitcoinScript,HexCoding, PublicKey, PublicKeyType, Hash, CoinType} = window.WalletCore;
-//   const utxoTxId = HexCoding.decode("d5e05558c5c79781b434d5d3d2f92ae723558e8e3799a79776015a441ecc919e");
-//   const res = BitcoinScript.lockScriptForAddress(publicKeyHEX, CoinType.bitcoin, utxoTxId, 2584897)
-//     // const Stringhex = HexCoding.decode(hexString.substring(2));
-//     return res.data();
-// }
-// buildPayToPublicKeyHash1(publicKeyHEX){
-//   const { BitcoinScript,HexCoding, PublicKey, PublicKeyType, Hash} = window.WalletCore;
-//     const publicKeyDecode = PublicKey.createWithData(HexCoding.decode(`0x${publicKeyHEX}`), PublicKeyType.secp256k1);
-//     const utxoPubkeyHash = Hash.ripemd(Hash.sha256(publicKeyDecode.data()));
-//     const res =  BitcoinScript.buildPayToPublicKeyHash(utxoPubkeyHash);
-//     const hexString = HexCoding.encode(res.data());
-//     // const Stringhex = HexCoding.decode(hexString.substring(2));
-//     return hexString;
-// }
-// test(){
-//   const { BitcoinScript,HexCoding, PublicKey, PublicKeyType, Hash, CoinType, CoinTypeConfiguration} = window.WalletCore;
-//   const test = CoinTypeConfiguration.getAccountURL(CoinType.bitcoin, 'myiZPoDRUWYUitxefEfdzuGByK1sgXEtmy');
-//   return test
-// }
-
-
-// bitcoinTransferActionTest(){
-//   try{
-//     const { TW, WalletCore } = window;
-//     const { AnySigner, CoinType,BitcoinSigHashType, PrivateKey, BitcoinScript, HexCoding } = WalletCore;
-//     const privateKey = bs58.decode("4gBSAXzSHcYwQukjcYByVrNfGGRG2e7rB3Pbhasq5FEm");
-//     const utxoTxId = HexCoding.decode("d5e05558c5c79781b434d5d3d2f92ae723558e8e3799a79776015a441ecc919e");
-//     const sscript = this.buildPayToPublicKeyHashTest("03ddd1b0e324f9807465a277c99516eaf4f9de636e71352132253d658233fa53df");
-//     const scriptsHexPubkeyHash = HexCoding.encode(this.getAdressBTCFromHexPublicKeyDescription('03ddd1b0e324f9807465a277c99516eaf4f9de636e71352132253d658233fa53df'));
-//     const outPoint = TW.Bitcoin.Proto.OutPoint.create({
-//       hash: utxoTxId.reverse(),
-//       index: 1,
-//       sequence: 4294967295
-//     });
-//     const utxo = TW.Bitcoin.Proto.UnspentTransaction.create({
-//       outPoint: outPoint,
-//       amount: 123129,
-//       script: sscript
-//     });
-    
-//     const input = TW.Bitcoin.Proto.SigningInput.create({
-//       hashType: BitcoinSigHashType.all,
-//       // hashType: BitcoinSigHashType.all,
-//       amount: 100,
-//       // extraOutputs:[{toAddress: "mkYhgBSZocDy9CkAiFz1p15oX9mA5kiHYf",amount: 100,}],
-//       byteFee: 1,
-//       toAddress: "mkYhgBSZocDy9CkAiFz1p15oX9mA5kiHYf",
-//       changeAddress: "myiZPoDRUWYUitxefEfdzuGByK1sgXEtmy",
-//       // extraOutputs: [{toAddress: "mkYhgBSZocDy9CkAiFz1p15oX9mA5kiHYf",amount: 100,}],
-//       utxo: [utxo],
-//       privateKey: [Uint8Array.from(privateKey)],
-//     });
-//     // input.scripts[scriptsHexPubkeyHash] = sscript;
-
-//     const encodedForPlan = TW.Bitcoin.Proto.SigningInput.encode(input).finish();
-//     const outputDataForPlan = AnySigner.plan(encodedForPlan, CoinType.bitcoin);
-//     const outputForPlan = TW.Bitcoin.Proto.TransactionPlan.decode(outputDataForPlan);
-//     input.plan = outputForPlan;
-    
-//     const encoded = TW.Bitcoin.Proto.SigningInput.encode(input).finish();
-//     const outputData = AnySigner.sign(encoded, CoinType.bitcoin);
-//     const output = TW.Bitcoin.Proto.SigningOutput.decode(outputData);
-//     // const output = TW.Bitcoin.Proto.SigningOutput.decode(outputData);
-//     // if (output.error != 0){
-//     //   return output.error
-//     // }
-//     return {output: output, input: encoded};
-//   } catch  (error) {
-//     console.error(JSON.stringify(error));
-//     return JSON.stringify({ error: error.message });
-//   }
-// }
 
 
 
@@ -332,9 +210,9 @@ bitcoinTransferActionSegwit(){
   try{
     const { TW, WalletCore } = window;
     const { AnySigner, CoinType,BitcoinSigHashType, PrivateKey, BitcoinScript, HexCoding } = WalletCore;
-    const privateKey = bs58.decode("Dn7cpHCdfxDbZJQxGnSspyCYJXGQCfgG1tqmKu5vBJcn");
+    const privateKey = bs58.decode("5gaVs9eHYCTzj2Eh6rBobUf366Td2VBpbY8miEyGhZES");
     const utxoTxId = HexCoding.decode("9f535670aa3e4d08685d400e10787c8398e3218065dcdb0c65a0c2781663cee4");
-    const sscript = this.buildPayToWeetnesPublicKeyHash("037753c5c37bf5626364f653d5b5d8f16c21105afc06da20957f68894670c2b74e");
+    const sscript = this.buildPayToWeetnesPublicKeyHash("029edda5f611ca43d706eb774d53c64c16f2bb6bb4aa9566eaa5d5a594e91c5b4e");
     const outPoint = TW.Bitcoin.Proto.OutPoint.create({
       hash: utxoTxId,
       index: 11,
@@ -365,9 +243,9 @@ bitcoinTransferActionSegwit(){
     const encoded = TW.Bitcoin.Proto.SigningInput.encode(input).finish();
     const outputData = AnySigner.sign(encoded, CoinType.bitcoin);
     const output = TW.Bitcoin.Proto.SigningOutput.decode(outputData);
-    // if (output.error != 0){
-    //   return output.error
-    // }
+    if (output.error != 0){
+      return output.error
+    }
     const hexEncodedOutput = HexCoding.encode(output.encoded);
     return {output: output, input: input, hexEncodedOutput: hexEncodedOutput};
   } catch  (error) {
@@ -378,13 +256,13 @@ bitcoinTransferActionSegwit(){
 
 
 
-bitcoinTransferAction1(){
+bitcoinTransferActionP2PKH(){
   try{
     const { TW, WalletCore } = window;
     const { AnySigner, CoinType,BitcoinSigHashType, PrivateKey, BitcoinScript, HexCoding } = WalletCore;
-    const privateKey = bs58.decode("519BNZPMhDKAerUbV8ZLmAZuyoAbkhhj5de1xpHMLd1i");
+    const privateKey = bs58.decode("2bdMTkAzsEuctaVMf7s29EymVJeKxmuxFmkVtfUK9JtL");
     const utxoTxId = HexCoding.decode("d5e05558c5c79781b434d5d3d2f92ae723558e8e3799a79776015a441ecc919e");
-    const sscript = this.buildPayToPublicKeyHash("032a3b57efef66ffc9a9017db7fa99ea97c9465785ef7be9a3c207d0ef7ecef98d");
+    const sscript = this.buildPayToPublicKeyHash("02fc19124a543fd3fce4dc064b27caf5e8ddba74ec2d52de544f9bb9243b70043b");
     const outPoint = TW.Bitcoin.Proto.OutPoint.create({
       hash: utxoTxId,
       index: 1,
@@ -401,7 +279,7 @@ bitcoinTransferAction1(){
       amount: 100,
       byteFee: 1,
       toAddress: "1M7tAxEhZA3kn76XBwQE8RWaEq74XQkwhE",
-      changeAddress: "1Ky1s8gqoToKJqAHHU1xgMcHdXQwm5kqgP",
+      changeAddress: "18M4Zkjousm1u2VTWGUXrvFFdrRhzyD3rK",
       utxo: [utxo],
       privateKey: [Uint8Array.from(privateKey)],
       сoinType: CoinType.bitcoin
