@@ -20,7 +20,7 @@ class BitcoinBlockChainData extends BlockChainData {
     String identifier = BlockChains.bitcoin,
   }) : super(
           identifier: identifier,
-          publicKey: accountId!,
+          publicKey: publicKey,
           privateKey: privateKey,
           derivationPath: derivationPath,
           passphrase: passphrase,

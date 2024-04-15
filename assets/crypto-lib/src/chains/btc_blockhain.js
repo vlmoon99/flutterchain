@@ -165,8 +165,8 @@ bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publi
     const utxoTxId = HexCoding.decode(tx_hash);
     const sscript = this.buildPayToFormat(format, publicKey);
     const outPoint = TW.Bitcoin.Proto.OutPoint.create({
-      hash: utxoTxId,
-      index: tx_output,
+      hash: utxoTxId.reverse(),
+      index: 1,
       sequence: 4294967295
     });
     const utxo = TW.Bitcoin.Proto.UnspentTransaction.create({

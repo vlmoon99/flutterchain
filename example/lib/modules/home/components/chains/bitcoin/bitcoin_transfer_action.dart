@@ -26,8 +26,9 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
   @override
   void initState() {
     super.initState();
-    recipientEditingController.text = "1M7tAxEhZA3kn76XBwQE8RWaEq74XQkwhE";
-    transferDepositController.text = "200";
+    recipientEditingController.text =
+        "bc1qtstyjv5uyt5kcsy0ru4h8m6a67f0xa9jy8z3gx";
+    transferDepositController.text = "1200";
   }
 
   @override
@@ -61,15 +62,15 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
             bitcoinVM.bitcoinState.add(
               currentState.copyWith(transferResult: value.data),
             );
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  value.status == BlockchainResponses.success
-                      ? 'Success transfer'
-                      : 'Failed transfer',
-                ),
-              ),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     content: Text(
+            //       value.status == BlockchainResponses.success
+            //           ? 'Success transfer'
+            //           : 'Failed transfer',
+            //     ),
+            //   ),
+            // );
             log("Result of transfer $value");
           },
         );
@@ -88,6 +89,7 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
               textEditingController: transferDepositController,
             ),
             const SizedBox(height: 20),
+            Text('${currentState.transferResult.toString()}')
             // SeeTransactionInfoNearBlockchain(
             //   tx: currentState.transferResult?['txHash'].toString(),
             // ),

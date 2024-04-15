@@ -47,8 +47,8 @@ class BitcoinBlockChainService implements BlockChainService {
     String privateKey,
     String publicKey,
   ) async {
-    const needKeyHash = false;
-    final accountID = await getAdressBTCP2PKHFomat(publicKey, needKeyHash);
+    final format = 'SEGWIT';
+    final accountID = await getAdressBTCSegWitFomat(publicKey);
     final transactionInfo =
         await bitcoinRpcClient.getTransactionInfo(accountID);
     final txHex = await signBitcoinTransfer(
@@ -59,7 +59,8 @@ class BitcoinBlockChainService implements BlockChainService {
         publicKey,
         transactionInfo.tx_hash,
         transactionInfo.ref_balance,
-        transactionInfo.tx_output);
+        transactionInfo.tx_output,
+        format);
 
     final res = bitcoinRpcClient.sendTransferNativeCoinTest(txHex);
     return res;
@@ -131,11 +132,12 @@ class BitcoinBlockChainService implements BlockChainService {
       String publicKey,
       String tx_hash,
       String utxoAmount,
-      int tx_output) async {
+      int tx_output,
+      String format) async {
     final BigintTransferAmount = BigInt.parse(transferAmount);
     final BigintUtxoAmount = BigInt.parse(utxoAmount);
     final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', '$tx_hash', $BigintUtxoAmount, $tx_output)");
+        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', '$tx_hash', $BigintUtxoAmount, $tx_output, '$format')");
     // final decode = jsonDecode(res);
     return res.toString();
   }
@@ -158,7 +160,14 @@ class BitcoinBlockChainService implements BlockChainService {
   Future<String> getAdressBTCP2PKHFomat(
       String publicKeyHEX, bool needKeyHash) async {
     final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.getAdressBTCP2PKHFomat('$publicKeyHEX', $needKeyHash)");
+        "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeyP2PKH('$publicKeyHEX', $needKeyHash)");
+    return res.toString();
+  }
+
+  //This method getting Address BTC in SegWit format from Public Key in Hex format
+  Future<String> getAdressBTCSegWitFomat(String publicKeyHEX) async {
+    final res = await jsVMService.callJS(
+        "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeySegWit('$publicKeyHEX')");
     return res.toString();
   }
 
