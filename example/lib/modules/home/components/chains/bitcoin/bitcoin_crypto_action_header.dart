@@ -63,6 +63,8 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final bitcoinVM = Modular.get<BitcoinVM>();
+    final bitcoinBlockChainService = bitcoinVM.cryptoLibrary.blockchainService
+        .blockchainServices[BlockChains.bitcoin] as BitcoinBlockChainService;
 
     return StreamBuilder<DerivationPath>(
         stream: bitcoinVM.bitcoinBlockchainStore.currentDerivationPath,
@@ -89,10 +91,6 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
           final currentPublicAddress = bitcoinBlockChainData.publicKey;
 
           final currentPrivAddress = bitcoinBlockChainData.privateKey;
-          // final test = bitcoinVM.cryptoLibrary.walletsStream.value
-          //     .firstWhere((element) =>
-          //         element.id == bitcoinVM.userStore.walletIdStream.value)
-          //     .blockchainsData;
 
           log("currentPublicAddress $currentPublicAddress");
           log("currentPrivAddress $currentPrivAddress");
@@ -284,6 +282,55 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                 ),
               ),
               const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: nearColors.nearAqua,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 20,
+                      ),
+                      child: SelectableText(
+                        'This is price for Fee/Bayte',
+                        style: nearTextStyles.headline!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: nearColors.nearBlack,
+                          fontSize: 15.sp,
+                        ),
+                      ),
+                    ),
+                    FutureBuilder(
+                      future: bitcoinBlockChainService.getActualPriceFee(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var data = snapshot.data?.data.values.first as Map;
+                          var interevlData = data.keys
+                              .map((e) => "${e}: ${data[e] + 10}\n")
+                              .join(" ");
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: SelectableText(
+                              '${interevlData}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           );
         });

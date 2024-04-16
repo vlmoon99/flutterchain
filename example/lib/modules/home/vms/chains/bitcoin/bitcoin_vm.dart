@@ -9,6 +9,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain_example/modules/home/services/helper_service.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/bitcoin_blockchain_store.dart';
 import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/ui_state_bitcoin.dart';
@@ -17,12 +18,14 @@ import 'package:rxdart/rxdart.dart';
 class BitcoinVM {
   final FlutterChainLibrary cryptoLibrary;
   final BitcoinBlockchainStore bitcoinBlockchainStore;
+  final NearHelperService bitcoinHelperService;
   final UserStore userStore;
   final BehaviorSubject<BitcoinState> bitcoinState =
       BehaviorSubject<BitcoinState>()..add(SuccessBitcoinBlockchainState());
   BitcoinVM(
     this.cryptoLibrary,
     this.bitcoinBlockchainStore,
+    this.bitcoinHelperService,
     this.userStore,
   );
 

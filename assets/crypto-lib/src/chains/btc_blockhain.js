@@ -157,7 +157,7 @@ buildPayToFormat(format, publicKey){
   }
 }
 
-bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publicKey, tx_hash, utxoAmount, tx_output, format){
+bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publicKey, tx_hash, utxoAmount, tx_output, format, feeBayte){
   try{
     const { TW, WalletCore } = window;
     const { AnySigner, CoinType, BitcoinScript, HexCoding } = WalletCore;
@@ -166,7 +166,7 @@ bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publi
     const sscript = this.buildPayToFormat(format, publicKey);
     const outPoint = TW.Bitcoin.Proto.OutPoint.create({
       hash: utxoTxId.reverse(),
-      index: 1,
+      index: tx_output,
       sequence: 4294967295
     });
     const utxo = TW.Bitcoin.Proto.UnspentTransaction.create({
@@ -178,7 +178,7 @@ bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publi
     const input = TW.Bitcoin.Proto.SigningInput.create({
       hashType: BitcoinScript.hashTypeForCoin(CoinType.bitcoin),
       amount: transferAmount,
-      byteFee: 1,
+      byteFee: feeBayte,
       toAddress: toAddress,
       changeAddress: accountID,
       utxo: [utxo],

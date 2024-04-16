@@ -80,11 +80,37 @@ class BitcoinRpcClient {
     );
   }
 
+  Future<BlockchainResponse> getActualPricesFeeSAll() async {
+    final res = await networkClient
+        .getRequest('https://mempool.space/api/v1/fees/recommended');
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    }
+    return BlockchainResponse(
+      data: {"data": res.data},
+      status: BlockchainResponses.success,
+    );
+  }
+
+  Future<int> getActualPricesFeeSHigher() async {
+    final res = await networkClient
+        .getRequest('https://mempool.space/api/v1/fees/recommended');
+    if (res.isSuccess) {
+      final tx_hash = res.data['fastestFee'] + 10;
+      return tx_hash!;
+    } else {
+      return 0;
+    }
+  }
+
   Future<BlockchainResponse> sendTransferNativeCoin(String txhex) async {
     final res = await networkClient.postHTTP(
         BitcoinBlockChainNetworkUrls.listOfUrls.first + '/txs/push',
         {'tx': txhex});
-    if (res.data['error'] != null) {
+    if (res.data['error'] != null || res.data == null) {
       return BlockchainResponse(
         data: res.data['error'],
         status: BlockchainResponses.error,

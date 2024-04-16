@@ -47,10 +47,17 @@ class BitcoinBlockChainService implements BlockChainService {
     String privateKey,
     String publicKey,
   ) async {
+    var tx_output = 0;
     final format = 'SEGWIT';
+    final actuelFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
     final accountID = await getAdressBTCSegWitFomat(publicKey);
     final transactionInfo =
         await bitcoinRpcClient.getTransactionInfo(accountID);
+    if (transactionInfo.tx_output < 0) {
+      tx_output = transactionInfo.tx_output * -1;
+    } else {
+      tx_output = transactionInfo.tx_output;
+    }
     final txHex = await signBitcoinTransfer(
         toAddress,
         accountID,
@@ -59,10 +66,11 @@ class BitcoinBlockChainService implements BlockChainService {
         publicKey,
         transactionInfo.tx_hash,
         transactionInfo.ref_balance,
-        transactionInfo.tx_output,
-        format);
+        tx_output,
+        format,
+        actuelFees);
 
-    final res = bitcoinRpcClient.sendTransferNativeCoinTest(txHex);
+    final res = await bitcoinRpcClient.sendTransferNativeCoin(txHex);
     return res;
   }
 
@@ -133,11 +141,12 @@ class BitcoinBlockChainService implements BlockChainService {
       String tx_hash,
       String utxoAmount,
       int tx_output,
-      String format) async {
+      String format,
+      int actuelFees) async {
     final BigintTransferAmount = BigInt.parse(transferAmount);
     final BigintUtxoAmount = BigInt.parse(utxoAmount);
     final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', '$tx_hash', $BigintUtxoAmount, $tx_output, '$format')");
+        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', '$tx_hash', $BigintUtxoAmount, $tx_output, '$format', $actuelFees)");
     // final decode = jsonDecode(res);
     return res.toString();
   }
@@ -169,6 +178,12 @@ class BitcoinBlockChainService implements BlockChainService {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeySegWit('$publicKeyHEX')");
     return res.toString();
+  }
+
+  //This method getting actual price fee in SegWit format
+  Future<BlockchainResponse> getActualPriceFee() async {
+    final res = await bitcoinRpcClient.getActualPricesFeeSAll();
+    return res;
   }
 
   @override

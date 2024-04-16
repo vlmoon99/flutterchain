@@ -1,10 +1,12 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
-import 'package:flutterchain_example/modules/home/components/chains/near/see_tx_in_explorer.dart';
+import 'package:flutterchain_example/modules/home/components/chains/bitcoin/bitcoin_see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/bitcoin_vm.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/ui_state_bitcoin.dart';
@@ -22,6 +24,7 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
       TextEditingController();
   final TextEditingController transferDepositController =
       TextEditingController();
+  final TextEditingController feeBayte = TextEditingController();
 
   @override
   void initState() {
@@ -29,6 +32,7 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
     recipientEditingController.text =
         "bc1qtstyjv5uyt5kcsy0ru4h8m6a67f0xa9jy8z3gx";
     transferDepositController.text = "1200";
+    feeBayte.text = '0';
   }
 
   @override
@@ -62,16 +66,16 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
             bitcoinVM.bitcoinState.add(
               currentState.copyWith(transferResult: value.data),
             );
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     content: Text(
-            //       value.status == BlockchainResponses.success
-            //           ? 'Success transfer'
-            //           : 'Failed transfer',
-            //     ),
-            //   ),
-            // );
-            log("Result of transfer $value");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  value.status == BlockchainResponses.success
+                      ? 'Success transfer'
+                      : 'Failed transfer',
+                ),
+              ),
+            );
+            log("Result of transfer ${value}");
           },
         );
       },
@@ -89,9 +93,16 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
               textEditingController: transferDepositController,
             ),
             const SizedBox(height: 20),
-            Text('${currentState.transferResult.toString()}')
-            // SeeTransactionInfoNearBlockchain(
-            //   tx: currentState.transferResult?['txHash'].toString(),
+            if (currentState.transferResult != null) ...[
+              SelectableText(
+                  '${currentState.transferResult?['data'].toString()}'),
+              const SizedBox(height: 20),
+              SelectableText(
+                  '${currentState.transferResult?['data']['tx']['hash'].toString()}'),
+            ]
+
+            // SeeTransactionInfoBitcoinBlockchain(
+            //   tx: currentState.transferResult?['tx']['hash'].toString(),
             // ),
           ],
         ),

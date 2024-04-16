@@ -38,6 +38,7 @@ class HomeModule extends Module {
         i(),
         i(),
         i(),
+        i(),
       ),
     ),
   ];
