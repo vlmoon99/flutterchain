@@ -212,14 +212,6 @@ class FlutterChainLibrary {
       throw Exception('Does not exist wallet with this name');
     }
 
-    final fromTheAddress = ((wallet.blockchainsData?[BlockChains.near])
-                    ?.firstWhereOrNull((element) =>
-                        element.derivationPath == currentDerivationPath)
-                as NearBlockChainData)
-            .accountId ??
-        (wallet.blockchainsData?[BlockChains.near] as NearBlockChainData)
-            .publicKey;
-
     final privateKey = wallet.blockchainsData?[typeOfBlockchain]
         ?.firstWhereOrNull(
             (element) => element.derivationPath == currentDerivationPath)
@@ -241,7 +233,7 @@ class FlutterChainLibrary {
     return blockchainService.callSmartContractFunction(
       typeOfBlockchain: typeOfBlockchain,
       privateKey: privateKey,
-      fromAddress: fromTheAddress,
+      fromAddress: publicKey,
       publicKey: publicKey,
       toAddress: toAddress,
       arguments: arguments,
