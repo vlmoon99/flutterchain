@@ -24,15 +24,13 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
       TextEditingController();
   final TextEditingController transferDepositController =
       TextEditingController();
-  final TextEditingController feeBayte = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     recipientEditingController.text =
         "bc1qtstyjv5uyt5kcsy0ru4h8m6a67f0xa9jy8z3gx";
-    transferDepositController.text = "1200";
-    feeBayte.text = '0';
+    transferDepositController.text = "0";
   }
 
   @override
@@ -94,11 +92,14 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
             ),
             const SizedBox(height: 20),
             if (currentState.transferResult != null) ...[
-              SelectableText(
-                  '${currentState.transferResult?['data'].toString()}'),
-              const SizedBox(height: 20),
-              SelectableText(
-                  '${currentState.transferResult?['data']['tx']['hash'].toString()}'),
+              if (currentState.transferResult?['data']['hash'] != null) ...[
+                SelectableText(
+                    '${currentState.transferResult?['data']['hash'].toString()}'),
+              ] else if (currentState.transferResult?['data']['tx']['hash'] !=
+                  null) ...[
+                SelectableText(
+                    '${currentState.transferResult?['data']['tx']['hash'].toString()}'),
+              ]
             ]
 
             // SeeTransactionInfoBitcoinBlockchain(

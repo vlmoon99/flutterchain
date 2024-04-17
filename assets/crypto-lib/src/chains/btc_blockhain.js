@@ -10,25 +10,7 @@ export class BitcoinBlockchain {
     concatenated.set(arr2, arr1.length);
     return concatenated;
   }
-  getPublicKeyFromSecretKeyFromNearApiJSFormat(secretKey) {
-    const { HexCoding } = window.WalletCore;
-    const decodedSecretKey = bs58.decode(secretKey);
-    const keyPair = nacl.sign.keyPair.fromSecretKey(decodedSecretKey);
-    return HexCoding.encode(keyPair.publicKey).substring(2);
-  }
-  getPrivateKeyFromSecretKeyFromNearApiJSFormat(secretKey) {
-    const { Base58, Base64, PrivateKey, Curve } = window.WalletCore;
-
-    const decodedSecretKey = Base58.decodeNoCheck(secretKey);
-    const privateKeyData = decodedSecretKey.subarray(0, 32);
-    if (!PrivateKey.isValid(privateKeyData, Curve.secp256k1)) {
-      throw new Error("Invalid private key");
-    }
-    const privKey = PrivateKey.createWithData(privateKeyData);
-    const privateKeyString = Base64.encode(privKey.data());
-
-    return privateKeyString;
-  }
+  
   isValidPrivateKeyBitcoin(secretKey){
     const { Base58, PrivateKey, Curve } = window.WalletCore;
     const decodedSecretKey = Base58.decode(secretKey);

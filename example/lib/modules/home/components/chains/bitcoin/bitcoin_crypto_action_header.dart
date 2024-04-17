@@ -171,29 +171,29 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                         ),
                       ),
                     ),
-                    // FutureBuilder(
-                    // future: bitcoinVM.getBalanceByDerivationPath(
-                    //     walletId: bitcoinVM.userStore.walletIdStream.value,
-                    //     currentDerivationPath: derivationModel,
-                    //   ),
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       return Padding(
-                    //         padding: const EdgeInsets.only(bottom: 20),
-                    //         child: SelectableText(
-                    //           'Total Amount of ${BlockChains.bitcoin} :${double.parse(snapshot.data.toString()).toStringAsFixed(5)}',
-                    //           style: nearTextStyles.headline!.copyWith(
-                    //             fontWeight: FontWeight.bold,
-                    //             color: nearColors.nearBlack,
-                    //             fontSize: 20,
-                    //           ),
-                    //         ),
-                    //       );
-                    //     } else {
-                    //       return const SizedBox();
-                    //     }
-                    //   },
-                    // ),
+                    FutureBuilder(
+                      future: bitcoinVM.getBalanceByDerivationPath(
+                        walletId: bitcoinVM.userStore.walletIdStream.value,
+                        currentDerivationPath: derivationModel,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: SelectableText(
+                              'Total Amount of ${BlockChains.bitcoin} :${double.parse(snapshot.data.toString()).toStringAsFixed(8)}',
+                              style: nearTextStyles.headline!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: nearColors.nearBlack,
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -312,7 +312,7 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                         if (snapshot.hasData) {
                           var data = snapshot.data?.data.values.first as Map;
                           var interevlData = data.keys
-                              .map((e) => "${e}: ${data[e] + 10}\n")
+                              .map((e) => "${e}: ${data[e] + 7}\n")
                               .join(" ");
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 20),

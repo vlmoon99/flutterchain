@@ -10,10 +10,11 @@ part 'bitcoin_blockchain_data.g.dart';
 class BitcoinBlockChainData extends BlockChainData {
   String? accountId;
   BitcoinBlockChainData({
+    // Standard bitcoin SegWit address
     this.accountId,
-    //Standard near ed25519 public key
+    //Standard bitcoin Base 58 encoded public key
     required String publicKey,
-    //Base 64 encoded
+    //Base 58 encoded
     required String privateKey,
     required DerivationPath derivationPath,
     required String passphrase,

@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_gas.dart';
-import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
@@ -74,7 +72,7 @@ class BitcoinBlockChainService implements BlockChainService {
     return res;
   }
 
-  //Call smart contract function
+  //Call smart contract function not exist in bitcoin
   @override
   Future<BlockchainResponse> callSmartContractFunction(
     String toAdress,
@@ -86,11 +84,10 @@ class BitcoinBlockChainService implements BlockChainService {
     throw UnimplementedError('callSmartContractFunction is not implemented.');
   }
 
-  //Get wallet balance by account ID (hex representation of near account)
+  //Get wallet balance by account ID (on input hex format public key)
   @override
   Future<String> getWalletBalance(String accountId) async {
-    const needKeyHash = false;
-    final addressId = await getAdressBTCP2PKHFomat(accountId, needKeyHash);
+    final addressId = await getAdressBTCSegWitFomat(accountId);
     final res = await bitcoinRpcClient.getAccountBalance(addressId);
     return res;
   }
@@ -132,6 +129,7 @@ class BitcoinBlockChainService implements BlockChainService {
     return blockChainData;
   }
 
+  // Generate tx sign transfer in hex format
   Future<String> signBitcoinTransfer(
       String toAddress,
       String accountID,
@@ -147,14 +145,10 @@ class BitcoinBlockChainService implements BlockChainService {
     final BigintUtxoAmount = BigInt.parse(utxoAmount);
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', '$tx_hash', $BigintUtxoAmount, $tx_output, '$format', $actuelFees)");
-    // final decode = jsonDecode(res);
     return res.toString();
   }
 
-  //This method helps sign near actions , you can find this actions description here -> https://nomicon.io/RuntimeSpec/Actions
-  //This is a core method to got signed transaction from your list of actions
-
-  //This method will transform Near public key (which in hex format) to Base58 format with "ed25519:" prefix
+  //This method will transform Bitcoin public key (which in hex format) to Base58 format
   Future<String> getBase58PubKeyFromHexValue(
       {required String? hexEncodedPubKey}) async {
     if (hexEncodedPubKey == null) {
@@ -165,7 +159,7 @@ class BitcoinBlockChainService implements BlockChainService {
     return res.toString();
   }
 
-  //This method getting Address BTC in P2PKH format from Public Key in Hex format
+  //This method getting Address BTC in P2PKH format from Public Key in Hex format, if needKeyHash = true, return key hash
   Future<String> getAdressBTCP2PKHFomat(
       String publicKeyHEX, bool needKeyHash) async {
     final res = await jsVMService.callJS(

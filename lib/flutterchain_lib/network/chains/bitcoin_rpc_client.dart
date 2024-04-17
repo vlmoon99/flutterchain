@@ -99,7 +99,7 @@ class BitcoinRpcClient {
     final res = await networkClient
         .getRequest('https://mempool.space/api/v1/fees/recommended');
     if (res.isSuccess) {
-      final tx_hash = res.data['fastestFee'] + 10;
+      final tx_hash = res.data['fastestFee'] + 7;
       return tx_hash!;
     } else {
       return 0;
