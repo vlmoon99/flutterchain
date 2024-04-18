@@ -10,12 +10,7 @@ abstract class BlockChainService {
   );
 
   Future<BlockchainResponse> sendTransferNativeCoin(
-    String toAdress,
-    String fromAdress,
-    String transferAmount,
-    String privateKey,
-    String publicKey,
-  );
+      TransferRequest transferRequest);
 
   Future<BlockchainResponse> callSmartContractFunction(
     String toAddress,

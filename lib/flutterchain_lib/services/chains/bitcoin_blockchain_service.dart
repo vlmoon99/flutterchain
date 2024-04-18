@@ -41,16 +41,14 @@ class BitcoinBlockChainService implements BlockChainService {
   //Send Bitcoin tokens thought bitcoin blockchain
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-    String toAddress,
-    String fromAddress,
-    String transferAmount,
-    String privateKey,
-    String publicKey,
-  ) async {
+      TransferRequest transferRequest) async {
+    BitcoinTransferRequest bitcoinTransferRequest =
+        transferRequest as BitcoinTransferRequest;
     var tx_output = 0;
     final format = 'SEGWIT';
     final actuelFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
-    final accountID = await getAdressBTCSegWitFomat(publicKey);
+    final accountID =
+        await getAdressBTCSegWitFomat(bitcoinTransferRequest.publicKey!);
     final transactionInfo =
         await bitcoinRpcClient.getTransactionInfo(accountID);
     if (transactionInfo.tx_output < 0) {
@@ -59,11 +57,11 @@ class BitcoinBlockChainService implements BlockChainService {
       tx_output = transactionInfo.tx_output;
     }
     final txHex = await signBitcoinTransfer(
-        toAddress,
+        bitcoinTransferRequest.toAddress!,
         accountID,
-        transferAmount,
-        privateKey,
-        publicKey,
+        bitcoinTransferRequest.transferAmount!,
+        bitcoinTransferRequest.privateKey!,
+        bitcoinTransferRequest.publicKey!,
         transactionInfo.tx_hash,
         transactionInfo.ref_balance,
         tx_output,

@@ -43,15 +43,12 @@ class NearBlockChainService implements BlockChainService {
   //Send Near tokens thought near blockchain
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-    String toAdress,
-    String fromAddress,
-    String transferAmount,
-    String privateKey,
-    String publicKey,
-  ) async {
+      TransferRequest transferRequest) async {
+    NearTransferRequest nearTransferRequest =
+        transferRequest as NearTransferRequest;
     final transactionInfo = await getTransactionInfo(
-      accountId: fromAddress,
-      publicKey: publicKey,
+      accountId: nearTransferRequest.publicKey!,
+      publicKey: nearTransferRequest.publicKey!,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
@@ -60,15 +57,15 @@ class NearBlockChainService implements BlockChainService {
     final actions = [
       {
         "type": "transfer",
-        "data": {"amount": transferAmount}
+        "data": {"amount": nearTransferRequest.transferAmount}
       }
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: fromAddress,
-      toAddress: toAdress,
-      transferAmount: transferAmount,
-      privateKey: privateKey,
+      fromAddress: nearTransferRequest.publicKey!,
+      toAddress: nearTransferRequest.toAddress!,
+      transferAmount: nearTransferRequest.transferAmount!,
+      privateKey: nearTransferRequest.privateKey!,
       gas: gas,
       nonce: transactionInfo.nonce,
       blockHash: transactionInfo.blockHash,

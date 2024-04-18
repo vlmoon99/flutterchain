@@ -25,25 +25,19 @@ void main() {
       final nearToYoctoNear = NearFormatter.nearToYoctoNear('1');
       const privateKey = 'privateKey in Base64';
       const publicKey = 'publicKey in hex';
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+          toAddress: toAddress,
+          fromAddress: fromAddress,
+          transferAmount: nearToYoctoNear,
+          privateKey: privateKey,
+          publicKey: publicKey);
 
       when(
-        service.sendTransferNativeCoin(
-          toAddress,
-          fromAddress,
-          nearToYoctoNear,
-          privateKey,
-          publicKey,
-        ),
+        service.sendTransferNativeCoin(nearTransferRequest),
       ).thenAnswer((_) async =>
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
 
-      final res = await service.sendTransferNativeCoin(
-        toAddress,
-        fromAddress,
-        nearToYoctoNear,
-        privateKey,
-        publicKey,
-      );
+      final res = await service.sendTransferNativeCoin(nearTransferRequest);
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });

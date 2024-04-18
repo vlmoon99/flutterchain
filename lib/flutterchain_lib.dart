@@ -166,26 +166,22 @@ class FlutterChainLibrary {
   }
 
   Future<BlockchainResponse> sendTransferNativeCoin({
-    required String walletId,
-    required String typeOfBlockchain,
-    required String toAddress,
-    required String transferAmount,
-    required DerivationPath currentDerivationPath,
+    required TransferRequest transferRequest,
   }) async {
     final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == walletId);
+        ?.firstWhereOrNull((element) => element.id == transferRequest.walletId);
     if (wallet == null) {
       throw Exception('Does not exist wallet with this name');
     }
 
-    final privateKey = wallet.blockchainsData?[typeOfBlockchain]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == currentDerivationPath)
+    final privateKey = wallet.blockchainsData?[transferRequest.blockchainType]
+        ?.firstWhereOrNull((element) =>
+            element.derivationPath == transferRequest.currentDerivationPath)
         ?.privateKey;
 
-    final publicKey = wallet.blockchainsData?[typeOfBlockchain]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == currentDerivationPath)
+    final publicKey = wallet.blockchainsData?[transferRequest.blockchainType]
+        ?.firstWhereOrNull((element) =>
+            element.derivationPath == transferRequest.currentDerivationPath)
         ?.publicKey;
     if (publicKey == null) {
       throw Exception('Public key is null');
@@ -193,14 +189,11 @@ class FlutterChainLibrary {
     if (privateKey == null) {
       throw Exception('Private key is null');
     }
+
+    transferRequest.privateKey = privateKey;
+    transferRequest.publicKey = publicKey;
     return blockchainService.sendTransferNativeCoin(
-      toAddress: toAddress,
-      fromAddress: publicKey,
-      transferAmount: transferAmount,
-      typeOfBlockchain: typeOfBlockchain,
-      privateKey: privateKey,
-      publicKey: publicKey,
-    );
+        transferRequest: transferRequest);
   }
 
   Future<BlockchainResponse> callSmartContractFunction({

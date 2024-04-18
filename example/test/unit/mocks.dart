@@ -177,12 +177,8 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-      {required String walletId,
-      required String typeOfBlockchain,
-      required String toAddress,
-      required String transferAmount,
-      required DerivationPath currentDerivationPath}) async {
-    if (transferAmount == '-1') {
+      {required TransferRequest transferRequest}) async {
+    if (transferRequest.transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},
@@ -405,12 +401,8 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
 
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-      String toAdress,
-      String fromAddress,
-      String transferAmount,
-      String privateKey,
-      String publicKey) async {
-    if (transferAmount == '-1') {
+      TransferRequest transferRequest) async {
+    if (transferRequest.transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},

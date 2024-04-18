@@ -208,19 +208,12 @@ class NearVM {
           .mnemonic;
 
   Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
-    required String toAddress,
-    required String transferAmount,
-    required String walletId,
-    required String typeOfBlockchain,
-    required DerivationPath currentDerivationPath,
+    required NearTransferRequest nearTransferRequest,
   }) async {
+    nearTransferRequest.transferAmount =
+        NearFormatter.nearToYoctoNear(nearTransferRequest.transferAmount!);
     final response = cryptoLibrary.sendTransferNativeCoin(
-      walletId: walletId,
-      typeOfBlockchain: typeOfBlockchain,
-      toAddress: toAddress,
-      currentDerivationPath: currentDerivationPath,
-      transferAmount: NearFormatter.nearToYoctoNear(transferAmount),
-    );
+        transferRequest: nearTransferRequest);
     return response;
   }
 

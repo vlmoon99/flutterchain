@@ -10,6 +10,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain
     as _i5;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart'
     as _i6;
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart'
     as _i4;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart'
@@ -120,21 +121,16 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i8.Future<_i4.BlockchainResponse> sendTransferNativeCoin(
-    String? toAdress,
-    String? fromAddress,
-    String? transferAmount,
-    String? privateKey,
-    String? publicKey,
-  ) =>
+          TransferRequest nearTransferRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendTransferNativeCoin,
           [
-            toAdress,
-            fromAddress,
-            transferAmount,
-            privateKey,
-            publicKey,
+            nearTransferRequest.toAddress,
+            nearTransferRequest.fromAddress,
+            nearTransferRequest.transferAmount,
+            nearTransferRequest.privateKey,
+            nearTransferRequest.publicKey,
           ],
         ),
         returnValue:
@@ -143,11 +139,11 @@ class MockNearBlockChainService extends _i1.Mock
           Invocation.method(
             #sendTransferNativeCoin,
             [
-              toAdress,
-              fromAddress,
-              transferAmount,
-              privateKey,
-              publicKey,
+              nearTransferRequest.toAddress,
+              nearTransferRequest.fromAddress,
+              nearTransferRequest.transferAmount,
+              nearTransferRequest.privateKey,
+              nearTransferRequest.publicKey,
             ],
           ),
         )),

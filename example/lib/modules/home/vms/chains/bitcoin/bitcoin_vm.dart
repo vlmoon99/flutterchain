@@ -64,20 +64,10 @@ class BitcoinVM {
           .firstWhere((element) => element.name == walletName)
           .mnemonic;
 
-  Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
-    required String toAddress,
-    required String transferAmount,
-    required String walletId,
-    required String typeOfBlockchain,
-    required DerivationPath currentDerivationPath,
-  }) async {
+  Future<BlockchainResponse> sendNativeCoinTransferByWalletId(
+      {required BitcoinTransferRequest bitcoinTransferRequest}) async {
     final response = cryptoLibrary.sendTransferNativeCoin(
-      walletId: walletId,
-      typeOfBlockchain: typeOfBlockchain,
-      toAddress: toAddress,
-      currentDerivationPath: currentDerivationPath,
-      transferAmount: transferAmount,
-    );
+        transferRequest: bitcoinTransferRequest);
     return response;
   }
 }

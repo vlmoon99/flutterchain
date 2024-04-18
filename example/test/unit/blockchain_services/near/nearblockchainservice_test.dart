@@ -157,14 +157,12 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+          toAddress: toAddress, transferAmount: transferAmount);
+
       // Act
-      final response = await mockNearBlockChainService.sendTransferNativeCoin(
-        toAddress,
-        fromAddress,
-        transferAmount,
-        privateKey,
-        publicKey,
-      );
+      final response = await mockNearBlockChainService
+          .sendTransferNativeCoin(nearTransferRequest);
 
       // Assert
       expect(response, expectedResponse);

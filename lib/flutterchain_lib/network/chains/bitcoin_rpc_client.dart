@@ -110,6 +110,7 @@ class BitcoinRpcClient {
     final res = await networkClient.postHTTP(
         BitcoinBlockChainNetworkUrls.listOfUrls.first + '/txs/push',
         {'tx': txhex});
+    print(res.data);
     if (res.data['error'] != null || res.data == null) {
       return BlockchainResponse(
         data: res.data['error'],
