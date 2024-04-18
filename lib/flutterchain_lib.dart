@@ -1,14 +1,13 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/core/core_repository.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
-
-import 'flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 
 class FlutterChainLibrary {
   final BehaviorSubject<List<Wallet>> walletsStream =
@@ -98,24 +97,29 @@ class FlutterChainLibrary {
   }
 
   Future<String> getBalanceOfAddressOnSpecificBlockchain({
-    required String walletId,
-    required String blockchainType,
-    required DerivationPath currentDerivationPath,
+    required TransferRequest transferRequest,
   }) async {
-    final wallet = walletsStream.value
-        .firstWhereOrNull((element) => element.id == walletId);
-    final publicKey = wallet?.blockchainsData?[blockchainType]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == currentDerivationPath)
-        ?.publicKey;
-    if (publicKey != null) {
+    if (transferRequest.accountID != null) {
       return blockchainService.getWalletBalance(
-          accountId: publicKey, blockchainType: blockchainType);
+          transferRequest: transferRequest);
     } else {
-      throw Exception("Public key is null");
+      final wallet = walletsStream.value.firstWhereOrNull(
+          (element) => element.id == transferRequest.walletId);
+      final publicKey = wallet?.blockchainsData?[transferRequest.blockchainType]
+          ?.firstWhereOrNull((element) =>
+              element.derivationPath == transferRequest.currentDerivationPath)
+          ?.publicKey;
+      if (publicKey != null) {
+        transferRequest.accountID = publicKey;
+        return blockchainService.getWalletBalance(
+            transferRequest: transferRequest);
+      } else {
+        throw Exception("Public key is null");
+      }
     }
   }
 
+//accountId: publicKey, blockchainType: blockchainType
   Future<Wallet> createWalletWithGeneratedMnemonic({
     required String walletName,
     String passphrase = '',

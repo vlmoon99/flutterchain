@@ -3,6 +3,7 @@ import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dar
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
@@ -171,11 +172,12 @@ void main() {
 
     test('getWalletBalance', () async {
       // Arrange
-      const accountId = 'accountId';
+      NearTransferRequest nearTransferRequest =
+          NearTransferRequest(accountID: 'accountId');
 
       // Act
       final response = await mockNearBlockChainService.getWalletBalance(
-        accountId,
+        nearTransferRequest,
       );
 
       // Assert

@@ -14,6 +14,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
     as _i4;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart'
     as _i9;
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart' as _i11;
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart'
     as _i3;
@@ -188,16 +189,17 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i8.Future<_i4.BlockchainResponse>);
 
   @override
-  _i8.Future<String> getWalletBalance(String? accountId) => (super.noSuchMethod(
+  _i8.Future<String> getWalletBalance(TransferRequest transferRequest) =>
+      (super.noSuchMethod(
         Invocation.method(
           #getWalletBalance,
-          [accountId],
+          [transferRequest.accountID],
         ),
         returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
           this,
           Invocation.method(
             #getWalletBalance,
-            [accountId],
+            [transferRequest.accountID],
           ),
         )),
       ) as _i8.Future<String>);

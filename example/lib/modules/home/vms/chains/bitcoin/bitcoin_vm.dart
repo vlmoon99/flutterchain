@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
@@ -41,14 +42,10 @@ class BitcoinVM {
   }
 
   Future<dynamic> getBalanceByDerivationPath({
-    required String walletId,
-    required DerivationPath currentDerivationPath,
+    required BitcoinTransferRequest bitcoinTransferRequest,
   }) async =>
       cryptoLibrary.getBalanceOfAddressOnSpecificBlockchain(
-        walletId: walletId,
-        blockchainType: BlockChains.bitcoin,
-        currentDerivationPath: currentDerivationPath,
-      );
+          transferRequest: bitcoinTransferRequest);
 
   Future<String> getWalletPublicKeyAddressByWalletId(
           String walletName, DerivationPath currentDerivationPath) async =>

@@ -1,5 +1,6 @@
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 abstract class BlockChainService {
@@ -24,7 +25,7 @@ abstract class BlockChainService {
     BlockChainSmartContractArguments arguments,
   );
 
-  Future<String> getWalletBalance(String accountId);
+  Future<String> getWalletBalance(TransferRequest transferRequest);
 
   Future<void> setBlockchainNetworkEnvironment({required String newUrl});
 

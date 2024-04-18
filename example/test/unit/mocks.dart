@@ -3,6 +3,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -195,9 +196,7 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<String> getBalanceOfAddressOnSpecificBlockchain({
-    required String walletId,
-    required String blockchainType,
-    required DerivationPath currentDerivationPath,
+    required TransferRequest transferRequest,
   }) async {
     return '100';
   }
@@ -424,7 +423,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<String> getWalletBalance(String accountId) async {
+  Future<String> getWalletBalance(TransferRequest transferRequest) async {
     return '100';
   }
 

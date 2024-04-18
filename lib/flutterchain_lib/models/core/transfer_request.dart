@@ -3,9 +3,10 @@ import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 abstract class TransferRequest {
   String? walletId;
-  String? blockchainType;
+  String blockchainType;
   String? newUrl;
   DerivationPath? derivationPath;
+  DerivationPath? currentDerivationPath;
   String? walletName;
   String? mnemonic;
   String? passphrase = '';
@@ -15,12 +16,14 @@ abstract class TransferRequest {
   String? privateKey;
   String? publicKey;
   String? fromAddress;
+  String? accountID;
 
   TransferRequest(
       this.walletId,
       this.blockchainType,
       this.newUrl,
       this.derivationPath,
+      this.currentDerivationPath,
       this.walletName,
       this.mnemonic,
       this.passphrase,
@@ -29,5 +32,6 @@ abstract class TransferRequest {
       this.transferAmount,
       this.privateKey,
       this.publicKey,
-      this.fromAddress);
+      this.fromAddress,
+      this.accountID);
 }

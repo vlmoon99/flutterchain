@@ -8,6 +8,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -173,8 +174,9 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                     ),
                     FutureBuilder(
                       future: bitcoinVM.getBalanceByDerivationPath(
-                        walletId: bitcoinVM.userStore.walletIdStream.value,
-                        currentDerivationPath: derivationModel,
+                        bitcoinTransferRequest: BitcoinTransferRequest(
+                            walletId: bitcoinVM.userStore.walletIdStream.value,
+                            currentDerivationPath: derivationModel),
                       ),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {

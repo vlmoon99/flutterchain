@@ -10,8 +10,10 @@ import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.d
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -122,8 +124,10 @@ class NearBlockChainService implements BlockChainService {
 
   //Get wallet balance by account ID (hex representation of near account)
   @override
-  Future<String> getWalletBalance(String accountId) async {
-    final res = await nearRpcClient.getAccountBalance(accountId);
+  Future<String> getWalletBalance(TransferRequest transferRequest) async {
+    final nearTransferRequest = transferRequest as NearTransferRequest;
+    final res =
+        await nearRpcClient.getAccountBalance(nearTransferRequest.accountID!);
     return res;
   }
 

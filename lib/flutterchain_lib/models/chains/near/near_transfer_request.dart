@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -7,10 +8,13 @@ class NearTransferRequest implements TransferRequest {
   BlockChainSmartContractArguments? arguments;
 
   @override
-  String? blockchainType;
+  String blockchainType = BlockChains.near;
 
   @override
   DerivationPath? derivationPath;
+
+  @override
+  DerivationPath? currentDerivationPath;
 
   @override
   String? fromAddress;
@@ -42,10 +46,13 @@ class NearTransferRequest implements TransferRequest {
   @override
   String? walletName;
 
+  @override
+  String? accountID;
+
   NearTransferRequest(
-      this.arguments,
-      this.blockchainType,
+      {this.arguments,
       this.derivationPath,
+      this.currentDerivationPath,
       this.fromAddress,
       this.mnemonic,
       this.newUrl,
@@ -55,5 +62,6 @@ class NearTransferRequest implements TransferRequest {
       this.toAddress,
       this.transferAmount,
       this.walletId,
-      this.walletName);
+      this.walletName,
+      this.accountID});
 }
