@@ -44,18 +44,13 @@ class BitcoinBlockChainService implements BlockChainService {
       TransferRequest transferRequest) async {
     BitcoinTransferRequest bitcoinTransferRequest =
         transferRequest as BitcoinTransferRequest;
-    var tx_output = 0;
     final format = 'SEGWIT';
     final actuelFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
     final accountID =
         await getAdressBTCSegWitFomat(bitcoinTransferRequest.publicKey!);
     final transactionInfo =
         await bitcoinRpcClient.getTransactionInfo(accountID);
-    if (transactionInfo.tx_output < 0) {
-      tx_output = transactionInfo.tx_output * -1;
-    } else {
-      tx_output = transactionInfo.tx_output;
-    }
+
     final txHex = await signBitcoinTransfer(
         bitcoinTransferRequest.toAddress!,
         accountID,
@@ -64,11 +59,11 @@ class BitcoinBlockChainService implements BlockChainService {
         bitcoinTransferRequest.publicKey!,
         transactionInfo.tx_hash,
         transactionInfo.ref_balance,
-        tx_output,
+        transactionInfo.tx_output,
         format,
         actuelFees);
 
-    final res = await bitcoinRpcClient.sendTransferNativeCoin(txHex);
+    final res = await bitcoinRpcClient.sendTransferNativeCoinTest(txHex);
     return res;
   }
 

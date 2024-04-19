@@ -30,7 +30,8 @@ class BitcoinRpcClient {
     String accountID,
   ) async {
     final res = await networkClient.getRequest(
-      BitcoinBlockChainNetworkUrls.listOfUrls.first + '/addrs/$accountID',
+      BitcoinBlockChainNetworkUrls.listOfUrls.first +
+          '/addrs/$accountID?unspentOnly=true',
     );
     if (res.isSuccess) {
       final tx_hash = res.data['txrefs'][0]['tx_hash'].toString();
