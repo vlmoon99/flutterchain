@@ -61,7 +61,7 @@ class BitcoinBlockChainService implements BlockChainService {
         format,
         actuelFees);
 
-    final res = await bitcoinRpcClient.sendTransferNativeCoinTest(txHex);
+    final res = await bitcoinRpcClient.sendTransferNativeCoin(txHex);
     return res;
   }
 

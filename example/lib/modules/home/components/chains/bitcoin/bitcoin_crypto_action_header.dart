@@ -172,30 +172,30 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                         ),
                       ),
                     ),
-                    // FutureBuilder(
-                    //   future: bitcoinVM.getBalanceByDerivationPath(
-                    //     bitcoinTransferRequest: BitcoinTransferRequest(
-                    //         walletId: bitcoinVM.userStore.walletIdStream.value,
-                    //         currentDerivationPath: derivationModel),
-                    //   ),
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       return Padding(
-                    //         padding: const EdgeInsets.only(bottom: 20),
-                    //         child: SelectableText(
-                    //           'Total Amount of ${BlockChains.bitcoin} :${double.parse(snapshot.data.toString()).toStringAsFixed(8)}',
-                    //           style: nearTextStyles.headline!.copyWith(
-                    //             fontWeight: FontWeight.bold,
-                    //             color: nearColors.nearBlack,
-                    //             fontSize: 20,
-                    //           ),
-                    //         ),
-                    //       );
-                    //     } else {
-                    //       return const SizedBox();
-                    //     }
-                    //   },
-                    // ),
+                    FutureBuilder(
+                      future: bitcoinVM.getBalanceByDerivationPath(
+                        bitcoinTransferRequest: BitcoinTransferRequest(
+                            walletId: bitcoinVM.userStore.walletIdStream.value,
+                            currentDerivationPath: derivationModel),
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: SelectableText(
+                              'Total Amount of ${BlockChains.bitcoin} :${double.parse(snapshot.data.toString()).toStringAsFixed(8)}',
+                              style: nearTextStyles.headline!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: nearColors.nearBlack,
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
