@@ -170,17 +170,18 @@ class NearVM {
     required String method,
     required DerivationPath currentDerivationPath,
   }) {
-    final response = cryptoLibrary.callSmartContractFunction(
+    NearTransferRequest nearTransferRequest = NearTransferRequest(
       currentDerivationPath: currentDerivationPath,
       walletId: walletId,
-      typeOfBlockchain: BlockChains.near,
       toAddress: smartContractAddress,
       arguments: NearBlockChainSmartContractArguments(
         method: method,
         args: args,
-        transferAmount: NearFormatter.nearToYoctoNear(amountOfDeposit),
+        transferAmount: amountOfDeposit,
       ),
     );
+    final response = cryptoLibrary.callSmartContractFunction(
+        transferRequest: nearTransferRequest);
     return response;
   }
 

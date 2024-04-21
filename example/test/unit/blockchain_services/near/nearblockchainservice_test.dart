@@ -130,15 +130,16 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
-      // Act
-      final response =
-          await mockNearBlockChainService.callSmartContractFunction(
-        toAddress,
-        fromAddress,
-        privateKey,
-        publicKey,
-        arguments,
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+        toAddress: toAddress,
+        fromAddress: fromAddress,
+        privateKey: privateKey,
+        publicKey: publicKey,
+        arguments: arguments,
       );
+      // Act
+      final response = await mockNearBlockChainService
+          .callSmartContractFunction(nearTransferRequest);
 
       // Assert
       expect(response, expectedResponse);

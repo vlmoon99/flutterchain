@@ -78,38 +78,42 @@ class NearBlockChainService implements BlockChainService {
   //Call smart contract function
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-    String toAdress,
-    String fromAdress,
-    String privateKey,
-    String publicKey,
-    BlockChainSmartContractArguments arguments,
+    TransferRequest transferRequest,
   ) async {
-    if (arguments is! NearBlockChainSmartContractArguments) {
+    NearTransferRequest nearTransferRequest =
+        transferRequest as NearTransferRequest;
+    if (nearTransferRequest.arguments
+        is! NearBlockChainSmartContractArguments) {
       throw Exception('Incorrect Blockchain Smart Contract Arguments');
     }
     final transactionInfo = await getTransactionInfo(
-      accountId: fromAdress,
-      publicKey: publicKey,
+      accountId: nearTransferRequest.fromAddress!,
+      publicKey: nearTransferRequest.publicKey!,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
     }
+    final arg =
+        nearTransferRequest.arguments as NearBlockChainSmartContractArguments;
+    if (arg == null) {
+      throw Exception('Incorrect Blockchain Arg');
+    }
     final List<Map<String, dynamic>> actions = [
       {
         "type": "functionCall",
         "data": {
-          "methodName": arguments.method,
-          "args": arguments.args,
+          "methodName": arg.method,
+          "args": arg.args,
         },
       },
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: toAdress,
-      transferAmount: arguments.transferAmount,
-      privateKey: privateKey,
+      fromAddress: transferRequest.fromAddress!,
+      toAddress: transferRequest.toAddress!,
+      transferAmount: arg.transferAmount,
+      privateKey: transferRequest.privateKey!,
       gas: gas,
       nonce: transactionInfo.nonce,
       blockHash: transactionInfo.blockHash,

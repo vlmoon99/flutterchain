@@ -74,25 +74,14 @@ class FlutterChainService {
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required String fromAddress,
-    required String typeOfBlockchain,
-    required String privateKey,
-    required String publicKey,
-    required String toAddress,
-    required BlockChainSmartContractArguments arguments,
+    required TransferRequest transferRequest,
   }) async {
-    if (blockchainServices[typeOfBlockchain] == null) {
+    if (blockchainServices[transferRequest.blockchainType] == null) {
       throw Exception('Incorrect Blockchain');
     }
 
-    final res =
-        await blockchainServices[typeOfBlockchain]?.callSmartContractFunction(
-      toAddress,
-      fromAddress,
-      privateKey,
-      publicKey,
-      arguments,
-    );
+    final res = await blockchainServices[transferRequest.blockchainType]
+        ?.callSmartContractFunction(transferRequest);
 
     if (res == null) {
       throw Exception('Incorrect Smart Contract Call');

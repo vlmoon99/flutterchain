@@ -307,7 +307,6 @@ void main() {
 
     test("callSmartContractFunction", () async {
       // Arrange
-      const typeOfBlockchain = BlockChains.near;
       final args = {'arg1': 'value1', 'arg2': 'value2'};
       final amountOfDeposit = NearFormatter.nearToYoctoNear("1");
       const smartContractAddress = 'some_contract_address';
@@ -326,11 +325,9 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
-      // Act
-      final result = await mockCryptoLibrary.callSmartContractFunction(
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
         currentDerivationPath: currentDerivationPath,
         walletId: walletID,
-        typeOfBlockchain: typeOfBlockchain,
         toAddress: smartContractAddress,
         arguments: NearBlockChainSmartContractArguments(
           method: method,
@@ -338,6 +335,10 @@ void main() {
           transferAmount: amountOfDeposit,
         ),
       );
+
+      // Act
+      final result = await mockCryptoLibrary.callSmartContractFunction(
+          transferRequest: nearTransferRequest);
 
       // Assert
       expect(result, expectedResponse);

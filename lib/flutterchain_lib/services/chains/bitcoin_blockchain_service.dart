@@ -68,11 +68,7 @@ class BitcoinBlockChainService implements BlockChainService {
   //Call smart contract function not exist in bitcoin
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-    String toAdress,
-    String fromAdress,
-    String privateKey,
-    String publicKey,
-    BlockChainSmartContractArguments arguments,
+    TransferRequest transferRequest,
   ) async {
     throw UnimplementedError('callSmartContractFunction is not implemented.');
   }

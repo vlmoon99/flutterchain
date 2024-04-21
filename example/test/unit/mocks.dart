@@ -163,12 +163,9 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
   }
 
   @override
-  Future<BlockchainResponse> callSmartContractFunction(
-      {required String walletId,
-      required String typeOfBlockchain,
-      required DerivationPath currentDerivationPath,
-      required String toAddress,
-      required BlockChainSmartContractArguments arguments}) async {
+  Future<BlockchainResponse> callSmartContractFunction({
+    required TransferRequest transferRequest,
+  }) async {
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},
@@ -383,11 +380,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-      String toAdress,
-      String fromAdress,
-      String privateKey,
-      String publicKey,
-      BlockChainSmartContractArguments arguments) async {
+      TransferRequest transferRequest) async {
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},

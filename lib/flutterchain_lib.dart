@@ -197,26 +197,22 @@ class FlutterChainLibrary {
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required String walletId,
-    required String typeOfBlockchain,
-    required DerivationPath currentDerivationPath,
-    required String toAddress,
-    required BlockChainSmartContractArguments arguments,
+    required TransferRequest transferRequest,
   }) async {
     final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == walletId);
+        ?.firstWhereOrNull((element) => element.id == transferRequest.walletId);
     if (wallet == null) {
       throw Exception('Does not exist wallet with this name');
     }
 
-    final privateKey = wallet.blockchainsData?[typeOfBlockchain]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == currentDerivationPath)
+    final privateKey = wallet.blockchainsData?[transferRequest.blockchainType]
+        ?.firstWhereOrNull((element) =>
+            element.derivationPath == transferRequest.currentDerivationPath)
         ?.privateKey;
 
-    final publicKey = wallet.blockchainsData?[typeOfBlockchain]
-        ?.firstWhereOrNull(
-            (element) => element.derivationPath == currentDerivationPath)
+    final publicKey = wallet.blockchainsData?[transferRequest.blockchainType]
+        ?.firstWhereOrNull((element) =>
+            element.derivationPath == transferRequest.currentDerivationPath)
         ?.publicKey;
 
     if (privateKey == null) {
@@ -227,13 +223,10 @@ class FlutterChainLibrary {
       throw Exception('Public key is null');
     }
 
+    transferRequest.privateKey = privateKey;
+    transferRequest.publicKey = publicKey;
+    transferRequest.fromAddress = publicKey;
     return blockchainService.callSmartContractFunction(
-      typeOfBlockchain: typeOfBlockchain,
-      privateKey: privateKey,
-      fromAddress: publicKey,
-      publicKey: publicKey,
-      toAddress: toAddress,
-      arguments: arguments,
-    );
+        transferRequest: transferRequest);
   }
 }

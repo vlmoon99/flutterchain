@@ -139,35 +139,18 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i8.Future<_i4.BlockchainResponse> callSmartContractFunction(
-    String? toAdress,
-    String? fromAdress,
-    String? privateKey,
-    String? publicKey,
-    _i10.BlockChainSmartContractArguments? arguments,
-  ) =>
+          transferRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #callSmartContractFunction,
-          [
-            toAdress,
-            fromAdress,
-            privateKey,
-            publicKey,
-            arguments,
-          ],
+          [transferRequest],
         ),
         returnValue:
             _i8.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #callSmartContractFunction,
-            [
-              toAdress,
-              fromAdress,
-              privateKey,
-              publicKey,
-              arguments,
-            ],
+            [transferRequest],
           ),
         )),
       ) as _i8.Future<_i4.BlockchainResponse>);

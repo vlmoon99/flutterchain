@@ -13,11 +13,7 @@ abstract class BlockChainService {
       TransferRequest transferRequest);
 
   Future<BlockchainResponse> callSmartContractFunction(
-    String toAddress,
-    String fromAddress,
-    String privateKey,
-    String publicKey,
-    BlockChainSmartContractArguments arguments,
+    TransferRequest transferRequest,
   );
 
   Future<String> getWalletBalance(TransferRequest transferRequest);
