@@ -139,7 +139,68 @@ buildPayToFormat(format, publicKey){
   }
 }
 
-bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publicKey, tx_hash, utxoAmount, tx_output, format, feeBayte){
+test (data){
+  const {TW} = window;
+  const { HexCoding } = WalletCore;
+   const newdata = data.map((e) => {
+    return  TW.Bitcoin.Proto.OutPoint.create({
+    hash: HexCoding.decode(e['tx_hash']).reverse(),
+    index: e['tx_output'],
+    sequence: 4294967295
+  })});
+    return newdata;
+}
+
+bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publicKey, dataFromUTXO, format, feeBayte){
+  try{
+    const { TW, WalletCore } = window;
+    const { AnySigner, CoinType, BitcoinScript, HexCoding } = WalletCore;
+    const privateKey = bs58.decode(privateKeyHex);
+    const sscript = this.buildPayToFormat(format, publicKey);
+
+    const datautxo = dataFromUTXO.map((data) => { 
+      return TW.Bitcoin.Proto.UnspentTransaction.create({
+        outPoint: TW.Bitcoin.Proto.OutPoint.create({
+          hash: HexCoding.decode(data['tx_hash']).reverse(),
+          index: data['tx_output'],
+          sequence: 4294967295
+        }),
+      amount: data['ref_balance'],
+      script: sscript
+      })});
+    
+    const input = TW.Bitcoin.Proto.SigningInput.create({
+      hashType: BitcoinScript.hashTypeForCoin(CoinType.bitcoin),
+      amount: transferAmount,
+      byteFee: feeBayte,
+      toAddress: toAddress,
+      changeAddress: accountID,
+      utxo: datautxo,
+      privateKey: [Uint8Array.from(privateKey)],
+      сoinType: CoinType.bitcoin,
+      useMaxUtxo: true,
+    });
+
+    const encodedForPlan = TW.Bitcoin.Proto.SigningInput.encode(input).finish();
+    const outputDataForPlan = AnySigner.plan(encodedForPlan, CoinType.bitcoin);
+    const outputForPlan = TW.Bitcoin.Proto.TransactionPlan.decode(outputDataForPlan);
+    input.plan = outputForPlan;
+    
+    const encoded = TW.Bitcoin.Proto.SigningInput.encode(input).finish();
+    const outputData = AnySigner.sign(encoded, CoinType.bitcoin);
+    const output = TW.Bitcoin.Proto.SigningOutput.decode(outputData);
+    if (output.error != 0){
+      return output.error
+    }
+    const hexEncodedOutput = HexCoding.encode(output.encoded);
+    return hexEncodedOutput.substring(2);
+  } catch  (error) {
+    console.error(JSON.stringify(error));
+    return JSON.stringify({ error: error.message });
+  }
+}
+
+bitcoinTransferActionCopy(toAddress, accountID, transferAmount, privateKeyHex, publicKey, tx_hash, utxoAmount, tx_output, format, feeBayte){
   try{
     const { TW, WalletCore } = window;
     const { AnySigner, CoinType, BitcoinScript, HexCoding } = WalletCore;
@@ -193,28 +254,44 @@ bitcoinTransferActionSegwit(){
     const { TW, WalletCore } = window;
     const { AnySigner, CoinType,BitcoinSigHashType, PrivateKey, BitcoinScript, HexCoding } = WalletCore;
     const privateKey = bs58.decode("5gaVs9eHYCTzj2Eh6rBobUf366Td2VBpbY8miEyGhZES");
-    const utxoTxId = HexCoding.decode("9f535670aa3e4d08685d400e10787c8398e3218065dcdb0c65a0c2781663cee4");
+    const utxoTxId1 = HexCoding.decode("bb5960608b45757824627c2f69f054c7cf2824af971a454f8721b64a273bd2e0");
+    const utxoTxId2 = HexCoding.decode("1cfeaeeaa66cfe96ad01a9841a20e4e658cc0ef0bd20a1fe267a8816d9f96139");
     const sscript = this.buildPayToWeetnesPublicKeyHash("029edda5f611ca43d706eb774d53c64c16f2bb6bb4aa9566eaa5d5a594e91c5b4e");
-    const outPoint = TW.Bitcoin.Proto.OutPoint.create({
-      hash: utxoTxId,
-      index: 11,
-      sequence: 4294967295
+    // const outPoint1 = TW.Bitcoin.Proto.OutPoint.create({
+    //   hash: utxoTxId.reverse(),
+    //   index: 0,
+    //   sequence: 4294967295
+    // });
+    const utxo1 = TW.Bitcoin.Proto.UnspentTransaction.create({
+      outPoint: TW.Bitcoin.Proto.OutPoint.create({
+        hash: utxoTxId1.reverse(),
+        index: 0,
+        sequence: 4294967295
+      }),
+      amount: 21000,
+      script: sscript
     });
-    const utxo = TW.Bitcoin.Proto.UnspentTransaction.create({
-      outPoint: outPoint,
-      amount: 159303,
+
+    const utxo2 = TW.Bitcoin.Proto.UnspentTransaction.create({
+      outPoint: TW.Bitcoin.Proto.OutPoint.create({
+        hash: utxoTxId2.reverse(),
+        index: 0,
+        sequence: 4294967295
+      }),
+      amount: 20000,
       script: sscript
     });
     
     const input = TW.Bitcoin.Proto.SigningInput.create({
       hashType: BitcoinScript.hashTypeForCoin(CoinType.bitcoin),
-      amount: 200,
-      byteFee: 1,
+      amount: 15000,
+      byteFee: 4,
       toAddress: "bc1qtstyjv5uyt5kcsy0ru4h8m6a67f0xa9jy8z3gx",
       changeAddress: "bc1q87tmwgwlwry2jhgy8fvflm05p2v2t7kc5ju843",
-      utxo: [utxo],
+      utxo: [utxo1, utxo2],
       privateKey: [Uint8Array.from(privateKey)],
-      сoinType: CoinType.bitcoin
+      сoinType: CoinType.bitcoin,
+      useMaxUtxo: true,
     });
 
     const encodedForPlan = TW.Bitcoin.Proto.SigningInput.encode(input).finish();
@@ -229,7 +306,7 @@ bitcoinTransferActionSegwit(){
       return output.error
     }
     const hexEncodedOutput = HexCoding.encode(output.encoded);
-    return {output: output, input: input, hexEncodedOutput: hexEncodedOutput};
+    return hexEncodedOutput.substring(2);
   } catch  (error) {
     console.error(JSON.stringify(error));
     return JSON.stringify({ error: error.message });

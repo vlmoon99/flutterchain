@@ -4,15 +4,9 @@ part 'bitcoin_transaction_info.g.dart';
 
 @JsonSerializable()
 class BitcoinTransactionInfoModel {
-  final String tx_hash;
-  final String ref_balance;
-  final int tx_output;
+  final List<dynamic> data;
 
-  BitcoinTransactionInfoModel({
-    required this.tx_hash,
-    required this.ref_balance,
-    required this.tx_output,
-  });
+  BitcoinTransactionInfoModel({required this.data});
 
   factory BitcoinTransactionInfoModel.fromJson(Map<String, dynamic> json) =>
       _$BitcoinTransactionInfoModelFromJson(json);
@@ -24,14 +18,13 @@ class BitcoinTransactionInfoModel {
       identical(this, other) ||
       other is BitcoinTransactionInfoModel &&
           runtimeType == other.runtimeType &&
-          tx_hash == other.tx_hash &&
-          ref_balance == other.ref_balance;
+          data == other.data;
 
   @override
-  int get hashCode => tx_hash.hashCode ^ ref_balance.hashCode;
+  int get hashCode => data.hashCode;
 
   @override
   String toString() {
-    return "{nonce $tx_hash , blockHash $ref_balance }";
+    return "{data $data }";
   }
 }

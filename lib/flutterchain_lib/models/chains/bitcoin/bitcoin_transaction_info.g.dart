@@ -9,15 +9,11 @@ part of 'bitcoin_transaction_info.dart';
 BitcoinTransactionInfoModel _$BitcoinTransactionInfoModelFromJson(
         Map<String, dynamic> json) =>
     BitcoinTransactionInfoModel(
-      tx_hash: json['tx_hash'] as String,
-      ref_balance: json['ref_balance'] as String,
-      tx_output: json['tx_output'] as int,
+      data: json['data'] as List<dynamic>,
     );
 
 Map<String, dynamic> _$BitcoinTransactionInfoModelToJson(
         BitcoinTransactionInfoModel instance) =>
     <String, dynamic>{
-      'tx_hash': instance.tx_hash,
-      'ref_balance': instance.ref_balance,
-      'tx_output': instance.tx_output,
+      'data': instance.data,
     };

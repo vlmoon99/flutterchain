@@ -27,22 +27,57 @@ class BitcoinRpcClient {
   BitcoinRpcClient({required this.networkClient});
 
   Future<BitcoinTransactionInfoModel> getTransactionInfo(
-    String accountID,
-  ) async {
+      String accountID, String transferAmount, int actuelFees) async {
     final res = await networkClient.getRequest(
       BitcoinBlockChainNetworkUrls.listOfUrls.first +
           '/addrs/$accountID?unspentOnly=true',
     );
     if (res.isSuccess) {
-      final tx_hash = res.data['txrefs'][0]['tx_hash'].toString();
-      final ref_balance = res.data['txrefs'][0]['ref_balance'].toString();
-      final tx_output =
-          int.tryParse(res.data['txrefs'][0]['tx_output_n'].toString()) ?? 0;
-      return BitcoinTransactionInfoModel(
-          tx_hash: tx_hash, ref_balance: ref_balance, tx_output: tx_output);
+      num currentSum = 0;
+      var indexWhithBigestSum = 0;
+      List<dynamic> listWithTXrefs = res.data['txrefs'];
+      for (int i = 0; i < listWithTXrefs.length; i++) {
+        if (currentSum < listWithTXrefs[i]['value']) {
+          currentSum = listWithTXrefs[i]['value'];
+          indexWhithBigestSum = i;
+        }
+      }
+      if (currentSum > num.parse(transferAmount) + actuelFees * 200) {
+        final tx_hash =
+            listWithTXrefs[indexWhithBigestSum]['tx_hash'].toString();
+        final ref_balance =
+            listWithTXrefs[indexWhithBigestSum]['value'].toString();
+        final tx_output = int.tryParse(listWithTXrefs[indexWhithBigestSum]
+                    ['tx_output_n']
+                .toString()) ??
+            0;
+        final data = {
+          "tx_hash": tx_hash,
+          "ref_balance": num.parse(ref_balance),
+          "tx_output": tx_output
+        };
+        List<dynamic> listData = [data];
+        return BitcoinTransactionInfoModel(data: listData);
+      } else {
+        List<dynamic> listData = [];
+        for (int i = 0; i < listWithTXrefs.length; i++) {
+          final tx_hash = listWithTXrefs[i]['tx_hash'].toString();
+          final ref_balance = listWithTXrefs[i]['value'].toString();
+          final tx_output =
+              int.tryParse(listWithTXrefs[i]['tx_output_n'].toString()) ?? 0;
+          final data = {
+            "tx_hash": tx_hash,
+            "ref_balance": num.parse(ref_balance),
+            "tx_output": tx_output
+          };
+          listData.add(data);
+        }
+        return BitcoinTransactionInfoModel(data: listData);
+      }
     } else {
-      return BitcoinTransactionInfoModel(
-          tx_hash: '', ref_balance: '', tx_output: 0);
+      return BitcoinTransactionInfoModel(data: [
+        {'tx_hash': '', 'ref_balance': '', 'tx_output': 0}
+      ]);
     }
   }
 

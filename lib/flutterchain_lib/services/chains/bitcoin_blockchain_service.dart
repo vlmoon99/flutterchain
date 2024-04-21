@@ -48,8 +48,8 @@ class BitcoinBlockChainService implements BlockChainService {
     final actuelFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
     final accountID =
         await getAdressBTCSegWitFomat(bitcoinTransferRequest.publicKey!);
-    final transactionInfo =
-        await bitcoinRpcClient.getTransactionInfo(accountID);
+    final transactionInfo = await bitcoinRpcClient.getTransactionInfo(
+        accountID, bitcoinTransferRequest.transferAmount!, actuelFees);
 
     final txHex = await signBitcoinTransfer(
         bitcoinTransferRequest.toAddress!,
@@ -57,9 +57,7 @@ class BitcoinBlockChainService implements BlockChainService {
         bitcoinTransferRequest.transferAmount!,
         bitcoinTransferRequest.privateKey!,
         bitcoinTransferRequest.publicKey!,
-        transactionInfo.tx_hash,
-        transactionInfo.ref_balance,
-        transactionInfo.tx_output,
+        transactionInfo.data,
         format,
         actuelFees);
 
@@ -133,15 +131,13 @@ class BitcoinBlockChainService implements BlockChainService {
       String transferAmount,
       String privateKey,
       String publicKey,
-      String tx_hash,
-      String utxoAmount,
-      int tx_output,
+      List<dynamic> dataFromUTXO,
       String format,
-      int actuelFees) async {
+      int feeBayte) async {
+    String jsonFormData = jsonEncode(dataFromUTXO);
     final BigintTransferAmount = BigInt.parse(transferAmount);
-    final BigintUtxoAmount = BigInt.parse(utxoAmount);
     final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', '$tx_hash', $BigintUtxoAmount, $tx_output, '$format', $actuelFees)");
+        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', $jsonFormData, '$format', $feeBayte)");
     return res.toString();
   }
 
