@@ -3,6 +3,7 @@ import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dar
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
@@ -129,15 +130,16 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
-      // Act
-      final response =
-          await mockNearBlockChainService.callSmartContractFunction(
-        toAddress,
-        fromAddress,
-        privateKey,
-        publicKey,
-        arguments,
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+        toAddress: toAddress,
+        fromAddress: fromAddress,
+        privateKey: privateKey,
+        publicKey: publicKey,
+        arguments: arguments,
       );
+      // Act
+      final response = await mockNearBlockChainService
+          .callSmartContractFunction(nearTransferRequest);
 
       // Assert
       expect(response, expectedResponse);
@@ -156,14 +158,12 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+          toAddress: toAddress, transferAmount: transferAmount);
+
       // Act
-      final response = await mockNearBlockChainService.sendTransferNativeCoin(
-        toAddress,
-        fromAddress,
-        transferAmount,
-        privateKey,
-        publicKey,
-      );
+      final response = await mockNearBlockChainService
+          .sendTransferNativeCoin(nearTransferRequest);
 
       // Assert
       expect(response, expectedResponse);
@@ -171,11 +171,12 @@ void main() {
 
     test('getWalletBalance', () async {
       // Arrange
-      const accountId = 'accountId';
+      NearTransferRequest nearTransferRequest =
+          NearTransferRequest(accountID: 'accountId');
 
       // Act
       final response = await mockNearBlockChainService.getWalletBalance(
-        accountId,
+        nearTransferRequest,
       );
 
       // Assert

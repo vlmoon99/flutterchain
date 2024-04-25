@@ -4,6 +4,7 @@ import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dar
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -24,25 +25,19 @@ void main() {
       final nearToYoctoNear = NearFormatter.nearToYoctoNear('1');
       const privateKey = 'privateKey in Base64';
       const publicKey = 'publicKey in hex';
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+          toAddress: toAddress,
+          fromAddress: fromAddress,
+          transferAmount: nearToYoctoNear,
+          privateKey: privateKey,
+          publicKey: publicKey);
 
       when(
-        service.sendTransferNativeCoin(
-          toAddress,
-          fromAddress,
-          nearToYoctoNear,
-          privateKey,
-          publicKey,
-        ),
+        service.sendTransferNativeCoin(nearTransferRequest),
       ).thenAnswer((_) async =>
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
 
-      final res = await service.sendTransferNativeCoin(
-        toAddress,
-        fromAddress,
-        nearToYoctoNear,
-        privateKey,
-        publicKey,
-      );
+      final res = await service.sendTransferNativeCoin(nearTransferRequest);
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });
@@ -53,6 +48,11 @@ void main() {
       const fromAddress = 'from_address';
       const privateKey = 'privateKey in Base64';
       const publicKey = 'publicKey in hex';
+      NearTransferRequest nearTransferRequest = NearTransferRequest(
+          toAddress: toAddress,
+          fromAddress: fromAddress,
+          privateKey: privateKey,
+          publicKey: publicKey);
 
       final arguments = NearBlockChainSmartContractArguments(
         method: 'exampleMethod',
@@ -60,22 +60,11 @@ void main() {
         transferAmount: NearFormatter.nearToYoctoNear('1'),
       );
 
-      when(service.callSmartContractFunction(
-        toAddress,
-        fromAddress,
-        privateKey,
-        publicKey,
-        arguments,
-      )).thenAnswer((_) async =>
-          BlockchainResponse(data: {}, status: BlockchainResponses.success));
+      when(service.callSmartContractFunction(nearTransferRequest)).thenAnswer(
+          (_) async => BlockchainResponse(
+              data: {}, status: BlockchainResponses.success));
 
-      final res = await service.callSmartContractFunction(
-        toAddress,
-        fromAddress,
-        privateKey,
-        publicKey,
-        arguments,
-      );
+      final res = await service.callSmartContractFunction(nearTransferRequest);
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });
@@ -155,12 +144,13 @@ void main() {
 
     test('getWalletBalance', () async {
       final service = MockNearBlockChainService();
-      const accountId = 'test_account_id';
+      NearTransferRequest nearTransferRequest =
+          NearTransferRequest(accountID: 'test_account_id');
 
-      when(service.getWalletBalance(accountId))
+      when(service.getWalletBalance(nearTransferRequest))
           .thenAnswer((_) async => '1000000000000000000000000');
 
-      final res = await service.getWalletBalance(accountId);
+      final res = await service.getWalletBalance(nearTransferRequest);
       expect(res, '1000000000000000000000000');
     });
 

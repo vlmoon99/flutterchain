@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
@@ -17,15 +19,20 @@ class FlutterChainService {
 
   FlutterChainService(
       {required this.jsVMService,
-      required final NearBlockChainService nearBlockchainService}) {
+      required final NearBlockChainService nearBlockchainService,
+      required final BitcoinBlockChainService bitcoinBlockchainService}) {
     //Add blockChainServices
     blockchainServices.putIfAbsent(
         BlockChains.near, () => nearBlockchainService);
+    blockchainServices.putIfAbsent(
+        BlockChains.bitcoin, () => bitcoinBlockchainService);
   }
+
   factory FlutterChainService.defaultInstance() {
     return FlutterChainService(
       jsVMService: getJsVM(),
       nearBlockchainService: NearBlockChainService.defaultInstance(),
+      bitcoinBlockchainService: BitcoinBlockChainService.defaultInstance(),
     );
   }
 
@@ -44,27 +51,21 @@ class FlutterChainService {
   }
 
   Future<String> getWalletBalance(
-      {required String accountId, required String blockchainType}) async {
-    final res =
-        await blockchainServices[blockchainType]?.getWalletBalance(accountId);
+      {required TransferRequest transferRequest}) async {
+    final res = await blockchainServices[transferRequest.blockchainType]
+        ?.getWalletBalance(transferRequest);
     return res ?? 'Error : no balance result';
   }
 
-  Future<BlockchainResponse> sendTransferNativeCoin({
-    required String toAddress,
-    required String fromAddress,
-    required String transferAmount,
-    required String typeOfBlockchain,
-    required String privateKey,
-    required String publicKey,
-  }) async {
-    if (blockchainServices[typeOfBlockchain] == null) {
+  Future<BlockchainResponse> sendTransferNativeCoin(
+      {required TransferRequest transferRequest}) async {
+    if (blockchainServices[transferRequest.blockchainType] == null) {
       throw Exception('Incorrect Blockchain');
     }
 
-    final blockchainService = blockchainServices[typeOfBlockchain];
-    final res = blockchainService?.sendTransferNativeCoin(
-        toAddress, fromAddress, transferAmount, privateKey, publicKey);
+    final blockchainService =
+        blockchainServices[transferRequest.blockchainType];
+    final res = blockchainService?.sendTransferNativeCoin(transferRequest);
 
     if (res == null) {
       throw Exception('Incorrect Transfer');
@@ -73,25 +74,14 @@ class FlutterChainService {
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required String fromAddress,
-    required String typeOfBlockchain,
-    required String privateKey,
-    required String publicKey,
-    required String toAddress,
-    required BlockChainSmartContractArguments arguments,
+    required TransferRequest transferRequest,
   }) async {
-    if (blockchainServices[typeOfBlockchain] == null) {
+    if (blockchainServices[transferRequest.blockchainType] == null) {
       throw Exception('Incorrect Blockchain');
     }
 
-    final res =
-        await blockchainServices[typeOfBlockchain]?.callSmartContractFunction(
-      toAddress,
-      fromAddress,
-      privateKey,
-      publicKey,
-      arguments,
-    );
+    final res = await blockchainServices[transferRequest.blockchainType]
+        ?.callSmartContractFunction(transferRequest);
 
     if (res == null) {
       throw Exception('Incorrect Smart Contract Call');

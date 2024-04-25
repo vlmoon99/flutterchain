@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
 
-import 'package:flutter/material.dart' as _i12;
+import 'package:flutter/material.dart' as _i13;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart'
     as _i5;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart'
@@ -13,8 +13,10 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transactio
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart'
     as _i4;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart'
+    as _i10;
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
     as _i9;
-import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart' as _i11;
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart' as _i12;
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart'
     as _i3;
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart'
@@ -22,7 +24,7 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i10;
+import 'package:mockito/src/dummies.dart' as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -119,85 +121,52 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i8.Future<_i4.BlockchainResponse> sendTransferNativeCoin(
-    String? toAdress,
-    String? fromAddress,
-    String? transferAmount,
-    String? privateKey,
-    String? publicKey,
-  ) =>
+          _i9.TransferRequest? transferRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendTransferNativeCoin,
-          [
-            toAdress,
-            fromAddress,
-            transferAmount,
-            privateKey,
-            publicKey,
-          ],
+          [transferRequest],
         ),
         returnValue:
             _i8.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #sendTransferNativeCoin,
-            [
-              toAdress,
-              fromAddress,
-              transferAmount,
-              privateKey,
-              publicKey,
-            ],
+            [transferRequest],
           ),
         )),
       ) as _i8.Future<_i4.BlockchainResponse>);
 
   @override
   _i8.Future<_i4.BlockchainResponse> callSmartContractFunction(
-    String? toAdress,
-    String? fromAdress,
-    String? privateKey,
-    String? publicKey,
-    _i9.BlockChainSmartContractArguments? arguments,
-  ) =>
+          transferRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #callSmartContractFunction,
-          [
-            toAdress,
-            fromAdress,
-            privateKey,
-            publicKey,
-            arguments,
-          ],
+          [transferRequest],
         ),
         returnValue:
             _i8.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #callSmartContractFunction,
-            [
-              toAdress,
-              fromAdress,
-              privateKey,
-              publicKey,
-              arguments,
-            ],
+            [transferRequest],
           ),
         )),
       ) as _i8.Future<_i4.BlockchainResponse>);
 
   @override
-  _i8.Future<String> getWalletBalance(String? accountId) => (super.noSuchMethod(
+  _i8.Future<String> getWalletBalance(_i9.TransferRequest? transferRequest) =>
+      (super.noSuchMethod(
         Invocation.method(
           #getWalletBalance,
-          [accountId],
+          [transferRequest],
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getWalletBalance,
-            [accountId],
+            [transferRequest],
           ),
         )),
       ) as _i8.Future<String>);
@@ -227,7 +196,7 @@ class MockNearBlockChainService extends _i1.Mock
   _i8.Future<_i5.NearBlockChainData> getBlockChainDataByDerivationPath({
     required String? mnemonic,
     required String? passphrase,
-    required _i11.DerivationPath? derivationPath,
+    required _i12.DerivationPath? derivationPath,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -374,7 +343,7 @@ class MockNearBlockChainService extends _i1.Mock
             #actions: actions,
           },
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #signNearActions,
@@ -432,7 +401,7 @@ class MockNearBlockChainService extends _i1.Mock
     required String? fromAddress,
     required String? mnemonic,
     String? passphrase = r'',
-    required _i11.DerivationPath? derivationPathOfNewGeneratedAccount,
+    required _i12.DerivationPath? derivationPathOfNewGeneratedAccount,
     required String? permission,
     required String? allowance,
     required String? smartContractId,
@@ -483,14 +452,14 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i8.Future<String> exportPrivateKeyToTheNearApiJsFormat(
-          {_i11.BlockChainData? currentBlockchainData}) =>
+          {_i12.BlockChainData? currentBlockchainData}) =>
       (super.noSuchMethod(
         Invocation.method(
           #exportPrivateKeyToTheNearApiJsFormat,
           [],
           {#currentBlockchainData: currentBlockchainData},
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #exportPrivateKeyToTheNearApiJsFormat,
@@ -509,7 +478,7 @@ class MockNearBlockChainService extends _i1.Mock
           [],
           {#hexEncodedPubKey: hexEncodedPubKey},
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getBase58PubKeyFromHexValue,
@@ -527,7 +496,7 @@ class MockNearBlockChainService extends _i1.Mock
           #getPublicKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getPublicKeyFromSecretKeyFromNearApiJSFormat,
@@ -544,7 +513,7 @@ class MockNearBlockChainService extends _i1.Mock
           #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
@@ -559,7 +528,7 @@ class MockNearBlockChainService extends _i1.Mock
           #getBlockchainNetworkEnvironment,
           [],
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getBlockchainNetworkEnvironment,
@@ -589,7 +558,7 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i8.Future<String> authWithNearWallets(
-    _i12.BuildContext? context,
+    _i13.BuildContext? context,
     String? privateNearAPIjsFormat,
   ) =>
       (super.noSuchMethod(
@@ -600,7 +569,7 @@ class MockNearBlockChainService extends _i1.Mock
             privateNearAPIjsFormat,
           ],
         ),
-        returnValue: _i8.Future<String>.value(_i10.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #authWithNearWallets,

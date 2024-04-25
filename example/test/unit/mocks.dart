@@ -3,6 +3,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -162,12 +163,9 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
   }
 
   @override
-  Future<BlockchainResponse> callSmartContractFunction(
-      {required String walletId,
-      required String typeOfBlockchain,
-      required DerivationPath currentDerivationPath,
-      required String toAddress,
-      required BlockChainSmartContractArguments arguments}) async {
+  Future<BlockchainResponse> callSmartContractFunction({
+    required TransferRequest transferRequest,
+  }) async {
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},
@@ -176,12 +174,8 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-      {required String walletId,
-      required String typeOfBlockchain,
-      required String toAddress,
-      required String transferAmount,
-      required DerivationPath currentDerivationPath}) async {
-    if (transferAmount == '-1') {
+      {required TransferRequest transferRequest}) async {
+    if (transferRequest.transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},
@@ -195,9 +189,7 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<String> getBalanceOfAddressOnSpecificBlockchain({
-    required String walletId,
-    required String blockchainType,
-    required DerivationPath currentDerivationPath,
+    required TransferRequest transferRequest,
   }) async {
     return '100';
   }
@@ -388,11 +380,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-      String toAdress,
-      String fromAdress,
-      String privateKey,
-      String publicKey,
-      BlockChainSmartContractArguments arguments) async {
+      TransferRequest transferRequest) async {
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},
@@ -406,12 +394,8 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
 
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-      String toAdress,
-      String fromAddress,
-      String transferAmount,
-      String privateKey,
-      String publicKey) async {
-    if (transferAmount == '-1') {
+      TransferRequest transferRequest) async {
+    if (transferRequest.transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},
@@ -424,7 +408,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<String> getWalletBalance(String accountId) async {
+  Future<String> getWalletBalance(TransferRequest transferRequest) async {
     return '100';
   }
 

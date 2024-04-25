@@ -10,8 +10,10 @@ import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.d
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -41,15 +43,12 @@ class NearBlockChainService implements BlockChainService {
   //Send Near tokens thought near blockchain
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
-    String toAdress,
-    String fromAddress,
-    String transferAmount,
-    String privateKey,
-    String publicKey,
-  ) async {
+      TransferRequest transferRequest) async {
+    NearTransferRequest nearTransferRequest =
+        transferRequest as NearTransferRequest;
     final transactionInfo = await getTransactionInfo(
-      accountId: fromAddress,
-      publicKey: publicKey,
+      accountId: nearTransferRequest.publicKey!,
+      publicKey: nearTransferRequest.publicKey!,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
@@ -58,15 +57,15 @@ class NearBlockChainService implements BlockChainService {
     final actions = [
       {
         "type": "transfer",
-        "data": {"amount": transferAmount}
+        "data": {"amount": nearTransferRequest.transferAmount}
       }
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: fromAddress,
-      toAddress: toAdress,
-      transferAmount: transferAmount,
-      privateKey: privateKey,
+      fromAddress: nearTransferRequest.publicKey!,
+      toAddress: nearTransferRequest.toAddress!,
+      transferAmount: nearTransferRequest.transferAmount!,
+      privateKey: nearTransferRequest.privateKey!,
       gas: gas,
       nonce: transactionInfo.nonce,
       blockHash: transactionInfo.blockHash,
@@ -79,38 +78,42 @@ class NearBlockChainService implements BlockChainService {
   //Call smart contract function
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-    String toAdress,
-    String fromAdress,
-    String privateKey,
-    String publicKey,
-    BlockChainSmartContractArguments arguments,
+    TransferRequest transferRequest,
   ) async {
-    if (arguments is! NearBlockChainSmartContractArguments) {
+    NearTransferRequest nearTransferRequest =
+        transferRequest as NearTransferRequest;
+    if (nearTransferRequest.arguments
+        is! NearBlockChainSmartContractArguments) {
       throw Exception('Incorrect Blockchain Smart Contract Arguments');
     }
     final transactionInfo = await getTransactionInfo(
-      accountId: fromAdress,
-      publicKey: publicKey,
+      accountId: nearTransferRequest.fromAddress!,
+      publicKey: nearTransferRequest.publicKey!,
     );
     final gas = BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
     }
+    final arg =
+        nearTransferRequest.arguments as NearBlockChainSmartContractArguments;
+    if (arg == null) {
+      throw Exception('Incorrect Blockchain Arg');
+    }
     final List<Map<String, dynamic>> actions = [
       {
         "type": "functionCall",
         "data": {
-          "methodName": arguments.method,
-          "args": arguments.args,
+          "methodName": arg.method,
+          "args": arg.args,
         },
       },
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: fromAdress,
-      toAddress: toAdress,
-      transferAmount: arguments.transferAmount,
-      privateKey: privateKey,
+      fromAddress: transferRequest.fromAddress!,
+      toAddress: transferRequest.toAddress!,
+      transferAmount: arg.transferAmount,
+      privateKey: transferRequest.privateKey!,
       gas: gas,
       nonce: transactionInfo.nonce,
       blockHash: transactionInfo.blockHash,
@@ -122,8 +125,10 @@ class NearBlockChainService implements BlockChainService {
 
   //Get wallet balance by account ID (hex representation of near account)
   @override
-  Future<String> getWalletBalance(String accountId) async {
-    final res = await nearRpcClient.getAccountBalance(accountId);
+  Future<String> getWalletBalance(TransferRequest transferRequest) async {
+    final nearTransferRequest = transferRequest as NearTransferRequest;
+    final res =
+        await nearRpcClient.getAccountBalance(nearTransferRequest.accountID!);
     return res;
   }
 

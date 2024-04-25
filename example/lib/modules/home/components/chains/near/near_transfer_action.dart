@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
@@ -49,11 +50,11 @@ class _NearTransferActionState extends State<NearTransferAction> {
             nearVM.nearBlockchainStore.currentDerivationPath.value;
         nearVM
             .sendNativeCoinTransferByWalletId(
-          currentDerivationPath: derivationPath,
-          toAddress: recipient,
-          transferAmount: amount,
-          walletId: walletID,
-          typeOfBlockchain: BlockChains.near,
+          nearTransferRequest: NearTransferRequest(
+              currentDerivationPath: derivationPath,
+              toAddress: recipient,
+              transferAmount: amount,
+              walletId: walletID),
         )
             .then(
           (value) {
