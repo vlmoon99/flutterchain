@@ -205,10 +205,9 @@ class FlutterChainLibrary {
       throw Exception('Does not exist wallet with this name');
     }
 
-
     final privateKey = wallet.blockchainsData?[transferRequest.blockchainType]
         ?.firstWhereOrNull((element) =>
-            element.derivationPath == transferRequest.currentDerivationPath
+            element.derivationPath == transferRequest.currentDerivationPath)
         ?.privateKey;
 
     final publicKey = wallet.blockchainsData?[transferRequest.blockchainType]
