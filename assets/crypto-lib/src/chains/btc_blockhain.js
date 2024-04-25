@@ -137,18 +137,6 @@ buildPayToFormat(format, publicKey){
   }
 }
 
-test (data){
-  const {TW} = window;
-  const { HexCoding } = WalletCore;
-   const newdata = data.map((e) => {
-    return  TW.Bitcoin.Proto.OutPoint.create({
-    hash: HexCoding.decode(e['tx_hash']).reverse(),
-    index: e['tx_output'],
-    sequence: 4294967295
-  })});
-    return newdata;
-}
-
 bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publicKey, dataFromUTXO, format, feeBayte){
   try{
     const { TW, WalletCore } = window;

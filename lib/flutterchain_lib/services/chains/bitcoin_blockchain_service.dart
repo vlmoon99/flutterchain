@@ -70,7 +70,7 @@ class BitcoinBlockChainService implements BlockChainService {
   Future<BlockchainResponse> callSmartContractFunction(
     TransferRequest transferRequest,
   ) async {
-    throw UnimplementedError('callSmartContractFunction is not implemented.');
+    throw UnimplementedError('callSmartContractFunction does not exist.');
   }
 
   //Get wallet balance by account ID (on input hex format public key)
