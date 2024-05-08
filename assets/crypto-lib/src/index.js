@@ -2,15 +2,12 @@ import { initWasm, TW } from "@trustwallet/wallet-core";
 import { NearBlockchain } from "./chains/near_blockchain";
 import { BitcoinBlockchain } from "./chains/btc_blockhain";
 import { generateMnemonic } from "./core/mnemonic";
-import * as bitcoin from 'bitcoinjs-lib';
 
 initWasm().then((WalletCore) => {
   //First step add WalletCore and TW to window
   window.WalletCore = WalletCore;
   window.TW = TW;
   //End
-
-  window.bitcoinjs = bitcoin;
 
   //Second Step add blockchains classes to window
   window.NearBlockchain = new NearBlockchain();
