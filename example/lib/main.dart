@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/lib_initialization_service.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -42,6 +43,7 @@ void main() {
           ),
         )));
   }, (error, stack) {
+    print(error.toString());
     //Catch Errors not caught by Flutter
     //TODO add catcher
   });
@@ -55,21 +57,21 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Modular.setInitialRoute(Routes.home.getModule());
-    return ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutterchain Wallet',
-            routeInformationParser: Modular.routeInformationParser,
-            routerDelegate: Modular.routerDelegate,
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-          );
-        });
+    ScreenUtil.init(context);
+    ScreenUtil.configure(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+    );
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutterchain Wallet',
+      routeInformationParser: Modular.routeInformationParser,
+      routerDelegate: Modular.routerDelegate,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+    );
     // !isAuthorized
     //     ? Modular.setInitialRoute(Routes.auth.getModule())
     //     : Modular.setInitialRoute(Routes.home.getModule());

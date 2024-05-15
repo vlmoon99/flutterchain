@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -100,6 +101,20 @@ class BitcoinRpcClient {
     }
   }
 
+  Future<String> getAccountBalanceWithAdress(String adress,
+      [bool testNetwork = true]) async {
+    final utxos = await getUTXOs(address: adress, testNetwork: testNetwork);
+    int satoshis = 0;
+
+    for (var utxo in utxos) {
+      satoshis += utxo["value"] as int;
+    }
+
+    final bitcoinAmount =
+        BitcoinFormatter.satoshiToBitcoin(satoshis.toString());
+    return bitcoinAmount;
+  }
+
   Future<BlockchainResponse> sendTransferNativeCoinTest(String txhex) async {
     final res = await networkClient.postHTTP(
         BitcoinBlockChainNetworkUrls.listOfUrls.first + '/txs/decode',
@@ -142,7 +157,40 @@ class BitcoinRpcClient {
     }
   }
 
-  Future<BlockchainResponse> sendTransferNativeCoin(String txhex) async {
+  Future<List<Map<String, dynamic>>> getUTXOs(
+      {required String address, bool testNetwork = true}) async {
+    final res = await networkClient.getRequest(
+        "https://blockstream.info${testNetwork ? '/testnet' : ''}/api/address/$address/utxo");
+
+    if (res.isSuccess) {
+      return List<Map<String, dynamic>>.from(res.data);
+    } else {
+      throw Exception(res.data);
+    }
+  }
+
+  Future<double> getFeeRate({bool testNetwork = true}) async {
+    final res = await networkClient.getRequest(
+        'https://blockstream.info${testNetwork ? '/testnet' : ''}/api/fee-estimates');
+    if (res.isSuccess) {
+      return res.data['6'];
+    } else {
+      throw Exception(res.data);
+    }
+  }
+
+  Future<Map<String, dynamic>> getExecutedTxData(
+      {required String txHash, bool testNetwork = true}) async {
+    final res = await networkClient.getRequest(
+        "https://blockstream.info${testNetwork ? '/testnet' : ''}/api/tx/$txHash");
+    if (res.isSuccess) {
+      return res.data;
+    } else {
+      throw Exception(res.data);
+    }
+  }
+
+  Future<BlockchainResponse> sendTransaction(String txhex) async {
     final res = await networkClient.postHTTP(
         BitcoinBlockChainNetworkUrls.listOfUrls.first + '/txs/push',
         {'tx': txhex});

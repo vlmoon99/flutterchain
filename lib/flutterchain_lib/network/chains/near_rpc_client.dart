@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -79,6 +80,49 @@ class NearRpcClient {
     }
   }
 
+  Future<BlockchainResponse> callViewMethod({
+    required String contractId,
+    required String method,
+    Map<String, dynamic> args = const {},
+  }) async {
+    final res = await networkClient.postHTTP("", {
+      'jsonrpc': '2.0',
+      'id': 'dontcare',
+      'method': 'query',
+      'params': {
+        'request_type': 'call_function',
+        'finality': 'final',
+        'account_id': contractId,
+        'method_name': method,
+        'args_base64': NearFormatter.argstobase64Args(args),
+      },
+    });
+
+    if (res.isSuccess) {
+      if (res.data['error'] != null || res.data['result']['error'] != null) {
+        return BlockchainResponse(
+          data: res.data['error'] ?? res.data['result']['error'],
+          status: BlockchainResponses.error,
+        );
+      }
+
+      final decodedResponse =
+          NearFormatter.decodeViewCallResponse(List<int>.from(res.data['result']?['result']));
+
+      return BlockchainResponse(
+        data: {"response": decodedResponse},
+        status: BlockchainResponses.success,
+      );
+    } else {
+      return BlockchainResponse(
+        data: {
+          "error": res.data,
+        },
+        status: BlockchainResponses.error,
+      );
+    }
+  }
+
   Future<BlockchainResponse> sendAsyncTx(List<String> params) async {
     final res = await networkClient.postHTTP('', {
       "jsonrpc": "2.0",
@@ -95,7 +139,7 @@ class NearRpcClient {
 
     String? transactionHash = res.data['result']['transaction']['hash'];
     String response = res.data['result']['status']['SuccessValue'] != null
-        ? NearFormatter.decodeResultOfResponse(
+        ? NearFormatter.decodeResultOfTransactionResponse(
             res.data['result']['status']['SuccessValue'].toString())
         : "no data in response";
     final String? functionCallError = res.data['result']['status']['Failure']
@@ -136,7 +180,7 @@ class NearRpcClient {
 
     String? transactionHash = res.data['result']['transaction']['hash'];
     String response = res.data['result']['status']['SuccessValue'] != null
-        ? NearFormatter.decodeResultOfResponse(
+        ? NearFormatter.decodeResultOfTransactionResponse(
             res.data['result']['status']['SuccessValue'].toString())
         : "no data in response";
     final String? functionCallError = res.data?['result']?['status']?['Failure']

@@ -1,5 +1,14 @@
 class BlockChains {
   static const near = "NEAR";
   static const bitcoin = "BITCOIN";
+  static const ethereum = "ETHEREUM";
+  static const bnb = "BNB";
+  static const aurora = "AURORA";
   static const List<String> supportedBlockChains = [near, bitcoin];
+  static const List<String> supportedBlockChainsForNearMPC = [
+    ethereum,
+    bitcoin,
+    bnb,
+    aurora
+  ];
 }

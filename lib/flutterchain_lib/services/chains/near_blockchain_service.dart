@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -9,10 +10,11 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
@@ -90,7 +92,7 @@ class NearBlockChainService implements BlockChainService {
       accountId: nearTransferRequest.fromAddress!,
       publicKey: nearTransferRequest.publicKey!,
     );
-    final gas = BlockchainGas.gas[BlockChains.near];
+    final gas = transferRequest.gas ?? BlockchainGas.gas[BlockChains.near];
     if (gas == null) {
       throw Exception('Incorrect Blockchain Gas');
     }
@@ -120,6 +122,20 @@ class NearBlockChainService implements BlockChainService {
       actions: actions,
     );
     final res = await nearRpcClient.sendSyncTx([signedAction]);
+    return res;
+  }
+
+  Future<BlockchainResponse> callViewMethod({
+    required String contractId,
+    required String method,
+    Map<String, dynamic> args = const {},
+  }) async {
+    final res = await nearRpcClient.callViewMethod(
+      contractId: contractId,
+      method: method,
+      args: args,
+    );
+
     return res;
   }
 
@@ -497,4 +513,145 @@ class NearBlockChainService implements BlockChainService {
     );
     return accountID ?? 'no_account_id';
   }
+
+  //MPC implementation
+
+  Future<MPCAccountInfo> getMPCAccount({
+    required String accountId,
+    String path = "flutterchain",
+    String chain = BlockChains.ethereum,
+    String typeOfNetwork = "testnet",
+    String? mpcPublicKey,
+  }) async {
+    final mpcAccountInfoData = await jsVMService.callJSAsync(
+      "window.generateAddressForNearMPC('$accountId', '$path', '$chain', ${mpcPublicKey != null ? "'$mpcPublicKey'" : 'undefined'}, '$typeOfNetwork')",
+    );
+    final mpcAccountInfo =
+        json.decode(mpcAccountInfoData) as Map<String, dynamic>;
+    return MPCAccountInfo(
+      adress: mpcAccountInfo["address"],
+      publicKey: mpcAccountInfo["publicKey"],
+    );
+  }
+
+  Future<String> signEVMTransationWithMPC({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required MpcTransactionInfo mpcTransactionInfo,
+    required String senderAdress,
+    String path = "flutterchain",
+    String mpcContract = 'v2.multichain-mpc.testnet',
+  }) async {
+    final unsignedTransaction = mpcTransactionInfo.transactionInfo;
+    final payload = Uint8List.fromList(
+        List<int>.from(unsignedTransaction["payload"].values));
+    final reversedPayload = payload.reversed.toList();
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: mpcContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "sign",
+          args: {
+            "payload": reversedPayload,
+            "path": path,
+            "key_version": 0,
+          },
+          transferAmount: '0',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    final signatureValList =
+        List<String>.from(jsonDecode(nearSignRequest.data["success"]));
+
+    final signatureData = jsonEncode({
+      "big_r": signatureValList[0],
+      "big_s": signatureValList[1],
+    });
+
+    final serializedUnsignedTransaction = Uint8List.fromList(
+        List<int>.from(unsignedTransaction["transaction"].values));
+
+    final signedTransaction = await jsVMService.callJS(
+      "window.EVMUtils.signTransactionWithMPCSignature('$signatureData', '${jsonEncode(serializedUnsignedTransaction)}', '$senderAdress', '${unsignedTransaction["typeOfTransaction"]}', '${jsonEncode(unsignedTransaction['chainInfo'])}')",
+    );
+
+    return signedTransaction;
+  }
+
+  Future<String> signBTCTransactionWithMPC({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required MpcTransactionInfo transactionInfo,
+    required String mpcSenderPublicKey,
+    String path = "flutterchain",
+    String mpcContract = 'v2.multichain-mpc.testnet',
+  }) async {
+    final unsignedTransaction = transactionInfo.transactionInfo;
+
+    //Get payloads of all utxos
+    final payloadsListEncoded = await jsVMService.callJS(
+        "window.BitcoinUtils.getReversedPayloadsToSignForMPC('${unsignedTransaction['psbt']}', '${jsonEncode(unsignedTransaction['utxos'])}', '$mpcSenderPublicKey')");
+    final payloadsList = jsonDecode(payloadsListEncoded) as List<dynamic>;
+
+    final List<Map<String, dynamic>> signatures = [];
+
+    //Get signatures for each payload
+    for (var i = 0; i < payloadsList.length; i++) {
+      final payload = Uint8List.fromList(List<int>.from(payloadsList[i]));
+
+      final nearSignRequest = await callSmartContractFunction(
+        NearTransferRequest(
+          fromAddress: accountId,
+          publicKey: publicKey,
+          toAddress: mpcContract,
+          privateKey: privateKey,
+          gas: "300000000000000",
+          arguments: NearBlockChainSmartContractArguments(
+            method: "sign",
+            args: {
+              "payload": payload,
+              "path": path,
+              "key_version": 0,
+            },
+            transferAmount: '0',
+          ),
+        ),
+      );
+
+      if (nearSignRequest.data["error"] != null) {
+        throw Exception(nearSignRequest.data["error"]);
+      }
+
+      final signatureValList =
+          List<String>.from(jsonDecode(nearSignRequest.data["success"]));
+
+      final signatureData = {
+        "big_r": signatureValList[0],
+        "big_s": signatureValList[1],
+      };
+
+      signatures.add(signatureData);
+    }
+
+    //Sign transaction
+    final signedTransactionEncoded = await jsVMService.callJS(
+        "window.BitcoinUtils.signTransactionWithMPCSignature('${unsignedTransaction['psbt']}', '${jsonEncode(signatures)}', '$mpcSenderPublicKey')");
+
+    final signedTransaction = jsonDecode(signedTransactionEncoded) as String;
+
+    return signedTransaction;
+  }
+
+  // Future<void>
 }
