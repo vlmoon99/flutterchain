@@ -534,6 +534,18 @@ class NearBlockChainService implements BlockChainService {
     );
   }
 
+  /// Signs an EVM transaction with the Near MPC.
+  ///
+  /// Parameters:
+  /// - [accountId]: The account ID of the Near sender.
+  /// - [publicKey]: The public key of the Near sender.
+  /// - [privateKey]: The private key of the Near sender.
+  /// - [mpcTransactionInfo]: The transaction information obtained from the MPC.
+  /// - [senderAdress]: The address of the sender provided by the MPC.
+  /// - [path]: The path used for the MPC signing.
+  /// - [mpcContract]: The contract address of the MPC.
+  ///
+  /// Returns the signed transaction as a string.
   Future<String> signEVMTransationWithMPC({
     required String accountId,
     required String publicKey,
@@ -588,6 +600,18 @@ class NearBlockChainService implements BlockChainService {
     return signedTransaction;
   }
 
+  /// Signs a Bitcoin transaction with the Near MPC.
+  ///
+  /// Parameters:
+  /// - [accountId]: The account ID of the Near sender.
+  /// - [publicKey]: The public key of the Near sender.
+  /// - [privateKey]: The private key of the Near sender.
+  /// - [transactionInfo]: The transaction information obtained from the MPC.
+  /// - [mpcSenderPublicKey]: The public key of the sender provided by the MPC.
+  /// - [path]: The path used for the MPC signing.
+  /// - [mpcContract]: The contract address of the MPC.
+  ///
+  /// Returns the signed transaction as a string.
   Future<String> signBTCTransactionWithMPC({
     required String accountId,
     required String publicKey,
@@ -653,5 +677,4 @@ class NearBlockChainService implements BlockChainService {
     return signedTransaction;
   }
 
-  // Future<void>
 }

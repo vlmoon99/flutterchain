@@ -1,43 +1,45 @@
 import { Address, bytesToHex } from "@ethereumjs/util";
 import { FeeMarketEIP1559Transaction, LegacyTransaction } from "@ethereumjs/tx";
 import { Common } from "@ethereumjs/common";
+import Web3 from "web3";
 
 export class EVMUtils {
   createUnsignedTransaction(
     receiver,
     weiAmount,
     chainInfo,
-    nonce,
-    gasPrice,
-    gasLimit,
-    maxPriorityFeePerGas
+    txCreatingInfo,
+    data
   ) {
     chainInfo = JSON.parse(chainInfo);
+    const { nonce, gasPrice, gasLimit, maxPriorityFeePerGas } =
+      JSON.parse(txCreatingInfo);
 
-    let common = undefined;
-
-    if (!chainInfo.name) {
-      common = new Common({ chain: chainInfo.chainId });
-    } else {
-      common = Common.custom({
-        name: chainInfo.name,
-        chainId: chainInfo.chainId,
-        networkId: chainInfo.chainId,
-      });
-    }
+    const common = chainInfo.name
+      ? Common.custom({
+          name: chainInfo.name,
+          chainId: chainInfo.chainId,
+          networkId: chainInfo.chainId,
+        })
+      : new Common({ chain: chainInfo.chainId });
 
     // Construct transaction
 
     if (maxPriorityFeePerGas) {
       const transactionData = {
         nonce,
-        gasLimit: gasLimit,
+        gasLimit,
         maxFeePerGas: gasPrice,
         maxPriorityFeePerGas,
         to: receiver,
         value: BigInt(weiAmount),
         chain: chainInfo.chainId,
       };
+
+      //Add data if it exists to form smart contract call
+      if (data) {
+        transactionData.data = data;
+      }
 
       // Return the message hash
       let transaction = FeeMarketEIP1559Transaction.fromTxData(
@@ -48,16 +50,27 @@ export class EVMUtils {
       );
       const payload = transaction.getHashedMessageToSign();
       transaction = transaction.serialize();
-      return JSON.stringify({ transaction, payload, chainInfo, typeOfTransaction: "FeeMarketEIP1559Transaction" });
+      return JSON.stringify({
+        transaction,
+        payload,
+        chainInfo,
+        typeOfTransaction: "FeeMarketEIP1559Transaction",
+      });
     } else {
+      // Construct transaction
 
       const transactionData = {
         nonce,
-        gasLimit: gasLimit,
-        gasPrice: gasPrice,
+        gasLimit,
+        gasPrice,
         to: Address.fromString(receiver),
         value: BigInt(weiAmount),
       };
+
+      //Add data if it exists to form smart contract call
+      if (data) {
+        transactionData.data = data;
+      }
 
       // Return the message hash
       let transaction = LegacyTransaction.fromTxData(transactionData, {
@@ -65,7 +78,12 @@ export class EVMUtils {
       });
       const payload = transaction.getHashedMessageToSign();
       transaction = transaction.serialize();
-      return JSON.stringify({ transaction, payload, chainInfo, typeOfTransaction: "LegacyTransaction" });
+      return JSON.stringify({
+        transaction,
+        payload,
+        chainInfo,
+        typeOfTransaction: "LegacyTransaction",
+      });
     }
   }
 
@@ -80,24 +98,25 @@ export class EVMUtils {
 
     chainInfo = JSON.parse(chainInfo);
 
-    let common = undefined;
 
-    if (!chainInfo.name) {
-      common = new Common({ chain: chainInfo.chainId });
-    } else {
-      common = Common.custom({
+    const common = chainInfo.name
+    ? Common.custom({
         name: chainInfo.name,
         chainId: chainInfo.chainId,
         networkId: chainInfo.chainId,
-      });
-    }
+      })
+    : new Common({ chain: chainInfo.chainId });
 
     if (typeOfTransaction === "FeeMarketEIP1559Transaction") {
       transaction = FeeMarketEIP1559Transaction.fromSerializedTx(
-        Uint8Array.from(JSON.parse(serializedTransaction)), {common});
+        Uint8Array.from(JSON.parse(serializedTransaction)),
+        { common }
+      );
     } else {
       transaction = LegacyTransaction.fromSerializedTx(
-        Uint8Array.from(JSON.parse(serializedTransaction)), {common});
+        Uint8Array.from(JSON.parse(serializedTransaction)),
+        { common }
+      );
     }
 
     const { big_r, big_s } = JSON.parse(signatureData);
@@ -112,10 +131,15 @@ export class EVMUtils {
       candidates = [0n, 1n].map((v) => transaction.addSignature(v, r, s));
     } else {
       // Calculate correct v values
-      const vValues = [27, 28];  // Legacy
-      const eip155vValues = [chainInfo.chainId * 2 + 35, chainInfo.chainId * 2 + 36];  // EIP-155
-      
-      candidates = [...vValues, ...eip155vValues].map((v) => transaction.addSignature(v, r, s));
+      const vValues = [27, 28]; // Legacy
+      const eip155vValues = [
+        chainInfo.chainId * 2 + 35,
+        chainInfo.chainId * 2 + 36,
+      ]; // EIP-155
+
+      candidates = [...vValues, ...eip155vValues].map((v) =>
+        transaction.addSignature(v, r, s)
+      );
     }
 
     // find the correct transaction
@@ -138,26 +162,31 @@ export class EVMUtils {
     return serializedTx;
   }
 
-  signTransaction(serializedTransaction, privateKey, typeOfTransaction, chainInfo) {
+  signTransaction(
+    serializedTransaction,
+    privateKey,
+    typeOfTransaction,
+    chainInfo
+  ) {
     let transaction = undefined;
 
-    if (!chainInfo.name) {
-      common = new Common({ chain: chainInfo.chainId });
-    } else {
-      common = Common.custom({
+    const common = chainInfo.name
+    ? Common.custom({
         name: chainInfo.name,
         chainId: chainInfo.chainId,
         networkId: chainInfo.chainId,
-      });
-    }
+      })
+    : new Common({ chain: chainInfo.chainId });
 
     if (typeOfTransaction === "FeeMarketEIP1559Transaction") {
       transaction = FeeMarketEIP1559Transaction.fromSerializedTx(
-          Uint8Array.from(JSON.parse(serializedTransaction)), {common}
-        );
+        Uint8Array.from(JSON.parse(serializedTransaction)),
+        { common }
+      );
     } else {
       transaction = LegacyTransaction.fromSerializedTx(
-        Uint8Array.from(JSON.parse(serializedTransaction)) , {common}
+        Uint8Array.from(JSON.parse(serializedTransaction)),
+        { common }
       );
     }
 
@@ -165,5 +194,28 @@ export class EVMUtils {
 
     const serializedTx = bytesToHex(signedTx.serialize());
     return serializedTx;
+  }
+
+  getAbiEncodedSmartContractArgs(functionSignature, parameters) {
+    parameters = JSON.parse(parameters);
+    const web3 = new Web3();
+
+    // Encode the function signature to get the function selector
+    const functionSelector =
+      web3.eth.abi.encodeFunctionSignature(functionSignature);
+
+    // Extract parameter types from the function signature
+    let parameterTypesString = functionSignature.slice(functionSignature.indexOf('(') + 1, functionSignature.indexOf(')'));
+    const parameterTypes = parameterTypesString ? parameterTypesString.split(',') : [];
+    
+    // Encode the parameters using the extracted types and values
+    const encodedParameters = web3.eth.abi.encodeParameters(
+      parameterTypes,
+      parameters
+    );
+
+    // Concatenate function selector and encoded parameters
+    const data = functionSelector + encodedParameters.slice(2);
+    return data;
   }
 }

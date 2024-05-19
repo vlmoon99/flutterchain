@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/formaters/chains/ethereum_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
@@ -29,6 +32,13 @@ class ChainSignatureFunctions extends StatefulWidget {
 class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
   late String currentBlockChainForChainSignatureFunctions =
       BlockChains.supportedBlockChainsForNearMPC.first;
+
+  final List<String> supportedBlockChainsForEVMContracts = [
+    BlockChains.ethereum,
+    BlockChains.bnb,
+    BlockChains.aurora,
+  ];
+
   final TextEditingController mpcContractController = TextEditingController()
     ..text = "v2.multichain-mpc.testnet";
   final TextEditingController pathController = TextEditingController()
@@ -37,11 +47,32 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
   final TextEditingController sendToController = TextEditingController();
   final TextEditingController amountController = TextEditingController()
     ..text = "0.01";
+
+  final TextEditingController smartContractFunctionController =
+      TextEditingController();
+
+  final TextEditingController smartContractArgumentsController =
+      TextEditingController();
+
   String txHash = "";
 
   bool loadingMpcAccountInfo = false;
-
   bool executingMpcTransaction = false;
+
+  Future<String> encodeSmartContractArgs(String function, String args) async {
+    final argsArray = jsonDecode(args);
+    final EthereumBlockChainService ethereumBlockChainService =
+        EthereumBlockChainService.defaultInstance();
+
+    final encodedRequest = ethereumBlockChainService.encodeSmartContractCall(
+      functionSignature: function,
+      parameters: argsArray,
+    );
+
+    return encodedRequest;
+  }
+
+  Future<void> executeMpcTransactionEthereum() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -81,19 +112,36 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
         });
 
         try {
+          String? smartContractData;
+          if (smartContractFunctionController.text.isNotEmpty &&
+              smartContractArgumentsController.text.isNotEmpty) {
+            smartContractData = await encodeSmartContractArgs(
+              smartContractFunctionController.text,
+              smartContractArgumentsController.text,
+            );
+          }
+
           if (currentBlockChainForChainSignatureFunctions ==
               BlockChains.ethereum) {
             final EthereumBlockChainService ethereumBlockChainService =
                 EthereumBlockChainService.defaultInstance();
             log("Getting transaction info...");
-            final transactionInfo = await ethereumBlockChainService
-                .getTransactionInfo(mpcAccountInfo!.adress);
+
+            final transactionInfo =
+                await ethereumBlockChainService.getTransactionInfo(
+              from: mpcAccountInfo!.adress,
+              to: sendToController.text,
+              data: smartContractData,
+              amountInEth: double.parse(amountController.text),
+            );
+
             log("Creating payload...");
             final unsignedTx =
                 await ethereumBlockChainService.createPayloadForNearMPC(
               receiverAddress: sendToController.text,
               amount: double.parse(amountController.text),
               transactionInfo: transactionInfo,
+              smartContractCallEncoded: smartContractData,
             );
 
             log("Signing transaction...");
@@ -160,8 +208,13 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                 BNBBlockChainService.defaultInstance();
 
             log("Getting transaction info...");
-            final transactionInfo = await bnbBlockChainService
-                .getTransactionInfo(mpcAccountInfo!.adress);
+
+            final transactionInfo =
+                await bnbBlockChainService.getTransactionInfo(
+              from: mpcAccountInfo!.adress,
+              to: sendToController.text,
+              data: smartContractData,
+            );
 
             log("Creating payload...");
 
@@ -170,6 +223,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
               transactionInfo: transactionInfo,
               receiverAddress: sendToController.text,
               amount: double.parse(amountController.text),
+              smartContractCallEncoded: smartContractData,
             );
 
             log("Signing transaction...");
@@ -200,8 +254,13 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                 AuroraBlockChainService.defaultInstance();
 
             log("Getting transaction info...");
-            final transactionInfo = await auroraBlockChainService
-                .getTransactionInfo(mpcAccountInfo!.adress);
+
+            final transactionInfo =
+                await auroraBlockChainService.getTransactionInfo(
+              from: mpcAccountInfo!.adress,
+              to: sendToController.text,
+              data: smartContractData,
+            );
 
             log("Creating payload...");
 
@@ -210,6 +269,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
               transactionInfo: transactionInfo,
               receiverAddress: sendToController.text,
               amount: double.parse(amountController.text),
+              smartContractCallEncoded: smartContractData,
             );
 
             log("Signing transaction...");
@@ -243,187 +303,214 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
           });
         }
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text("Chain: ",
-                  style: nearTextStyles.label?.copyWith(fontSize: 16.sp)),
-              SizedBox(width: 20.w),
-              DropdownButton<String>(
-                dropdownColor: Colors.white,
-                iconEnabledColor: nearColors.nearPurple,
-                items: BlockChains.supportedBlockChainsForNearMPC
-                    .map((blockChain) => DropdownMenuItem<String>(
-                        value: blockChain, child: Text(blockChain)))
-                    .toList(),
-                value: currentBlockChainForChainSignatureFunctions.isNotEmpty
-                    ? currentBlockChainForChainSignatureFunctions
-                    : null,
-                onChanged: (model) {
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text("Chain: ",
+                    style: nearTextStyles.label?.copyWith(fontSize: 16.sp)),
+                SizedBox(width: 20.w),
+                DropdownButton<String>(
+                  dropdownColor: Colors.white,
+                  iconEnabledColor: nearColors.nearPurple,
+                  items: BlockChains.supportedBlockChainsForNearMPC
+                      .map((blockChain) => DropdownMenuItem<String>(
+                          value: blockChain, child: Text(blockChain)))
+                      .toList(),
+                  value: currentBlockChainForChainSignatureFunctions.isNotEmpty
+                      ? currentBlockChainForChainSignatureFunctions
+                      : null,
+                  onChanged: (model) {
+                    setState(() {
+                      currentBlockChainForChainSignatureFunctions = model!;
+                      mpcAccountInfo = null;
+                    });
+                    sendToController.clear();
+                    amountController.text = "0.01";
+                    smartContractFunctionController.clear();
+                    smartContractArgumentsController.clear();
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
+            NearActionTextField(
+              labelText: 'MPC Contract',
+              textEditingController: mpcContractController,
+            ),
+            SizedBox(height: 20.h),
+            NearActionTextField(
+              labelText: 'Derivation Path',
+              textEditingController: pathController,
+            ),
+            SizedBox(height: 20.h),
+            ElevatedButton(
+                onPressed: () async {
                   setState(() {
-                    currentBlockChainForChainSignatureFunctions = model!;
-                    mpcAccountInfo = null;
+                    loadingMpcAccountInfo = true;
                   });
-                  sendToController.clear();
-                  amountController.text = "0.01";
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 20.h),
-          NearActionTextField(
-            labelText: 'MPC Contract',
-            textEditingController: mpcContractController,
-          ),
-          SizedBox(height: 20.h),
-          NearActionTextField(
-            labelText: 'Derivation Path',
-            textEditingController: pathController,
-          ),
-          SizedBox(height: 20.h),
-          ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  loadingMpcAccountInfo = true;
-                });
-                final mpcPublicKey =
-                    (await nearBlockChainService.callViewMethod(
-                            contractId: mpcContractController.text,
-                            method: "public_key"))
-                        .data['response'];
+                  final mpcPublicKey =
+                      (await nearBlockChainService.callViewMethod(
+                              contractId: mpcContractController.text,
+                              method: "public_key"))
+                          .data['response'];
 
-                final mpcAccInfo = await nearBlockChainService.getMPCAccount(
-                  accountId: accountId!,
-                  mpcPublicKey: mpcPublicKey,
-                  chain: currentBlockChainForChainSignatureFunctions,
-                  path: pathController.text,
-                );
-                setState(() {
-                  mpcAccountInfo = mpcAccInfo;
-                  loadingMpcAccountInfo = false;
-                });
-              },
-              child: const Text("Get Account / Update Info")),
-          SizedBox(height: 15.h),
-          if (loadingMpcAccountInfo)
-            const CircularProgressIndicator()
-          else ...[
-            if (mpcAccountInfo != null) ...[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SelectableText(
-                          "Adress: ${mpcAccountInfo!.adress}",
-                          style:
-                              nearTextStyles.label?.copyWith(fontSize: 16.sp),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                child: FittedBox(
-                                  child: QrImageView(
-                                    data: mpcAccountInfo!.adress,
-                                    version: QrVersions.auto,
-                                    size: 200.0,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.qr_code),
-                      )
-                    ],
-                  ),
-                  FutureBuilder(
-                    future: Future.delayed(Duration.zero, () async {
-                      switch (currentBlockChainForChainSignatureFunctions) {
-                        case BlockChains.ethereum:
-                          {
-                            final EthereumBlockChainService
-                                ethereumBlockChainService =
-                                EthereumBlockChainService.defaultInstance();
-                            return ethereumBlockChainService
-                                .getWalletBalance(EVMTransferRequest(
-                              accountID: mpcAccountInfo!.adress,
-                            ));
-                          }
-                        case BlockChains.bitcoin:
-                          {
-                            final BitcoinBlockChainService
-                                bitcoinBlockChainService =
-                                BitcoinBlockChainService.defaultInstance();
-                            return bitcoinBlockChainService.bitcoinRpcClient
-                                .getAccountBalanceWithAdress(
-                                    mpcAccountInfo!.adress);
-                          }
-                        case BlockChains.bnb:
-                          {
-                            final BNBBlockChainService bnbBlockChainService =
-                                BNBBlockChainService.defaultInstance();
-                            return bnbBlockChainService
-                                .getWalletBalance(EVMTransferRequest(
-                              accountID: mpcAccountInfo!.adress,
-                            ));
-                          }
-                        case BlockChains.aurora:
-                          {
-                            final AuroraBlockChainService
-                                auroraBlockChainService =
-                                AuroraBlockChainService.defaultInstance();
-                            return auroraBlockChainService
-                                .getWalletBalance(EVMTransferRequest(
-                              accountID: mpcAccountInfo!.adress,
-                            ));
-                          }
-                        default:
-                          {
-                            return Future.delayed(
-                                Duration.zero, () => "Unimplemented");
-                          }
-                      }
-                    }),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        return const CircularProgressIndicator();
-                      }
-                      return Text("Balance: ${snapshot.data}");
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                  NearActionTextField(
-                    labelText: 'Send to address',
-                    textEditingController: sendToController,
-                  ),
-                  SizedBox(height: 20.h),
-                  NearActionTextField(
-                    labelText: 'Amount',
-                    textEditingController: amountController,
-                  ),
-                  SizedBox(height: 20.h),
-                  if (executingMpcTransaction)
+                  final mpcAccInfo = await nearBlockChainService.getMPCAccount(
+                    accountId: accountId!,
+                    mpcPublicKey: mpcPublicKey,
+                    chain: currentBlockChainForChainSignatureFunctions,
+                    path: pathController.text,
+                  );
+                  setState(() {
+                    mpcAccountInfo = mpcAccInfo;
+                    loadingMpcAccountInfo = false;
+                  });
+                },
+                child: const Text("Get Account / Update Info")),
+            SizedBox(height: 15.h),
+            if (loadingMpcAccountInfo)
+              const CircularProgressIndicator()
+            else ...[
+              if (mpcAccountInfo != null) ...[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       children: [
-                        const Text("Executing MPC Contract"),
-                        SizedBox(width: 10.w),
-                        const CircularProgressIndicator(),
+                        Expanded(
+                          child: SelectableText(
+                            "Adress: ${mpcAccountInfo!.adress}",
+                            style:
+                                nearTextStyles.label?.copyWith(fontSize: 16.sp),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  child: FittedBox(
+                                    child: QrImageView(
+                                      data: mpcAccountInfo!.adress,
+                                      version: QrVersions.auto,
+                                      size: 200.0,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          icon: Icon(Icons.qr_code),
+                        )
                       ],
                     ),
-                  if (txHash != "") SelectableText("Tx Hash: $txHash"),
-                ],
-              )
+                    FutureBuilder(
+                      future: Future.delayed(Duration.zero, () async {
+                        switch (currentBlockChainForChainSignatureFunctions) {
+                          case BlockChains.ethereum:
+                            {
+                              final EthereumBlockChainService
+                                  ethereumBlockChainService =
+                                  EthereumBlockChainService.defaultInstance();
+                              return ethereumBlockChainService
+                                  .getWalletBalance(EVMTransferRequest(
+                                accountID: mpcAccountInfo!.adress,
+                              ));
+                            }
+                          case BlockChains.bitcoin:
+                            {
+                              final BitcoinBlockChainService
+                                  bitcoinBlockChainService =
+                                  BitcoinBlockChainService.defaultInstance();
+                              return bitcoinBlockChainService.bitcoinRpcClient
+                                  .getAccountBalanceWithAdress(
+                                      mpcAccountInfo!.adress);
+                            }
+                          case BlockChains.bnb:
+                            {
+                              final BNBBlockChainService bnbBlockChainService =
+                                  BNBBlockChainService.defaultInstance();
+                              return bnbBlockChainService
+                                  .getWalletBalance(EVMTransferRequest(
+                                accountID: mpcAccountInfo!.adress,
+                              ));
+                            }
+                          case BlockChains.aurora:
+                            {
+                              final AuroraBlockChainService
+                                  auroraBlockChainService =
+                                  AuroraBlockChainService.defaultInstance();
+                              return auroraBlockChainService
+                                  .getWalletBalance(EVMTransferRequest(
+                                accountID: mpcAccountInfo!.adress,
+                              ));
+                            }
+                          default:
+                            {
+                              return Future.delayed(
+                                  Duration.zero, () => "Unimplemented");
+                            }
+                        }
+                      }),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return const CircularProgressIndicator();
+                        }
+                        return Text("Balance: ${snapshot.data}");
+                      },
+                    ),
+                    SizedBox(height: 20.h),
+                    NearActionTextField(
+                      labelText: 'Send to address',
+                      textEditingController: sendToController,
+                    ),
+                    SizedBox(height: 20.h),
+                    NearActionTextField(
+                      labelText: 'Amount',
+                      textEditingController: amountController,
+                    ),
+                    SizedBox(height: 20.h),
+                    if (supportedBlockChainsForEVMContracts.contains(
+                        currentBlockChainForChainSignatureFunctions)) ...[
+                      Text(
+                          "Optional arguments if you want to call a smart contract function:",
+                          style:
+                              nearTextStyles.label?.copyWith(fontSize: 16.sp)),
+                      SizedBox(height: 10.h),
+                      const Text(
+                          "Format: functionName(typeOfArg1, typeOfArg2, ...)"),
+                      SizedBox(height: 5.h),
+                      NearActionTextField(
+                        labelText: 'Smart Contract Fuction',
+                        textEditingController: smartContractFunctionController,
+                      ),
+                      SizedBox(height: 20.h),
+                      const Text("Format: [Arg1, Arg2, ...]"),
+                      SizedBox(height: 5.h),
+                      NearActionTextField(
+                        labelText: 'Smart Contract Arguments',
+                        textEditingController: smartContractArgumentsController,
+                      ),
+                      SizedBox(height: 15.h),
+                    ],
+                    if (executingMpcTransaction)
+                      Row(
+                        children: [
+                          const Text("Executing MPC Contract"),
+                          SizedBox(width: 10.w),
+                          const CircularProgressIndicator(),
+                        ],
+                      ),
+                    if (txHash != "") SelectableText("Tx Hash: $txHash"),
+                  ],
+                )
+              ]
             ]
-          ]
-        ],
+          ],
+        ),
       ),
     );
   }

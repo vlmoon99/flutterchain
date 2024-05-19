@@ -29,8 +29,18 @@ class EthereumBlockChainService implements BlockChainService {
     );
   }
 
-  Future<EVMTransactionInfo> getTransactionInfo(String accountID) async {
-    final res = await ethereumRpcClient.getTransactionInfo(accountID);
+  Future<EVMTransactionInfo> getTransactionInfo({
+    required String from,
+    String? to,
+    String? data,
+    double? amountInEth,
+  }) async {
+    final res = await ethereumRpcClient.getTransactionInfo(
+      from: from,
+      to: to,
+      data: data,
+      amountInEth: amountInEth,
+    );
     return res;
   }
 
@@ -86,10 +96,18 @@ class EthereumBlockChainService implements BlockChainService {
 
   //MPC Feature
 
+  /// Create payload for Near MPC using Ethereum data
+  ///
+  /// The receiver address is the address of the recipient of the transaction.
+  /// The amount is the amount of ETH to send.
+  /// The transaction info is the necessary information to create an unsigned transaction.
+  /// The smart contract call encoded is the encoded smart contract call.
+  /// The type of network is the network type (testnet or mainnet).
   Future<MpcTransactionInfo> createPayloadForNearMPC({
     required String receiverAddress,
     required double amount,
     required EVMTransactionInfo transactionInfo,
+    String? smartContractCallEncoded,
     String typeOfNetwork = "testnet",
   }) async {
     final amountInWei = EthereumFormater.convertEthToWei(amount);
@@ -100,12 +118,30 @@ class EthereumBlockChainService implements BlockChainService {
 
     final unsignedTransactionData = await jsVMService.callJS(
       """window.EVMUtils.createUnsignedTransaction('$receiverAddress', $amountInWei, 
-      '${jsonEncode(chainInfo)}', ${transactionInfo.nonce}, ${transactionInfo.gasPrice}, 
-       ${transactionInfo.gasLimit}, ${transactionInfo.maxPriorityFeePerGas})""",
+      '${jsonEncode(chainInfo)}', '${jsonEncode(transactionInfo)}', 
+       ${smartContractCallEncoded != null ? """'$smartContractCallEncoded'""" : 'undefined'} )""",
     );
     final unsignedTransaction =
         json.decode(unsignedTransactionData) as Map<String, dynamic>;
     return MpcTransactionInfo(transactionInfo: unsignedTransaction);
+  }
+
+  /// Encode the smart contract call using the ABI (Application Binary Interface)
+  ///
+  /// The function signature is a string that represents the function name and its parameters.
+  /// For example: 'transfer(address,uint256)'
+  ///
+  /// The parameters are list of values that are passed to the function.
+  /// For example: ['0x1234567890', 100]
+  ///
+  /// Returns a string that is the encoded smart contract call
+  Future<String> encodeSmartContractCall({
+    required String functionSignature,
+    List<dynamic> parameters = const [],
+  }) async {
+    final cleanedFunctionSignature = functionSignature.replaceAll(' ', '');
+    return await jsVMService.callJS(
+        """window.EVMUtils.getAbiEncodedSmartContractArgs('$cleanedFunctionSignature', '${jsonEncode(parameters)}' )""");
   }
 
   Future<BlockchainResponse> sendTransaction(String txhex) async {

@@ -30,7 +30,8 @@
     "long": "5.2.3",
     "npm": "^10.3.0",
     "tweetnacl": "^1.0.3",
-    "watchify": "^4.0.0"
+    "watchify": "^4.0.0",
+    "web3": "^4.8.0"
   },
   "devDependencies": {
     "browserify": "^17.0.0",

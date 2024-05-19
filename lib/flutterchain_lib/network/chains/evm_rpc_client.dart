@@ -46,13 +46,18 @@ class EVMRpcClient {
     }
   }
 
-  Future<EVMTransactionInfo> getTransactionInfo(String adress) async {
+  Future<EVMTransactionInfo> getTransactionInfo({
+    required String from,
+    String? to,
+    String? data,
+    double? amountInEth,
+  }) async {
     try {
       final nonceRequest = await networkClient.postHTTP('', {
         'jsonrpc': '2.0',
         'id': 'dontcare',
         'method': 'eth_getTransactionCount',
-        'params': [adress, 'latest']
+        'params': [from, 'latest']
       });
       if (!nonceRequest.isSuccess) throw Exception('Nonce request error');
 
@@ -94,7 +99,38 @@ class EVMRpcClient {
         log("Legacy transaction will be used");
       });
 
-      const gasLimit = 21000;
+      late int gasLimit;
+
+      if (data != null || amountInEth != null) {
+        final gasLimitRequest = await networkClient.postHTTP('', {
+          "jsonrpc": "2.0",
+          "method": "eth_estimateGas",
+          "params": [
+            {
+              "from": from,
+              "to": to,
+              if (data != null) "data": data,
+              if (amountInEth != null)
+                "value": "0x" +
+                    EthereumFormater.convertEthToWei(amountInEth)
+                        .toRadixString(16)
+                        .toUpperCase()
+                        .padLeft(4, '0'),
+            }
+          ],
+          "id": "dontcare"
+        });
+
+        if (!gasLimitRequest.isSuccess) {
+          throw Exception('Gas limit request error');
+        }
+
+        gasLimit = convertHexToDecimal(
+          gasLimitRequest.data['result'].toString().substring(2),
+        );
+      } else {
+        gasLimit = 21000;
+      }
 
       return EVMTransactionInfo(
         nonce: nonce,
@@ -118,7 +154,7 @@ class EVMRpcClient {
     if (res.isSuccess) {
       if (res.data['error'] != null) {
         return BlockchainResponse(
-          data: res.data['error']['message'],
+          data: res.data['error'],
           status: BlockchainResponses.error,
         );
       }
