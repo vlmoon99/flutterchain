@@ -6,8 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/formaters/chains/ethereum_formater.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
@@ -71,8 +69,6 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
     return encodedRequest;
   }
-
-  Future<void> executeMpcTransactionEthereum() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -213,6 +209,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                 await bnbBlockChainService.getTransactionInfo(
               from: mpcAccountInfo!.adress,
               to: sendToController.text,
+              amountInEth: double.parse(amountController.text),
               data: smartContractData,
             );
 
@@ -259,6 +256,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                 await auroraBlockChainService.getTransactionInfo(
               from: mpcAccountInfo!.adress,
               to: sendToController.text,
+              amountInEth: double.parse(amountController.text),
               data: smartContractData,
             );
 

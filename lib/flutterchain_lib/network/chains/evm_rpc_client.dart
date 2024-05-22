@@ -113,9 +113,7 @@ class EVMRpcClient {
               if (amountInEth != null)
                 "value": "0x" +
                     EthereumFormater.convertEthToWei(amountInEth)
-                        .toRadixString(16)
-                        .toUpperCase()
-                        .padLeft(4, '0'),
+                        .toRadixString(16),
             }
           ],
           "id": "dontcare"
