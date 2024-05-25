@@ -8,11 +8,13 @@ import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bnb_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/ethereum_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/xrp_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
@@ -292,6 +294,42 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
             } else {
               print(txSendInfo.data);
             }
+          } else if (currentBlockChainForChainSignatureFunctions ==
+              BlockChains.xrp) {
+            final XRPBlockChainService xrpBlockChainService =
+                XRPBlockChainService.defaultInstance();
+
+            final txInfo = await xrpBlockChainService.getTransactionInfo(
+              senderAdress: mpcAccountInfo!.adress,
+            );
+
+            final mpcTransactionInfo =
+                await xrpBlockChainService.createPayloadForNearMPC(
+              mpcAccountInfo: mpcAccountInfo!,
+              receiverAddress: sendToController.text,
+              amount: double.parse(amountController.text),
+              transactionInfo: txInfo,
+            );
+
+            final signedTx =
+                await nearBlockChainService.signXRPTransactionWithMPC(
+              accountId: accountId!,
+              publicKey: accountId,
+              privateKey: privateKey!,
+              mpcTransactionInfo: mpcTransactionInfo,
+            );
+
+            final txSendInfo =
+                await xrpBlockChainService.sendTransaction(signedTx);
+
+            if (txSendInfo.status == BlockchainResponses.success) {
+              setState(() {
+                txHash = txSendInfo.data['txHash'];
+              });
+              print(txSendInfo.data);
+            } else {
+              print(txSendInfo.data);
+            }
           }
         } catch (err) {
           print(err.toString());
@@ -443,6 +481,12 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   AuroraBlockChainService.defaultInstance();
                               return auroraBlockChainService
                                   .getWalletBalance(EVMTransferRequest(
+                                accountID: mpcAccountInfo!.adress,
+                              ));
+                            }
+                            case BlockChains.xrp: {
+                              final XRPBlockChainService xrpBlockChainService = XRPBlockChainService.defaultInstance();
+                              return xrpBlockChainService.getWalletBalance(XRPTransferRequest(
                                 accountID: mpcAccountInfo!.adress,
                               ));
                             }

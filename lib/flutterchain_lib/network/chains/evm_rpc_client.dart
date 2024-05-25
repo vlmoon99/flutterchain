@@ -101,7 +101,7 @@ class EVMRpcClient {
 
       late int gasLimit;
 
-      if (data != null || amountInEth != null) {
+      if (data != null) {
         final gasLimitRequest = await networkClient.postHTTP('', {
           "jsonrpc": "2.0",
           "method": "eth_estimateGas",
@@ -109,7 +109,7 @@ class EVMRpcClient {
             {
               "from": from,
               "to": to,
-              if (data != null) "data": data,
+              "data": data,
               if (amountInEth != null)
                 "value": "0x" +
                     EthereumFormater.convertEthToWei(amountInEth)
@@ -121,6 +121,10 @@ class EVMRpcClient {
 
         if (!gasLimitRequest.isSuccess) {
           throw Exception('Gas limit request error');
+        }
+
+        if (gasLimitRequest.data['error'] != null) {
+          throw Exception(gasLimitRequest.data['error']['message']);
         }
 
         gasLimit = convertHexToDecimal(

@@ -677,4 +677,53 @@ class NearBlockChainService implements BlockChainService {
     return signedTransaction;
   }
 
+  Future<String> signXRPTransactionWithMPC({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required MpcTransactionInfo mpcTransactionInfo,
+    String path = "flutterchain",
+    String mpcContract = 'v2.multichain-mpc.testnet',
+  }) async {
+    final unsignedTransaction = mpcTransactionInfo.transactionInfo;
+    final payload = Uint8List.fromList(
+        List<int>.from(unsignedTransaction["payload"].values));
+    final reversedPayload = payload.reversed.toList();
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: mpcContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "sign",
+          args: {
+            "payload": reversedPayload,
+            "path": path,
+            "key_version": 0,
+          },
+          transferAmount: '0',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    final signatureValList =
+        List<String>.from(jsonDecode(nearSignRequest.data["success"]));
+
+    final signatureData = jsonEncode({
+      "big_r": signatureValList[0],
+      "big_s": signatureValList[1],
+    });
+
+    final signedTransaction = await jsVMService.callJS(
+      "window.XRPUtils.signTransactionWithMPCSignature( '${jsonEncode(unsignedTransaction['unsignedTx'])}', '$signatureData')",
+    );
+    return signedTransaction;
+  }
 }

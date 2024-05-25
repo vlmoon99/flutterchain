@@ -4,6 +4,7 @@ import BN from 'bn.js';
 import keccak from 'keccak';
 import hash from 'hash.js';
 import bs58check from 'bs58check';
+import * as xrpl from 'xrpl';
 
 const MPC_PUBLIC_KEY = 'secp256k1:4NfTiv3UsGahebgTaHyD9vF8KYKMBnfd6kh94mK6xv8fGBiJB8TBtFMP5WWXz6B89Ac1fbpzPwAvoyQebemHFwx3';
 
@@ -97,22 +98,46 @@ export async function uncompressedHexPointToBtcAddress(publicKeyHex, network) {
   return address;
 }
 
+export function uncompressedHexPointToXRPAddress(childPublicKey) {
+  const ec = new EC('secp256k1');
+  const x = childPublicKey.substring(2, 66);
+  const y = childPublicKey.substring(66);
+  const point = ec.curve.point(x, y);
+  childPublicKey = point.encode('hex', true);
+  const address = xrpl.deriveAddress(childPublicKey);
+  return {address, childPublicKey};
+}
+
 export async function generateAddressForNearMPC(accountId, path, chain, publicMPCKey = MPC_PUBLIC_KEY, network = "testnet") {
-  const childPublicKey = await deriveChildPublicKey(
+  let childPublicKey = await deriveChildPublicKey(
     najPublicKeyStrToUncompressedHexPoint(publicMPCKey),
     accountId,
     path,
   );
   if (!chain) chain = 'ETHEREUM';
-  const chains = {
-    BITCOIN: () =>
-      uncompressedHexPointToBtcAddress(childPublicKey, network),
-    ETHEREUM: () => uncompressedHexPointToEvmAddress(childPublicKey),
-    BNB: () => uncompressedHexPointToEvmAddress(childPublicKey),
-    AURORA: () => uncompressedHexPointToEvmAddress(childPublicKey),
-  };
+  let address;
+  switch (chain) {
+    case "BITCOIN":
+      address = await uncompressedHexPointToBtcAddress(childPublicKey, network);
+      break;
+    case "ETHEREUM":
+      address = uncompressedHexPointToEvmAddress(childPublicKey);
+      break;
+    case "BNB":
+      address = uncompressedHexPointToEvmAddress(childPublicKey);
+      break;
+    case "AURORA":
+      address = uncompressedHexPointToEvmAddress(childPublicKey);
+      break;
+    case "XRP":
+      ({address, childPublicKey} = uncompressedHexPointToXRPAddress(childPublicKey));
+      break;
+    default:
+      break;
+  }
+
   return JSON.stringify({
-    address: await chains[chain](),
+    address,
     publicKey: childPublicKey,
   });
 }
