@@ -114,7 +114,7 @@ export async function generateAddressForNearMPC(accountId, path, chain, publicMP
     accountId,
     path,
   );
-  const evmChains = ['ETHEREUM', 'BNB', 'AURORA', 'POLYGON'];
+  const evmChains = ['ETHEREUM', 'BNB', 'AURORA', 'POLYGON', 'AVALANCHE'];
   let address;
   
   if (evmChains.includes(chain)) {

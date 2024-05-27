@@ -10,6 +10,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_req
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/avalanche_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bnb_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/ethereum_blockchain_service.dart';
@@ -39,6 +40,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
     BlockChains.bnb,
     BlockChains.aurora,
     BlockChains.polygon,
+    BlockChains.avalanche,
   ];
 
   final TextEditingController mpcContractController = TextEditingController()
@@ -344,6 +346,53 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
               print(txSendInfo.data);
             }
           } else if (currentBlockChainForChainSignatureFunctions ==
+              BlockChains.avalanche) {
+            final AvalancheBlockChainService avalancheBlockChainService =
+                AvalancheBlockChainService.defaultInstance();
+
+            log("Getting transaction info...");
+
+            final transactionInfo =
+                await avalancheBlockChainService.getTransactionInfo(
+              from: mpcAccountInfo!.adress,
+              to: sendToController.text,
+              amountInAvax: double.parse(amountController.text),
+              data: smartContractData,
+            );
+
+            log("Creating payload...");
+
+            final unsignedTx =
+                await avalancheBlockChainService.createPayloadForNearMPC(
+              transactionInfo: transactionInfo,
+              receiverAddress: sendToController.text,
+              amount: double.parse(amountController.text),
+              smartContractCallEncoded: smartContractData,
+            );
+
+            log("Signing transaction...");
+            final signedTx =
+                await nearBlockChainService.signEVMTransationWithMPC(
+              accountId: accountId!,
+              publicKey: accountId,
+              privateKey: privateKey!,
+              mpcTransactionInfo: unsignedTx,
+              senderAdress: mpcAccountInfo!.adress,
+              mpcContract: mpcContractController.text,
+            );
+
+            log("Sending transaction...");
+            final txSendInfo =
+                await avalancheBlockChainService.sendTransaction(signedTx);
+            if (txSendInfo.status == BlockchainResponses.success) {
+              setState(() {
+                txHash = txSendInfo.data['txHash'];
+              });
+              print(txSendInfo.data);
+            } else {
+              print(txSendInfo.data);
+            }
+          } else if (currentBlockChainForChainSignatureFunctions ==
               BlockChains.xrp) {
             final XRPBlockChainService xrpBlockChainService =
                 XRPBlockChainService.defaultInstance();
@@ -543,6 +592,16 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   accountID: mpcAccountInfo!.adress,
                                 ),
                               );
+                            }
+                          case BlockChains.avalanche:
+                            {
+                              final AvalancheBlockChainService
+                                  avalancheBlockChainService =
+                                  AvalancheBlockChainService.defaultInstance();
+                              return avalancheBlockChainService
+                                  .getWalletBalance(EVMTransferRequest(
+                                accountID: mpcAccountInfo!.adress,
+                              ));
                             }
                           case BlockChains.xrp:
                             {
