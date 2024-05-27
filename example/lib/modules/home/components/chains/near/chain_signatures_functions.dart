@@ -14,6 +14,7 @@ import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain
 import 'package:flutterchain/flutterchain_lib/services/chains/bnb_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/ethereum_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/polygon_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/xrp_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
@@ -37,6 +38,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
     BlockChains.ethereum,
     BlockChains.bnb,
     BlockChains.aurora,
+    BlockChains.polygon,
   ];
 
   final TextEditingController mpcContractController = TextEditingController()
@@ -295,6 +297,53 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
               print(txSendInfo.data);
             }
           } else if (currentBlockChainForChainSignatureFunctions ==
+              BlockChains.polygon) {
+            final PolygonBlockChainService polygonBlockChainService =
+                PolygonBlockChainService.defaultInstance();
+
+            log("Getting transaction info...");
+
+            final transactionInfo =
+                await polygonBlockChainService.getTransactionInfo(
+              from: mpcAccountInfo!.adress,
+              to: sendToController.text,
+              amountInMatic: double.parse(amountController.text),
+              data: smartContractData,
+            );
+
+            log("Creating payload...");
+
+            final unsignedTx =
+                await polygonBlockChainService.createPayloadForNearMPC(
+              transactionInfo: transactionInfo,
+              receiverAddress: sendToController.text,
+              amount: double.parse(amountController.text),
+              smartContractCallEncoded: smartContractData,
+            );
+
+            log("Signing transaction...");
+            final signedTx =
+                await nearBlockChainService.signEVMTransationWithMPC(
+              accountId: accountId!,
+              publicKey: accountId,
+              privateKey: privateKey!,
+              mpcTransactionInfo: unsignedTx,
+              senderAdress: mpcAccountInfo!.adress,
+              mpcContract: mpcContractController.text,
+            );
+
+            log("Sending transaction...");
+            final txSendInfo =
+                await polygonBlockChainService.sendTransaction(signedTx);
+            if (txSendInfo.status == BlockchainResponses.success) {
+              setState(() {
+                txHash = txSendInfo.data['txHash'];
+              });
+              print(txSendInfo.data);
+            } else {
+              print(txSendInfo.data);
+            }
+          } else if (currentBlockChainForChainSignatureFunctions ==
               BlockChains.xrp) {
             final XRPBlockChainService xrpBlockChainService =
                 XRPBlockChainService.defaultInstance();
@@ -484,9 +533,23 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                 accountID: mpcAccountInfo!.adress,
                               ));
                             }
-                            case BlockChains.xrp: {
-                              final XRPBlockChainService xrpBlockChainService = XRPBlockChainService.defaultInstance();
-                              return xrpBlockChainService.getWalletBalance(XRPTransferRequest(
+                          case BlockChains.polygon:
+                            {
+                              final PolygonBlockChainService
+                                  polygonBlockChainService =
+                                  PolygonBlockChainService.defaultInstance();
+                              return polygonBlockChainService.getWalletBalance(
+                                EVMTransferRequest(
+                                  accountID: mpcAccountInfo!.adress,
+                                ),
+                              );
+                            }
+                          case BlockChains.xrp:
+                            {
+                              final XRPBlockChainService xrpBlockChainService =
+                                  XRPBlockChainService.defaultInstance();
+                              return xrpBlockChainService
+                                  .getWalletBalance(XRPTransferRequest(
                                 accountID: mpcAccountInfo!.adress,
                               ));
                             }

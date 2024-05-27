@@ -114,27 +114,24 @@ export async function generateAddressForNearMPC(accountId, path, chain, publicMP
     accountId,
     path,
   );
-  if (!chain) chain = 'ETHEREUM';
+  const evmChains = ['ETHEREUM', 'BNB', 'AURORA', 'POLYGON'];
   let address;
-  switch (chain) {
-    case "BITCOIN":
-      address = await uncompressedHexPointToBtcAddress(childPublicKey, network);
-      break;
-    case "ETHEREUM":
-      address = uncompressedHexPointToEvmAddress(childPublicKey);
-      break;
-    case "BNB":
-      address = uncompressedHexPointToEvmAddress(childPublicKey);
-      break;
-    case "AURORA":
-      address = uncompressedHexPointToEvmAddress(childPublicKey);
-      break;
-    case "XRP":
-      ({address, childPublicKey} = uncompressedHexPointToXRPAddress(childPublicKey));
-      break;
-    default:
-      break;
+  
+  if (evmChains.includes(chain)) {
+    address = uncompressedHexPointToEvmAddress(childPublicKey);
+  } else {
+    switch (chain) {
+      case "BITCOIN":
+        address = await uncompressedHexPointToBtcAddress(childPublicKey, network);
+        break;
+      case "XRP":
+        ({address, childPublicKey} = uncompressedHexPointToXRPAddress(childPublicKey));
+        break;
+      default:
+        throw new Error(`Unsupported chain: ${chain}`);
+    }
   }
+  
 
   return JSON.stringify({
     address,
