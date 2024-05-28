@@ -120,7 +120,7 @@ class PolygonBlockChainService implements BlockChainService {
     final amountInWei = EthereumFormater.convertEthToWei(amount);
     final chainId = typeOfNetwork == "testnet" ? 80002 : 137;
     final Map<String, dynamic> chainInfo = {
-      "name": "aurora",
+      "name": "polygon",
       "chainId": chainId,
     };
 
