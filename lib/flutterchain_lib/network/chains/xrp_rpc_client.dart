@@ -39,7 +39,7 @@ class XRPRpcClient {
     if (res.isSuccess && res.data['result']['error'] == null) {
       return res.data['result'];
     } else {
-      throw Exception(res.data);
+      throw res.data;
     }
   }
 
@@ -52,6 +52,13 @@ class XRPRpcClient {
       final amountInXrp = XrpFormatter.dropsToXrp(int.parse(amountInDrops));
       return amountInXrp.toString();
     } catch (err) {
+      if (err is Map) {
+        if (err['result']['error'] == 'actNotFound') {
+          return '0';
+        } else {
+          throw Exception(err['result']["error_message"]);
+        }
+      }
       rethrow;
     }
   }
@@ -66,7 +73,15 @@ class XRPRpcClient {
       "jsonrpc": "2.0"
     });
     final serverInfo = serverInfoRequest.data['result']['info'] as Map;
-    final accountData = await getAccountInfo(adress);
+    late Map<String, dynamic> accountData;
+    try {
+      accountData = await getAccountInfo(adress);
+    } catch (err) {
+      if (err is Map) {
+        throw Exception(err['result']["error_message"]);
+      }
+      rethrow;
+    }
 
     final networkId = serverInfo['network_id'] as int;
 
