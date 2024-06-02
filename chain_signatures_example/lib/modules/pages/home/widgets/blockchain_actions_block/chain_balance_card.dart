@@ -170,8 +170,10 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
 
   @override
   void didUpdateWidget(covariant ChainBalanceInfo oldWidget) {
-    if (oldWidget.chainAddress != widget.chainAddress) {
-      updateBalance(widget.chainAddress);
+    if (oldWidget.chain != widget.chain) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        updateBalance(widget.chainAddress);
+      });
     }
     super.didUpdateWidget(oldWidget);
   }

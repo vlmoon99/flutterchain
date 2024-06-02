@@ -63,6 +63,16 @@ class _ChainActionsState extends State<ChainActions> {
 
   String txHash = "";
 
+  @override
+  void didUpdateWidget(covariant ChainActions oldWidget) {
+    if (oldWidget.chain != widget.chain) {
+      setState(() {
+        selectedAction = ChainAction.transfer;
+      });
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   void validator() {
     if (receiverAddressController.text.isEmpty) {
       throw Exception('Receiver address is required');
@@ -128,6 +138,9 @@ class _ChainActionsState extends State<ChainActions> {
                   .map(
                     (action) => DropdownMenuItem(
                       value: action,
+                      enabled: action == ChainAction.transfer ||
+                          AvaliableBlockchainsInfo.evmChains
+                              .contains(widget.chain),
                       child: Text(
                         action == ChainAction.transfer
                             ? "Transfer"
@@ -135,6 +148,16 @@ class _ChainActionsState extends State<ChainActions> {
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
+                          color: action == ChainAction.transfer ||
+                                  AvaliableBlockchainsInfo.evmChains
+                                      .contains(widget.chain)
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.red,
+                          decoration: action == ChainAction.transfer ||
+                                  AvaliableBlockchainsInfo.evmChains
+                                      .contains(widget.chain)
+                              ? TextDecoration.none
+                              : TextDecoration.lineThrough,
                         ),
                       ),
                     ),
