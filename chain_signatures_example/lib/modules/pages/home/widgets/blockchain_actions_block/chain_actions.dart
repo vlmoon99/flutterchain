@@ -206,7 +206,7 @@ class _ChainActionsState extends State<ChainActions> {
           SizedBox(height: 14.h),
           RoundedTextField(
             textEditingController: smartContractArgsController,
-            labelText: "Smart Contract Function",
+            labelText: "Smart Contract Args",
             fontSize: 16.sp,
           ),
           Padding(
