@@ -72,8 +72,8 @@ class HomeMainBody extends StatelessWidget {
           children: [
             SvgPicture.asset(
               "assets/near-protocol-near-logo.svg",
-              width: 25.w,
-              height: 25.w,
+              width: 25.h,
+              height: 25.h,
             ),
             SizedBox(width: 10.w),
             Text(

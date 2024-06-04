@@ -179,8 +179,8 @@ class _BlockChainActionsBlockState extends State<BlockChainActionsBlock> {
                                 child: ListTile(
                                   leading: SvgPicture.asset(
                                     AvaliableBlockchainsInfo.chainsLogos[chain],
-                                    height: 30.w,
-                                    width: 30.w,
+                                    height: 30.h,
+                                    width: 30.h,
                                   ),
                                   title: Text(
                                     chain,
@@ -239,10 +239,12 @@ class ChainAccountInfoAndActions extends StatefulWidget {
   final String derivationPath;
 
   @override
-  State<ChainAccountInfoAndActions> createState() => _ChainAccountInfoAndActionsState();
+  State<ChainAccountInfoAndActions> createState() =>
+      _ChainAccountInfoAndActionsState();
 }
 
-class _ChainAccountInfoAndActionsState extends State<ChainAccountInfoAndActions> {
+class _ChainAccountInfoAndActionsState
+    extends State<ChainAccountInfoAndActions> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -278,4 +280,3 @@ class _ChainAccountInfoAndActionsState extends State<ChainAccountInfoAndActions>
     );
   }
 }
-
