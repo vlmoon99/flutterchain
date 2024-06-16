@@ -2,7 +2,6 @@ import { initWasm, TW } from "@trustwallet/wallet-core";
 import { NearBlockchain } from "./chains/near_blockchain";
 import { BitcoinBlockchain } from "./chains/btc_blockhain";
 import { generateMnemonic } from "./core/mnemonic";
-import * as bitcoin from 'bitcoinjs-lib';
 import { generateAddressForNearMPC } from "./utils/kdf";
 import { EVMUtils } from "./utils/evm";
 import { BitcoinUtils } from "./utils/bitcoin";
