@@ -14,8 +14,6 @@ initWasm().then((WalletCore) => {
   window.TW = TW;
   //End
 
-  window.bitcoinjs = bitcoin;
-
   //Second Step add blockchains classes to window
   window.NearBlockchain = new NearBlockchain();
   window.BitcoinBlockchain = new BitcoinBlockchain();
