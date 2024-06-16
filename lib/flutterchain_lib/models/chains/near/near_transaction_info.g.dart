@@ -9,7 +9,7 @@ part of 'near_transaction_info.dart';
 NearTransactionInfoModel _$NearTransactionInfoModelFromJson(
         Map<String, dynamic> json) =>
     NearTransactionInfoModel(
-      nonce: (json['nonce'] as num).toInt(),
+      nonce: json['nonce'] as int,
       blockHash: json['blockHash'] as String,
     );
 

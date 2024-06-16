@@ -57,4 +57,19 @@ class WebviewJsVMService implements JsVMService {
     await _readyCompleter.future;
     return _webViewMobileController.evaluateJavascript(source: function);
   }
+
+  @override
+  Future<dynamic> callJSAsync(String function) async {
+    await _readyCompleter.future;
+    final String functionBody = """
+      var output = $function;
+      await output;
+      return output;
+    """;
+    final res = await _webViewMobileController.callAsyncJavaScript(
+      functionBody: functionBody,
+      arguments: {},
+    );
+    return Future.value(res?.value);
+  }
 }

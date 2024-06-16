@@ -19,4 +19,27 @@ class WebJsVMService implements JsVMService {
 
     return res;
   }
+
+  @override
+  Future callJSAsync(String function) async {
+    var completer = Completer<dynamic>();
+
+    // Call the JavaScript function which returns a Promise
+    var jsPromise = js.context.callMethod('eval', [function]);
+
+    // Convert the JS Promise to a Dart Future
+    jsPromise.callMethod('then', [
+      (result) {
+        completer.complete(result);
+      }
+    ]);
+
+    jsPromise.callMethod('catch', [
+      (error) {
+        completer.completeError(error.toString());
+      }
+    ]);
+
+    return completer.future;
+  }
 }

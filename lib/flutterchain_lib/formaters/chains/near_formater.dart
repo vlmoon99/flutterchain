@@ -46,11 +46,25 @@ class NearFormatter {
     }
   }
 
-  static String decodeResultOfResponse(String successValue) {
+  static String decodeResultOfTransactionResponse(String successValue) {
     if (successValue.isEmpty || successValue == 'null') {
       return 'none data in response';
     }
     final decodedRes = utf8.decode(base64.decode(successValue));
     return decodedRes;
+  }
+
+  static String argstobase64Args(Map<String, dynamic> args) {
+    return base64.encode(utf8.encode(json.encode(args)));
+  }
+
+  static dynamic decodeViewCallResponse(List<int> response) {
+    final decodedFromUtf8 = utf8.decode(response);
+    try {
+      final transformedToObject = json.decode(decodedFromUtf8);
+      return transformedToObject;
+    } catch (err) {
+      return decodedFromUtf8;
+    }
   }
 }

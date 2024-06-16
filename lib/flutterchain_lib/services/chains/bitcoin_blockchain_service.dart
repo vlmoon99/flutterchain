@@ -1,16 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
+import 'package:flutterchain/flutterchain_lib/formaters/chains/bitcoin_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/bitcoin_rpc_client.dart';
@@ -61,7 +57,7 @@ class BitcoinBlockChainService implements BlockChainService {
         format,
         actuelFees);
 
-    final res = await bitcoinRpcClient.sendTransferNativeCoin(txHex);
+    final res = await bitcoinRpcClient.sendTransaction(txHex);
     return res;
   }
 
@@ -75,7 +71,7 @@ class BitcoinBlockChainService implements BlockChainService {
 
   //Get wallet balance by account ID (on input hex format public key)
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest) async {
+  Future<String> getWalletBalance(TransferRequest transferRequest, ) async {
     final bitcoinTransferRequest = transferRequest as BitcoinTransferRequest;
     final addressId =
         await getAdressBTCSegWitFomat(bitcoinTransferRequest.accountID!);
@@ -181,4 +177,44 @@ class BitcoinBlockChainService implements BlockChainService {
     String? accountId = Uri.base.queryParameters["account_id"];
     return accountId;
   }
+
+  //MPC Feature
+
+  Future<MpcTransactionInfo> createPayloadForNearMPC({
+    required String senderAddress,
+    required String receiverAddress,
+    required String amountOfBTC,
+    bool testNetwork = true,
+  }) async {
+    final utxos = await bitcoinRpcClient.getUTXOs(address: senderAddress);
+    final feeRate = await bitcoinRpcClient.getFeeRate();
+
+    final Map<String, dynamic> txInfos = {};
+
+    for (var utxo in utxos) {
+      final res =
+          await bitcoinRpcClient.getExecutedTxData(txHash: utxo['txid']);
+      txInfos[utxo['txid']] = res;
+    }
+
+    final amountOfSatoshi =
+        int.parse(BitcoinFormatter.bitcoinToSatoshi(amountOfBTC));
+
+    final network = testNetwork ? 'testnet' : 'mainnet';
+
+    final psbtEncoded = await jsVMService.callJS(
+        "window.BitcoinUtils.createPayload('$senderAddress', '$receiverAddress', $amountOfSatoshi, '${jsonEncode(utxos)}', '${jsonEncode(txInfos)}', $feeRate, '$network')");
+    final psbtInHex = jsonDecode(psbtEncoded);
+
+    return MpcTransactionInfo(transactionInfo: {
+      'psbt': psbtInHex,
+      'utxos': utxos,
+    });
+  }
+
+  Future<BlockchainResponse> sendTransaction(String txhex) async {
+    final res = await bitcoinRpcClient.sendTransaction(txhex);
+    return res;
+  }
+
 }

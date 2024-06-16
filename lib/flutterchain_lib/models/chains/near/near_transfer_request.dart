@@ -49,19 +49,23 @@ class NearTransferRequest implements TransferRequest {
   @override
   String? accountID;
 
-  NearTransferRequest(
-      {this.arguments,
-      this.derivationPath,
-      this.currentDerivationPath,
-      this.fromAddress,
-      this.mnemonic,
-      this.newUrl,
-      this.passphrase,
-      this.privateKey,
-      this.publicKey,
-      this.toAddress,
-      this.transferAmount,
-      this.walletId,
-      this.walletName,
-      this.accountID});
+  String? gas;
+
+  NearTransferRequest({
+    this.arguments,
+    this.derivationPath,
+    this.currentDerivationPath,
+    this.fromAddress,
+    this.mnemonic,
+    this.newUrl,
+    this.passphrase,
+    this.privateKey,
+    this.publicKey,
+    this.toAddress,
+    this.transferAmount,
+    this.walletId,
+    this.walletName,
+    this.accountID,
+    this.gas,
+  });
 }

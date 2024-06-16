@@ -7,6 +7,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:flutterchain_example/modules/home/components/chains/near/chain_signatures_functions.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/export_key_in_near_api_js_format_action.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/login_with_mynear_wallet.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_activate_testnet_account.dart';
@@ -73,6 +74,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
                       NearAddKeyAction(),
                       NearDeleteKeyAction(),
                       NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
+                      ChainSignatureFunctions(),
                       ExportKeyInNearApiJsFormat(),
                     ],
                   ),
@@ -91,6 +93,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
                       NearAddKeyAction(),
                       NearDeleteKeyAction(),
                       NearMakeActionWithInjectedPrivateKeyInNearApiJsFormat(),
+                      ChainSignatureFunctions(),
                       ExportKeyInNearApiJsFormat(),
                     ],
                   ),
