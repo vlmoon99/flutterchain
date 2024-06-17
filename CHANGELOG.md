@@ -34,3 +34,8 @@ Update wallet core package
 ## 1.0.0-beta.14
 
 Fix derivation path in addKey for Near Blockchain
+
+
+## 1.0.0-beta.15
+
+Add Chain Signatures Functional for Near Blockchain
