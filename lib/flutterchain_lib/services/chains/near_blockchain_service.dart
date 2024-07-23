@@ -726,4 +726,35 @@ class NearBlockChainService implements BlockChainService {
     );
     return signedTransaction;
   }
+
+  Future<dynamic> deployNFTCollection({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required Map<String, dynamic> args,
+    String factoryContract = 'mintspace2.testnet',
+  }) async {
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: factoryContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "create_store",
+          args: args,
+          transferAmount: '0',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    final signatureValList = jsonDecode(nearSignRequest.data["success"]);
+
+    return signatureValList;
+  }
 }
