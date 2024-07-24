@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mintbase_example/modules/models/models.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_create_dialog.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_dialog.dart';
+import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_mnemonic.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({super.key});
@@ -84,6 +85,40 @@ class _InitPageState extends State<InitPage> {
                   showDialog(
                     context: context,
                     builder: (context) {
+                      return Dialog(
+                        child: NearAccountImportActionDialog(
+                          networkType: networkType,
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Text(
+                  'Import Near account',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10).r,
+                child: Text(
+                  'OR',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: FilledButton(
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
                       return Padding(
                         padding: EdgeInsets.symmetric(horizontal: .1.sw),
                         child: Dialog(
@@ -122,7 +157,7 @@ class _InitPageState extends State<InitPage> {
                     context: context,
                     builder: (context) {
                       return Dialog(
-                        child: NearAccountImportActionDialog(
+                        child: NearAccountImportMnemonic(
                           networkType: networkType,
                         ),
                       );
@@ -130,7 +165,7 @@ class _InitPageState extends State<InitPage> {
                   );
                 },
                 child: Text(
-                  'Import Near account',
+                  'Import Near account whit mnemonic',
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),

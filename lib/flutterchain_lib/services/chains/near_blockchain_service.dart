@@ -744,7 +744,7 @@ class NearBlockChainService implements BlockChainService {
         arguments: NearBlockChainSmartContractArguments(
           method: "create_store",
           args: args,
-          transferAmount: '0',
+          transferAmount: '3700000000000000000000000 ',
         ),
       ),
     );
@@ -753,8 +753,6 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
-    final signatureValList = jsonDecode(nearSignRequest.data["success"]);
-
-    return signatureValList;
+    return true;
   }
 }

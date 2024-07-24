@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/consts/secure_storage_keys.dart';
 import 'package:mintbase_example/modules/models/authorized.dart';
 import 'package:mintbase_example/modules/models/models.dart';
@@ -11,41 +13,32 @@ import 'package:mintbase_example/modules/services/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
 import 'package:mintbase_example/widget/rounded_text_field.dart';
 
-class NearAccountImportActionDialog extends StatefulWidget {
-  const NearAccountImportActionDialog({
+class NearAccountImportMnemonic extends StatefulWidget {
+  final NearNetworkType networkType;
+
+  const NearAccountImportMnemonic({
     super.key,
     required this.networkType,
   });
 
-  final NearNetworkType networkType;
-
   @override
-  State<NearAccountImportActionDialog> createState() =>
-      _NearAccountImportActionDialogState();
+  State<NearAccountImportMnemonic> createState() =>
+      _NearAccountImportMnemonicState();
 }
 
-class _NearAccountImportActionDialogState
-    extends State<NearAccountImportActionDialog> {
+class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
   bool loading = false;
 
-  final TextEditingController accountIdController = TextEditingController();
-  final TextEditingController privateKeyController = TextEditingController();
+  final TextEditingController mnemonicController = TextEditingController();
+  final TextEditingController acountIDController = TextEditingController();
 
-  void accountCredentialsValidation() {
-    if (accountIdController.text.isEmpty) {
-      throw Exception('Account ID is required');
+  Future<NearBlockChainData> getAccountInfo({required String mnemonic}) async {
+    if (mnemonicController.text == null) {
+      throw Exception("Input mnemonic");
     }
-    if (accountIdController.text.length < 6) {
-      throw Exception('Account ID isn\'t valid');
-    }
-
-    if (privateKeyController.text.isEmpty) {
-      throw Exception('Private key is required');
-    }
-
-    if (privateKeyController.text.startsWith('ed25519:')) {
-      throw Exception('Private key isn\'t valid');
-    }
+    final passphrase = "";
+    return await Modular.get<NearBlockChainService>()
+        .getBlockChainDataFromMnemonic(mnemonic, passphrase);
   }
 
   @override
@@ -58,27 +51,31 @@ class _NearAccountImportActionDialogState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SizedBox(height: 30.h),
           RoundedTextField(
-            textEditingController: accountIdController,
-            labelText: "Account ID",
+            textEditingController: acountIDController,
+            labelText: "AcountID",
           ),
-          SizedBox(height: 25.h),
+          SizedBox(height: 30.h),
+          SizedBox(height: 30.h),
           RoundedTextField(
-            textEditingController: privateKeyController,
-            labelText: "Private Key",
+            textEditingController: mnemonicController,
+            labelText: "Mnemonic",
           ),
           SizedBox(height: 30.h),
           if (!loading)
             FilledButton(
               onPressed: () async {
-                accountCredentialsValidation();
                 setState(() {
                   loading = true;
                 });
 
+                final accountInfo =
+                    await getAccountInfo(mnemonic: mnemonicController.text);
+
                 Modular.get<AuthController>(key: "AuthController").login(
-                    accountId: accountIdController.text,
-                    secretKey: privateKeyController.text,
+                    accountId: acountIDController.text,
+                    secretKey: accountInfo.privateKey,
                     networkType: widget.networkType);
 
                 final FlutterSecureStorage secureStorage =
@@ -87,8 +84,8 @@ class _NearAccountImportActionDialogState
                   key: SecureStorageKeys.info,
                   value: jsonEncode(
                     Authorized(
-                      accountIdController.text,
-                      privateKeyController.text,
+                      acountIDController.text,
+                      accountInfo.privateKey,
                       widget.networkType,
                     ),
                   ),
@@ -113,5 +110,6 @@ class _NearAccountImportActionDialogState
         ],
       ),
     );
+    ;
   }
 }
