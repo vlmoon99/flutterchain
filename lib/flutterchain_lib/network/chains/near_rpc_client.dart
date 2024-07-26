@@ -106,8 +106,8 @@ class NearRpcClient {
         );
       }
 
-      final decodedResponse =
-          NearFormatter.decodeViewCallResponse(List<int>.from(res.data['result']?['result']));
+      final decodedResponse = NearFormatter.decodeViewCallResponse(
+          List<int>.from(res.data['result']?['result']));
 
       return BlockchainResponse(
         data: {"response": decodedResponse},
@@ -205,6 +205,46 @@ class NearRpcClient {
         status: BlockchainResponses.error,
       );
     }
+  }
+
+  Future<BlockchainResponse> mintBaseRPCInteractions(
+      {required String query, required bool testnet}) async {
+    var uri = "";
+    if (testnet == true) {
+      uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.first;
+    } else {
+      uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.last;
+    }
+
+    final heders = {"mb-api-key": "anon", "content-type": "application/json"};
+
+    final res = await networkClient.postHTTP(uri,
+        {"query": query, "variables": {}, "operationName": "MyQuery"}, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
+
+  Future<BlockchainResponse> getCollection(
+      {required String owner_id, required bool testnet}) async {
+    final query = """query MyQuery {
+            nft_contracts(
+              limit: 30
+              where: {owner_id: {_eq: "${owner_id}"}}
+            ) {
+              owner_id
+              name
+            }
+          }""";
+
+    return await mintBaseRPCInteractions(query: query, testnet: testnet);
   }
 }
 

@@ -727,13 +727,31 @@ class NearBlockChainService implements BlockChainService {
     return signedTransaction;
   }
 
-  Future<dynamic> deployNFTCollection({
+  Future<bool> deployNFTCollection({
     required String accountId,
     required String publicKey,
     required String privateKey,
-    required Map<String, dynamic> args,
+    required String symbol,
+    required String name,
+    required String ownerId,
+    String? icon,
+    String? baseUri,
+    String? reference,
+    String? referenceHash,
     String factoryContract = 'mintspace2.testnet',
   }) async {
+    final Map<String, dynamic> args = {
+      "owner_id": ownerId,
+      "metadata": {
+        "name": name,
+        "spec": "nft-1.0.0",
+        "symbol": symbol,
+        "icon": icon,
+        "baseUri": baseUri,
+        "reference": reference,
+        "referenceHash": referenceHash
+      }
+    };
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
         fromAddress: accountId,
@@ -744,7 +762,7 @@ class NearBlockChainService implements BlockChainService {
         arguments: NearBlockChainSmartContractArguments(
           method: "create_store",
           args: args,
-          transferAmount: '3700000000000000000000000 ',
+          transferAmount: '3700000000000000000000000',
         ),
       ),
     );
@@ -754,5 +772,129 @@ class NearBlockChainService implements BlockChainService {
     }
 
     return true;
+  }
+
+  Future<List<dynamic>> checkCollection(
+      {required String owner_id, required bool testnet}) async {
+    final response =
+        await nearRpcClient.getCollection(owner_id: owner_id, testnet: testnet);
+
+    List<dynamic> contracts = response.data["data"]["nft_contracts"];
+    if (contracts.isEmpty) {
+      final names = [];
+      return names;
+    }
+    List<String> names =
+        contracts.map((contacts) => contacts["name"] as String).toList();
+    return names;
+  }
+
+  Future<dynamic> transferNFTCollection({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required String nftCollectionContract,
+    required String new_owner,
+    required bool keep_old_minters,
+  }) async {
+    final Map<String, dynamic> args = {
+      "new_owner": new_owner,
+      "keep_old_minters": keep_old_minters
+    };
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: nftCollectionContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "transfer_store_ownership",
+          args: args,
+          transferAmount: '1',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    return true;
+  }
+
+  Future<dynamic> addDeleteMinters({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required String nftCollectionContract,
+    required String name,
+    required bool isAdd,
+  }) async {
+    late Map<String, dynamic> args;
+
+    if (isAdd == true) {
+      args = {
+        "grant": [name]
+      };
+    } else {
+      args = {
+        "revoke": [name]
+      };
+    }
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: nftCollectionContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "batch_change_minters",
+          args: args,
+          transferAmount: '1',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    return true;
+  }
+
+  Future<List<dynamic>> getMinters({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required String nftCollectionContract,
+  }) async {
+    final Map<String, dynamic> args = {};
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: nftCollectionContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "list_minters",
+          args: args,
+          transferAmount: '1',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    final names = nearSignRequest.data["success"] as String;
+
+    return jsonDecode(names);
   }
 }

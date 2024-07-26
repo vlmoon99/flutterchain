@@ -18,6 +18,30 @@ class AuthController extends Disposable {
 
   AuthInfo get state => _streamController.value;
 
+  Future<void> loginDefault({
+    required String accountId,
+    required String secretKey,
+    required NearNetworkType networkType,
+  }) async {
+    // try {
+    await nearBlockChainService.setBlockchainNetworkEnvironment(
+      newUrl: networkType == NearNetworkType.mainnet
+          ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
+          : NearBlockChainNetworkUrls.listOfUrls.first,
+    );
+
+    _streamController.add(state.copyWith(
+      accountId: accountId,
+      publicKey: accountId,
+      secretKey: secretKey,
+      privateKey: secretKey,
+      networkType: networkType,
+    ));
+    // } catch (err) {
+    //   rethrow;
+    // }
+  }
+
   Future<void> login({
     required String accountId,
     required String secretKey,

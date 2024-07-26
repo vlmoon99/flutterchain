@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mintbase_example/modules/models/models.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_create_dialog.dart';
-import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_dialog.dart';
+import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_default_dialog.dart';
+import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_nearAPIjs_dialog.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_mnemonic.dart';
 
 class InitPage extends StatefulWidget {
@@ -85,16 +86,19 @@ class _InitPageState extends State<InitPage> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return Dialog(
-                        child: NearAccountImportActionDialog(
-                          networkType: networkType,
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: .1.sw),
+                        child: Dialog(
+                          child: NearAccountCreationActionDialog(
+                            networkType: networkType,
+                          ),
                         ),
                       );
                     },
                   );
                 },
                 child: Text(
-                  'Import Near account',
+                  'Create new Near account',
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),
@@ -119,19 +123,50 @@ class _InitPageState extends State<InitPage> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: .1.sw),
-                        child: Dialog(
-                          child: NearAccountCreationActionDialog(
-                            networkType: networkType,
-                          ),
+                      return Dialog(
+                        child: NearAccountImportActionDialogDefault(
+                          networkType: networkType,
                         ),
                       );
                     },
                   );
                 },
                 child: Text(
-                  'Create new Near account',
+                  'Import Near account Default',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10).r,
+                child: Text(
+                  'OR',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: FilledButton(
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        child: NearAccountImportActionDialog(
+                          networkType: networkType,
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Text(
+                  'Import Near account NEARAPIJS',
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),

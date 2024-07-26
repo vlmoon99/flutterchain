@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
+import 'package:mintbase_example/modules/pages/thems/thems.dart';
 import 'package:mintbase_example/modules/services/auth_controller.dart';
 
 class CreateCollectionDialog extends StatefulWidget {
@@ -23,9 +23,9 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
   final referenceHashController = TextEditingController();
 
   final nearService = Modular.get<NearBlockChainService>();
-  Future<BlockchainResponse>? responseCollection;
+  Future<bool>? responseCollection;
 
-  Future<BlockchainResponse> deployNFTCollection(
+  Future<bool> deployNFTCollection(
       {required String symbol,
       required String name,
       required String ownerId,
@@ -34,41 +34,30 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
       String? reference,
       String? referenceHash}) async {
     final AuthController infoAccount = Modular.get(key: "AuthController");
-    final Map<String, dynamic> args = {
-      "owner_id": ownerId,
-      "metadata": {
-        "name": name,
-        "spec": "nft-1.0.0",
-        "symbol": symbol,
-        "icon": icon,
-        "baseUri": baseUri,
-        "reference": reference,
-        "referenceHash": referenceHash
-      }
-    };
 
     return await nearService.deployNFTCollection(
         accountId: infoAccount.state.accountId,
         publicKey: infoAccount.state.publicKey,
         privateKey: infoAccount.state.privateKey,
-        args: args);
+        symbol: symbol,
+        name: name,
+        ownerId: ownerId,
+        icon: icon,
+        baseUri: baseUri,
+        reference: reference,
+        referenceHash: referenceHash);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(
-            color: Colors.blue,
-            width: 2.0,
-          ),
-        ),
-        padding: EdgeInsets.all(10),
+        decoration: Thems.boxDecoration,
+        padding: Thems.padding,
         child: Column(children: [
           const Text(
             "Create collection",
-            style: TextStyle(fontSize: 17),
+            style:
+                TextStyle(fontSize: 17, color: Color.fromARGB(255, 245, 79, 1)),
           ),
           TextField(
             controller: symbolController,

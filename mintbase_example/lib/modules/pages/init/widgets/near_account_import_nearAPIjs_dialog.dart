@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/consts/secure_storage_keys.dart';
 import 'package:mintbase_example/modules/models/authorized.dart';
 import 'package:mintbase_example/modules/models/models.dart';
@@ -13,32 +11,41 @@ import 'package:mintbase_example/modules/services/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
 import 'package:mintbase_example/widget/rounded_text_field.dart';
 
-class NearAccountImportMnemonic extends StatefulWidget {
-  final NearNetworkType networkType;
-
-  const NearAccountImportMnemonic({
+class NearAccountImportActionDialog extends StatefulWidget {
+  const NearAccountImportActionDialog({
     super.key,
     required this.networkType,
   });
 
+  final NearNetworkType networkType;
+
   @override
-  State<NearAccountImportMnemonic> createState() =>
-      _NearAccountImportMnemonicState();
+  State<NearAccountImportActionDialog> createState() =>
+      _NearAccountImportActionDialogState();
 }
 
-class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
+class _NearAccountImportActionDialogState
+    extends State<NearAccountImportActionDialog> {
   bool loading = false;
 
-  final TextEditingController mnemonicController = TextEditingController();
-  final TextEditingController acountIDController = TextEditingController();
+  final TextEditingController accountIdController = TextEditingController();
+  final TextEditingController privateKeyController = TextEditingController();
 
-  Future<NearBlockChainData> getAccountInfo({required String mnemonic}) async {
-    if (mnemonicController.text == null) {
-      throw Exception("Input mnemonic");
+  void accountCredentialsValidation() {
+    if (accountIdController.text.isEmpty) {
+      throw Exception('Account ID is required');
     }
-    final passphrase = "";
-    return await Modular.get<NearBlockChainService>()
-        .getBlockChainDataFromMnemonic(mnemonic, passphrase);
+    if (accountIdController.text.length < 6) {
+      throw Exception('Account ID isn\'t valid');
+    }
+
+    if (privateKeyController.text.isEmpty) {
+      throw Exception('Private key is required');
+    }
+
+    if (privateKeyController.text.startsWith('ed25519:')) {
+      throw Exception('Private key isn\'t valid');
+    }
   }
 
   @override
@@ -51,31 +58,27 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 30.h),
           RoundedTextField(
-            textEditingController: acountIDController,
-            labelText: "AcountID",
+            textEditingController: accountIdController,
+            labelText: "Account ID",
           ),
-          SizedBox(height: 30.h),
-          SizedBox(height: 30.h),
+          SizedBox(height: 25.h),
           RoundedTextField(
-            textEditingController: mnemonicController,
-            labelText: "Mnemonic",
+            textEditingController: privateKeyController,
+            labelText: "Private Key",
           ),
           SizedBox(height: 30.h),
           if (!loading)
             FilledButton(
               onPressed: () async {
+                accountCredentialsValidation();
                 setState(() {
                   loading = true;
                 });
 
-                final accountInfo =
-                    await getAccountInfo(mnemonic: mnemonicController.text);
-
                 await Modular.get<AuthController>(key: "AuthController").login(
-                    accountId: acountIDController.text,
-                    secretKey: accountInfo.privateKey,
+                    accountId: accountIdController.text,
+                    secretKey: privateKeyController.text,
                     networkType: widget.networkType);
 
                 final FlutterSecureStorage secureStorage =
@@ -84,8 +87,8 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
                   key: SecureStorageKeys.info,
                   value: jsonEncode(
                     Authorized(
-                      acountIDController.text,
-                      accountInfo.privateKey,
+                      accountIdController.text,
+                      privateKeyController.text,
                       widget.networkType,
                     ),
                   ),
@@ -110,6 +113,5 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
         ],
       ),
     );
-    ;
   }
 }

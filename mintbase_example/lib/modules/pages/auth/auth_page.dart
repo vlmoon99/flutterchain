@@ -3,7 +3,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/modules/models/models.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/add_remove_minters.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
+import 'package:mintbase_example/modules/pages/thems/thems.dart';
 import 'package:mintbase_example/modules/services/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
 
@@ -18,7 +21,9 @@ class _AuthPageState extends State<AuthPage> {
   String? accountId;
   String? privateKey;
   String? publicKey;
+  NearNetworkType? networkType;
   Future<String>? balance;
+  Future<List<dynamic>>? nameCollections;
 
   final nearService = Modular.get<NearBlockChainService>();
 
@@ -27,20 +32,35 @@ class _AuthPageState extends State<AuthPage> {
         .getWalletBalance(NearTransferRequest(accountID: account_id));
   }
 
-  void getInfoStream() {
+  void getInfoStream() async {
     final AuthInfo info =
         Modular.get<AuthController>(key: "AuthController").state;
     setState(() {
       accountId = info.accountId;
       privateKey = info.privateKey;
       publicKey = info.publicKey;
+      networkType = info.networkType;
     });
+  }
+
+  Future<List<dynamic>> checkCollection() async {
+    if (accountId == null) {
+      throw Exception("AccountId is not defined");
+    }
+    if (networkType == NearNetworkType.testnet) {
+      return await nearService.checkCollection(
+          owner_id: accountId!, testnet: true);
+    } else {
+      return await nearService.checkCollection(
+          owner_id: accountId!, testnet: false);
+    }
   }
 
   @override
   void initState() {
     getInfoStream();
     balance = getWalletBalance(account_id: accountId!);
+    nameCollections = checkCollection();
     super.initState();
   }
 
@@ -55,32 +75,43 @@ class _AuthPageState extends State<AuthPage> {
         alignment: Alignment.center,
         child: Column(
           children: [
-            IconButton(
-                icon: Icon(Icons.keyboard_double_arrow_left),
-                onPressed: () => Modular.to.navigate(CoreRoutes.home)),
-            Container(
-              child: const Text(
-                "Mintbase integration",
-                style: TextStyle(fontSize: 25, color: Colors.red),
-              ),
+            Row(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.keyboard_double_arrow_left),
+                    onPressed: () => Modular.to.navigate(CoreRoutes.home),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      "Mintbase integration",
+                      style: TextStyle(fontSize: 25, color: Colors.red),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 48), // Ширина кнопки для симметрии
+              ],
             ),
             const SizedBox(height: 10),
-            Expanded(
+            Flexible(
               child: SingleChildScrollView(
                 child: Column(
                   // key: UniqueKey(),
                   children: [
                     Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+                        padding: Thems.padding,
+                        decoration: Thems.boxDecoration,
                         child: Column(
                           children: [
+                            const Text(
+                              "Main info",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Color.fromARGB(255, 245, 79, 1)),
+                            ),
                             if (accountId != null &&
                                 privateKey != null &&
                                 publicKey != null) ...[
@@ -99,8 +130,12 @@ class _AuthPageState extends State<AuthPage> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+                                    const Text(
+                                      "Your balance: ",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
                                     balance == null
-                                        ? Text(
+                                        ? const Text(
                                             "The balance hasn't been loaded yet")
                                         : Flexible(
                                             child: FutureBuilder<String>(
@@ -135,15 +170,72 @@ class _AuthPageState extends State<AuthPage> {
                                       }),
                                     ),
                                   ]),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  nameCollections == null
+                                      ? const Text(
+                                          "Data about collections not loaded")
+                                      : FutureBuilder<List<dynamic>>(
+                                          future: nameCollections,
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<List<dynamic>>
+                                                  snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const CircularProgressIndicator();
+                                            } else if (snapshot.hasError) {
+                                              return const Text(
+                                                'Error:',
+                                                overflow: TextOverflow.ellipsis,
+                                              );
+                                            } else if (snapshot.hasData &&
+                                                snapshot.data!.isNotEmpty) {
+                                              return Column(
+                                                children: [
+                                                  const Text(
+                                                    'Your collections:',
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  ...snapshot.data!
+                                                      .map((collection) {
+                                                    return SelectableText(
+                                                      '${collection}.mintspace2.testnet',
+                                                      style: const TextStyle(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 0, 0, 0),
+                                                          fontSize: 16),
+                                                    );
+                                                  }).toList(),
+                                                ],
+                                              );
+                                            } else {
+                                              return const Text(
+                                                  'You do not have collection');
+                                            }
+                                          },
+                                        ),
+                                  IconButton(
+                                    icon: Icon(Icons.replay_outlined),
+                                    onPressed: () => setState(() {
+                                      nameCollections = checkCollection();
+                                    }),
+                                  ),
+                                ],
+                              ),
                             ] else ...[
                               const Text('Some gone wrong, please try again')
                             ]
                           ],
                         )),
-                    SizedBox(
-                      height: 13,
-                    ),
+                    SizedBox(height: 13),
                     CreateCollectionDialog(),
+                    SizedBox(height: 13),
+                    TransferCollectionDialog(),
+                    SizedBox(height: 13),
+                    AddRemoveMinters(),
                   ],
                 ),
               ),

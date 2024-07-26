@@ -11,8 +11,8 @@ import 'package:mintbase_example/modules/services/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
 import 'package:mintbase_example/widget/rounded_text_field.dart';
 
-class NearAccountImportActionDialog extends StatefulWidget {
-  const NearAccountImportActionDialog({
+class NearAccountImportActionDialogDefault extends StatefulWidget {
+  const NearAccountImportActionDialogDefault({
     super.key,
     required this.networkType,
   });
@@ -20,12 +20,12 @@ class NearAccountImportActionDialog extends StatefulWidget {
   final NearNetworkType networkType;
 
   @override
-  State<NearAccountImportActionDialog> createState() =>
-      _NearAccountImportActionDialogState();
+  State<NearAccountImportActionDialogDefault> createState() =>
+      _NearAccountImportActionDialogDefaultState();
 }
 
-class _NearAccountImportActionDialogState
-    extends State<NearAccountImportActionDialog> {
+class _NearAccountImportActionDialogDefaultState
+    extends State<NearAccountImportActionDialogDefault> {
   bool loading = false;
 
   final TextEditingController accountIdController = TextEditingController();
@@ -76,10 +76,11 @@ class _NearAccountImportActionDialogState
                   loading = true;
                 });
 
-                Modular.get<AuthController>(key: "AuthController").login(
-                    accountId: accountIdController.text,
-                    secretKey: privateKeyController.text,
-                    networkType: widget.networkType);
+                await Modular.get<AuthController>(key: "AuthController")
+                    .loginDefault(
+                        accountId: accountIdController.text,
+                        secretKey: privateKeyController.text,
+                        networkType: widget.networkType);
 
                 final FlutterSecureStorage secureStorage =
                     Modular.get<FlutterSecureStorage>();
