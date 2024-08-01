@@ -246,6 +246,18 @@ class NearRpcClient {
 
     return await mintBaseRPCInteractions(query: query, testnet: testnet);
   }
+
+  Future<BlockchainResponse> getNFTInfo(
+      {required String owner_id, required bool testnet}) async {
+    final query = """query MyQuery {
+                        mb_views_nft_owned_tokens(where: {minter: {_eq: "$owner_id"}}) {
+                          title
+                          token_id
+                          nft_contract_id
+                        }
+                      }""";
+    return await mintBaseRPCInteractions(query: query, testnet: testnet);
+  }
 }
 
 class NearNetworkClient extends NetworkClient {

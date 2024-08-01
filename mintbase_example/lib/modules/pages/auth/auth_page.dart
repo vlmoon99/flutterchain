@@ -4,7 +4,9 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_r
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/modules/models/models.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/add_remove_minters.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/check_info.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/mint_NFT.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/thems/thems.dart';
 import 'package:mintbase_example/modules/services/auth_controller.dart';
@@ -231,11 +233,15 @@ class _AuthPageState extends State<AuthPage> {
                           ],
                         )),
                     SizedBox(height: 13),
+                    CheckInfo(),
+                    SizedBox(height: 13),
                     CreateCollectionDialog(),
                     SizedBox(height: 13),
                     TransferCollectionDialog(),
                     SizedBox(height: 13),
                     AddRemoveMinters(),
+                    SizedBox(height: 13),
+                    Mintnft(),
                   ],
                 ),
               ),

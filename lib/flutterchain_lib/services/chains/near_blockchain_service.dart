@@ -784,9 +784,26 @@ class NearBlockChainService implements BlockChainService {
       final names = [];
       return names;
     }
+
     List<String> names =
         contracts.map((contacts) => contacts["name"] as String).toList();
+
     return names;
+  }
+
+  Future<List<dynamic>> checkNFTInfo(
+      {required String owner_id, required bool testnet}) async {
+    final response =
+        await nearRpcClient.getNFTInfo(owner_id: owner_id, testnet: testnet);
+
+    List<dynamic> contracts =
+        response.data["data"]["mb_views_nft_owned_tokens"];
+    if (contracts.isEmpty) {
+      final contractsNull = [];
+      return contractsNull;
+    }
+
+    return contracts;
   }
 
   Future<dynamic> transferNFTCollection({
@@ -896,5 +913,102 @@ class NearBlockChainService implements BlockChainService {
     final names = nearSignRequest.data["success"] as String;
 
     return jsonDecode(names);
+  }
+
+  Future<bool> mintNFT({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required String nftCollectionContract,
+    required String owner_id,
+    required String description,
+    required String title,
+    required String? media,
+    int num_to_mint = 1,
+    Map<String, int>? split_between,
+    Map<String, int>? split_owners,
+    List<String>? tags,
+    List<dynamic>? extra,
+    String? category,
+    String? document,
+  }) async {
+    int? splitBetweenSum;
+    Map<String, dynamic>? royalty_args;
+    if (split_owners != null) {
+      int sum = split_owners.values.reduce((a, b) => a + b);
+      if (sum * 100 > 10000) {
+        throw Exception("To mach percentage, limit exhausted");
+      }
+      split_owners.values.map((value) => value * 100);
+    }
+
+    if (split_between != null) {
+      splitBetweenSum = split_between.values.reduce((a, b) => a + b);
+      if (splitBetweenSum * 100 > 5000) {
+        throw Exception("To mach percentage, limit exhausted");
+      }
+
+      final splitBetweenUpdate = calculateRoyalty(
+          noCompletelyRoyalty: split_between, totalSum: splitBetweenSum * 100);
+      royalty_args = {
+        "split_between": splitBetweenUpdate,
+        "percentage": splitBetweenSum * 100
+      };
+    }
+    final referenceJSON = jsonEncode({
+      "title": title,
+      "description": description,
+      "tags": tags,
+      "media": media,
+      "document": document,
+      "extra": extra,
+      "type": "NEP171",
+      "category": category
+    });
+
+    final Map<String, dynamic> args = {
+      "owner_id": owner_id,
+      "metadata": {
+        "title": title,
+        "description": description,
+        "copies": num_to_mint,
+        "media": "data:image/png;base64," + media!,
+        "reference":
+            "https://arweave.net/wL2t0_F4eAGtsXTKeb9SpR7sxn9JDZuidSWzvXUe6Ks",
+      },
+      "num_to_mint": num_to_mint,
+      "royalty_args": royalty_args,
+      "split_owners": split_owners,
+    };
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: nftCollectionContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "nft_batch_mint",
+          args: args,
+          transferAmount: '1',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    return true;
+  }
+
+  Map<String, int> calculateRoyalty(
+      {required Map<String, int> noCompletelyRoyalty, required int totalSum}) {
+    final updatedRoyalty = {
+      for (var entry in noCompletelyRoyalty.entries)
+        entry.key: (((entry.value * 100) / totalSum) * 10000).round()
+    };
+    return updatedRoyalty;
   }
 }

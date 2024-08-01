@@ -69,19 +69,27 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
             height: 10,
           ),
           Text("Do you want keep old minters?", style: TextStyle(fontSize: 16)),
-          DropdownButton<bool>(
-              value: keep_old_minters,
-              items: <bool>[true, false].map((bool value) {
-                return DropdownMenuItem<bool>(
-                  value: value,
-                  child: value == true ? Text("Yes") : Text("No"),
-                );
-              }).toList(),
-              onChanged: (bool? newValue) {
-                setState(() {
-                  keep_old_minters = newValue!;
-                });
-              }),
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              width: 2.0,
+            )),
+            child: DropdownButton<bool>(
+                alignment: AlignmentDirectional.center,
+                value: keep_old_minters,
+                items: <bool>[true, false].map((bool value) {
+                  return DropdownMenuItem<bool>(
+                    value: value,
+                    child: value == true ? Text("Yes") : Text("No"),
+                  );
+                }).toList(),
+                onChanged: (bool? newValue) {
+                  setState(() {
+                    keep_old_minters = newValue!;
+                  });
+                }),
+          ),
           ElevatedButton(
             onPressed: () async {
               setState(() {
