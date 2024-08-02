@@ -139,41 +139,47 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                           "Data about minters not loaded,\nfor interaction add name collection",
                           softWrap: true),
                     )
-                  : FutureBuilder<List<dynamic>>(
-                      future: nameMinters,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<dynamic>> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return const Text(
-                            'Error:',
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        } else if (snapshot.hasData &&
-                            snapshot.data!.isNotEmpty) {
-                          return Column(
-                            children: [
-                              const Text(
-                                'Your minters:',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              ...snapshot.data!.map((minters) {
-                                return Text(
-                                  softWrap: true,
-                                  '${minters}',
-                                  style: const TextStyle(
-                                      color: const Color.fromARGB(255, 0, 0, 0),
-                                      fontSize: 16),
-                                );
-                              }).toList(),
-                            ],
-                          );
-                        } else {
-                          return const Text('You do not have minters');
-                        }
-                      },
+                  : Flexible(
+                      child: FutureBuilder<List<dynamic>>(
+                        future: nameMinters,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<dynamic>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return const Text(
+                              'Error:',
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.isNotEmpty) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Your minters:',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                ...snapshot.data!.map((minters) {
+                                  return Text(
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: null,
+                                    '${minters}',
+                                    style: const TextStyle(
+                                        color:
+                                            const Color.fromARGB(255, 0, 0, 0),
+                                        fontSize: 16),
+                                  );
+                                }).toList(),
+                              ],
+                            );
+                          } else {
+                            return const Text('You do not have minters');
+                          }
+                        },
+                      ),
                     ),
               IconButton(
                 icon: Icon(Icons.replay_outlined),

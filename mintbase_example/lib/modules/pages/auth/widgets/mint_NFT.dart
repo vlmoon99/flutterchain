@@ -100,19 +100,16 @@ class _MintnftState extends State<Mintnft> {
       String? category,
       String? document}) async {
     final AuthController infoAccount = Modular.get(key: "AuthController");
-
+    File? documentFile;
     List<String>? tagsList;
     if (tags != null) {
       tagsList = tags.split(",").map((tag) => tag.trim()).toList();
     }
 
-    final mediaNoComletie = await File(media);
-    final imageBytes = await mediaNoComletie.readAsBytes();
-    img.Image? originalImage = img.decodeImage(imageBytes);
-    img.Image resizedImage =
-        img.copyResize(originalImage!, width: 300, height: 300);
-    final resizedImageBytes = img.encodePng(resizedImage);
-    final mediaComletie = base64Encode(resizedImageBytes);
+    final mediaFile = File(media);
+    if (document != null) {
+      documentFile = File(document);
+    }
 
     return await nearService.mintNFT(
       accountId: infoAccount.state.accountId,
@@ -121,7 +118,7 @@ class _MintnftState extends State<Mintnft> {
       nftCollectionContract: nftCollectionContract,
       owner_id: owner_id,
       title: title,
-      media: mediaComletie,
+      media: mediaFile,
       description: description,
       num_to_mint: num_to_mint,
       split_between: split_between,
@@ -129,8 +126,13 @@ class _MintnftState extends State<Mintnft> {
       tags: tagsList,
       extra: extra,
       category: category,
-      document: document,
+      document: documentFile,
     );
+  }
+
+  void test({required String pathFile}) {
+    final file = File(pathFile);
+    nearService.uploadFileToArweave(file: file);
   }
 
   Future<String?> pickMediaFile() async {

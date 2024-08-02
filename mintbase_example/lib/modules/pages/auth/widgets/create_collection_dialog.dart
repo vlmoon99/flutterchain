@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -34,6 +35,12 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
       String? reference,
       String? referenceHash}) async {
     final AuthController infoAccount = Modular.get(key: "AuthController");
+    String? iconConvert;
+    if (icon != null) {
+      File iconFile = File(icon);
+      List<int> imageBytes = await iconFile.readAsBytes();
+      iconConvert = base64Encode(imageBytes);
+    }
 
     return await nearService.deployNFTCollection(
         accountId: infoAccount.state.accountId,
@@ -42,7 +49,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
         symbol: symbol,
         name: name,
         ownerId: ownerId,
-        icon: icon,
+        icon: iconConvert,
         baseUri: baseUri,
         reference: reference,
         referenceHash: referenceHash);

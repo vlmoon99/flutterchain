@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -734,19 +735,20 @@ class NearBlockChainService implements BlockChainService {
     required String symbol,
     required String name,
     required String ownerId,
+    String? spec = "nft-1.0.0",
     String? icon,
-    String? baseUri,
+    String? baseUri = "https://arweave.net",
     String? reference,
     String? referenceHash,
-    String factoryContract = 'mintspace2.testnet',
+    String? factoryContract = 'mintspace2.testnet',
   }) async {
     final Map<String, dynamic> args = {
       "owner_id": ownerId,
       "metadata": {
         "name": name,
-        "spec": "nft-1.0.0",
+        "spec": spec,
         "symbol": symbol,
-        "icon": icon,
+        "icon": "data:image/png;base64,$icon",
         "baseUri": baseUri,
         "reference": reference,
         "referenceHash": referenceHash
@@ -796,8 +798,7 @@ class NearBlockChainService implements BlockChainService {
     final response =
         await nearRpcClient.getNFTInfo(owner_id: owner_id, testnet: testnet);
 
-    List<dynamic> contracts =
-        response.data["data"]["mb_views_nft_owned_tokens"];
+    List<dynamic> contracts = response.data["data"]["mb_views_nft_tokens"];
     if (contracts.isEmpty) {
       final contractsNull = [];
       return contractsNull;
@@ -923,17 +924,23 @@ class NearBlockChainService implements BlockChainService {
     required String owner_id,
     required String description,
     required String title,
-    required String? media,
+    required File media,
+    String? media_type,
+    File? animation_url,
     int num_to_mint = 1,
     Map<String, int>? split_between,
     Map<String, int>? split_owners,
     List<String>? tags,
     List<dynamic>? extra,
     String? category,
-    String? document,
+    File? document,
+    String? baseURL = "https://arweave.net/",
   }) async {
     int? splitBetweenSum;
     Map<String, dynamic>? royalty_args;
+    String? animationUpload;
+    String? documentUpload;
+    String mediaUploadURL;
     if (split_owners != null) {
       int sum = split_owners.values.reduce((a, b) => a + b);
       if (sum * 100 > 10000) {
@@ -955,16 +962,36 @@ class NearBlockChainService implements BlockChainService {
         "percentage": splitBetweenSum * 100
       };
     }
-    final referenceJSON = jsonEncode({
+
+    String mediaUpload = await uploadFileToArweave(file: media);
+    mediaUploadURL = baseURL! + mediaUpload;
+
+    if (animation_url != null) {
+      animationUpload = await uploadFileToArweave(file: animation_url);
+      animationUpload = baseURL + animationUpload;
+    }
+
+    if (document != null) {
+      documentUpload = await uploadFileToArweave(file: document);
+      documentUpload = baseURL + documentUpload;
+    }
+
+    final reference = {
       "title": title,
       "description": description,
+      "media": mediaUploadURL,
+      "media_type": media_type,
+      "animation_url": animationUpload,
+      "document": documentUpload,
       "tags": tags,
-      "media": media,
-      "document": document,
       "extra": extra,
+      "store": nftCollectionContract,
       "type": "NEP171",
       "category": category
-    });
+    };
+
+    final referenceUpload =
+        await uploadReferenceToArweave(reference: reference);
 
     final Map<String, dynamic> args = {
       "owner_id": owner_id,
@@ -972,9 +999,8 @@ class NearBlockChainService implements BlockChainService {
         "title": title,
         "description": description,
         "copies": num_to_mint,
-        "media": "data:image/png;base64," + media!,
-        "reference":
-            "https://arweave.net/wL2t0_F4eAGtsXTKeb9SpR7sxn9JDZuidSWzvXUe6Ks",
+        "media": mediaUpload,
+        "reference": referenceUpload,
       },
       "num_to_mint": num_to_mint,
       "royalty_args": royalty_args,
@@ -1003,6 +1029,24 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
+  Future<String> uploadFileToArweave({required File file}) async {
+    final response = await nearRpcClient.uploadFileToArweave(file: file);
+    if (response.status == "error") {
+      throw Exception("${response.data}");
+    }
+    return response.data["id"];
+  }
+
+  Future<String> uploadReferenceToArweave(
+      {required Map<String, dynamic> reference}) async {
+    final response =
+        await nearRpcClient.uploadReferenceToArweave(reference: reference);
+    if (response.status == "error") {
+      throw Exception("${response.data}");
+    }
+    return response.data["id"];
+  }
+
   Map<String, int> calculateRoyalty(
       {required Map<String, int> noCompletelyRoyalty, required int totalSum}) {
     final updatedRoyalty = {
@@ -1010,5 +1054,35 @@ class NearBlockChainService implements BlockChainService {
         entry.key: (((entry.value * 100) / totalSum) * 10000).round()
     };
     return updatedRoyalty;
+  }
+
+  Future<bool> transferNFT(
+      {required String accountId,
+      required String publicKey,
+      required String privateKey,
+      required String nftCollectionContract,
+      required List<List<String>> tokenIds}) async {
+    final Map<String, dynamic> args = {"token_ids": tokenIds};
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: nftCollectionContract,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "nft_batch_transfer",
+          args: args,
+          transferAmount: '1',
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    return true;
   }
 }

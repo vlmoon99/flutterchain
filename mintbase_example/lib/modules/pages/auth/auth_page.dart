@@ -4,10 +4,11 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_r
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/modules/models/models.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/add_remove_minters.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/check_info.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/check_NFT_info.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/mint_NFT.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/transfet_NFT.dart';
 import 'package:mintbase_example/modules/pages/thems/thems.dart';
 import 'package:mintbase_example/modules/services/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
@@ -178,46 +179,49 @@ class _AuthPageState extends State<AuthPage> {
                                   nameCollections == null
                                       ? const Text(
                                           "Data about collections not loaded")
-                                      : FutureBuilder<List<dynamic>>(
-                                          future: nameCollections,
-                                          builder: (BuildContext context,
-                                              AsyncSnapshot<List<dynamic>>
-                                                  snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const CircularProgressIndicator();
-                                            } else if (snapshot.hasError) {
-                                              return const Text(
-                                                'Error:',
-                                                overflow: TextOverflow.ellipsis,
-                                              );
-                                            } else if (snapshot.hasData &&
-                                                snapshot.data!.isNotEmpty) {
-                                              return Column(
-                                                children: [
-                                                  const Text(
-                                                    'Your collections:',
-                                                    style:
-                                                        TextStyle(fontSize: 16),
-                                                  ),
-                                                  ...snapshot.data!
-                                                      .map((collection) {
-                                                    return SelectableText(
-                                                      '${collection}.mintspace2.testnet',
-                                                      style: const TextStyle(
-                                                          color: const Color
-                                                              .fromARGB(
-                                                              255, 0, 0, 0),
+                                      : Flexible(
+                                          child: FutureBuilder<List<dynamic>>(
+                                            future: nameCollections,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<List<dynamic>>
+                                                    snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const CircularProgressIndicator();
+                                              } else if (snapshot.hasError) {
+                                                return const Text(
+                                                  'Error:',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                );
+                                              } else if (snapshot.hasData &&
+                                                  snapshot.data!.isNotEmpty) {
+                                                return Column(
+                                                  children: [
+                                                    const Text(
+                                                      'Your collections:',
+                                                      style: TextStyle(
                                                           fontSize: 16),
-                                                    );
-                                                  }).toList(),
-                                                ],
-                                              );
-                                            } else {
-                                              return const Text(
-                                                  'You do not have collection');
-                                            }
-                                          },
+                                                    ),
+                                                    ...snapshot.data!
+                                                        .map((collection) {
+                                                      return SelectableText(
+                                                        '${collection}.mintspace2.testnet',
+                                                        style: const TextStyle(
+                                                            color: const Color
+                                                                .fromARGB(
+                                                                255, 0, 0, 0),
+                                                            fontSize: 16),
+                                                      );
+                                                    }).toList(),
+                                                  ],
+                                                );
+                                              } else {
+                                                return const Text(
+                                                    'You do not have collection');
+                                              }
+                                            },
+                                          ),
                                         ),
                                   IconButton(
                                     icon: Icon(Icons.replay_outlined),
@@ -242,6 +246,8 @@ class _AuthPageState extends State<AuthPage> {
                     AddRemoveMinters(),
                     SizedBox(height: 13),
                     Mintnft(),
+                    SizedBox(height: 13),
+                    TransfetNft(),
                   ],
                 ),
               ),

@@ -20,7 +20,7 @@ class _CheckInfoState extends State<CheckInfo> {
     final AuthController infoAccount = Modular.get(key: "AuthController");
 
     return await nearService.checkNFTInfo(
-        owner_id: "maierr.testnet", testnet: true);
+        owner_id: infoAccount.state.accountId, testnet: true);
   }
 
   @override
@@ -63,9 +63,17 @@ class _CheckInfoState extends State<CheckInfo> {
                             style: TextStyle(fontSize: 16),
                           ),
                           ...snapshot.data!.map((nftInfo) {
+                            String burnedInfo;
                             print(nftInfo);
+                            if (nftInfo["burned_timestamp"] == null) {
+                              burnedInfo = "This is active nft";
+                            } else {
+                              burnedInfo =
+                                  "This is inactive nft: time burned - ${nftInfo["burned_timestamp"]}";
+                            }
+
                             return SelectableText(
-                              'NFT ${nftInfo["title"]}: in ${nftInfo["nft_contract_id"]} collection whit NFT ID - ${nftInfo["token_id"]}',
+                              'NFT ${nftInfo["title"]}: in ${nftInfo["nft_contract_id"]} collection whit NFT ID - ${nftInfo["token_id"]}. $burnedInfo',
                               maxLines: null,
                               style: const TextStyle(
                                   color: const Color.fromARGB(255, 0, 0, 0),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bs58/bs58.dart';
@@ -16,6 +17,7 @@ import 'package:hex/hex.dart';
 
 class NearRpcClient {
   final NearNetworkClient networkClient;
+  final NearNetworkClientWithTime nearClientWithTime;
 
   factory NearRpcClient.defaultInstance() {
     return NearRpcClient(
@@ -23,9 +25,14 @@ class NearRpcClient {
         baseUrl: NearBlockChainNetworkUrls.listOfUrls.first,
         dio: Dio(),
       ),
+      nearClientWithTime: NearNetworkClientWithTime(
+        baseUrl: NearBlockChainNetworkUrls.listOfUrls.first,
+        dio: Dio(),
+      ),
     );
   }
-  NearRpcClient({required this.networkClient});
+  NearRpcClient(
+      {required this.networkClient, required this.nearClientWithTime});
 
   Future<NearTransactionInfoModel> getTransactionInfo(
     String accountId,
@@ -250,13 +257,69 @@ class NearRpcClient {
   Future<BlockchainResponse> getNFTInfo(
       {required String owner_id, required bool testnet}) async {
     final query = """query MyQuery {
-                        mb_views_nft_owned_tokens(where: {minter: {_eq: "$owner_id"}}) {
-                          title
-                          token_id
-                          nft_contract_id
-                        }
-                      }""";
+                      mb_views_nft_tokens(where: {owner: {_eq: "$owner_id"}}) {
+                        title
+                        token_id
+                        nft_contract_id
+                        burned_timestamp
+                      }
+                    }""";
     return await mintBaseRPCInteractions(query: query, testnet: testnet);
+  }
+
+  Future<BlockchainResponse> uploadFileToArweave({required File file}) async {
+    int maxSize = 31457280;
+    if (await file.length() > maxSize) {
+      throw Exception("The file size should be up to 30MB");
+    }
+
+    final uri = 'https://ar.mintbase.xyz';
+    final heders = {"mb-api-key": "anon"};
+
+    var formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(file.path,
+          filename: file.path.split('/').last),
+    });
+
+    final res = await nearClientWithTime.postHTTP(uri, formData, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
+
+  Future<BlockchainResponse> uploadReferenceToArweave(
+      {required Map<String, dynamic> reference}) async {
+    FormData formData = FormData();
+    reference.forEach((key, value) {
+      if (value != null) {
+        formData.files.add(MapEntry(
+          key,
+          MultipartFile.fromString(value),
+        ));
+      }
+    });
+
+    final uri = 'https://ar.mintbase.xyz/reference';
+    final heders = {"mb-api-key": "anon"};
+
+    final res = await nearClientWithTime.postHTTP(uri, formData, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
   }
 }
 
@@ -273,6 +336,25 @@ class NearNetworkClient extends NetworkClient {
           Duration(seconds: 1),
           Duration(seconds: 1),
           Duration(seconds: 1),
+        ],
+      ),
+    );
+  }
+}
+
+class NearNetworkClientWithTime extends NetworkClient {
+  NearNetworkClientWithTime({required super.baseUrl, required super.dio}) {
+    dio.interceptors.add(
+      RetryInterceptor(
+        dio: dio,
+        logPrint: log,
+        retries: 5,
+        retryDelays: const [
+          Duration(seconds: 30),
+          Duration(seconds: 20),
+          Duration(seconds: 20),
+          Duration(seconds: 20),
+          Duration(seconds: 20),
         ],
       ),
     );
