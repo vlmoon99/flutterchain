@@ -924,16 +924,16 @@ class NearBlockChainService implements BlockChainService {
     required String owner_id,
     required String description,
     required String title,
-    required File media,
+    required String media,
     String? media_type,
-    File? animation_url,
+    String? animation,
     int num_to_mint = 1,
     Map<String, int>? split_between,
     Map<String, int>? split_owners,
     List<String>? tags,
     List<dynamic>? extra,
     String? category,
-    File? document,
+    String? document,
     String? baseURL = "https://arweave.net/",
   }) async {
     int? splitBetweenSum;
@@ -941,12 +941,15 @@ class NearBlockChainService implements BlockChainService {
     String? animationUpload;
     String? documentUpload;
     String mediaUploadURL;
+    Map<String, int> finalSplitOwners = {};
     if (split_owners != null) {
       int sum = split_owners.values.reduce((a, b) => a + b);
       if (sum * 100 > 10000) {
         throw Exception("To mach percentage, limit exhausted");
       }
-      split_owners.values.map((value) => value * 100);
+      finalSplitOwners = split_owners.map((key, value) {
+        return MapEntry(key, value * 100);
+      });
     }
 
     if (split_between != null) {
@@ -962,17 +965,22 @@ class NearBlockChainService implements BlockChainService {
         "percentage": splitBetweenSum * 100
       };
     }
-
-    String mediaUpload = await uploadFileToArweave(file: media);
+    final mediaFile = File(media);
+    int totalSize = mediaFile.lengthSync();
+    String mediaUpload = await uploadFileToArweave(file: mediaFile);
     mediaUploadURL = baseURL! + mediaUpload;
 
-    if (animation_url != null) {
-      animationUpload = await uploadFileToArweave(file: animation_url);
+    if (animation != null && animation!.length > 0) {
+      final animationFile = File(animation);
+      totalSize += animationFile.lengthSync();
+      animationUpload = await uploadFileToArweave(file: animationFile);
       animationUpload = baseURL + animationUpload;
     }
 
-    if (document != null) {
-      documentUpload = await uploadFileToArweave(file: document);
+    if (document != null && document!.length > 0) {
+      final documentFile = File(document);
+      totalSize += documentFile.lengthSync();
+      documentUpload = await uploadFileToArweave(file: documentFile);
       documentUpload = baseURL + documentUpload;
     }
 
@@ -993,19 +1001,28 @@ class NearBlockChainService implements BlockChainService {
     final referenceUpload =
         await uploadReferenceToArweave(reference: reference);
 
+    Map<String, dynamic> metadata = {
+      "reference": referenceUpload["id"],
+      "media": referenceUpload["media_hash"],
+      "title": title,
+    };
+
     final Map<String, dynamic> args = {
       "owner_id": owner_id,
-      "metadata": {
-        "title": title,
-        "description": description,
-        "copies": num_to_mint,
-        "media": mediaUpload,
-        "reference": referenceUpload,
-      },
+      "metadata": metadata,
       "num_to_mint": num_to_mint,
       "royalty_args": royalty_args,
-      "split_owners": split_owners,
+      "split_owners": finalSplitOwners,
     };
+
+    totalSize += reference.toString().length;
+    totalSize += args.toString().length;
+
+    final transferAmount = mintingDeposit(
+        nSplits: finalSplitOwners.length,
+        nTokens: num_to_mint,
+        nRoyalties: split_between?.length ?? 0,
+        metadata: metadata);
 
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
@@ -1015,9 +1032,9 @@ class NearBlockChainService implements BlockChainService {
         privateKey: privateKey,
         gas: "300000000000000",
         arguments: NearBlockChainSmartContractArguments(
-          method: "nft_batch_mint",
+          method: "storage_cost_to_mint",
           args: args,
-          transferAmount: '1',
+          transferAmount: transferAmount,
         ),
       ),
     );
@@ -1029,6 +1046,32 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
+  String mintingDeposit({
+    required int nSplits,
+    required int nTokens,
+    required int nRoyalties,
+    required Map<String, dynamic> metadata,
+  }) {
+    const int STORAGE_BYTES_TOKEN_BASE = 440;
+    const int STORAGE_BYTES_COMMON = 80;
+    const int STORAGE_BYTES_MINTING_BASE = 92;
+    const int STORAGE_BYTES_MINTING_FEE = 100;
+    const int STORAGE_PRICE_PER_BYTE_EXPONENT = 19;
+    int nSplitsAdj = nSplits < 1 ? 0 : nSplits - 1;
+    int bytesPerToken = STORAGE_BYTES_TOKEN_BASE +
+        nSplitsAdj * STORAGE_BYTES_COMMON +
+        STORAGE_BYTES_COMMON;
+    int metadataBytesEstimate = metadata.toString().length;
+
+    int totalBytes = STORAGE_BYTES_MINTING_BASE +
+        STORAGE_BYTES_MINTING_FEE +
+        metadataBytesEstimate +
+        bytesPerToken * nTokens +
+        STORAGE_BYTES_COMMON * nRoyalties;
+
+    return "${(totalBytes / 10).ceil()}${'0' * STORAGE_PRICE_PER_BYTE_EXPONENT}";
+  }
+
   Future<String> uploadFileToArweave({required File file}) async {
     final response = await nearRpcClient.uploadFileToArweave(file: file);
     if (response.status == "error") {
@@ -1037,14 +1080,14 @@ class NearBlockChainService implements BlockChainService {
     return response.data["id"];
   }
 
-  Future<String> uploadReferenceToArweave(
+  Future<Map<String, dynamic>> uploadReferenceToArweave(
       {required Map<String, dynamic> reference}) async {
     final response =
         await nearRpcClient.uploadReferenceToArweave(reference: reference);
     if (response.status == "error") {
       throw Exception("${response.data}");
     }
-    return response.data["id"];
+    return response.data;
   }
 
   Map<String, int> calculateRoyalty(

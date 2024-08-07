@@ -20,6 +20,8 @@ class Mintnft extends StatefulWidget {
 class _MintnftState extends State<Mintnft> {
   final nearService = Modular.get<NearBlockChainService>();
 
+  Future<bool>? isMint;
+
   final nftCollectionContractController = TextEditingController();
   final ownerIDController = TextEditingController();
   final referenceHashController = TextEditingController();
@@ -30,8 +32,9 @@ class _MintnftState extends State<Mintnft> {
 
   final pickMediaController = TextEditingController();
   final pickDocumentController = TextEditingController();
+  final pickAnimationController = TextEditingController();
 
-  CategoryNFT categoryNFT = CategoryNFT.art;
+  CategoryNFT? categoryNFT;
 
   final List<TextEditingController> _percentRoyaltiesControllers = [
     TextEditingController()
@@ -91,24 +94,19 @@ class _MintnftState extends State<Mintnft> {
       required String owner_id,
       required int num_to_mint,
       required String title,
-      required String media,
+      required String mediaPath,
       required String description,
       Map<String, int>? split_between,
       Map<String, int>? split_owners,
       String? tags,
       List<dynamic>? extra,
       String? category,
-      String? document}) async {
+      String? documentPath,
+      String? animationPath}) async {
     final AuthController infoAccount = Modular.get(key: "AuthController");
-    File? documentFile;
     List<String>? tagsList;
     if (tags != null) {
       tagsList = tags.split(",").map((tag) => tag.trim()).toList();
-    }
-
-    final mediaFile = File(media);
-    if (document != null) {
-      documentFile = File(document);
     }
 
     return await nearService.mintNFT(
@@ -118,7 +116,8 @@ class _MintnftState extends State<Mintnft> {
       nftCollectionContract: nftCollectionContract,
       owner_id: owner_id,
       title: title,
-      media: mediaFile,
+      media: mediaPath,
+      animation: animationPath,
       description: description,
       num_to_mint: num_to_mint,
       split_between: split_between,
@@ -126,37 +125,29 @@ class _MintnftState extends State<Mintnft> {
       tags: tagsList,
       extra: extra,
       category: category,
-      document: documentFile,
+      document: documentPath,
     );
   }
 
-  void test({required String pathFile}) {
-    final file = File(pathFile);
-    nearService.uploadFileToArweave(file: file);
-  }
-
-  Future<String?> pickMediaFile() async {
+  Future<String?> pickFile({required TextEditingController controller}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
       setState(() {
-        pickMediaController.text = result.files.single.path!;
+        controller.text = result.files.single.path!;
       });
     } else {
       return null;
     }
   }
 
-  Future<String?> pickDocumentFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        pickDocumentController.text = result.files.single.path!;
-      });
-    } else {
-      return null;
-    }
+  @override
+  void initState() {
+    numToMintController.text = "1";
+    nftCollectionContractController.text = "nftnazar.mintspace2.testnet";
+    ownerIDController.text =
+        "9ea892def9e116996012d4ce87ef4ff99b638f109c5c826693304378298b2072";
+    super.initState();
   }
 
   @override
@@ -209,22 +200,35 @@ class _MintnftState extends State<Mintnft> {
           Column(
             children: [
               ElevatedButton(
-                onPressed: pickMediaFile,
+                onPressed: () => pickFile(controller: pickMediaController),
                 child: const Text('Pick media File**'),
               ),
-              SizedBox(height: 10),
               pickMediaController.text.isNotEmpty
                   ? Text('Selected File: ${pickMediaController.text}')
                   : Text('No file selected.'),
             ],
           ),
+          SizedBox(height: 10),
           Column(
             children: [
               ElevatedButton(
-                onPressed: pickDocumentFile,
+                onPressed: () => pickFile(controller: pickAnimationController),
+                child: const Text('Pick animation File'),
+              ),
+              Text(
+                pickAnimationController.text.isNotEmpty
+                    ? 'Selected File: ${pickAnimationController.text}'
+                    : 'No file selected.',
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Column(
+            children: [
+              ElevatedButton(
+                onPressed: () => pickFile(controller: pickDocumentController),
                 child: Text('Pick document File'),
               ),
-              SizedBox(height: 20),
               Text(
                 pickDocumentController.text.isNotEmpty
                     ? 'Selected File: ${pickDocumentController.text}'
@@ -232,6 +236,7 @@ class _MintnftState extends State<Mintnft> {
               ),
             ],
           ),
+          SizedBox(height: 10),
           TextField(
             controller: numToMintController,
             decoration:
@@ -251,6 +256,7 @@ class _MintnftState extends State<Mintnft> {
               width: 2.0,
             )),
             child: DropdownButton<CategoryNFT>(
+                hint: const Text("Choose category"),
                 alignment: AlignmentDirectional.center,
                 value: categoryNFT,
                 items: CategoryNFT.values.map((CategoryNFT value) {
@@ -390,22 +396,56 @@ class _MintnftState extends State<Mintnft> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (_percentRoyaltiesControllers.first.text.isNotEmpty) {
-                final royalties = convertToSplit(
+              Map<String, int>? split_owners;
+              Map<String, int>? split_between;
+              if (_percentOwnersControllers.first.text.isNotEmpty) {
+                split_owners = convertToSplit(
                     percentControllers: _percentOwnersControllers,
                     accountIdControllers: _accountIdOwnersControllers,
                     isRoyalties: false);
               }
-              await mintNFT(
-                  nftCollectionContract: nftCollectionContractController.text,
-                  owner_id: ownerIDController.text,
-                  num_to_mint: int.tryParse(numToMintController.text) ?? 1,
-                  title: titleController.text,
-                  media: pickMediaController.text,
-                  description: descriptionController.text);
+              if (_percentRoyaltiesControllers.first.text.isNotEmpty) {
+                split_between = convertToSplit(
+                    percentControllers: _percentRoyaltiesControllers,
+                    accountIdControllers: _accountIdRoyaltiesControllers,
+                    isRoyalties: true);
+              }
+              setState(() {
+                isMint = mintNFT(
+                    nftCollectionContract: nftCollectionContractController.text,
+                    owner_id: ownerIDController.text,
+                    num_to_mint: int.tryParse(numToMintController.text) ?? 1,
+                    title: titleController.text,
+                    mediaPath: pickMediaController.text,
+                    description: descriptionController.text,
+                    split_between: split_between,
+                    split_owners: split_owners,
+                    tags: tagsController.text,
+                    category: categoryNFT!.name,
+                    documentPath: pickDocumentController.text,
+                    animationPath: pickAnimationController.text);
+              });
             },
             child: const Text('Mint NFT'),
           ),
+          isMint == null
+              ? const Text("No action on minting")
+              : FutureBuilder<bool>(
+                  future: isMint,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return SelectableText('Error: ${snapshot.error}');
+                    } else {
+                      return const SelectableText(
+                        "NFT was minting successful",
+                        style: TextStyle(fontSize: 16),
+                      );
+                    }
+                  },
+                )
         ],
       ),
     );
