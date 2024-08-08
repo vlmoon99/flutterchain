@@ -7,6 +7,7 @@ import 'package:mintbase_example/modules/pages/auth/widgets/add_remove_minters.d
 import 'package:mintbase_example/modules/pages/auth/widgets/check_NFT_info.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/mint_NFT.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/multiply.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfet_NFT.dart';
 import 'package:mintbase_example/modules/pages/thems/thems.dart';
@@ -248,6 +249,8 @@ class _AuthPageState extends State<AuthPage> {
                     Mintnft(),
                     SizedBox(height: 13),
                     TransfetNft(),
+                    SizedBox(height: 13),
+                    MultiplyNFT(),
                   ],
                 ),
               ),

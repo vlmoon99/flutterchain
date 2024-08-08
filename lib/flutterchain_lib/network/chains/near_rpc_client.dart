@@ -216,9 +216,10 @@ class NearRpcClient {
   }
 
   Future<BlockchainResponse> mintBaseRPCInteractions(
-      {required String query, required bool testnet}) async {
+      {required String query}) async {
     var uri = "";
-    if (testnet == true) {
+    if (networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
       uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.first;
     } else {
       uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.last;
@@ -252,7 +253,7 @@ class NearRpcClient {
             }
           }""";
 
-    return await mintBaseRPCInteractions(query: query, testnet: testnet);
+    return await mintBaseRPCInteractions(query: query);
   }
 
   Future<BlockchainResponse> getNFTInfo(
@@ -265,7 +266,7 @@ class NearRpcClient {
                         burned_timestamp
                       }
                     }""";
-    return await mintBaseRPCInteractions(query: query, testnet: testnet);
+    return await mintBaseRPCInteractions(query: query);
   }
 
   Future<BlockchainResponse> uploadFileToArweave({required File file}) async {
@@ -326,7 +327,8 @@ class NearRpcClient {
         throw Exception("This is format file doesn`t supported");
     }
 
-    final res = await nearClientWithTime.postHTTP(uri, formData, heders);
+    final res = await networkClient.postHTTP(uri, formData, heders);
+
     if (res.data['error'] != null) {
       return BlockchainResponse(
         data: res.data['error'],
@@ -380,6 +382,27 @@ class NearRpcClient {
           data: res.data, status: BlockchainResponses.success);
     }
   }
+
+  Future<BlockchainResponse> getInfoForMultiply(
+      {required String nameNFTCollection,
+      required String ownerId,
+      required String nameNFT}) async {
+    final query = """query MyQuery {
+                            mb_views_nft_tokens(
+                              where: {nft_contract_id: {_eq: "$nameNFTCollection"}, title: {_eq: "$nameNFT"}, minter: {_eq: "$ownerId"}, burned_timestamp: {_is_null: true}}
+                              distinct_on: title
+                            ) {
+                              splits
+                              title
+                              royalties_percent
+                              reference
+                              nft_contract_name
+                              media
+                              royalties
+                            }
+                          }""";
+    return await mintBaseRPCInteractions(query: query);
+  }
 }
 
 class NearNetworkClient extends NetworkClient {
@@ -409,7 +432,7 @@ class NearNetworkClientWithTime extends NetworkClient {
         logPrint: log,
         retries: 5,
         retryDelays: const [
-          Duration(seconds: 30),
+          Duration(seconds: 5),
           Duration(seconds: 2),
           Duration(seconds: 2),
           Duration(seconds: 2),

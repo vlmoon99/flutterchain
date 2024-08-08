@@ -50,6 +50,13 @@ class _MintnftState extends State<Mintnft> {
     TextEditingController()
   ];
 
+  final List<TextEditingController> _customNameControllers = [
+    TextEditingController()
+  ];
+  final List<TextEditingController> _customValueControllers = [
+    TextEditingController()
+  ];
+
   void addNewField(
       {required List<TextEditingController> percentControllers,
       required List<TextEditingController> accountIdControllers}) {
@@ -87,6 +94,22 @@ class _MintnftState extends State<Mintnft> {
       percentControllers.removeAt(index);
       accountIdControllers.removeAt(index);
     });
+  }
+
+  List<dynamic> convertExtra(
+      {required List<TextEditingController> namecontrollers,
+      required List<TextEditingController> valueControllers}) {
+    List<dynamic> extra = [];
+
+    for (var i = 0; i < namecontrollers.length; i++) {
+      extra.add({
+        "trait_type": namecontrollers[i].text,
+        "display_type": namecontrollers[i].text,
+        "value": valueControllers[i].text
+      });
+    }
+
+    return extra;
   }
 
   Future<bool> mintNFT(
@@ -164,6 +187,12 @@ class _MintnftState extends State<Mintnft> {
     for (var accountId in _accountIdOwnersControllers) {
       accountId.dispose();
     }
+    for (var name in _customNameControllers) {
+      name.dispose();
+    }
+    for (var value in _customValueControllers) {
+      value.dispose();
+    }
     super.dispose();
   }
 
@@ -204,7 +233,8 @@ class _MintnftState extends State<Mintnft> {
                 child: const Text('Pick media File**'),
               ),
               pickMediaController.text.isNotEmpty
-                  ? Text('Selected File: ${pickMediaController.text}')
+                  ? Text(
+                      'Selected File: ${pickMediaController.text.split("/").toList().last}')
                   : Text('No file selected.'),
             ],
           ),
@@ -217,7 +247,7 @@ class _MintnftState extends State<Mintnft> {
               ),
               Text(
                 pickAnimationController.text.isNotEmpty
-                    ? 'Selected File: ${pickAnimationController.text}'
+                    ? 'Selected File: ${pickAnimationController.text.split("/").toList().last}'
                     : 'No file selected.',
               ),
             ],
@@ -231,7 +261,7 @@ class _MintnftState extends State<Mintnft> {
               ),
               Text(
                 pickDocumentController.text.isNotEmpty
-                    ? 'Selected File: ${pickDocumentController.text}'
+                    ? 'Selected File: ${pickDocumentController.text.split("/").toList().last}'
                     : 'No file selected.',
               ),
             ],
@@ -282,11 +312,11 @@ class _MintnftState extends State<Mintnft> {
             padding: Thems.padding,
             child: Column(
               children: [
-                Text(
+                const Text(
                   "Input Forever Royalties",
                   style: TextStyle(fontSize: 16),
                 ),
-                Text(
+                const Text(
                   "Maximum Forever Royalties is 50%",
                   style: TextStyle(fontSize: 15),
                 ),
@@ -346,7 +376,7 @@ class _MintnftState extends State<Mintnft> {
             padding: Thems.padding,
             child: Column(
               children: [
-                Text(
+                const Text(
                   "Input Split Revenue",
                   style: TextStyle(fontSize: 16),
                 ),
@@ -394,10 +424,74 @@ class _MintnftState extends State<Mintnft> {
               ],
             ),
           ),
+          SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                border: Border.all(
+                  color: Color.fromARGB(255, 240, 158, 50),
+                  width: 2.0,
+                )),
+            padding: Thems.padding,
+            child: Column(
+              children: [
+                const Text(
+                  "Input Custom parameters",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(
+                  height: _customNameControllers.length * 60,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: _customNameControllers.length,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          children: [
+                            Flexible(
+                              child: TextField(
+                                controller: _customNameControllers[index],
+                                decoration: const InputDecoration(
+                                    labelText: 'Input name'),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Flexible(
+                              child: TextField(
+                                controller: _customValueControllers[index],
+                                decoration: const InputDecoration(
+                                    labelText: 'Input value'),
+                              ),
+                            ),
+                            IconButton(
+                                onPressed: () => _removeField(
+                                    index: index,
+                                    percentControllers: _customNameControllers,
+                                    accountIdControllers:
+                                        _customValueControllers),
+                                icon: Icon(Icons.remove))
+                          ],
+                        );
+                      }),
+                ),
+                IconButton(
+                    onPressed: () => addNewField(
+                        percentControllers: _customNameControllers,
+                        accountIdControllers: _customValueControllers),
+                    icon: Icon(Icons.add)),
+              ],
+            ),
+          ),
           ElevatedButton(
             onPressed: () async {
               Map<String, int>? split_owners;
               Map<String, int>? split_between;
+              List<dynamic>? extra;
+              if (_customNameControllers.first.text.isNotEmpty) {
+                extra = convertExtra(
+                    namecontrollers: _customNameControllers,
+                    valueControllers: _customValueControllers);
+              }
               if (_percentOwnersControllers.first.text.isNotEmpty) {
                 split_owners = convertToSplit(
                     percentControllers: _percentOwnersControllers,
@@ -421,9 +515,10 @@ class _MintnftState extends State<Mintnft> {
                     split_between: split_between,
                     split_owners: split_owners,
                     tags: tagsController.text,
-                    category: categoryNFT!.name,
+                    category: categoryNFT?.name,
                     documentPath: pickDocumentController.text,
-                    animationPath: pickAnimationController.text);
+                    animationPath: pickAnimationController.text,
+                    extra: extra);
               });
             },
             child: const Text('Mint NFT'),

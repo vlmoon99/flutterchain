@@ -85,7 +85,8 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
           ),
           TextField(
             controller: baseUriController,
-            decoration: const InputDecoration(labelText: 'Input uri(variably)'),
+            decoration: const InputDecoration(
+                labelText: 'Input uri(variably, arweave default)'),
           ),
           TextField(
             controller: referenceController,

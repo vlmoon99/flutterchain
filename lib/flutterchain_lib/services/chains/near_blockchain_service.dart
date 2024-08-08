@@ -941,7 +941,7 @@ class NearBlockChainService implements BlockChainService {
     String? animationUpload;
     String? documentUpload;
     String mediaUploadURL;
-    Map<String, int> finalSplitOwners = {};
+    Map<String, int>? finalSplitOwners;
     if (split_owners != null) {
       int sum = split_owners.values.reduce((a, b) => a + b);
       if (sum * 100 > 10000) {
@@ -966,20 +966,17 @@ class NearBlockChainService implements BlockChainService {
       };
     }
     final mediaFile = File(media);
-    int totalSize = mediaFile.lengthSync();
     String mediaUpload = await uploadFileToArweave(file: mediaFile);
     mediaUploadURL = baseURL! + mediaUpload;
 
     if (animation != null && animation!.length > 0) {
       final animationFile = File(animation);
-      totalSize += animationFile.lengthSync();
       animationUpload = await uploadFileToArweave(file: animationFile);
       animationUpload = baseURL + animationUpload;
     }
 
     if (document != null && document!.length > 0) {
       final documentFile = File(document);
-      totalSize += documentFile.lengthSync();
       documentUpload = await uploadFileToArweave(file: documentFile);
       documentUpload = baseURL + documentUpload;
     }
@@ -1015,11 +1012,8 @@ class NearBlockChainService implements BlockChainService {
       "split_owners": finalSplitOwners,
     };
 
-    totalSize += reference.toString().length;
-    totalSize += args.toString().length;
-
     final transferAmount = mintingDeposit(
-        nSplits: finalSplitOwners.length,
+        nSplits: finalSplitOwners?.length ?? 0,
         nTokens: num_to_mint,
         nRoyalties: split_between?.length ?? 0,
         metadata: metadata);
@@ -1032,7 +1026,7 @@ class NearBlockChainService implements BlockChainService {
         privateKey: privateKey,
         gas: "300000000000000",
         arguments: NearBlockChainSmartContractArguments(
-          method: "storage_cost_to_mint",
+          method: "nft_batch_mint",
           args: args,
           transferAmount: transferAmount,
         ),
@@ -1061,7 +1055,7 @@ class NearBlockChainService implements BlockChainService {
     int bytesPerToken = STORAGE_BYTES_TOKEN_BASE +
         nSplitsAdj * STORAGE_BYTES_COMMON +
         STORAGE_BYTES_COMMON;
-    int metadataBytesEstimate = metadata.toString().length;
+    int metadataBytesEstimate = jsonEncode(metadata).length;
 
     int totalBytes = STORAGE_BYTES_MINTING_BASE +
         STORAGE_BYTES_MINTING_FEE +
@@ -1069,7 +1063,7 @@ class NearBlockChainService implements BlockChainService {
         bytesPerToken * nTokens +
         STORAGE_BYTES_COMMON * nRoyalties;
 
-    return "${(totalBytes / 10).ceil()}${'0' * STORAGE_PRICE_PER_BYTE_EXPONENT}";
+    return "${(totalBytes).ceil()}${'0' * STORAGE_PRICE_PER_BYTE_EXPONENT}";
   }
 
   Future<String> uploadFileToArweave({required File file}) async {
@@ -1122,6 +1116,77 @@ class NearBlockChainService implements BlockChainService {
       ),
     );
 
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    return true;
+  }
+
+  Future<bool> multiplyNFT({
+    required String nameNFTCollection,
+    required String nameNFT,
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    required int numToMint,
+    String? media,
+    String? reference,
+  }) async {
+    Map<String, dynamic>? royalty_args;
+
+    final data = await nearRpcClient.getInfoForMultiply(
+        nameNFTCollection: nameNFTCollection,
+        ownerId: accountId,
+        nameNFT: nameNFT);
+
+    Map<String, dynamic> nftInfo =
+        data.data["data"]["mb_views_nft_tokens"].first;
+
+    media ??= nftInfo["media"].replaceFirst("https://arweave.net/", "");
+    reference ??= nftInfo["reference"];
+
+    if (nftInfo["royalties"] != null) {
+      royalty_args = {
+        "split_between": nftInfo["royalties"],
+        "percentage": nftInfo["royalties_percent"],
+      };
+    }
+
+    Map<String, dynamic> metadata = {
+      "reference": nftInfo["reference"],
+      "media": media,
+      "title": nftInfo["title"],
+    };
+
+    final Map<String, dynamic> args = {
+      "owner_id": accountId,
+      "metadata": metadata,
+      "num_to_mint": numToMint,
+      "royalty_args": royalty_args,
+      "split_owners": nftInfo["splits"],
+    };
+
+    final transferAmount = mintingDeposit(
+        nSplits: nftInfo["splits"]?.length ?? 0,
+        nTokens: numToMint,
+        nRoyalties: nftInfo["royalties"]?.length ?? 0,
+        metadata: metadata);
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: nameNFTCollection,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "nft_batch_mint",
+          args: args,
+          transferAmount: transferAmount,
+        ),
+      ),
+    );
     if (nearSignRequest.data["error"] != null) {
       throw Exception(nearSignRequest.data["error"]);
     }
