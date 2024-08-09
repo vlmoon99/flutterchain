@@ -93,6 +93,10 @@ class _TransfetNftState extends State<TransfetNft> {
           const Text('Transfer NFT',
               style: TextStyle(
                   fontSize: 17, color: Color.fromARGB(255, 245, 79, 1))),
+          const Text('You must be owner this NFT',
+              style: TextStyle(
+                fontSize: 16,
+              )),
           SizedBox(height: 10),
           TextField(
             controller: accountIdCollectionController,

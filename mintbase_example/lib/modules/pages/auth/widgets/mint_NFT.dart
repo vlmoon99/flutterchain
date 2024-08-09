@@ -483,7 +483,7 @@ class _MintnftState extends State<Mintnft> {
             ),
           ),
           ElevatedButton(
-            onPressed: () async {
+            onPressed: () {
               Map<String, int>? split_owners;
               Map<String, int>? split_between;
               List<dynamic>? extra;

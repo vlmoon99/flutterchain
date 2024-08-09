@@ -8,6 +8,7 @@ import 'package:mintbase_example/modules/pages/auth/widgets/check_NFT_info.dart'
 import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/mint_NFT.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/multiply.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/simple_sale_nft.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfet_NFT.dart';
 import 'package:mintbase_example/modules/pages/thems/thems.dart';
@@ -27,7 +28,8 @@ class _AuthPageState extends State<AuthPage> {
   String? publicKey;
   NearNetworkType? networkType;
   Future<String>? balance;
-  Future<List<dynamic>>? nameCollections;
+  Future<List<dynamic>>? nameOwnerCollections;
+  Future<List<dynamic>>? nameMinterCollections;
 
   final nearService = Modular.get<NearBlockChainService>();
 
@@ -47,24 +49,23 @@ class _AuthPageState extends State<AuthPage> {
     });
   }
 
-  Future<List<dynamic>> checkCollection() async {
+  Future<List<dynamic>> checkOwnerCollection() async {
     if (accountId == null) {
       throw Exception("AccountId is not defined");
     }
-    if (networkType == NearNetworkType.testnet) {
-      return await nearService.checkCollection(
-          owner_id: accountId!, testnet: true);
-    } else {
-      return await nearService.checkCollection(
-          owner_id: accountId!, testnet: false);
-    }
+    return await nearService.checkOwnerCollection(owner_id: accountId!);
+  }
+
+  Future<List<dynamic>> checkMinterCollection() async {
+    return await nearService.checkMinterCollection(owner_id: accountId!);
   }
 
   @override
   void initState() {
     getInfoStream();
     balance = getWalletBalance(account_id: accountId!);
-    nameCollections = checkCollection();
+    nameOwnerCollections = checkOwnerCollection();
+    nameMinterCollections = checkMinterCollection();
     super.initState();
   }
 
@@ -177,12 +178,12 @@ class _AuthPageState extends State<AuthPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  nameCollections == null
+                                  nameOwnerCollections == null
                                       ? const Text(
-                                          "Data about collections not loaded")
+                                          "Data about owner collections not loaded")
                                       : Flexible(
                                           child: FutureBuilder<List<dynamic>>(
-                                            future: nameCollections,
+                                            future: nameOwnerCollections,
                                             builder: (BuildContext context,
                                                 AsyncSnapshot<List<dynamic>>
                                                     snapshot) {
@@ -200,7 +201,7 @@ class _AuthPageState extends State<AuthPage> {
                                                 return Column(
                                                   children: [
                                                     const Text(
-                                                      'Your collections:',
+                                                      'Your owner collections:',
                                                       style: TextStyle(
                                                           fontSize: 16),
                                                     ),
@@ -227,7 +228,68 @@ class _AuthPageState extends State<AuthPage> {
                                   IconButton(
                                     icon: Icon(Icons.replay_outlined),
                                     onPressed: () => setState(() {
-                                      nameCollections = checkCollection();
+                                      nameOwnerCollections =
+                                          checkOwnerCollection();
+                                    }),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  nameMinterCollections == null
+                                      ? const Text(
+                                          "Data about minter collections not loaded")
+                                      : Flexible(
+                                          child: FutureBuilder<List<dynamic>>(
+                                            future: nameMinterCollections,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<List<dynamic>>
+                                                    snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const CircularProgressIndicator();
+                                              } else if (snapshot.hasError) {
+                                                return Text(
+                                                  'Error: ${snapshot.error}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                );
+                                              } else if (snapshot.hasData &&
+                                                  snapshot.data!.isNotEmpty) {
+                                                return Column(
+                                                  children: [
+                                                    const Text(
+                                                      'Your minter collections:',
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    ),
+                                                    ...snapshot.data!
+                                                        .map((collection) {
+                                                      return SelectableText(
+                                                        '${collection}',
+                                                        style: const TextStyle(
+                                                            color: const Color
+                                                                .fromARGB(
+                                                                255, 0, 0, 0),
+                                                            fontSize: 16),
+                                                      );
+                                                    }).toList(),
+                                                  ],
+                                                );
+                                              } else {
+                                                return const Text(
+                                                    'You do not have collection');
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                  IconButton(
+                                    icon: Icon(Icons.replay_outlined),
+                                    onPressed: () => setState(() {
+                                      nameMinterCollections =
+                                          checkMinterCollection();
                                     }),
                                   ),
                                 ],
@@ -251,6 +313,8 @@ class _AuthPageState extends State<AuthPage> {
                     TransfetNft(),
                     SizedBox(height: 13),
                     MultiplyNFT(),
+                    SizedBox(height: 13),
+                    SimpleSale(),
                   ],
                 ),
               ),

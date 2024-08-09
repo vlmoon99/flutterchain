@@ -66,6 +66,10 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
             style:
                 TextStyle(fontSize: 17, color: Color.fromARGB(255, 245, 79, 1)),
           ),
+          const Text(
+            "On your account must be more then 3.7 Near",
+            style: TextStyle(fontSize: 16),
+          ),
           TextField(
             controller: symbolController,
             decoration: const InputDecoration(labelText: 'Input symbol'),

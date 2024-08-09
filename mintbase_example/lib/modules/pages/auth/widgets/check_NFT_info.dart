@@ -15,17 +15,26 @@ class _CheckInfoState extends State<CheckInfo> {
   final nearService = Modular.get<NearBlockChainService>();
 
   Future<List<dynamic>>? listInfo;
+  Future<List<dynamic>>? listingNFTInfo;
 
   Future<List<dynamic>> checkNFTInfo() async {
     final AuthController infoAccount = Modular.get(key: "AuthController");
 
     return await nearService.checkNFTInfo(
-        owner_id: infoAccount.state.accountId, testnet: true);
+        owner_id: infoAccount.state.accountId);
+  }
+
+  Future<List<dynamic>> checkListingNFT() async {
+    final AuthController infoAccount = Modular.get(key: "AuthController");
+
+    return await nearService.checkListingNFT(
+        ownerId: infoAccount.state.accountId);
   }
 
   @override
   void initState() {
     listInfo = checkNFTInfo();
+    listingNFTInfo = checkListingNFT();
     super.initState();
   }
 
@@ -59,7 +68,7 @@ class _CheckInfoState extends State<CheckInfo> {
                       return Column(
                         children: [
                           const Text(
-                            'Your NFT:',
+                            'Your owner NFT:',
                             style: TextStyle(fontSize: 16),
                           ),
                           ...snapshot.data!.map((nftInfo) {
@@ -71,7 +80,6 @@ class _CheckInfoState extends State<CheckInfo> {
                               burnedInfo =
                                   "This is inactive nft: time burned - ${nftInfo["burned_timestamp"]}";
                             }
-
                             return SelectableText(
                               'NFT ${nftInfo["title"]}: in ${nftInfo["nft_contract_id"]} collection whit NFT ID - ${nftInfo["token_id"]}. $burnedInfo',
                               maxLines: null,
@@ -93,7 +101,54 @@ class _CheckInfoState extends State<CheckInfo> {
                 listInfo = checkNFTInfo();
               });
             },
-            child: const Text('Check info'),
+            child: const Text('Check info owner'),
+          ),
+          SizedBox(height: 10),
+          Text("Listing NFT:"),
+          listingNFTInfo == null
+              ? const Text("Data not found")
+              : FutureBuilder<List<dynamic>>(
+                  future: listingNFTInfo,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<dynamic>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return Text(
+                        'Error: ${snapshot.error}',
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return Column(
+                        children: [
+                          const Text(
+                            'Your listing NFT:',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          ...snapshot.data!.map((nftInfo) {
+                            return SelectableText(
+                              'NFT ${nftInfo["title"]}: in ${nftInfo["nft_contract_id"]} collection whit NFT ID - ${nftInfo["token_id"]}.',
+                              maxLines: null,
+                              style: const TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 16),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    } else {
+                      return const Text('You do not have listing nft');
+                    }
+                  },
+                ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                listingNFTInfo = checkListingNFT();
+              });
+            },
+            child: const Text('Check info listing'),
           ),
         ],
       ),

@@ -241,8 +241,8 @@ class NearRpcClient {
     }
   }
 
-  Future<BlockchainResponse> getCollection(
-      {required String owner_id, required bool testnet}) async {
+  Future<BlockchainResponse> getOwenCollection(
+      {required String owner_id}) async {
     final query = """query MyQuery {
             nft_contracts(
               limit: 30
@@ -256,14 +256,34 @@ class NearRpcClient {
     return await mintBaseRPCInteractions(query: query);
   }
 
-  Future<BlockchainResponse> getNFTInfo(
-      {required String owner_id, required bool testnet}) async {
+  Future<BlockchainResponse> getMinterCollection(
+      {required String owner_id}) async {
+    final query = """query MyQuery {
+                      mb_store_minters(where: {minter_id: {_eq: "$owner_id"}}) {
+                        nft_contract_id
+                      }
+                    }""";
+    return await mintBaseRPCInteractions(query: query);
+  }
+
+  Future<BlockchainResponse> getNFTInfo({required String owner_id}) async {
     final query = """query MyQuery {
                       mb_views_nft_tokens(where: {owner: {_eq: "$owner_id"}}) {
                         title
                         token_id
                         nft_contract_id
                         burned_timestamp
+                      }
+                    }""";
+    return await mintBaseRPCInteractions(query: query);
+  }
+
+  Future<BlockchainResponse> getListingNFT({required String ownerId}) async {
+    final query = """query MyQuery {
+                      mb_views_active_listings(where: {listed_by: {_eq: "$ownerId"}}) {
+                        title
+                        token_id
+                        nft_contract_id
                       }
                     }""";
     return await mintBaseRPCInteractions(query: query);
@@ -389,7 +409,7 @@ class NearRpcClient {
       required String nameNFT}) async {
     final query = """query MyQuery {
                             mb_views_nft_tokens(
-                              where: {nft_contract_id: {_eq: "$nameNFTCollection"}, title: {_eq: "$nameNFT"}, minter: {_eq: "$ownerId"}, burned_timestamp: {_is_null: true}}
+                              where: {nft_contract_id: {_eq: "$nameNFTCollection"}, title: {_eq: "$nameNFT"}, burned_timestamp: {_is_null: true}, owner: {_eq: "$ownerId"}}
                               distinct_on: title
                             ) {
                               splits
@@ -401,6 +421,22 @@ class NearRpcClient {
                               royalties
                             }
                           }""";
+    return await mintBaseRPCInteractions(query: query);
+  }
+
+  Future<BlockchainResponse> NFTInteractionPermission(
+      {required String nameNFTCollection,
+      required String tokenId,
+      required String ownerId}) async {
+    final query = """query MyQuery {
+                      mb_views_nft_tokens(
+                        where: {nft_contract_id: {_eq: "$nameNFTCollection"}, burned_timestamp: {_is_null: true}, token_id: {_eq: "$tokenId"}, owner: {_eq: "$ownerId"}}
+                        distinct_on: title
+                      ) {
+                        title
+                        token_id
+                      }
+                    }""";
     return await mintBaseRPCInteractions(query: query);
   }
 }
