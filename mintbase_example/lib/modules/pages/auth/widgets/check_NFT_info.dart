@@ -18,17 +18,17 @@ class _CheckInfoState extends State<CheckInfo> {
   Future<List<dynamic>>? listingNFTInfo;
 
   Future<List<dynamic>> checkNFTInfo() async {
-    final AuthController infoAccount = Modular.get(key: "AuthController");
+    final infoAccount =
+        Modular.get<AuthController>(key: "AuthController").state;
 
-    return await nearService.checkNFTInfo(
-        owner_id: infoAccount.state.accountId);
+    return await nearService.checkNFTInfo(owner_id: infoAccount.accountId);
   }
 
   Future<List<dynamic>> checkListingNFT() async {
-    final AuthController infoAccount = Modular.get(key: "AuthController");
+    final infoAccount =
+        Modular.get<AuthController>(key: "AuthController").state;
 
-    return await nearService.checkListingNFT(
-        ownerId: infoAccount.state.accountId);
+    return await nearService.checkListingNFT(ownerId: infoAccount.accountId);
   }
 
   @override

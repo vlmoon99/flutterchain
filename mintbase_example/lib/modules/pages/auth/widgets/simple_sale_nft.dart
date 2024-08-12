@@ -23,14 +23,14 @@ class _SimpleSaleState extends State<SimpleSale> {
       {required String nameNFTCollection,
       required String tokenId,
       required String price}) async {
-    final AuthController infoAccount = Modular.get(key: "AuthController");
+    final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
     return await nearService.simpleListNFT(
         nameNFTCollection: nameNFTCollection,
         tokenId: tokenId,
         price: price,
-        accountId: infoAccount.state.accountId,
-        publicKey: infoAccount.state.publicKey,
-        privateKey: infoAccount.state.privateKey);
+        accountId: infocrypto.accountId,
+        publicKey: infocrypto.publicKey,
+        privateKey: infocrypto.privateKey);
   }
 
   @override
@@ -70,10 +70,12 @@ class _SimpleSaleState extends State<SimpleSale> {
           ),
           ElevatedButton(
             onPressed: () {
-              simpleSaleNFT(
-                  nameNFTCollection: nftCollectionContractController.text,
-                  tokenId: tokenIDController.text,
-                  price: priceController.text);
+              setState(() {
+                isList = simpleSaleNFT(
+                    nameNFTCollection: nftCollectionContractController.text,
+                    tokenId: tokenIDController.text,
+                    price: priceController.text);
+              });
             },
             child: const Text('List NFT'),
           ),

@@ -230,7 +230,11 @@ class NearBlockChainService implements BlockChainService {
     final res = await jsVMService.callJS(
         "window.NearBlockchain.signNearActions('$fromAddress','$toAddress','$transferAmount', '$gas' , '$privateKey','$nonce','$blockHash','${jsonEncode(actions)}')");
 
-    final decodedRes = jsonDecode(res);
+    Map<String, dynamic> decodedRes = jsonDecode(res);
+    if (decodedRes.containsKey("error")) {
+      throw Exception("Error: ${decodedRes["error"]}");
+    }
+
     final signedTx = decodedRes['signedTransaction'].toString();
     return signedTx;
   }
@@ -1242,13 +1246,35 @@ class NearBlockChainService implements BlockChainService {
     required String publicKey,
     required String privateKey,
   }) async {
-    final msg = jsonEncode({"price": price, "autotransfer": true});
+    final nearRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: "market-v2-beta.mintspace2.testnet",
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "deposit_storage",
+          args: {"autotransfer": true},
+          transferAmount: "12500000000000000000000",
+        ),
+      ),
+    );
+
+    if (nearRequest.data["error"] != null) {
+      throw Exception(nearRequest.data["error"]);
+    }
+
+    final msg =
+        """{\\"price\\":\\"${price}000000000000000000000000\\",\\"autotransfer\\":true}""";
 
     final Map<String, dynamic> args = {
       "token_id": tokenId,
       "account_id": "market-v2-beta.mintspace2.testnet",
       "msg": msg,
     };
+
+    await Future.delayed(Duration(seconds: 1));
 
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
@@ -1260,7 +1286,42 @@ class NearBlockChainService implements BlockChainService {
         arguments: NearBlockChainSmartContractArguments(
           method: "nft_approve",
           args: args,
-          transferAmount: "800000000000000000000",
+          transferAmount: "1000000000000000000000",
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    } else if (nearSignRequest.data["success"] != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> unlistNFT(
+      {required String accountId,
+      required String publicKey,
+      required String nameNFTCollection,
+      required String privateKey,
+      required int tokenId}) async {
+    final Map<String, dynamic> args = {
+      "token_ids": ["$tokenId"],
+      "nft_contract_id": nameNFTCollection
+    };
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: "market-v2-beta.mintspace2.testnet",
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "unlist",
+          args: args,
+          transferAmount: "1",
         ),
       ),
     );
@@ -1270,5 +1331,60 @@ class NearBlockChainService implements BlockChainService {
     }
 
     return true;
+  }
+
+  Future<bool> buySimpleListNFT(
+      {required String accountId,
+      required String publicKey,
+      required String nameNFTCollection,
+      required String privateKey,
+      required int tokenId,
+      String? referrer_id}) async {
+    final price = await getPriceForBuySimpleListNFT(
+            nftContractId: nameNFTCollection, tokenId: tokenId) +
+        1000000000;
+
+    final Map<String, dynamic> args = {
+      "nft_contract_id": nameNFTCollection,
+      "token_id": "$tokenId",
+      "referrer_id": referrer_id?.length == 0 ? null : referrer_id,
+    };
+
+    BigInt formatPrice = BigInt.from(price);
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: "market-v2-beta.mintspace2.testnet",
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "buy",
+          args: args,
+          transferAmount: formatPrice.toString(),
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    return true;
+  }
+
+  Future<double> getPriceForBuySimpleListNFT(
+      {required String nftContractId, required int tokenId}) async {
+    final request = await nearRpcClient.getPriceForBuySimpleListNFT(
+        nftContractId: nftContractId, tokenId: tokenId);
+
+    List<dynamic> requestInfo =
+        request.data["data"]["mb_views_active_listings"];
+    if (requestInfo.length == 0) {
+      throw Exception("This NFT not in active listings");
+    }
+
+    return requestInfo.first["price"];
   }
 }

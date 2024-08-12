@@ -126,16 +126,17 @@ class _MintnftState extends State<Mintnft> {
       String? category,
       String? documentPath,
       String? animationPath}) async {
-    final AuthController infoAccount = Modular.get(key: "AuthController");
+    final infoAccount =
+        Modular.get<AuthController>(key: "AuthController").state;
     List<String>? tagsList;
     if (tags != null) {
       tagsList = tags.split(",").map((tag) => tag.trim()).toList();
     }
 
     return await nearService.mintNFT(
-      accountId: infoAccount.state.accountId,
-      publicKey: infoAccount.state.publicKey,
-      privateKey: infoAccount.state.privateKey,
+      accountId: infoAccount.accountId,
+      publicKey: infoAccount.publicKey,
+      privateKey: infoAccount.privateKey,
       nftCollectionContract: nftCollectionContract,
       owner_id: owner_id,
       title: title,

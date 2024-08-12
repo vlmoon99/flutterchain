@@ -24,14 +24,14 @@ class _MultiplyNFTState extends State<MultiplyNFT> {
       {required String nameNFTCollection,
       required String nameNFT,
       required int numToMint}) {
-    final AuthController infoAccount = Modular.get(key: "AuthController");
-
+    final infoAccount =
+        Modular.get<AuthController>(key: "AuthController").state;
     return nearService.multiplyNFT(
         nameNFTCollection: nameNFTCollection,
         nameNFT: nameNFT,
-        accountId: infoAccount.state.accountId,
-        publicKey: infoAccount.state.publicKey,
-        privateKey: infoAccount.state.privateKey,
+        accountId: infoAccount.accountId,
+        publicKey: infoAccount.publicKey,
+        privateKey: infoAccount.privateKey,
         numToMint: numToMint);
   }
 

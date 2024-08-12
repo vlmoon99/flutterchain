@@ -34,7 +34,8 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
       String? baseUri,
       String? reference,
       String? referenceHash}) async {
-    final AuthController infoAccount = Modular.get(key: "AuthController");
+    final infoAccount =
+        Modular.get<AuthController>(key: "AuthController").state;
     String? iconConvert;
     if (icon != null) {
       File iconFile = File(icon);
@@ -43,9 +44,9 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
     }
 
     return await nearService.deployNFTCollection(
-        accountId: infoAccount.state.accountId,
-        publicKey: infoAccount.state.publicKey,
-        privateKey: infoAccount.state.privateKey,
+        accountId: infoAccount.accountId,
+        publicKey: infoAccount.publicKey,
+        privateKey: infoAccount.privateKey,
         symbol: symbol,
         name: name,
         ownerId: ownerId,
