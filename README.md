@@ -26,16 +26,36 @@ Instructions for building the library from source code.
 1. Add This code to the head tag For Web project
 
 ```
-  <script type="application/javascript" 
-    src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" 
-    defer
-  ></script>
+<head>
+  <!-- other head elements -->
+  <script type="application/javascript" src="flutter.js" defer></script>
+  <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
+  <script type="module" src="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle.js"></script>
+  <script type="application/javascript" src="/assets/packages/flutterchain/assets/crypto-lib/dist/dop_bundle.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle2.js">
 
-  <script
-      type="application/javascript"
-      src="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle.js"
-      defer
-></script>
+
+</head>
+
+<body>
+  <script>
+    window.addEventListener("load", async function (ev) {
+      {{flutter_js}}
+      {{flutter_build_config}}
+
+      _flutter.loader.load({
+        serviceWorker: {
+          serviceWorkerVersion: '{{flutter_service_worker_version}}',
+        },
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine().then(function (appRunner) {
+            appRunner.runApp();
+          });
+        },
+      });
+    });
+  </script>
+</body>
 ```
 
 2.  Set Android: minSdkVersion >= 19, compileSdk >= 34, AGP version >= 7.3.0 in the android/app/build.gradle file and add android:usesCleartextTraffic="true" in manifest

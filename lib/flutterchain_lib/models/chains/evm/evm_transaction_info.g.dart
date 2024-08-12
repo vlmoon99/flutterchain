@@ -8,10 +8,10 @@ part of 'evm_transaction_info.dart';
 
 EVMTransactionInfo _$EVMTransactionInfoFromJson(Map<String, dynamic> json) =>
     EVMTransactionInfo(
-      nonce: json['nonce'] as int,
-      gasPrice: json['gasPrice'] as int,
-      maxPriorityFeePerGas: json['maxPriorityFeePerGas'] as int?,
-      gasLimit: json['gasLimit'] as int,
+      nonce: (json['nonce'] as num).toInt(),
+      gasPrice: (json['gasPrice'] as num).toInt(),
+      maxPriorityFeePerGas: (json['maxPriorityFeePerGas'] as num?)?.toInt(),
+      gasLimit: (json['gasLimit'] as num).toInt(),
     );
 
 Map<String, dynamic> _$EVMTransactionInfoToJson(EVMTransactionInfo instance) =>

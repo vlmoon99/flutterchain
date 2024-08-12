@@ -17,6 +17,9 @@ class _Home extends RouteClass {
   String startPage = '/';
   String login = '/login';
   String actions = '/actions';
+  String concordiumCreateAccount = '/concordiumCreateAccount';
+  String concordiumActions = '/concordiumActions';
+  String redirect = '/redirect';
 }
 
 abstract class RouteClass {

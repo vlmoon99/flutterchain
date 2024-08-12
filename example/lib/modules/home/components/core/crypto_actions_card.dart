@@ -9,7 +9,7 @@ class CryptoActionCard extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.color,
-    required this.onTap,
+    this.onTap,
     required this.child,
     required this.height,
   }) : super(key: key);
@@ -17,7 +17,7 @@ class CryptoActionCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final Color color;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Widget child;
   final double height;
   @override
@@ -74,40 +74,42 @@ class CryptoActionCard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Expanded(child: child),
-            const SizedBox(height: 40),
-            InkWell(
-              onTap: onTap,
-              child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: nearColors.nearAqua,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      offset: const Offset(0, 2),
-                      blurRadius: 4,
-                      spreadRadius: 0,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      offset: const Offset(0, 1),
-                      blurRadius: 2,
-                      spreadRadius: -1,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Text(
-                    'Execute',
-                    style: nearTextStyles.bodyCopy!.copyWith(
-                      color: nearColors.nearWhite,
+            if (onTap != null) ...[
+              const SizedBox(height: 40),
+              InkWell(
+                onTap: onTap,
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: nearColors.nearAqua,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 2),
+                        blurRadius: 4,
+                        spreadRadius: 0,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 1),
+                        blurRadius: 2,
+                        spreadRadius: -1,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      'Execute',
+                      style: nearTextStyles.bodyCopy!.copyWith(
+                        color: nearColors.nearWhite,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              )
+            ],
           ],
         ),
       ),

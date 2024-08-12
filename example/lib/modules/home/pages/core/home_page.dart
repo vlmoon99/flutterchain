@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -198,6 +197,32 @@ class _CryptoListPageState extends State<CryptoListPage> {
                     ),
                     child: Text(
                       'Create Wallet',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.w,
+                ),
+                SizedBox(
+                  width: 300,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Modular.to
+                          .navigate(".${Routes.home.concordiumCreateAccount}");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: nearColors.nearPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text(
+                      'Create Concordium Wallet',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.sp,

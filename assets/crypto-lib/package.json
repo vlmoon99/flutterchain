@@ -1,41 +1,47 @@
 {
   "name": "crypto-lib",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "watch": {
-    "build-dev": "*.js"
-  },
-  "scripts": {
-    "clean": "rm -r dist/bundle.js package-lock.json node_modules",
-    "build-dev": "node ./scripts/wallet_core_fix.js && browserify ./src/index.js -p esmify -o ./dist/bundle.js --debug --verbose",
-    "build-prod": "node ./scripts/wallet_core_fix.js && browserify ./src/index.js -p esmify -o ./dist/bundle.js",
-    "watch": "watchify ./src/index.js -p esmify -o ./dist/bundle.js --debug --verbose"
-  },
   "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build_sublib && vite",
+    "build:all": "npm run build_sublib && npm run build",
+    "build": "vite build",
+    "build_sublib": "node ./scripts/wallet_core_fix.js && browserify -t [ babelify --presets [ @babel/preset-env ] ] ./src/index2.js > ./public/dop_bundle.js --verbose",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.9",
+    "@babel/preset-env": "^7.25.0",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "vite": "^5.3.4",
+    "vite-plugin-babel": "^1.2.0",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-static-copy": "^1.0.6",
+    "vite-plugin-top-level-await": "^1.4.2",
+    "vite-plugin-wasm": "^3.3.0",
+    "vite-plugin-webworker-service": "^1.1.0"
+  },
   "dependencies": {
+    "@concordium/web-sdk": "^7.5.0",
     "@ethereumjs/common": "^4.3.0",
     "@ethereumjs/tx": "^5.3.0",
     "@ethereumjs/util": "^9.0.3",
+    "@scure/bip39": "^1.3.0",
     "@trustwallet/wallet-core": "^4.0.24",
     "bitcoinjs-lib": "^6.1.6",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
     "bs58check": "^3.0.1",
+    "core-js": "^3.37.1",
+    "events": "^3.3.0",
     "hash.js": "^1.1.7",
     "keccak": "^3.0.4",
     "long": "5.2.3",
     "npm": "^10.3.0",
     "tweetnacl": "^1.0.3",
-    "watchify": "^4.0.0",
     "web3": "^4.8.0",
     "xrpl": "^3.0.0"
-  },
-  "devDependencies": {
-    "browserify": "^17.0.0",
-    "esmify": "^2.1.1"
   }
 }

@@ -744,4 +744,43 @@ class MockNearBlockChainService extends _i1.Mock
           ),
         )),
       ) as _i9.Future<String>);
+
+  @override
+  _i9.Future<String> signXRPTransactionWithMPC({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required _i14.MpcTransactionInfo? mpcTransactionInfo,
+    String? path = r'flutterchain',
+    String? mpcContract = r'v2.multichain-mpc.testnet',
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #signXRPTransactionWithMPC,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #mpcTransactionInfo: mpcTransactionInfo,
+            #path: path,
+            #mpcContract: mpcContract,
+          },
+        ),
+        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+          this,
+          Invocation.method(
+            #signXRPTransactionWithMPC,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #mpcTransactionInfo: mpcTransactionInfo,
+              #path: path,
+              #mpcContract: mpcContract,
+            },
+          ),
+        )),
+      ) as _i9.Future<String>);
 }
