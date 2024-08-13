@@ -19,6 +19,7 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
   final referrerIdController = TextEditingController();
 
   Future<bool>? isBuy;
+  Future<String>? price;
 
   Future<bool> buySimpleListNft(
       {required String nameNFTCollection,
@@ -33,6 +34,15 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
         privateKey: infocrypto.privateKey,
         tokenId: tokenId,
         referrer_id: referrer_id);
+  }
+
+  Future<String> checkPrice(
+      {required String nftContractId, required int tokenId}) async {
+    double priceNotFormat = await nearService.getPriceForBuySimpleListNFT(
+            nftContractId: nftContractId, tokenId: tokenId) +
+        1000000000;
+    BigInt priceFormat = BigInt.from(priceNotFormat);
+    return priceFormat.toString();
   }
 
   @override
@@ -84,6 +94,39 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
                       final data = snapshot.data!;
                       return const SelectableText(
                         "The NFT has been bought",
+                        style: TextStyle(fontSize: 16),
+                      );
+                    }
+                  },
+                ),
+          SizedBox(height: 10),
+          Text(
+            "You can check price nft",
+            style: TextStyle(fontSize: 16),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                price = checkPrice(
+                    nftContractId: nftCollectionController.text,
+                    tokenId: int.parse(tokenIdController.text));
+              });
+            },
+            child: const Text('Check price'),
+          ),
+          price == null
+              ? const Text("There were no interactions")
+              : FutureBuilder<String>(
+                  future: price,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return SelectableText('Error: ${snapshot.error}');
+                    } else {
+                      return SelectableText(
+                        "Price: ${snapshot.data}",
                         style: TextStyle(fontSize: 16),
                       );
                     }

@@ -166,6 +166,12 @@ class _MintnftState extends State<Mintnft> {
   }
 
   @override
+  void initState() {
+    numToMintController.text = "1";
+    super.initState();
+  }
+
+  @override
   void dispose() {
     for (var percent in _percentRoyaltiesControllers) {
       percent.dispose();

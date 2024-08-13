@@ -1021,13 +1021,13 @@ class NearBlockChainService implements BlockChainService {
     String mediaUpload = await uploadFileToArweave(file: mediaFile);
     mediaUploadURL = baseURL! + mediaUpload;
 
-    if (animation != null && animation!.length > 0) {
+    if (animation != null && animation.length > 0) {
       final animationFile = File(animation);
       animationUpload = await uploadFileToArweave(file: animationFile);
       animationUpload = baseURL + animationUpload;
     }
 
-    if (document != null && document!.length > 0) {
+    if (document != null && document.length > 0) {
       final documentFile = File(document);
       documentUpload = await uploadFileToArweave(file: documentFile);
       documentUpload = baseURL + documentUpload;
@@ -1270,25 +1270,6 @@ class NearBlockChainService implements BlockChainService {
     required String privateKey,
     String? arg_account_id = "market-v2-beta.mintspace2.testnet",
   }) async {
-    final nearRequest = await callSmartContractFunction(
-      NearTransferRequest(
-        fromAddress: accountId,
-        publicKey: publicKey,
-        toAddress: arg_account_id,
-        privateKey: privateKey,
-        gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "deposit_storage",
-          args: {"autotransfer": true},
-          transferAmount: "12500000000000000000000",
-        ),
-      ),
-    );
-
-    if (nearRequest.data["error"] != null) {
-      throw Exception(nearRequest.data["error"]);
-    }
-
     final msg =
         """{\\"price\\":\\"${price}000000000000000000000000\\",\\"autotransfer\\":true}""";
 
@@ -1297,8 +1278,6 @@ class NearBlockChainService implements BlockChainService {
       "account_id": arg_account_id,
       "msg": msg,
     };
-
-    // await Future.delayed(Duration(seconds: 1));
 
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
