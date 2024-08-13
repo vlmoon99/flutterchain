@@ -4,31 +4,34 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:mintbase_example/modules/pages/thems/thems.dart';
 import 'package:mintbase_example/modules/services/auth_controller.dart';
 
-class UnlistNft extends StatefulWidget {
-  const UnlistNft({super.key});
+class RollingAuctionNft extends StatefulWidget {
+  const RollingAuctionNft({super.key});
 
   @override
-  State<UnlistNft> createState() => _UnlistNftState();
+  State<RollingAuctionNft> createState() => _RollingAuctionNftState();
 }
 
-class _UnlistNftState extends State<UnlistNft> {
+class _RollingAuctionNftState extends State<RollingAuctionNft> {
   final nearService = Modular.get<NearBlockChainService>();
 
   final nftCollectionController = TextEditingController();
   final tokenIdController = TextEditingController();
+  final priceController = TextEditingController();
 
-  Future<bool>? isUnlistNFT;
+  Future<bool>? isRolling;
 
-  Future<bool> unlistNFT(
-      {required String nameNFTCollection, required int tokenId}) async {
+  Future<bool> rollingAuctionNft(
+      {required String nameNFTCollection,
+      required int tokenId,
+      required int price}) async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
-
-    return await nearService.unlistNFT(
+    return await nearService.rollingAuctionNft(
         accountId: infocrypto.accountId,
         publicKey: infocrypto.publicKey,
         nameNFTCollection: nameNFTCollection,
         privateKey: infocrypto.privateKey,
-        tokenId: tokenId);
+        tokenId: tokenId,
+        price: price);
   }
 
   @override
@@ -38,7 +41,7 @@ class _UnlistNftState extends State<UnlistNft> {
       padding: Thems.padding,
       child: Column(
         children: [
-          const Text('Unlist NFT',
+          const Text('Rolling auction NFT',
               style: TextStyle(
                   fontSize: 17, color: Color.fromARGB(255, 245, 79, 1))),
           TextField(
@@ -48,22 +51,27 @@ class _UnlistNftState extends State<UnlistNft> {
           ),
           TextField(
             controller: tokenIdController,
-            decoration: const InputDecoration(labelText: 'Input token id NFT'),
+            decoration: const InputDecoration(labelText: 'Input token id'),
+          ),
+          TextField(
+            controller: priceController,
+            decoration: const InputDecoration(labelText: 'Minimum bid(Near)'),
           ),
           ElevatedButton(
-            onPressed: () async {
+            onPressed: () {
               setState(() {
-                isUnlistNFT = unlistNFT(
+                isRolling = rollingAuctionNft(
                     nameNFTCollection: nftCollectionController.text,
-                    tokenId: int.parse(tokenIdController.text));
+                    tokenId: int.parse(tokenIdController.text),
+                    price: int.parse(priceController.text));
               });
             },
-            child: const Text('Unlist NFT'),
+            child: const Text('Rolling NFT'),
           ),
-          isUnlistNFT == null
-              ? const Text("There were no interactions")
+          isRolling == null
+              ? const Text("No action on rolling")
               : FutureBuilder<bool>(
-                  future: isUnlistNFT,
+                  future: isRolling,
                   builder:
                       (BuildContext context, AsyncSnapshot<bool> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -71,14 +79,13 @@ class _UnlistNftState extends State<UnlistNft> {
                     } else if (snapshot.hasError) {
                       return SelectableText('Error: ${snapshot.error}');
                     } else {
-                      final data = snapshot.data!;
                       return const SelectableText(
-                        "NFT was unlisted",
+                        "NFT was rolling successful",
                         style: TextStyle(fontSize: 16),
                       );
                     }
                   },
-                ),
+                )
         ],
       ),
     );

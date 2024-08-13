@@ -9,10 +9,12 @@ import 'package:mintbase_example/modules/pages/auth/widgets/check_nft_info.dart'
 import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/mint_nft.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/multiply.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/offers.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/rolling_auction_nft.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/simple_sale_nft.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfet_nft.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/unlist_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/widgets/unlist_delist_nft.dart';
 import 'package:mintbase_example/modules/pages/thems/thems.dart';
 import 'package:mintbase_example/modules/services/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
@@ -318,9 +320,13 @@ class _AuthPageState extends State<AuthPage> {
                     SizedBox(height: 13),
                     SimpleSale(),
                     SizedBox(height: 13),
-                    UnlistNft(),
+                    UnlistDelistNFT(),
                     SizedBox(height: 13),
                     BuySimpleListNft(),
+                    SizedBox(height: 13),
+                    RollingAuctionNft(),
+                    SizedBox(height: 13),
+                    Offers(),
                   ],
                 ),
               ),

@@ -37,10 +37,11 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
     final infoAccount =
         Modular.get<AuthController>(key: "AuthController").state;
     String? iconConvert;
-    if (icon != null) {
+    if (icon != null && icon.length > 0) {
       File iconFile = File(icon);
       List<int> imageBytes = await iconFile.readAsBytes();
       iconConvert = base64Encode(imageBytes);
+      iconConvert = "data:image/png;base64,${iconConvert}";
     }
 
     return await nearService.deployNFTCollection(
@@ -121,9 +122,24 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
             },
             child: const Text('Create collection'),
           ),
-          responseCollection == true
-              ? Text("Collection was create successful")
-              : Text("Collection was not created"),
+          responseCollection == null
+              ? const Text("There were no interactions")
+              : FutureBuilder<bool>(
+                  future: responseCollection,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return SelectableText('Error: ${snapshot.error}');
+                    } else {
+                      return const SelectableText(
+                        "Your collection was created",
+                        style: TextStyle(fontSize: 16),
+                      );
+                    }
+                  },
+                ),
         ]));
   }
 }

@@ -117,12 +117,12 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                       } else {
                         if (_isAdd == true) {
                           return const Text(
-                            "minters was add",
+                            "Minters was add",
                             style: TextStyle(fontSize: 16),
                           );
                         } else {
                           return const Text(
-                            "minters was delete",
+                            "Minters was delete",
                             style: TextStyle(fontSize: 16),
                           );
                         }

@@ -166,15 +166,6 @@ class _MintnftState extends State<Mintnft> {
   }
 
   @override
-  void initState() {
-    numToMintController.text = "1";
-    nftCollectionContractController.text = "nftnazar.mintspace2.testnet";
-    ownerIDController.text =
-        "9ea892def9e116996012d4ce87ef4ff99b638f109c5c826693304378298b2072";
-    super.initState();
-  }
-
-  @override
   void dispose() {
     for (var percent in _percentRoyaltiesControllers) {
       percent.dispose();

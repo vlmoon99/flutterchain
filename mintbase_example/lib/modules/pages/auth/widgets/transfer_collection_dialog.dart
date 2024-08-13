@@ -99,10 +99,10 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
                     keep_old_minters: keep_old_minters);
               });
             },
-            child: const Text('Create collection'),
+            child: const Text('Transfer collection'),
           ),
           responseTransfer == null
-              ? Text("There were no transfers")
+              ? const Text("There were no transfers")
               : Flexible(
                   child: FutureBuilder<bool>(
                     future: responseTransfer,

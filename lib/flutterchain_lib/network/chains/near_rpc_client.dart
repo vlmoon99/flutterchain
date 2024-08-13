@@ -301,6 +301,22 @@ class NearRpcClient {
     return await mintBaseRPCInteractions(query: query);
   }
 
+  Future<BlockchainResponse> getPriceMaxBidNFT(
+      {required String nftContractId, required int tokenId}) async {
+    final query = """query MyQuery {
+                      nft_offers_aggregate(
+                        where: {nft_contract_id: {_eq: "$nftContractId"}, token_id: {_eq: "$tokenId"}}
+                      ) {
+                        aggregate {
+                          max {
+                            offer_price
+                          }
+                        }
+                      }
+                    }""";
+    return await mintBaseRPCInteractions(query: query);
+  }
+
   Future<BlockchainResponse> uploadFileToArweave({required File file}) async {
     int maxSize = 31457280;
     FormData formData;
