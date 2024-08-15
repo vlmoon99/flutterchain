@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mintbase_example/modules/models/models.dart';
+import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_create_dialog.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_default_dialog.dart';
 import 'package:mintbase_example/modules/pages/init/widgets/near_account_import_nearAPIjs_dialog.dart';

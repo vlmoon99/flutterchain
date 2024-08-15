@@ -47,7 +47,6 @@ class AppModule extends Module {
     Bind.singleton(
       (i) => NearRpcClient(
         networkClient: i(),
-        nearClientWithTime: i(),
       ),
     ),
     Bind.singleton(

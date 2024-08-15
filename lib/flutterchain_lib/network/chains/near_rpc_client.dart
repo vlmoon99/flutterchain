@@ -18,7 +18,6 @@ import 'package:http_parser/http_parser.dart';
 
 class NearRpcClient {
   final NearNetworkClient networkClient;
-  final NearNetworkClientWithTime nearClientWithTime;
 
   factory NearRpcClient.defaultInstance() {
     return NearRpcClient(
@@ -26,14 +25,9 @@ class NearRpcClient {
         baseUrl: NearBlockChainNetworkUrls.listOfUrls.first,
         dio: Dio(),
       ),
-      nearClientWithTime: NearNetworkClientWithTime(
-        baseUrl: NearBlockChainNetworkUrls.listOfUrls.first,
-        dio: Dio(),
-      ),
     );
   }
-  NearRpcClient(
-      {required this.networkClient, required this.nearClientWithTime});
+  NearRpcClient({required this.networkClient});
 
   Future<NearTransactionInfoModel> getTransactionInfo(
     String accountId,
@@ -241,82 +235,6 @@ class NearRpcClient {
     }
   }
 
-  Future<BlockchainResponse> getOwenCollection(
-      {required String owner_id}) async {
-    final query = """query MyQuery {
-            nft_contracts(
-              limit: 30
-              where: {owner_id: {_eq: "${owner_id}"}}
-            ) {
-              owner_id
-              name
-            }
-          }""";
-
-    return await mintBaseRPCInteractions(query: query);
-  }
-
-  Future<BlockchainResponse> getMinterCollection(
-      {required String owner_id}) async {
-    final query = """query MyQuery {
-                      mb_store_minters(where: {minter_id: {_eq: "$owner_id"}}) {
-                        nft_contract_id
-                      }
-                    }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
-
-  Future<BlockchainResponse> getNFTInfo({required String owner_id}) async {
-    final query = """query MyQuery {
-                      mb_views_nft_tokens(where: {owner: {_eq: "$owner_id"}}) {
-                        title
-                        token_id
-                        nft_contract_id
-                        burned_timestamp
-                      }
-                    }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
-
-  Future<BlockchainResponse> getListingNFT({required String ownerId}) async {
-    final query = """query MyQuery {
-                      mb_views_active_listings(where: {listed_by: {_eq: "$ownerId"}}) {
-                        title
-                        token_id
-                        nft_contract_id
-                      }
-                    }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
-
-  Future<BlockchainResponse> getPriceForBuySimpleListNFT(
-      {required String nftContractId, required int tokenId}) async {
-    final query = """query MyQuery {
-                      mb_views_active_listings(
-                        where: {nft_contract_id: {_eq: "$nftContractId"}, token_id: {_eq: "$tokenId"}}
-                      ) {
-                        price
-                      }
-                    }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
-
-  Future<BlockchainResponse> getPriceMaxBidNFT(
-      {required String nftContractId, required int tokenId}) async {
-    final query = """query MyQuery {
-                      nft_offers_aggregate(
-                        where: {nft_contract_id: {_eq: "$nftContractId"}, token_id: {_eq: "$tokenId"}}
-                      ) {
-                        aggregate {
-                          max {
-                            offer_price
-                          }
-                        }
-                      }
-                    }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
-
   Future<BlockchainResponse> uploadFileToArweave({required File file}) async {
     int maxSize = 31457280;
     FormData formData;
@@ -329,6 +247,7 @@ class NearRpcClient {
     final heders = {
       "mb-api-key": "anon",
     };
+
     String fileFormat = checkFileFormat(filePath: file.path);
 
     switch (fileFormat) {
@@ -430,43 +349,6 @@ class NearRpcClient {
           data: res.data, status: BlockchainResponses.success);
     }
   }
-
-  Future<BlockchainResponse> getInfoForMultiply(
-      {required String nameNFTCollection,
-      required String ownerId,
-      required String nameNFT}) async {
-    final query = """query MyQuery {
-                            mb_views_nft_tokens(
-                              where: {nft_contract_id: {_eq: "$nameNFTCollection"}, title: {_eq: "$nameNFT"}, burned_timestamp: {_is_null: true}, owner: {_eq: "$ownerId"}}
-                              distinct_on: title
-                            ) {
-                              splits
-                              title
-                              royalties_percent
-                              reference
-                              nft_contract_name
-                              media
-                              royalties
-                            }
-                          }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
-
-  Future<BlockchainResponse> NFTInteractionPermission(
-      {required String nameNFTCollection,
-      required String tokenId,
-      required String ownerId}) async {
-    final query = """query MyQuery {
-                      mb_views_nft_tokens(
-                        where: {nft_contract_id: {_eq: "$nameNFTCollection"}, burned_timestamp: {_is_null: true}, token_id: {_eq: "$tokenId"}, owner: {_eq: "$ownerId"}}
-                        distinct_on: title
-                      ) {
-                        title
-                        token_id
-                      }
-                    }""";
-    return await mintBaseRPCInteractions(query: query);
-  }
 }
 
 class NearNetworkClient extends NetworkClient {
@@ -482,25 +364,6 @@ class NearNetworkClient extends NetworkClient {
           Duration(seconds: 1),
           Duration(seconds: 1),
           Duration(seconds: 1),
-        ],
-      ),
-    );
-  }
-}
-
-class NearNetworkClientWithTime extends NetworkClient {
-  NearNetworkClientWithTime({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(
-      RetryInterceptor(
-        dio: dio,
-        logPrint: log,
-        retries: 5,
-        retryDelays: const [
-          Duration(seconds: 5),
-          Duration(seconds: 2),
-          Duration(seconds: 2),
-          Duration(seconds: 2),
-          Duration(seconds: 2),
         ],
       ),
     );

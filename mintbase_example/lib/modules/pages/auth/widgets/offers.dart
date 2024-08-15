@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
-import 'package:mintbase_example/modules/pages/thems/thems.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
+import 'package:mintbase_example/thems/thems.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 
 class Offers extends StatefulWidget {
   const Offers({super.key});
@@ -116,7 +116,7 @@ class _OffersState extends State<Offers> {
                     tokenId: int.parse(tokenIdController.text));
               });
             },
-            child: const Text('Rolling NFT'),
+            child: const Text('Check price NFT'),
           ),
           priceOffers == null
               ? const Text("No action on checking")

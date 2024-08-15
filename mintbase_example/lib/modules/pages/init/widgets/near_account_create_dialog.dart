@@ -13,10 +13,10 @@ import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:mintbase_example/consts/secure_storage_keys.dart';
-import 'package:mintbase_example/modules/models/authorized.dart';
-import 'package:mintbase_example/modules/models/models.dart';
+import 'package:mintbase_example/modules/models/authorized_model/authorized.dart';
+import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
 import 'package:mintbase_example/routes/routes.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';

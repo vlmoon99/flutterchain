@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
-import 'package:mintbase_example/modules/models/models.dart';
+import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/add_remove_minters.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/buy_simple_list_nft.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/check_nft_info.dart';
@@ -15,8 +15,8 @@ import 'package:mintbase_example/modules/pages/auth/widgets/simple_sale_nft.dart
 import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/transfet_nft.dart';
 import 'package:mintbase_example/modules/pages/auth/widgets/unlist_delist_nft.dart';
-import 'package:mintbase_example/modules/pages/thems/thems.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
+import 'package:mintbase_example/thems/thems.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
 
 class AuthPage extends StatefulWidget {
@@ -75,8 +75,6 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       body: SafeArea(
           child: Container(

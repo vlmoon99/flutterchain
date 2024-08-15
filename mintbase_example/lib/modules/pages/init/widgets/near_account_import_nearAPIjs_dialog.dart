@@ -5,9 +5,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mintbase_example/consts/secure_storage_keys.dart';
-import 'package:mintbase_example/modules/models/authorized.dart';
-import 'package:mintbase_example/modules/models/models.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
+import 'package:mintbase_example/modules/models/authorized_model/authorized.dart';
+import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
 import 'package:mintbase_example/widget/rounded_text_field.dart';
 

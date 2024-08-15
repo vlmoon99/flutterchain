@@ -5,7 +5,7 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:mintbase_example/modules/pages/auth/auth_page.dart';
 import 'package:mintbase_example/modules/pages/init/init_page.dart';
 import 'package:mintbase_example/routes/routes.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 
 class AppModule extends Module {
   @override

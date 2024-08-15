@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
-import 'package:mintbase_example/modules/pages/thems/thems.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
+import 'package:mintbase_example/thems/thems.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 
 class BuySimpleListNft extends StatefulWidget {
   const BuySimpleListNft({super.key});
@@ -39,9 +39,8 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
   Future<String> checkPrice(
       {required String nftContractId, required int tokenId}) async {
     double priceNotFormat = await nearService.getPriceForBuySimpleListNFT(
-            nftContractId: nftContractId, tokenId: tokenId) +
-        1000000000;
-    BigInt priceFormat = BigInt.from(priceNotFormat);
+        nftContractId: nftContractId, tokenId: tokenId);
+    BigInt priceFormat = BigInt.from(priceNotFormat) + BigInt.from(16777217);
     return priceFormat.toString();
   }
 

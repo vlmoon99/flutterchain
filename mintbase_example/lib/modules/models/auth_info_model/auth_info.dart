@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 enum NearNetworkType { testnet, mainnet }
 
-enum CategoryNFT { art, defi, fashion, membership, music, photography, ticket }
-
 @immutable
 class AuthInfo {
   final String accountId;

@@ -789,7 +789,17 @@ class NearBlockChainService implements BlockChainService {
   }
 
   Future<List<dynamic>> checkOwnerCollection({required String owner_id}) async {
-    final response = await nearRpcClient.getOwenCollection(owner_id: owner_id);
+    final query = """query MyQuery {
+            nft_contracts(
+              limit: 30
+              where: {owner_id: {_eq: "${owner_id}"}}
+            ) {
+              owner_id
+              name
+            }
+          }""";
+
+    final response = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
     List<dynamic> contracts = response.data["data"]["nft_contracts"];
     if (contracts.isEmpty) {
@@ -805,8 +815,13 @@ class NearBlockChainService implements BlockChainService {
 
   Future<List<dynamic>> checkMinterCollection(
       {required String owner_id}) async {
-    final response =
-        await nearRpcClient.getMinterCollection(owner_id: owner_id);
+    final query = """query MyQuery {
+                      mb_store_minters(where: {minter_id: {_eq: "$owner_id"}}) {
+                        nft_contract_id
+                      }
+                    }""";
+
+    final response = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
     List<dynamic> contracts = response.data["data"]["mb_store_minters"];
     if (contracts.isEmpty) {
@@ -822,7 +837,16 @@ class NearBlockChainService implements BlockChainService {
   }
 
   Future<List<dynamic>> checkNFTInfo({required String owner_id}) async {
-    final response = await nearRpcClient.getNFTInfo(owner_id: owner_id);
+    final query = """query MyQuery {
+                      mb_views_nft_tokens(where: {owner: {_eq: "$owner_id"}}) {
+                        title
+                        token_id
+                        nft_contract_id
+                        burned_timestamp
+                      }
+                    }""";
+
+    final response = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
     List<dynamic> contracts = response.data["data"]["mb_views_nft_tokens"];
     if (contracts.isEmpty) {
@@ -834,7 +858,15 @@ class NearBlockChainService implements BlockChainService {
   }
 
   Future<List<dynamic>> checkListingNFT({required String ownerId}) async {
-    final response = await nearRpcClient.getListingNFT(ownerId: ownerId);
+    final query = """query MyQuery {
+                      mb_views_active_listings(where: {listed_by: {_eq: "$ownerId"}}) {
+                        title
+                        token_id
+                        nft_contract_id
+                      }
+                    }""";
+
+    final response = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
     List<dynamic> contracts = response.data["data"]["mb_views_active_listings"];
     if (contracts.isEmpty) {
@@ -847,8 +879,19 @@ class NearBlockChainService implements BlockChainService {
 
   Future<double> checkMaxPriceBidNFT(
       {required String nftContractId, required int tokenId}) async {
-    final response = await nearRpcClient.getPriceMaxBidNFT(
-        nftContractId: nftContractId, tokenId: tokenId);
+    final query = """query MyQuery {
+                      nft_offers_aggregate(
+                        where: {nft_contract_id: {_eq: "$nftContractId"}, token_id: {_eq: "$tokenId"}}
+                      ) {
+                        aggregate {
+                          max {
+                            offer_price
+                          }
+                        }
+                      }
+                    }""";
+
+    final response = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
     Map<String, dynamic> pricesResponse =
         response.data["data"]["nft_offers_aggregate"];
@@ -1154,7 +1197,7 @@ class NearBlockChainService implements BlockChainService {
     final Map<String, dynamic> args = {"token_ids": tokenIds};
 
     for (var i = 0; i < tokenIds.length; i++) {
-      final havePermission = await nearRpcClient.NFTInteractionPermission(
+      final havePermission = await NFTInteractionPermission(
           nameNFTCollection: nftCollectionContract,
           tokenId: tokenIds[i][0],
           ownerId: accountId);
@@ -1186,6 +1229,22 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
+  Future<BlockchainResponse> NFTInteractionPermission(
+      {required String nameNFTCollection,
+      required String tokenId,
+      required String ownerId}) async {
+    final query = """query MyQuery {
+                      mb_views_nft_tokens(
+                        where: {nft_contract_id: {_eq: "$nameNFTCollection"}, burned_timestamp: {_is_null: true}, token_id: {_eq: "$tokenId"}, owner: {_eq: "$ownerId"}}
+                        distinct_on: title
+                      ) {
+                        title
+                        token_id
+                      }
+                    }""";
+    return await nearRpcClient.mintBaseRPCInteractions(query: query);
+  }
+
   Future<bool> multiplyNFT({
     required String nameNFTCollection,
     required String nameNFT,
@@ -1198,7 +1257,7 @@ class NearBlockChainService implements BlockChainService {
   }) async {
     Map<String, dynamic>? royalty_args;
 
-    final data = await nearRpcClient.getInfoForMultiply(
+    final data = await getInfoForMultiply(
         nameNFTCollection: nameNFTCollection,
         ownerId: accountId,
         nameNFT: nameNFT);
@@ -1259,6 +1318,27 @@ class NearBlockChainService implements BlockChainService {
     }
 
     return true;
+  }
+
+  Future<BlockchainResponse> getInfoForMultiply(
+      {required String nameNFTCollection,
+      required String ownerId,
+      required String nameNFT}) async {
+    final query = """query MyQuery {
+                            mb_views_nft_tokens(
+                              where: {nft_contract_id: {_eq: "$nameNFTCollection"}, title: {_eq: "$nameNFT"}, burned_timestamp: {_is_null: true}, owner: {_eq: "$ownerId"}}
+                              distinct_on: title
+                            ) {
+                              splits
+                              title
+                              royalties_percent
+                              reference
+                              nft_contract_name
+                              media
+                              royalties
+                            }
+                          }""";
+    return await nearRpcClient.mintBaseRPCInteractions(query: query);
   }
 
   Future<bool> simpleListNFT({
@@ -1381,8 +1461,7 @@ class NearBlockChainService implements BlockChainService {
     String? toAddress = "market-v2-beta.mintspace2.testnet",
   }) async {
     final price = await getPriceForBuySimpleListNFT(
-            nftContractId: nameNFTCollection, tokenId: tokenId) +
-        1000000000;
+        nftContractId: nameNFTCollection, tokenId: tokenId);
 
     final Map<String, dynamic> args = {
       "nft_contract_id": nameNFTCollection,
@@ -1390,7 +1469,7 @@ class NearBlockChainService implements BlockChainService {
       "referrer_id": referrer_id?.length == 0 ? null : referrer_id,
     };
 
-    BigInt formatPrice = BigInt.from(price);
+    BigInt formatPrice = BigInt.from(price) + BigInt.from(16777217);
 
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
@@ -1416,8 +1495,15 @@ class NearBlockChainService implements BlockChainService {
 
   Future<double> getPriceForBuySimpleListNFT(
       {required String nftContractId, required int tokenId}) async {
-    final request = await nearRpcClient.getPriceForBuySimpleListNFT(
-        nftContractId: nftContractId, tokenId: tokenId);
+    final query = """query MyQuery {
+                      mb_views_active_listings(
+                        where: {nft_contract_id: {_eq: "$nftContractId"}, token_id: {_eq: "$tokenId"}}
+                      ) {
+                        price
+                      }
+                    }""";
+
+    final request = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
     List<dynamic> requestInfo =
         request.data["data"]["mb_views_active_listings"];

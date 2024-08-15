@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mintbase_example/modules/models/models.dart';
+import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
 
 part 'authorized.g.dart';
 

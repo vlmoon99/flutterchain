@@ -5,10 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
-import 'package:mintbase_example/modules/models/models.dart';
-import 'package:mintbase_example/modules/pages/thems/thems.dart';
-import 'package:mintbase_example/modules/services/auth_controller.dart';
-import 'package:image/image.dart' as img;
+import 'package:mintbase_example/modules/models/category_nft_model/category_nft.dart';
+import 'package:mintbase_example/thems/thems.dart';
+import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 
 class Mintnft extends StatefulWidget {
   const Mintnft({super.key});
