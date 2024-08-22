@@ -9,4 +9,5 @@ class Thems {
       ));
 
   static final padding = EdgeInsets.all(10);
+  static final textColorAppDialog = Color.fromARGB(255, 227, 147, 91);
 }

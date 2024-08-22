@@ -9,4 +9,9 @@ class NearBlockChainNetworkUrls {
     "https://graph.mintbase.xyz/testnet",
     "https://graph.mintbase.xyz/mainnet"
   };
+
+  static const listOfMarketAccountId = {
+    "market-v2-beta.mintspace2.testnet",
+    "simple.market.mintbase1.near"
+  };
 }

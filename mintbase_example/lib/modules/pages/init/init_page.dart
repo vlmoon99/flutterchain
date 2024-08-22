@@ -58,9 +58,6 @@ class _InitPageState extends State<InitPage> {
                       .map(
                         (net) => DropdownMenuItem(
                           value: net,
-                          //TODO: mainnet disable flag
-                          enabled:
-                              net == NearNetworkType.mainnet ? false : true,
                           child: Text(
                             net.name,
                             style: TextStyle(

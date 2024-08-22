@@ -55,6 +55,9 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
           const Text('Unlist simple sale and delist NFT',
               style: TextStyle(
                   fontSize: 17, color: Color.fromARGB(255, 245, 79, 1))),
+          SizedBox(height: 7),
+          const Text('Unlist - for simple sale\nDelist - for rolling',
+              style: TextStyle(fontSize: 16)),
           TextField(
             controller: nftCollectionController,
             decoration: const InputDecoration(
@@ -77,7 +80,11 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
                     output = "unlist";
                   });
                 },
-                child: const Text('Unlist NFT'),
+                child: const Text('Unlist NFT',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
               SizedBox(width: 45),
               ElevatedButton(
@@ -89,7 +96,11 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
                     output = "delist";
                   });
                 },
-                child: const Text('Delist NFT'),
+                child: const Text('Delist NFT',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
             ],
           ),

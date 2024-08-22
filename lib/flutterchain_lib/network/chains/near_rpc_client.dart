@@ -242,11 +242,9 @@ class NearRpcClient {
       throw Exception("The file size should be up to 30MB");
     }
 
-    final uri = 'https://ar.mintbase.xyz';
+    String uri = 'https://ar.mintbase.xyz';
 
-    final heders = {
-      "mb-api-key": "anon",
-    };
+    Map<String, dynamic> heders = {"mb-api-key": "anon"};
 
     String fileFormat = checkFileFormat(filePath: file.path);
 
@@ -332,10 +330,11 @@ class NearRpcClient {
       }
     });
 
-    FormData formData = FormData.fromMap(finalRefetence); //.fromMap(reference);
+    FormData formData = FormData.fromMap(finalRefetence);
 
     final uri = 'https://ar.mintbase.xyz/reference';
-    final heders = {"mb-api-key": "anon"};
+
+    Map<String, dynamic> heders = {"mb-api-key": "anon"};
 
     final res = await networkClient.postHTTP(uri, formData, heders);
 

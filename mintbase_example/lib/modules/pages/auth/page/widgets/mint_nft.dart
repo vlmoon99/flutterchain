@@ -227,7 +227,11 @@ class _MintnftState extends State<Mintnft> {
             children: [
               ElevatedButton(
                 onPressed: () => pickFile(controller: pickMediaController),
-                child: const Text('Pick media File**'),
+                child: const Text('Pick media File**',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
               pickMediaController.text.isNotEmpty
                   ? Text(
@@ -240,7 +244,11 @@ class _MintnftState extends State<Mintnft> {
             children: [
               ElevatedButton(
                 onPressed: () => pickFile(controller: pickAnimationController),
-                child: const Text('Pick animation File'),
+                child: const Text('Pick animation File',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
               Text(
                 pickAnimationController.text.isNotEmpty
@@ -254,7 +262,11 @@ class _MintnftState extends State<Mintnft> {
             children: [
               ElevatedButton(
                 onPressed: () => pickFile(controller: pickDocumentController),
-                child: Text('Pick document File'),
+                child: Text('Pick document File',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
               Text(
                 pickDocumentController.text.isNotEmpty
@@ -518,7 +530,11 @@ class _MintnftState extends State<Mintnft> {
                     extra: extra);
               });
             },
-            child: const Text('Mint NFT'),
+            child: const Text('Mint NFT',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
           isMint == null
               ? const Text("No action on minting")

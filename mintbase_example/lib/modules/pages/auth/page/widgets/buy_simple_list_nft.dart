@@ -4,45 +4,43 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 
-class Offers extends StatefulWidget {
-  const Offers({super.key});
+class BuySimpleListNft extends StatefulWidget {
+  const BuySimpleListNft({super.key});
 
   @override
-  State<Offers> createState() => _OffersState();
+  State<BuySimpleListNft> createState() => _BuySimpleListNftState();
 }
 
-class _OffersState extends State<Offers> {
+class _BuySimpleListNftState extends State<BuySimpleListNft> {
   final nearService = Modular.get<NearBlockChainService>();
 
   final nftCollectionController = TextEditingController();
   final tokenIdController = TextEditingController();
-  final priceBidController = TextEditingController();
-  final timeoutInHoursController = TextEditingController();
+  final referrerIdController = TextEditingController();
 
-  Future<bool>? isOffering;
-  Future<double>? priceOffers;
+  Future<bool>? isBuy;
+  Future<String>? price;
 
-  Future<bool> offersToRollingAuction(
+  Future<bool> buySimpleListNft(
       {required String nameNFTCollection,
       required int tokenId,
-      required int priceBid,
-      required int? timeoutInHours}) async {
+      String? referrer_id}) async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
 
-    return await nearService.offersToRollingAuction(
+    return await nearService.buySimpleListNFT(
         accountId: infocrypto.accountId,
         publicKey: infocrypto.publicKey,
         nameNFTCollection: nameNFTCollection,
         privateKey: infocrypto.privateKey,
         tokenId: tokenId,
-        priceBid: priceBid,
-        timeoutInHours: timeoutInHours);
+        referrer_id: referrer_id);
   }
 
-  Future<double> checkMaxPriceBidNFT(
+  Future<String> checkPrice(
       {required String nftContractId, required int tokenId}) async {
-    return await nearService.checkMaxPriceBidNFT(
+    String priceNotFormat = await nearService.getPriceForBuySimpleListNFT(
         nftContractId: nftContractId, tokenId: tokenId);
+    return priceNotFormat;
   }
 
   @override
@@ -52,7 +50,7 @@ class _OffersState extends State<Offers> {
       padding: Thems.padding,
       child: Column(
         children: [
-          const Text('Offers to rolling auction NFT',
+          const Text('Buy simple list NFT',
               style: TextStyle(
                   fontSize: 17, color: Color.fromARGB(255, 245, 79, 1))),
           TextField(
@@ -62,36 +60,32 @@ class _OffersState extends State<Offers> {
           ),
           TextField(
             controller: tokenIdController,
-            decoration: const InputDecoration(labelText: 'Input token id'),
+            decoration: const InputDecoration(labelText: 'Input token id NFT'),
           ),
           TextField(
-            controller: priceBidController,
-            decoration: const InputDecoration(labelText: 'Price bid(Near)'),
-          ),
-          TextField(
-            controller: timeoutInHoursController,
+            controller: referrerIdController,
             decoration:
-                const InputDecoration(labelText: 'Time out(hour, option)'),
+                const InputDecoration(labelText: 'Input referrer id(optional)'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               setState(() {
-                isOffering = offersToRollingAuction(
-                  nameNFTCollection: nftCollectionController.text,
-                  tokenId: int.parse(tokenIdController.text),
-                  priceBid: int.parse(priceBidController.text),
-                  timeoutInHours: timeoutInHoursController.text.isNotEmpty
-                      ? int.parse(timeoutInHoursController.text)
-                      : null,
-                );
+                isBuy = buySimpleListNft(
+                    nameNFTCollection: nftCollectionController.text,
+                    tokenId: int.parse(tokenIdController.text),
+                    referrer_id: referrerIdController.text);
               });
             },
-            child: const Text('Rolling NFT'),
+            child: const Text('Buy NFT',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
-          isOffering == null
-              ? const Text("No action on rolling")
+          isBuy == null
+              ? const Text("There were no interactions")
               : FutureBuilder<bool>(
-                  future: isOffering,
+                  future: isBuy,
                   builder:
                       (BuildContext context, AsyncSnapshot<bool> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -99,38 +93,46 @@ class _OffersState extends State<Offers> {
                     } else if (snapshot.hasError) {
                       return SelectableText('Error: ${snapshot.error}');
                     } else {
+                      final data = snapshot.data!;
                       return const SelectableText(
-                        "Offer was create successful",
+                        "The NFT has been bought",
                         style: TextStyle(fontSize: 16),
                       );
                     }
                   },
                 ),
           SizedBox(height: 10),
-          Text("Beffor starting you can check max price bid"),
+          Text(
+            "You can check price nft",
+            style: TextStyle(fontSize: 16),
+          ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               setState(() {
-                priceOffers = checkMaxPriceBidNFT(
+                price = checkPrice(
                     nftContractId: nftCollectionController.text,
                     tokenId: int.parse(tokenIdController.text));
               });
             },
-            child: const Text('Check price NFT'),
+            child: const Text('Check price',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
-          priceOffers == null
-              ? const Text("No action on checking")
-              : FutureBuilder<double>(
-                  future: priceOffers,
+          price == null
+              ? const Text("There were no interactions")
+              : FutureBuilder<String>(
+                  future: price,
                   builder:
-                      (BuildContext context, AsyncSnapshot<double> snapshot) {
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return SelectableText('Error: ${snapshot.error}');
                     } else {
                       return SelectableText(
-                        "Max price bid: ${snapshot.data}",
+                        "Price: ${snapshot.data}",
                         style: TextStyle(fontSize: 16),
                       );
                     }

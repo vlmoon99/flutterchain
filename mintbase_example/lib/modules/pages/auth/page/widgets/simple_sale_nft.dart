@@ -77,7 +77,11 @@ class _SimpleSaleState extends State<SimpleSale> {
                     price: priceController.text);
               });
             },
-            child: const Text('List NFT'),
+            child: const Text('List NFT',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
           isList == null
               ? const Text("No action on listing")
@@ -90,10 +94,17 @@ class _SimpleSaleState extends State<SimpleSale> {
                     } else if (snapshot.hasError) {
                       return SelectableText('Error: ${snapshot.error}');
                     } else {
-                      return const SelectableText(
-                        "NFT was listing successful",
-                        style: TextStyle(fontSize: 16),
-                      );
+                      if (snapshot.data == true) {
+                        return const SelectableText(
+                          "NFT was listing successful",
+                          style: TextStyle(fontSize: 16),
+                        );
+                      } else {
+                        return const SelectableText(
+                          "NFT not listed",
+                          style: TextStyle(fontSize: 16),
+                        );
+                      }
                     }
                   },
                 )

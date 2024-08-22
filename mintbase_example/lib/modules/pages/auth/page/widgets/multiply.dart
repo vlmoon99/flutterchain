@@ -79,7 +79,11 @@ class _MultiplyNFTState extends State<MultiplyNFT> {
                     numToMint: int.tryParse(numToMultiplyController.text)!);
               });
             },
-            child: const Text('Multiply NFT'),
+            child: const Text('Multiply NFT',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
           isMint == null
               ? const Text("No action on multiply minting")

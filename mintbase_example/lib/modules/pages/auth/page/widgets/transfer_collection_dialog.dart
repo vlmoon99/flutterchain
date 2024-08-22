@@ -99,7 +99,11 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
                     keep_old_minters: keep_old_minters);
               });
             },
-            child: const Text('Transfer collection'),
+            child: const Text('Transfer collection',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
           responseTransfer == null
               ? const Text("There were no transfers")

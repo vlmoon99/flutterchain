@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -744,8 +746,15 @@ class NearBlockChainService implements BlockChainService {
     String? baseUri = "https://arweave.net",
     String? reference,
     String? referenceHash,
-    String? factoryContract = 'mintspace2.testnet',
+    String? factoryContract,
   }) async {
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      factoryContract ??= "mintspace2.testnet";
+    } else {
+      factoryContract ??= "mintbase1.near";
+    }
+
     icon = (icon != null && icon.isNotEmpty)
         ? icon
         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEXUlEQVRYR8VXW4hVVRj+vrX3OYbFNBl2eSsoa8pkxMJmzpGGoIwMY0wwImuCXmKKkiikKayHQIpAwbdAswskBYqJSlANek7TUOPURGKCWdmFkJnsoZnhzNn/F2vcZ9gez2UfEVoP+2Gv///Xt771X4mUq6enpz2Kogck3S2pk+R1ki736iT/kfQzyW/N7PNsNrtvcHDwTBrTbCbU1dV1cxiGGyWtA3BJM/l4f1rSLjPbPDQ0dKyRTl0AS5YsubStre11AP0AwiYHi+SJmJGFCdmypG3T09MDIyMjk7Vs1ASQy+VuIrkbQEezG3vqJfXGTzHhnFtlZttIuoTuUQC9hULheLW98wDkcrnbARwkeWWzw+P9ewCsB/AYgBkz6yW5lmRfUl/SOMmVhUJhJPn/HAD+5gCKLRzubS0AMO59MTa828z2Oud2VF8gBtGdZGIOQPzmX6ehPWk4iqKOIAg+BnCr/y/pJUmnnHPv1WHw6NTU1B0Vn5gDkM/ntwB4NiXtc2KS9kdR1B+G4aMA/pD0kaQHGwDwILcUi8UNs37jPz7UgiD4PoW318Qn6QSA/STbJc2T9EkjAAB8dCwuFos/zgLI5/M7YydqlYBa8vvMbFcTAJ6FncVisY/5fP4KT10LSaYZyFQAAEyHYXitB+BD6N1mVlvYTwsAZraeuVxuR3XMNjpM0mFJW0n+VUfub0mnSS6S5JxznQBeBpDMkBXV7R7AKEkv1HRJGiLpvX0rgHYzGyB5S5yuZ/VJHioUCv25XO4Vn/0AHDCzD51z35DMViWnUf8EEwC8H6RZj5O8Py5M3pF+D4JghZn9lFDeB+AtAF9U/vmw9CBJ3lt1yIQHYIks1gzEapJPSlodJ53xcrncmclkTiUOOwRgM8n9iX8Pk/S+tqqKAWsZgJmddM6971kzs+f9W5P0VbOyZmZmZjyo5yStcc4djKJoE8kxkvNrAWjlCVZLugHAYefcpJmtIzkAIKii7ldJL5jZkTAMF0t6A8CNNeidaMkJAXjqNwLobvZWafYljbYahhcVAIDtrSaiiwpgNhGlSMVjAI5J8m3Xm3FILapD8UKSd9XwiVriZ1Ox36lXjCRtMLPPwjC8s1QqHRgeHv6tu7v7IefcNYkQG8tkMqPlcnmNrylm9q9z7lMAlzXyg7li5IXqlOOvADwN4EsAPoOdLpVKHdlsdm/SCUku8/UdwIo4NzxF8noALzYAcG45jlmobkjelnTc014xRPI+Sa8BWJ4w7lsyH8qVtUfSHpLv1ANwXkPiBWu0ZEeiKOoLgsAzMd+nXTNb7pz7geTsQBLfuIvkqwBWnu3I9ASAZSSfqQOgdkvmhaubUpKboij6IAiCpSSH/aAB4JEqw9+VSqXeTCZzm6Q/nXNXA/A94rxqAA2b0opwjbb8JADfzy8FcFWdW01K8kwtqFdZU7XlCRCpB5M0GQ9A+sGkYrDF0awejgsbzZLW/rfhtPpKTcbzM5J+uZDx/D8+0FUx/4DhyAAAAABJRU5ErkJggg==";
@@ -785,19 +794,19 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
   Future<List<dynamic>> checkOwnerCollection({required String owner_id}) async {
     final query = """query MyQuery {
-            nft_contracts(
-              limit: 30
-              where: {owner_id: {_eq: "${owner_id}"}}
-            ) {
-              owner_id
-              name
-            }
-          }""";
+                      nft_contracts(where: {owner_id: {_eq: "$owner_id"}}) {
+                        id
+                      }
+                    }""";
 
     final response = await nearRpcClient.mintBaseRPCInteractions(query: query);
 
@@ -808,7 +817,7 @@ class NearBlockChainService implements BlockChainService {
     }
 
     List<String> names =
-        contracts.map((contacts) => contacts["name"] as String).toList();
+        contracts.map((contacts) => contacts["id"] as String).toList();
 
     return names;
   }
@@ -877,7 +886,7 @@ class NearBlockChainService implements BlockChainService {
     return contracts;
   }
 
-  Future<double> checkMaxPriceBidNFT(
+  Future<Map<String, String>> checkMaxPriceBidNFT(
       {required String nftContractId, required int tokenId}) async {
     final query = """query MyQuery {
                       nft_offers_aggregate(
@@ -899,7 +908,18 @@ class NearBlockChainService implements BlockChainService {
       throw Exception("This token don`t have offer max sum");
     }
 
-    return pricesResponse["aggregate"]["max"]["offer_price"];
+    final resPriceBid = Decimal.parse(
+        pricesResponse["aggregate"]["max"]["offer_price"].toString());
+
+    final priceBid = await getPriceForBuySimpleListNFT(
+        nftContractId: nftContractId, tokenId: tokenId);
+
+    Map<String, String> responseBid = {
+      "maxbid": resPriceBid.toString(),
+      "minbid": priceBid.toString()
+    };
+
+    return responseBid;
   }
 
   Future<dynamic> transferNFTCollection({
@@ -932,6 +952,10 @@ class NearBlockChainService implements BlockChainService {
 
     if (nearSignRequest.data["error"] != null) {
       throw Exception(nearSignRequest.data["error"]);
+    }
+
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
     }
 
     return true;
@@ -974,9 +998,11 @@ class NearBlockChainService implements BlockChainService {
 
     if (nearSignRequest.data["error"] != null) {
       throw Exception(nearSignRequest.data["error"]);
+    } else if (nearSignRequest.data["success"] != null) {
+      return true;
+    } else {
+      return false;
     }
-
-    return true;
   }
 
   Future<List<dynamic>> getMinters({
@@ -1132,6 +1158,10 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
@@ -1226,6 +1256,10 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
@@ -1317,6 +1351,10 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
@@ -1348,14 +1386,28 @@ class NearBlockChainService implements BlockChainService {
     required String accountId,
     required String publicKey,
     required String privateKey,
-    String? arg_account_id = "market-v2-beta.mintspace2.testnet",
+    String? market_account_id,
   }) async {
-    final msg =
-        """{\\"price\\":\\"${price}000000000000000000000000\\",\\"autotransfer\\":true}""";
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.first;
+    } else {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.last;
+    }
+
+    Decimal iputPrice = Decimal.parse(price);
+
+    Decimal constValue = Decimal.parse('1000000000000000000000000');
+
+    Decimal resultPrice = iputPrice * constValue;
+
+    final msg = """{\\"price\\":\\"${resultPrice.toString()}\\"}""";
 
     final Map<String, dynamic> args = {
       "token_id": tokenId,
-      "account_id": arg_account_id,
+      "account_id": market_account_id,
       "msg": msg,
     };
 
@@ -1376,11 +1428,56 @@ class NearBlockChainService implements BlockChainService {
 
     if (nearSignRequest.data["error"] != null) {
       throw Exception(nearSignRequest.data["error"]);
-    } else if (nearSignRequest.data["success"] != null) {
-      return true;
-    } else {
-      return false;
     }
+
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
+    return true;
+  }
+
+  Future<bool> ListingActivate({
+    required String accountId,
+    required String publicKey,
+    required String privateKey,
+    String? market_account_id,
+  }) async {
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.first;
+    } else {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.last;
+    }
+
+    final Map<String, dynamic> args = {"autotransfer": true};
+
+    final nearSignRequest = await callSmartContractFunction(
+      NearTransferRequest(
+        fromAddress: accountId,
+        publicKey: publicKey,
+        toAddress: market_account_id,
+        privateKey: privateKey,
+        gas: "300000000000000",
+        arguments: NearBlockChainSmartContractArguments(
+          method: "deposit_storage",
+          args: args,
+          transferAmount: "10000000000000000000000",
+        ),
+      ),
+    );
+
+    if (nearSignRequest.data["error"] != null) {
+      throw Exception(nearSignRequest.data["error"]);
+    }
+
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
+    return true;
   }
 
   Future<bool> unlistNFT(
@@ -1389,17 +1486,26 @@ class NearBlockChainService implements BlockChainService {
       required String nameNFTCollection,
       required String privateKey,
       required int tokenId,
-      String? toAddress = "market-v2-beta.mintspace2.testnet"}) async {
+      String? market_account_id}) async {
     final Map<String, dynamic> args = {
       "token_ids": ["$tokenId"],
       "nft_contract_id": nameNFTCollection
     };
 
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.first;
+    } else {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.last;
+    }
+
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
         fromAddress: accountId,
         publicKey: publicKey,
-        toAddress: toAddress,
+        toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
         arguments: NearBlockChainSmartContractArguments(
@@ -1414,6 +1520,10 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
@@ -1423,17 +1533,26 @@ class NearBlockChainService implements BlockChainService {
       required String nameNFTCollection,
       required String privateKey,
       required int tokenId,
-      String? toAddress = "market.mintspace2.testnet"}) async {
+      String? market_account_id}) async {
     final Map<String, dynamic> args = {
       "token_ids": ["$tokenId"],
       "nft_contract_id": nameNFTCollection,
     };
 
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.first;
+    } else {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.last;
+    }
+
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
         fromAddress: accountId,
         publicKey: publicKey,
-        toAddress: toAddress,
+        toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
         arguments: NearBlockChainSmartContractArguments(
@@ -1448,6 +1567,10 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
@@ -1458,10 +1581,19 @@ class NearBlockChainService implements BlockChainService {
     required String privateKey,
     required int tokenId,
     String? referrer_id,
-    String? toAddress = "market-v2-beta.mintspace2.testnet",
+    String? market_account_id,
   }) async {
     final price = await getPriceForBuySimpleListNFT(
         nftContractId: nameNFTCollection, tokenId: tokenId);
+
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.first;
+    } else {
+      market_account_id ??=
+          NearBlockChainNetworkUrls.listOfMarketAccountId.last;
+    }
 
     final Map<String, dynamic> args = {
       "nft_contract_id": nameNFTCollection,
@@ -1469,13 +1601,13 @@ class NearBlockChainService implements BlockChainService {
       "referrer_id": referrer_id?.length == 0 ? null : referrer_id,
     };
 
-    BigInt formatPrice = BigInt.from(price) + BigInt.from(16777217);
+    Decimal formatPrice = Decimal.parse(price);
 
     final nearSignRequest = await callSmartContractFunction(
       NearTransferRequest(
         fromAddress: accountId,
         publicKey: publicKey,
-        toAddress: toAddress,
+        toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
         arguments: NearBlockChainSmartContractArguments(
@@ -1490,10 +1622,14 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
-  Future<double> getPriceForBuySimpleListNFT(
+  Future<String> getPriceForBuySimpleListNFT(
       {required String nftContractId, required int tokenId}) async {
     final query = """query MyQuery {
                       mb_views_active_listings(
@@ -1511,7 +1647,9 @@ class NearBlockChainService implements BlockChainService {
       throw Exception("This NFT not in active listings");
     }
 
-    return requestInfo.first["price"];
+    Decimal price = Decimal.parse(requestInfo.first["price"].toString());
+
+    return price.toString();
   }
 
   Future<bool> rollingAuctionNft(
@@ -1520,13 +1658,26 @@ class NearBlockChainService implements BlockChainService {
       required String nameNFTCollection,
       required String privateKey,
       required int tokenId,
-      required int price,
-      String? arg_account_id = "market.mintspace2.testnet"}) async {
+      required String price,
+      String? market_account_id}) async {
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??= "market.mintspace2.testnet";
+    } else {
+      market_account_id ??= "market.mintbase1.near";
+    }
+
+    Decimal iputPrice = Decimal.parse(price);
+
+    Decimal constValue = Decimal.parse('1000000000000000000000000');
+
+    Decimal resultPrice = iputPrice * constValue;
+
     final Map<String, dynamic> args = {
       "token_id": "$tokenId",
-      "account_id": arg_account_id,
+      "account_id": market_account_id,
       "msg":
-          """{\\"price\\":\\"${price}000000000000000000000000\\",\\"autotransfer\\":false}"""
+          """{\\"price\\":\\"${resultPrice.toString()}\\",\\"autotransfer\\":false}"""
     };
 
     final nearSignRequest = await callSmartContractFunction(
@@ -1548,6 +1699,10 @@ class NearBlockChainService implements BlockChainService {
       throw Exception(nearSignRequest.data["error"]);
     }
 
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
     return true;
   }
 
@@ -1557,14 +1712,28 @@ class NearBlockChainService implements BlockChainService {
     required String nameNFTCollection,
     required String privateKey,
     required int tokenId,
-    required int priceBid,
+    required String priceBid,
     int? timeoutInHours,
-    String? toAddress = "market.mintspace2.testnet",
+    String? market_account_id,
   }) async {
     timeoutInHours ??= 24;
+
+    if (nearRpcClient.networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      market_account_id ??= "market.mintspace2.testnet";
+    } else {
+      market_account_id ??= "market.mintbase1.near";
+    }
+
+    Decimal iputPrice = Decimal.parse(priceBid);
+
+    Decimal constValue = Decimal.parse('1000000000000000000000000');
+
+    Decimal resultPrice = iputPrice * constValue;
+
     final Map<String, dynamic> args = {
       "token_key": ["$tokenId:$nameNFTCollection"],
-      "price": ["${priceBid}000000000000000000000000"],
+      "price": [resultPrice.toString()],
       "timeout": [
         {"Hours": timeoutInHours}
       ]
@@ -1574,19 +1743,23 @@ class NearBlockChainService implements BlockChainService {
       NearTransferRequest(
         fromAddress: accountId,
         publicKey: publicKey,
-        toAddress: toAddress,
+        toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
         arguments: NearBlockChainSmartContractArguments(
           method: "make_offer",
           args: args,
-          transferAmount: "${priceBid}000000000000000000000000",
+          transferAmount: resultPrice.toString(),
         ),
       ),
     );
 
     if (nearSignRequest.data["error"] != null) {
       throw Exception(nearSignRequest.data["error"]);
+    }
+
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
     }
 
     return true;

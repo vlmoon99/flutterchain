@@ -42,6 +42,31 @@ class AuthController extends Disposable {
     // }
   }
 
+  Future<void> loginWithMnemonic({
+    required String accountId,
+    required String publicKey,
+    required String secretKey,
+    required NearNetworkType networkType,
+  }) async {
+    // try {
+    await nearBlockChainService.setBlockchainNetworkEnvironment(
+      newUrl: networkType == NearNetworkType.mainnet
+          ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
+          : NearBlockChainNetworkUrls.listOfUrls.first,
+    );
+
+    _streamController.add(state.copyWith(
+      accountId: accountId,
+      publicKey: publicKey,
+      secretKey: secretKey,
+      privateKey: secretKey,
+      networkType: networkType,
+    ));
+    // } catch (err) {
+    //   rethrow;
+    // }
+  }
+
   Future<void> login({
     required String accountId,
     required String secretKey,

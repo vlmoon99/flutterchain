@@ -3,18 +3,19 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/add_remove_minters.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/buy_simple_list_nft.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/check_nft_info.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/create_collection_dialog.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/mint_nft.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/multiply.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/offers.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/rolling_auction_nft.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/simple_sale_nft.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/transfer_collection_dialog.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/transfet_nft.dart';
-import 'package:mintbase_example/modules/pages/auth/widgets/unlist_delist_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/add_remove_minters.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/buy_simple_list_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/check_nft_info.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/create_collection_dialog.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/mint_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/multiply.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/offers.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/rolling_auction_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/simple_sale_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/listing_activate.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/transfer_collection_dialog.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/transfet_nft.dart';
+import 'package:mintbase_example/modules/pages/auth/page/widgets/unlist_delist_nft.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 import 'package:mintbase_example/routes/routes.dart';
@@ -76,32 +77,23 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Mintbase integration",
+          style:
+              TextStyle(fontSize: 25, color: Color.fromARGB(255, 219, 85, 85)),
+        ),
+        centerTitle: true,
+        foregroundColor: Color.fromARGB(255, 219, 85, 85),
+        backgroundColor: Color.fromARGB(225, 167, 167, 167),
+        shadowColor: Colors.transparent,
+      ),
       body: SafeArea(
           child: Container(
         padding: EdgeInsets.all(10),
         alignment: Alignment.center,
         child: Column(
           children: [
-            Row(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.keyboard_double_arrow_left),
-                    onPressed: () => Modular.to.navigate(CoreRoutes.home),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "Mintbase integration",
-                      style: TextStyle(fontSize: 25, color: Colors.red),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 48), // Ширина кнопки для симметрии
-              ],
-            ),
             const SizedBox(height: 10),
             Flexible(
               child: SingleChildScrollView(
@@ -117,7 +109,7 @@ class _AuthPageState extends State<AuthPage> {
                               "Main info",
                               style: TextStyle(
                                   fontSize: 17,
-                                  color: Color.fromARGB(255, 245, 79, 1)),
+                                  color: Color.fromARGB(255, 219, 85, 85)),
                             ),
                             if (accountId != null &&
                                 privateKey != null &&
@@ -210,7 +202,7 @@ class _AuthPageState extends State<AuthPage> {
                                                     ...snapshot.data!
                                                         .map((collection) {
                                                       return SelectableText(
-                                                        '${collection}.mintspace2.testnet',
+                                                        collection,
                                                         style: const TextStyle(
                                                             color: const Color
                                                                 .fromARGB(
@@ -315,6 +307,8 @@ class _AuthPageState extends State<AuthPage> {
                     TransfetNft(),
                     SizedBox(height: 13),
                     MultiplyNFT(),
+                    SizedBox(height: 13),
+                    ListingActivate(),
                     SizedBox(height: 13),
                     SimpleSale(),
                     SizedBox(height: 13),

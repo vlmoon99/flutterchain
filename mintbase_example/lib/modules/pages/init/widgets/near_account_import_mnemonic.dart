@@ -73,10 +73,12 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
                 final accountInfo =
                     await getAccountInfo(mnemonic: mnemonicController.text);
 
-                await Modular.get<AuthController>(key: "AuthController").login(
-                    accountId: acountIDController.text,
-                    secretKey: accountInfo.privateKey,
-                    networkType: widget.networkType);
+                await Modular.get<AuthController>(key: "AuthController")
+                    .loginWithMnemonic(
+                        accountId: acountIDController.text,
+                        publicKey: accountInfo.publicKey,
+                        secretKey: accountInfo.privateKey,
+                        networkType: widget.networkType);
 
                 final FlutterSecureStorage secureStorage =
                     Modular.get<FlutterSecureStorage>();

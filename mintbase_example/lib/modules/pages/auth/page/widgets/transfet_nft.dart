@@ -163,17 +163,22 @@ class _TransfetNftState extends State<TransfetNft> {
           ),
           SizedBox(height: 10),
           ElevatedButton(
-              onPressed: () {
-                final tokenIds = convertToTokenIds(
-                    idNFTControllers: _idNFTControllers,
-                    accountIdControllers: _accountIdControllers);
-                setState(() {
-                  isAdd = transferNFT(
-                      nftCollectionContract: accountIdCollectionController.text,
-                      tokenIds: tokenIds);
-                });
-              },
-              child: const Text("Transfer NFT")),
+            onPressed: () {
+              final tokenIds = convertToTokenIds(
+                  idNFTControllers: _idNFTControllers,
+                  accountIdControllers: _accountIdControllers);
+              setState(() {
+                isAdd = transferNFT(
+                    nftCollectionContract: accountIdCollectionController.text,
+                    tokenIds: tokenIds);
+              });
+            },
+            child: const Text("Transfer NFT",
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
+          ),
           isAdd == null
               ? const Text("No action on transfer")
               : FutureBuilder<bool>(

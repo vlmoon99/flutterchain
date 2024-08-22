@@ -120,7 +120,11 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                     referenceHash: referenceHashController.text);
               });
             },
-            child: const Text('Create collection'),
+            child: const Text('Create collection',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
           responseCollection == null
               ? const Text("There were no interactions")

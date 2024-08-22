@@ -1,4 +1,5 @@
 class CoreRoutes {
   static String auth = '/auth';
-  static String home = '/';
+  static String init = '/';
+  static String home = '/home';
 }

@@ -23,7 +23,7 @@ class _RollingAuctionNftState extends State<RollingAuctionNft> {
   Future<bool> rollingAuctionNft(
       {required String nameNFTCollection,
       required int tokenId,
-      required int price}) async {
+      required String price}) async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
     return await nearService.rollingAuctionNft(
         accountId: infocrypto.accountId,
@@ -63,10 +63,14 @@ class _RollingAuctionNftState extends State<RollingAuctionNft> {
                 isRolling = rollingAuctionNft(
                     nameNFTCollection: nftCollectionController.text,
                     tokenId: int.parse(tokenIdController.text),
-                    price: int.parse(priceController.text));
+                    price: priceController.text);
               });
             },
-            child: const Text('Rolling NFT'),
+            child: const Text('Rolling NFT',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
           isRolling == null
               ? const Text("No action on rolling")

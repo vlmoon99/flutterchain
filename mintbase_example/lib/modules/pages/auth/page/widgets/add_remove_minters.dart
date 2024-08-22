@@ -86,7 +86,11 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                         isAdd: true);
                   });
                 },
-                child: const Text('ADD'),
+                child: const Text('ADD',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
               SizedBox(width: 45),
               ElevatedButton(
@@ -99,7 +103,11 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                         isAdd: false);
                   });
                 },
-                child: const Text('DELETE'),
+                child: const Text('DELETE',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.primary)),
               ),
             ],
           ),

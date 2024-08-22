@@ -96,13 +96,16 @@ class _CheckInfoState extends State<CheckInfo> {
                   },
                 ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                listInfo = checkNFTInfo();
-              });
-            },
-            child: const Text('Check info owner'),
-          ),
+              onPressed: () {
+                setState(() {
+                  listInfo = checkNFTInfo();
+                });
+              },
+              child: const Text('Check info owner',
+                  style: TextStyle(color: Colors.white, fontSize: 15)),
+              style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(
+                      Theme.of(context).colorScheme.primary))),
           SizedBox(height: 10),
           Text("Listing NFT:"),
           listingNFTInfo == null
@@ -148,7 +151,11 @@ class _CheckInfoState extends State<CheckInfo> {
                 listingNFTInfo = checkListingNFT();
               });
             },
-            child: const Text('Check info listing'),
+            child: const Text('Check info listing',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.primary)),
           ),
         ],
       ),

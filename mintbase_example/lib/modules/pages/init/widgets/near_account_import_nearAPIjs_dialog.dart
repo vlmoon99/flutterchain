@@ -99,7 +99,7 @@ class _NearAccountImportActionDialogState
                   loading = false;
                 });
 
-                Modular.to.navigate("${CoreRoutes.auth}");
+                Modular.to.pushNamed("${CoreRoutes.auth}/");
               },
               child: Text(
                 'Import Near account',
