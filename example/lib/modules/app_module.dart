@@ -13,6 +13,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:flutterchain_example/modules/home/home_module.dart';
 import 'package:flutterchain_example/modules/home/services/helper_service.dart';
+import 'package:flutterchain_example/modules/wallet/wallet_module.dart';
 import 'package:flutterchain_example/network/helper_network_client.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -113,8 +114,10 @@ class AppModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ModuleRoute(
-      Routes.home.module,
-      module: HomeModule(),
+      // Routes.home.module,
+      // module:HomeModule()
+      Routes.wallet.module,
+      module: WalletModule(),
     ),
   ];
 }

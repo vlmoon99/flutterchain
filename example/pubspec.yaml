@@ -23,6 +23,7 @@ dependencies:
   easy_localization: ^3.0.1
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.1
   flutter_modular: 5.0.3
   flutter_screenutil: ^5.7.0
   flutterchain:
@@ -52,6 +53,7 @@ flutter:
   assets:
     - assets/translations/
     - assets/fonts/
+    - assets/images/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

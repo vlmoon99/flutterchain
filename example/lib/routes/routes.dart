@@ -3,6 +3,13 @@
 class Routes {
   static final _Auth auth = _Auth();
   static final _Home home = _Home();
+  static final _Wallet wallet = _Wallet();
+}
+
+class _Wallet extends RouteClass {
+  @override
+  String module = '/wallet';
+  String home = '/';
 }
 
 class _Auth extends RouteClass {
