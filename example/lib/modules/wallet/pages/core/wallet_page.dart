@@ -1,10 +1,13 @@
+import 'dart:math';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain_example/assets/images/icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
-//this is a action buttons
+//this is an action buttons
 Widget _buildButton(BuildContext context, AppIcon icon, String label) {
   final theme = Modular.get<AppTheme>();
   final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -85,7 +88,11 @@ Widget _buildTokensAndNfts() {
     }
   ];
 
-  return ListView.builder(
+  return ListView.separated(
+    separatorBuilder: (context, index) => Divider(
+      color: nearColors.nearGray,
+      thickness: 0.1,
+    ),
     itemCount: tokens.length,
     itemBuilder: (context, index) {
       final token = tokens[index];
@@ -130,11 +137,9 @@ Widget _buildTokensAndNfts() {
   );
 }
 
-//this is a Wallet page,it's main page of UI.
+//this is a Wallet page,it's the main page of UI.
 class WalletPageTab extends StatelessWidget {
   const WalletPageTab({super.key});
-
-  get height => null;
 
   @override
   Widget build(BuildContext context) {
@@ -144,135 +149,152 @@ class WalletPageTab extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: nearColors.nearWhite,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //this is TopBar
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 24.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const AppIcon(
-                      iconType: IconType.settingsIcon,
-                      size: 24,
-                    ),
-                    Text('Wallet',
-                        style: nearTextStyles.label!.copyWith(
-                            fontWeight: FontWeight.w700, fontSize: 25)),
-                    const AppIcon(
-                      iconType: IconType.scanIcon,
-                      size: 30,
-                    )
-                  ],
-                ),
-              ),
-              // this is Balance
-              const SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Text('Total balance',
-                    style: nearTextStyles.label!
-                        .copyWith(color: nearColors.nearGray, fontSize: 16)),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Center(
-                child: Text('\$2.663.56',
-                    style: nearTextStyles.bodyCopy!.copyWith(
-                        color: nearColors.nearBlack,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700)),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      // body: SafeArea(
+      // child: Padding(
+      //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //this is TopBar
+          Container(
+            color: const Color.fromARGB(255, 241, 240, 240),
+            height: 330,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 45, horizontal: 24.0),
+              child: Column(
                 children: [
-                  _buildButton(
-                      context,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       const AppIcon(
-                        iconType: IconType.send,
-                        size: 56,
+                        iconType: IconType.settingsIcon,
+                        size: 24,
                       ),
-                      'Send'),
-                  _buildButton(
-                      context,
+                      Text('Wallet',
+                          style: nearTextStyles.label!.copyWith(
+                              fontWeight: FontWeight.w700, fontSize: 25)),
                       const AppIcon(
-                        iconType: IconType.receive,
-                        size: 56,
-                      ),
-                      'Receive'),
-                  _buildButton(context,
-                      const AppIcon(iconType: IconType.buy, size: 56), 'Buy'),
-                  _buildButton(
-                      context,
-                      const AppIcon(
-                        iconType: IconType.swap,
-                        size: 56,
-                      ),
-                      'Swap'),
+                        iconType: IconType.scanIcon,
+                        size: 30,
+                      )
+                    ],
+                  ),
+
+                  // this is Balance
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: Text('Total balance',
+                        style: nearTextStyles.label!.copyWith(
+                            color: nearColors.nearGray, fontSize: 16)),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Center(
+                    child: Text('\$2.663.56',
+                        style: nearTextStyles.bodyCopy!.copyWith(
+                            color: nearColors.nearBlack,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildButton(
+                          context,
+                          const AppIcon(
+                            iconType: IconType.send,
+                            size: 56,
+                          ),
+                          'Send'),
+                      _buildButton(
+                          context,
+                          const AppIcon(
+                            iconType: IconType.receive,
+                            size: 56,
+                          ),
+                          'Receive'),
+                      _buildButton(
+                          context,
+                          const AppIcon(iconType: IconType.buy, size: 56),
+                          'Buy'),
+                      _buildButton(
+                          context,
+                          const AppIcon(
+                            iconType: IconType.swap,
+                            size: 56,
+                          ),
+                          'Swap'),
+                    ],
+                  ),
                 ],
               ),
-              SizedBox(height: 30),
-              DefaultTabController(
-                length: 2,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 327,
-                      height: 56,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: const Color.fromARGB(255, 241, 240, 240)),
-                      child: TabBar(
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        indicatorPadding: const EdgeInsets.all(4.5),
-                        indicator: BoxDecoration(
-                          color: nearColors.nearBlack,
-                          borderRadius: BorderRadius.circular(17),
-                        ),
-                        labelColor: nearColors.nearWhite,
-                        labelStyle:
-                            const TextStyle(fontWeight: FontWeight.w600),
-                        unselectedLabelColor: Colors.black,
-                        tabs: const [
-                          Tab(
-                            text: 'Tokens',
-                          ),
-                          Tab(
-                            text: 'NFTs',
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 400,
-                      child: TabBarView(
-                        children: [
-                          _buildTokensAndNfts(),
-                          const Center(
-                            child: Text(
-                              'this is nft tab',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+
+          const SizedBox(height: 10),
+          // this is a Tokens/NFTs tab
+          Container(
+            color: nearColors.nearWhite,
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  Container(
+                    width: 327,
+                    height: 56,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: const Color.fromARGB(255, 241, 240, 240)),
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorPadding: const EdgeInsets.all(4.5),
+                      indicator: BoxDecoration(
+                        color: nearColors.nearBlack,
+                        borderRadius: BorderRadius.circular(17),
+                      ),
+                      labelColor: nearColors.nearWhite,
+                      labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                      unselectedLabelColor: Colors.black,
+                      tabs: const [
+                        Tab(
+                          text: 'Tokens',
+                        ),
+                        Tab(
+                          text: 'NFTs',
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    color: nearColors.nearWhite,
+                    height: 400,
+                    child: TabBarView(
+                      children: [
+                        _buildTokensAndNfts(),
+                        const Center(
+                          child: Text(
+                            'this is nft tab',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -311,14 +333,14 @@ class HistoryTab extends StatelessWidget {
   }
 }
 
-class WalletPage extends StatefulWidget {
-  const WalletPage({super.key});
+class WalletPageBottomBar extends StatefulWidget {
+  const WalletPageBottomBar({super.key});
 
   @override
-  State<WalletPage> createState() => _WalletPageState();
+  State<WalletPageBottomBar> createState() => _WalletPageBottomBarState();
 }
 
-class _WalletPageState extends State<WalletPage> {
+class _WalletPageBottomBarState extends State<WalletPageBottomBar> {
   final PageController _pageController = PageController();
 
   int _currentPageIndex = 0;
@@ -333,9 +355,9 @@ class _WalletPageState extends State<WalletPage> {
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
-    final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
 
     return Scaffold(
+        backgroundColor: nearColors.nearWhite,
         body: PageView(
           controller: _pageController,
           onPageChanged: _onPageChanged,
@@ -348,13 +370,15 @@ class _WalletPageState extends State<WalletPage> {
             onTap: _onPageSelected,
             items: const [
               BottomNavigationBarItem(
-                  icon: AppIcon(iconType: IconType.wallet), label: 'wallet'),
+                  icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
               BottomNavigationBarItem(
-                  icon: AppIcon(iconType: IconType.stackingIcon),
-                  label: 'stacking'),
-              BottomNavigationBarItem(icon: Icon(Icons.man), label: 'profile'),
+                  icon: Icon(FluentIcons.stack_24_regular), label: 'Stacking'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.history), label: 'histroy'),
+                  icon: Icon(FluentIcons.person_24_regular), label: 'Profile'),
+              BottomNavigationBarItem(
+                icon: Icon(FluentIcons.history_24_regular),
+                label: ('History'),
+              )
             ]));
   }
 
@@ -373,5 +397,26 @@ class _WalletPageState extends State<WalletPage> {
         curve: Curves.linear,
       );
     });
+  }
+}
+
+class WalletPage extends StatefulWidget {
+  const WalletPage({super.key});
+
+  @override
+  State<WalletPage> createState() => _WalletPageState();
+}
+
+class _WalletPageState extends State<WalletPage> {
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      designSize: Size(375, 812),
+      builder: (context, child) {
+        return MaterialApp(
+          home: WalletPageBottomBar(),
+        );
+      },
+    );
   }
 }
