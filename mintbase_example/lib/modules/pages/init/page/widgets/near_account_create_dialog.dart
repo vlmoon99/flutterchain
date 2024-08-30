@@ -15,7 +15,6 @@ import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart'
 import 'package:mintbase_example/consts/secure_storage_keys.dart';
 import 'package:mintbase_example/modules/models/authorized_model/authorized.dart';
 import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
-import 'package:mintbase_example/routes/routes.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
@@ -127,7 +126,7 @@ class _NearAccountCreationActionDialogState
           ),
         ),
       );
-      Modular.to.navigate("${CoreRoutes.auth}");
+      Modular.to.pushNamed("//home/auth");
     });
     super.didChangeDependencies();
   }

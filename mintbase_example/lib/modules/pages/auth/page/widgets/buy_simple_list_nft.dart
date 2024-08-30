@@ -93,7 +93,6 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
                     } else if (snapshot.hasError) {
                       return SelectableText('Error: ${snapshot.error}');
                     } else {
-                      final data = snapshot.data!;
                       return const SelectableText(
                         "The NFT has been bought",
                         style: TextStyle(fontSize: 16),

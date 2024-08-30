@@ -18,7 +18,6 @@ import 'package:mintbase_example/modules/pages/auth/page/widgets/transfet_nft.da
 import 'package:mintbase_example/modules/pages/auth/page/widgets/unlist_delist_nft.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
-import 'package:mintbase_example/routes/routes.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});

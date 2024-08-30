@@ -1,11 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
-import 'package:mintbase_example/modules/models/category_nft_model/category_nft.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 
@@ -122,7 +119,7 @@ class _MintnftState extends State<Mintnft> {
       Map<String, int>? split_owners,
       String? tags,
       List<dynamic>? extra,
-      String? category,
+      CategoryNFT? category,
       String? documentPath,
       String? animationPath}) async {
     final infoAccount =
@@ -524,7 +521,7 @@ class _MintnftState extends State<Mintnft> {
                     split_between: split_between,
                     split_owners: split_owners,
                     tags: tagsController.text,
-                    category: categoryNFT?.name,
+                    category: categoryNFT,
                     documentPath: pickDocumentController.text,
                     animationPath: pickAnimationController.text,
                     extra: extra);

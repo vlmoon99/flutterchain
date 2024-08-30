@@ -117,7 +117,6 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
                       } else if (snapshot.hasError) {
                         return SelectableText('Error: ${snapshot.error}');
                       } else {
-                        final data = snapshot.data!;
                         return const SelectableText(
                           "Collection was transferred",
                           style: TextStyle(fontSize: 16),

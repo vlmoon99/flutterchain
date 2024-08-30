@@ -35,7 +35,7 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Modular.setInitialRoute(CoreRoutes.home);
+    Modular.setInitialRoute(CoreRoutes.init);
     ScreenUtil.init(context);
     ScreenUtil.configure(
       designSize: const Size(360, 690),

@@ -8,7 +8,6 @@ import 'package:mintbase_example/consts/secure_storage_keys.dart';
 import 'package:mintbase_example/modules/models/authorized_model/authorized.dart';
 import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
-import 'package:mintbase_example/routes/routes.dart';
 import 'package:mintbase_example/widget/rounded_text_field.dart';
 
 class NearAccountImportActionDialog extends StatefulWidget {
@@ -99,7 +98,7 @@ class _NearAccountImportActionDialogState
                   loading = false;
                 });
 
-                Modular.to.pushNamed("${CoreRoutes.auth}/");
+                Modular.to.pushNamed("//home/auth");
               },
               child: Text(
                 'Import Near account',

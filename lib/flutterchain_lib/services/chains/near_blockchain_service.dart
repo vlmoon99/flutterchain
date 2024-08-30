@@ -11,6 +11,7 @@ import 'package:flutterchain/flutterchain_lib/constants/core/blockchains_gas.dar
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
@@ -1053,7 +1054,7 @@ class NearBlockChainService implements BlockChainService {
     Map<String, int>? split_owners,
     List<String>? tags,
     List<dynamic>? extra,
-    String? category,
+    CategoryNFT? category,
     String? document,
     String? baseURL = "https://arweave.net/",
   }) async {
@@ -1079,7 +1080,7 @@ class NearBlockChainService implements BlockChainService {
         throw Exception("To mach percentage, limit exhausted");
       }
 
-      final splitBetweenUpdate = calculateRoyalty(
+      final splitBetweenUpdate = _calculateRoyalty(
           noCompletelyRoyalty: split_between, totalSum: splitBetweenSum * 100);
       royalty_args = {
         "split_between": splitBetweenUpdate,
@@ -1113,7 +1114,7 @@ class NearBlockChainService implements BlockChainService {
       "extra": extra,
       "store": nftCollectionContract,
       "type": "NEP171",
-      "category": category
+      "category": category?.name
     };
 
     final referenceUpload =
@@ -1209,7 +1210,7 @@ class NearBlockChainService implements BlockChainService {
     return response.data;
   }
 
-  Map<String, int> calculateRoyalty(
+  Map<String, int> _calculateRoyalty(
       {required Map<String, int> noCompletelyRoyalty, required int totalSum}) {
     final updatedRoyalty = {
       for (var entry in noCompletelyRoyalty.entries)
@@ -1227,7 +1228,7 @@ class NearBlockChainService implements BlockChainService {
     final Map<String, dynamic> args = {"token_ids": tokenIds};
 
     for (var i = 0; i < tokenIds.length; i++) {
-      final havePermission = await NFTInteractionPermission(
+      final havePermission = await _NFTInteractionPermission(
           nameNFTCollection: nftCollectionContract,
           tokenId: tokenIds[i][0],
           ownerId: accountId);
@@ -1263,7 +1264,7 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
-  Future<BlockchainResponse> NFTInteractionPermission(
+  Future<BlockchainResponse> _NFTInteractionPermission(
       {required String nameNFTCollection,
       required String tokenId,
       required String ownerId}) async {
@@ -1291,7 +1292,7 @@ class NearBlockChainService implements BlockChainService {
   }) async {
     Map<String, dynamic>? royalty_args;
 
-    final data = await getInfoForMultiply(
+    final data = await _getInfoForMultiply(
         nameNFTCollection: nameNFTCollection,
         ownerId: accountId,
         nameNFT: nameNFT);
@@ -1358,7 +1359,7 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
-  Future<BlockchainResponse> getInfoForMultiply(
+  Future<BlockchainResponse> _getInfoForMultiply(
       {required String nameNFTCollection,
       required String ownerId,
       required String nameNFT}) async {
