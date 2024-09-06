@@ -76,7 +76,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () async {
                   setState(() {
                     _isAdd = true;
@@ -93,7 +93,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                         Theme.of(context).colorScheme.primary)),
               ),
               SizedBox(width: 45),
-              ElevatedButton(
+              FilledButton(
                 onPressed: () async {
                   setState(() {
                     _isAdd = false;
@@ -123,14 +123,22 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                       } else if (snapshot.hasError) {
                         return SelectableText('Error: ${snapshot.error}');
                       } else {
-                        if (_isAdd == true) {
-                          return const Text(
-                            "Minters was add",
-                            style: TextStyle(fontSize: 16),
-                          );
+                        final data = snapshot.data;
+                        if (data == true) {
+                          if (_isAdd == true) {
+                            return const Text(
+                              "Minters was add",
+                              style: TextStyle(fontSize: 16),
+                            );
+                          } else {
+                            return const Text(
+                              "Minters was delete",
+                              style: TextStyle(fontSize: 16),
+                            );
+                          }
                         } else {
                           return const Text(
-                            "Minters was delete",
+                            "Function was not successful",
                             style: TextStyle(fontSize: 16),
                           );
                         }
@@ -145,6 +153,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                   ? const Center(
                       child: Text(
                           "Data about minters not loaded,\nfor interaction add name collection",
+                          style: TextStyle(fontSize: 16),
                           softWrap: true),
                     )
                   : Flexible(
@@ -184,7 +193,10 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                               ],
                             );
                           } else {
-                            return const Text('You do not have minters');
+                            return const Text(
+                              'You do not have minters',
+                              style: TextStyle(fontSize: 16),
+                            );
                           }
                         },
                       ),

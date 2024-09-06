@@ -70,7 +70,8 @@ class _MultiplyNFTState extends State<MultiplyNFT> {
             decoration:
                 const InputDecoration(labelText: 'Input num to multiply'),
           ),
-          ElevatedButton(
+          SizedBox(height: 10),
+          FilledButton(
             onPressed: () {
               setState(() {
                 isMint = multiplyNFT(

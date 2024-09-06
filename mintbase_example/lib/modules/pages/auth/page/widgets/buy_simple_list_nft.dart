@@ -67,7 +67,8 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
             decoration:
                 const InputDecoration(labelText: 'Input referrer id(optional)'),
           ),
-          ElevatedButton(
+          SizedBox(height: 10),
+          FilledButton(
             onPressed: () async {
               setState(() {
                 isBuy = buySimpleListNft(
@@ -105,7 +106,7 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
             "You can check price nft",
             style: TextStyle(fontSize: 16),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () async {
               setState(() {
                 price = checkPrice(

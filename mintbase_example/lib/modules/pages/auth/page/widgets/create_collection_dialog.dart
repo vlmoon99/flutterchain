@@ -69,7 +69,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                 TextStyle(fontSize: 17, color: Color.fromARGB(255, 245, 79, 1)),
           ),
           const Text(
-            "On your account must be more then 3.7 Near",
+            "On your account must be more then 3.7 Near. And name collection characters must be in lower case.",
             style: TextStyle(fontSize: 16),
           ),
           TextField(
@@ -107,7 +107,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
           SizedBox(
             height: 10,
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () async {
               setState(() {
                 responseCollection = deployNFTCollection(

@@ -222,7 +222,7 @@ class _MintnftState extends State<Mintnft> {
           ),
           Column(
             children: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () => pickFile(controller: pickMediaController),
                 child: const Text('Pick media File**',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
@@ -239,7 +239,7 @@ class _MintnftState extends State<Mintnft> {
           SizedBox(height: 10),
           Column(
             children: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () => pickFile(controller: pickAnimationController),
                 child: const Text('Pick animation File',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
@@ -257,7 +257,7 @@ class _MintnftState extends State<Mintnft> {
           SizedBox(height: 10),
           Column(
             children: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () => pickFile(controller: pickDocumentController),
                 child: Text('Pick document File',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
@@ -488,7 +488,7 @@ class _MintnftState extends State<Mintnft> {
               ],
             ),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               Map<String, int>? split_owners;
               Map<String, int>? split_between;

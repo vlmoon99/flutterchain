@@ -162,7 +162,7 @@ class _TransfetNftState extends State<TransfetNft> {
             ),
           ),
           SizedBox(height: 10),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               final tokenIds = convertToTokenIds(
                   idNFTControllers: _idNFTControllers,

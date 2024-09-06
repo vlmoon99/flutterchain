@@ -73,7 +73,8 @@ class _OffersState extends State<Offers> {
             decoration:
                 const InputDecoration(labelText: 'Time out(hour, option)'),
           ),
-          ElevatedButton(
+          SizedBox(height: 10),
+          FilledButton(
             onPressed: () {
               setState(() {
                 isOffering = offersToRollingAuction(
@@ -86,7 +87,7 @@ class _OffersState extends State<Offers> {
                 );
               });
             },
-            child: const Text('Rolling NFT',
+            child: const Text('Make offer NFT',
                 style: TextStyle(color: Colors.white, fontSize: 15)),
             style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(
@@ -112,7 +113,7 @@ class _OffersState extends State<Offers> {
                 ),
           SizedBox(height: 10),
           Text("Beffor starting you can check max price bid"),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               setState(() {
                 pricesOffers = checkMaxPriceBidNFT(

@@ -95,7 +95,7 @@ class _CheckInfoState extends State<CheckInfo> {
                     }
                   },
                 ),
-          ElevatedButton(
+          FilledButton(
               onPressed: () {
                 setState(() {
                   listInfo = checkNFTInfo();
@@ -145,7 +145,7 @@ class _CheckInfoState extends State<CheckInfo> {
                     }
                   },
                 ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               setState(() {
                 listingNFTInfo = checkListingNFT();

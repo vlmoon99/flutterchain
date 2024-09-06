@@ -41,13 +41,13 @@ class _ListingActivateState extends State<ListingActivate> {
               style: TextStyle(
                 fontSize: 17,
               )),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               setState(() {
                 isActivate = storageListingActivate();
               });
             },
-            child: const Text('List NFT',
+            child: const Text('Activate',
                 style: TextStyle(color: Colors.white, fontSize: 15)),
             style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(

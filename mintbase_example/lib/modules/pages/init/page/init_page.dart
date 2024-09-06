@@ -94,6 +94,11 @@ class _InitPageState extends State<InitPage> {
                     },
                   );
                 },
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
                 child: Text(
                   'Create new Near account',
                   style: TextStyle(
@@ -128,6 +133,11 @@ class _InitPageState extends State<InitPage> {
                     },
                   );
                 },
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
                 child: Text(
                   'Import Near account Default',
                   style: TextStyle(
@@ -162,6 +172,11 @@ class _InitPageState extends State<InitPage> {
                     },
                   );
                 },
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
                 child: Text(
                   'Import Near account NEARAPIJS',
                   style: TextStyle(
@@ -196,6 +211,11 @@ class _InitPageState extends State<InitPage> {
                     },
                   );
                 },
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
                 child: Text(
                   'Import Near account whit mnemonic',
                   style: TextStyle(

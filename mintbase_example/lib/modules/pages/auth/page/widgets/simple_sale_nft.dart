@@ -68,7 +68,8 @@ class _SimpleSaleState extends State<SimpleSale> {
             controller: priceController,
             decoration: const InputDecoration(labelText: 'Input price'),
           ),
-          ElevatedButton(
+          SizedBox(height: 10),
+          FilledButton(
             onPressed: () {
               setState(() {
                 isList = simpleSaleNFT(

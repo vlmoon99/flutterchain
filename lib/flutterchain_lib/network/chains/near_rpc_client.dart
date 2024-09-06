@@ -71,6 +71,9 @@ class NearRpcClient {
         }
       },
     );
+    if (res.data["error"] != null) {
+      throw Exception("Account not exist");
+    }
     if (res.isSuccess) {
       final decodedRes = res.data['result']['amount'].toString();
       final nearAmount = NearFormatter.yoctoNearToNear(

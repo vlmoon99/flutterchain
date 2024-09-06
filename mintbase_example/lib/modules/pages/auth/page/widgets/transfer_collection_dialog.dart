@@ -90,7 +90,7 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
                   });
                 }),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () async {
               setState(() {
                 responseTransfer = transferNFTCollection(

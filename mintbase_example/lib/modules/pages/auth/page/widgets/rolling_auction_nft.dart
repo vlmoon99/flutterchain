@@ -57,7 +57,8 @@ class _RollingAuctionNftState extends State<RollingAuctionNft> {
             controller: priceController,
             decoration: const InputDecoration(labelText: 'Minimum bid(Near)'),
           ),
-          ElevatedButton(
+          SizedBox(height: 10),
+          FilledButton(
             onPressed: () {
               setState(() {
                 isRolling = rollingAuctionNft(

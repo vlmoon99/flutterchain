@@ -11,7 +11,7 @@ import 'package:mintbase_example/routes/routes.dart';
 void main() {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await initFlutterChainLib();
+    initFlutterChainLib();
     final isAuthorized = await checkIfUserAuthorized();
 
     //Catch Errors caught by Flutter
@@ -38,7 +38,7 @@ class AppWidget extends StatelessWidget {
     Modular.setInitialRoute(CoreRoutes.init);
     ScreenUtil.init(context);
     ScreenUtil.configure(
-      designSize: const Size(360, 690),
+      designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
     );

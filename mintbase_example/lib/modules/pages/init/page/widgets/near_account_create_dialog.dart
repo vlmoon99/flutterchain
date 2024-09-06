@@ -91,19 +91,23 @@ class _NearAccountCreationActionDialogState
         currentActionLog = "Funding it...";
       });
 
-      final fundRequest = await Dio().post(
-        "https://server-for-account-creation.onrender.com/create-account",
-        data: {
-          "accountId": nearBlockChainData.publicKey,
-        },
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-          },
-        ),
-      );
+      final dio = Dio();
 
-      log(fundRequest.data['message']);
+      for (var i = 0; i < 5; i++) {
+        final fundRequest = await dio.post(
+          "https://server-for-account-creation.onrender.com/create-account",
+          data: {
+            "accountId": nearBlockChainData.publicKey,
+          },
+          options: Options(
+            headers: {
+              "Content-Type": "application/json",
+            },
+          ),
+        );
+
+        log(fundRequest.data['message']);
+      }
 
       if (!mounted) return;
       setState(() {

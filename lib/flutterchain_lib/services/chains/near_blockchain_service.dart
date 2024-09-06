@@ -767,7 +767,7 @@ class NearBlockChainService implements BlockChainService {
     final Map<String, dynamic> args = {
       "owner_id": ownerId,
       "metadata": {
-        "name": name,
+        "name": name.toLowerCase(),
         "spec": spec,
         "symbol": symbol,
         "icon": icon,
@@ -889,6 +889,8 @@ class NearBlockChainService implements BlockChainService {
 
   Future<Map<String, String>> checkMaxPriceBidNFT(
       {required String nftContractId, required int tokenId}) async {
+    String resPriceBid;
+
     final query = """query MyQuery {
                       nft_offers_aggregate(
                         where: {nft_contract_id: {_eq: "$nftContractId"}, token_id: {_eq: "$tokenId"}}
@@ -905,18 +907,18 @@ class NearBlockChainService implements BlockChainService {
 
     Map<String, dynamic> pricesResponse =
         response.data["data"]["nft_offers_aggregate"];
-    if (pricesResponse.isEmpty) {
-      throw Exception("This token don`t have offer max sum");
+    if (pricesResponse["aggregate"]["max"]["offer_price"] != null) {
+      resPriceBid = Decimal.parse(
+              pricesResponse["aggregate"]["max"]["offer_price"].toString())
+          .toString();
+    } else {
+      resPriceBid = "There have been no interactions with this offerer yet.";
     }
-
-    final resPriceBid = Decimal.parse(
-        pricesResponse["aggregate"]["max"]["offer_price"].toString());
-
     final priceBid = await getPriceForBuySimpleListNFT(
         nftContractId: nftContractId, tokenId: tokenId);
 
     Map<String, String> responseBid = {
-      "maxbid": resPriceBid.toString(),
+      "maxbid": resPriceBid,
       "minbid": priceBid.toString()
     };
 
@@ -1088,6 +1090,9 @@ class NearBlockChainService implements BlockChainService {
       };
     }
     final mediaFile = File(media);
+    if (!mediaFile.existsSync()) {
+      throw Exception("Media file does not exist");
+    }
     String mediaUpload = await uploadFileToArweave(file: mediaFile);
     mediaUploadURL = baseURL! + mediaUpload;
 

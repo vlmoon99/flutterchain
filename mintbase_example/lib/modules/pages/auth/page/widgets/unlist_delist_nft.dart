@@ -71,7 +71,7 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () async {
                   setState(() {
                     response = unlistNFT(
@@ -87,7 +87,7 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
                         Theme.of(context).colorScheme.primary)),
               ),
               SizedBox(width: 45),
-              ElevatedButton(
+              FilledButton(
                 onPressed: () async {
                   setState(() {
                     response = delistNFT(
