@@ -97,7 +97,6 @@ class _AuthPageState extends State<AuthPage> {
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
-                  // key: UniqueKey(),
                   children: [
                     Container(
                         padding: Thems.padding,

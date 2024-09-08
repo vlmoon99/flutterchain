@@ -1082,7 +1082,7 @@ class NearBlockChainService implements BlockChainService {
         throw Exception("To mach percentage, limit exhausted");
       }
 
-      final splitBetweenUpdate = _calculateRoyalty(
+      final splitBetweenUpdate = calculateRoyalty(
           noCompletelyRoyalty: split_between, totalSum: splitBetweenSum * 100);
       royalty_args = {
         "split_between": splitBetweenUpdate,
@@ -1215,7 +1215,7 @@ class NearBlockChainService implements BlockChainService {
     return response.data;
   }
 
-  Map<String, int> _calculateRoyalty(
+  Map<String, int> calculateRoyalty(
       {required Map<String, int> noCompletelyRoyalty, required int totalSum}) {
     final updatedRoyalty = {
       for (var entry in noCompletelyRoyalty.entries)
@@ -1233,7 +1233,7 @@ class NearBlockChainService implements BlockChainService {
     final Map<String, dynamic> args = {"token_ids": tokenIds};
 
     for (var i = 0; i < tokenIds.length; i++) {
-      final havePermission = await _NFTInteractionPermission(
+      final havePermission = await NFTInteractionPermission(
           nameNFTCollection: nftCollectionContract,
           tokenId: tokenIds[i][0],
           ownerId: accountId);
@@ -1269,7 +1269,7 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
-  Future<BlockchainResponse> _NFTInteractionPermission(
+  Future<BlockchainResponse> NFTInteractionPermission(
       {required String nameNFTCollection,
       required String tokenId,
       required String ownerId}) async {
@@ -1297,7 +1297,7 @@ class NearBlockChainService implements BlockChainService {
   }) async {
     Map<String, dynamic>? royalty_args;
 
-    final data = await _getInfoForMultiply(
+    final data = await getInfoForMultiply(
         nameNFTCollection: nameNFTCollection,
         ownerId: accountId,
         nameNFT: nameNFT);
@@ -1364,7 +1364,7 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
-  Future<BlockchainResponse> _getInfoForMultiply(
+  Future<BlockchainResponse> getInfoForMultiply(
       {required String nameNFTCollection,
       required String ownerId,
       required String nameNFT}) async {
@@ -1443,7 +1443,7 @@ class NearBlockChainService implements BlockChainService {
     return true;
   }
 
-  Future<bool> ListingActivate({
+  Future<bool> listingActivate({
     required String accountId,
     required String publicKey,
     required String privateKey,

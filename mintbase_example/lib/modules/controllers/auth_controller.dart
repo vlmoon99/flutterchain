@@ -23,13 +23,11 @@ class AuthController extends Disposable {
     required String secretKey,
     required NearNetworkType networkType,
   }) async {
-    // try {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
       newUrl: networkType == NearNetworkType.mainnet
           ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
           : NearBlockChainNetworkUrls.listOfUrls.first,
     );
-
     _streamController.add(state.copyWith(
       accountId: accountId,
       publicKey: accountId,
@@ -37,9 +35,6 @@ class AuthController extends Disposable {
       privateKey: secretKey,
       networkType: networkType,
     ));
-    // } catch (err) {
-    //   rethrow;
-    // }
   }
 
   Future<void> loginWithMnemonic({
@@ -48,7 +43,6 @@ class AuthController extends Disposable {
     required String secretKey,
     required NearNetworkType networkType,
   }) async {
-    // try {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
       newUrl: networkType == NearNetworkType.mainnet
           ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
@@ -62,9 +56,6 @@ class AuthController extends Disposable {
       privateKey: secretKey,
       networkType: networkType,
     ));
-    // } catch (err) {
-    //   rethrow;
-    // }
   }
 
   Future<void> login({
@@ -72,7 +63,6 @@ class AuthController extends Disposable {
     required String secretKey,
     required NearNetworkType networkType,
   }) async {
-    // try {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
       newUrl: networkType == NearNetworkType.mainnet
           ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
@@ -95,9 +85,6 @@ class AuthController extends Disposable {
       privateKey: privateKey,
       networkType: networkType,
     ));
-    // } catch (err) {
-    //   rethrow;
-    // }
   }
 
   Future<void> logout() async {

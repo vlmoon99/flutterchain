@@ -18,7 +18,7 @@ class _ListingActivateState extends State<ListingActivate> {
   Future<bool> storageListingActivate() async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
 
-    return await nearService.ListingActivate(
+    return await nearService.listingActivate(
         accountId: infocrypto.accountId,
         publicKey: infocrypto.publicKey,
         privateKey: infocrypto.privateKey);
