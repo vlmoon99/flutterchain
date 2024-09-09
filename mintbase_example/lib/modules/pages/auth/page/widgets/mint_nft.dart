@@ -220,6 +220,7 @@ class _MintnftState extends State<Mintnft> {
             controller: titleController,
             decoration: const InputDecoration(labelText: 'Input title**'),
           ),
+          SizedBox(height: 10),
           Column(
             children: [
               FilledButton(
@@ -488,6 +489,7 @@ class _MintnftState extends State<Mintnft> {
               ],
             ),
           ),
+          SizedBox(height: 10),
           FilledButton(
             onPressed: () {
               Map<String, int>? split_owners;
