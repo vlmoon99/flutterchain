@@ -40,14 +40,21 @@ class NetworkClient {
         appExceptions.messageForDev, appExceptions.statusCode, false);
   }
 
-  Future<ApiResponse> postHTTP(String url, dynamic data) async {
+  Future<ApiResponse> postHTTP(String url, dynamic data,
+      [Map<String, dynamic>? headers]) async {
     AppExceptions? appExceptions;
+    late Response response;
 
     try {
-      Response response = await dio.post(
-        url,
-        data: data,
-      );
+      if (headers != null) {
+        response =
+            await dio.post(url, data: data, options: Options(headers: headers));
+      } else {
+        response = await dio.post(
+          url,
+          data: data,
+        );
+      }
       return ApiResponse.success(response.data, response.statusCode!, true);
     } on DioException catch (e) {
       appExceptions = _handleError(e);

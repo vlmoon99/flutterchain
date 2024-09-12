@@ -16,6 +16,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   rxdart: ^0.27.7
   dio: ^5.4.0
+  decimal: ^3.0.2
   bs58: ^1.0.2
   hex: ^0.2.0
   collection: ^1.17.2
