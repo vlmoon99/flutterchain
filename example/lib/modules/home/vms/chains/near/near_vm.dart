@@ -66,10 +66,10 @@ class NearVM {
         .generateNewWallet(walletName: "GeneratedRandom ${DateTime.now()}");
     final randomBlockchainData = await cryptoLibrary
         .blockchainService.blockchainServices[BlockChains.near]!
-        .getBlockChainDataByDerivationPath(
-      derivationPath: randomWalletDerivationPath,
+        .getBlockChainData(
       mnemonic: generatedWallet.mnemonic,
       passphrase: '',
+      derivationPath: randomWalletDerivationPath,
     );
     log("New Public Key ${randomBlockchainData.publicKey}");
     final currentWallet = cryptoLibrary.walletsStream.value

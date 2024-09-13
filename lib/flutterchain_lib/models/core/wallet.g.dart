@@ -34,9 +34,8 @@ BlockChainData _$BlockChainDataFromJson(Map<String, dynamic> json) =>
       identifier: json['identifier'] as String,
       publicKey: json['publicKey'] as String,
       privateKey: json['privateKey'] as String,
-      derivationPath: DerivationPath.fromJson(
+      derivationPath: DerivationPathData.fromJson(
           json['derivationPath'] as Map<String, dynamic>),
-      passphrase: json['passphrase'] as String,
     );
 
 Map<String, dynamic> _$BlockChainDataToJson(BlockChainData instance) =>
@@ -45,8 +44,13 @@ Map<String, dynamic> _$BlockChainDataToJson(BlockChainData instance) =>
       'publicKey': instance.publicKey,
       'privateKey': instance.privateKey,
       'derivationPath': instance.derivationPath,
-      'passphrase': instance.passphrase,
     };
+
+DerivationPathData _$DerivationPathDataFromJson(Map<String, dynamic> json) =>
+    DerivationPathData();
+
+Map<String, dynamic> _$DerivationPathDataToJson(DerivationPathData instance) =>
+    <String, dynamic>{};
 
 DerivationPath _$DerivationPathFromJson(Map<String, dynamic> json) =>
     DerivationPath(

@@ -58,18 +58,12 @@ class AuroraBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockChainData> getBlockChainDataByDerivationPath(
-      {required String mnemonic,
-      required String? passphrase,
-      required DerivationPath derivationPath}) {
-    // TODO: implement getBlockChainDataByDerivationPath
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<BlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) {
-    // TODO: implement getBlockChainDataFromMnemonic
+  Future<BlockChainData> getBlockChainData({
+    required String mnemonic,
+    String? passphrase,
+    DerivationPathData? derivationPath,
+  }) {
+    // TODO: implement getBlockChainData
     throw UnimplementedError();
   }
 

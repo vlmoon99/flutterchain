@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'dart:developer';
 import 'package:collection/collection.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
@@ -11,9 +9,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_bloc
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/bitcoin_vm.dart';
-import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/ui_state_bitcoin.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class BitcoinCryptoActionHeader extends StatefulWidget {
@@ -134,7 +130,7 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                       items: listOfBlockChainData
                           ?.map((blockChainData) =>
                               DropdownMenuItem<DerivationPath>(
-                                value: blockChainData.derivationPath,
+                                value: blockChainData.derivationPath as DerivationPath,
                                 child: SelectableText(
                                   blockChainData.derivationPath.toString(),
                                   style: nearTextStyles.bodyCopy!.copyWith(

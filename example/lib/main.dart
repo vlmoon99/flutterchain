@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/lib_initialization_service.dart';
 import 'package:easy_localization/easy_localization.dart';

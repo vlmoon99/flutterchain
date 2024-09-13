@@ -1,6 +1,4 @@
-import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
@@ -79,11 +77,10 @@ class FlutterChainLibrary {
       throw Exception('Does not exist blockchain service with this name');
     }
 
-    final blockChainData =
-        await blockChainService.getBlockChainDataByDerivationPath(
-      derivationPath: derivationPath,
+    final blockChainData = await blockChainService.getBlockChainData(
       mnemonic: wallet.mnemonic,
       passphrase: wallet.passphrase,
+      derivationPath: derivationPath,
     );
     wallet.blockchainsData![blockchainType] = {
       ...wallet.blockchainsData![blockchainType] ?? {},

@@ -71,7 +71,9 @@ class BitcoinBlockChainService implements BlockChainService {
 
   //Get wallet balance by account ID (on input hex format public key)
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest, ) async {
+  Future<String> getWalletBalance(
+    TransferRequest transferRequest,
+  ) async {
     final bitcoinTransferRequest = transferRequest as BitcoinTransferRequest;
     final addressId =
         await getAdressBTCSegWitFomat(bitcoinTransferRequest.accountID!);
@@ -91,28 +93,17 @@ class BitcoinBlockChainService implements BlockChainService {
     return BitcoinBlockChainNetworkUrls.listOfUrls;
   }
 
-  //Getting private , public key and other information from mnemonic passphrase, and derivation path
   @override
-  Future<BitcoinBlockChainData> getBlockChainDataByDerivationPath({
+  Future<BlockChainData> getBlockChainData({
     required String mnemonic,
-    required String? passphrase,
-    required DerivationPath derivationPath,
+    String? passphrase,
+    DerivationPathData? derivationPath,
   }) async {
-    final res = await jsVMService.callJS(
-        """window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${derivationPath.accountNumber}","${derivationPath.change}","${derivationPath.address}")""");
+    final rawFunction = derivationPath == null
+        ? "window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
+        : """window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";
+    final res = await jsVMService.callJS(rawFunction);
     final blockChainData = BitcoinBlockChainData.fromJson(jsonDecode(res));
-    return blockChainData;
-  }
-
-  //Getting private , public key and other information from mnemonic and passphrase
-  //this method will give you first standard wallet generated from this mnemonic and passphrase
-  @override
-  Future<BitcoinBlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) async {
-    final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
-    final decodedRes = jsonDecode(res);
-    final blockChainData = BitcoinBlockChainData.fromJson(decodedRes);
     return blockChainData;
   }
 
@@ -216,5 +207,4 @@ class BitcoinBlockChainService implements BlockChainService {
     final res = await bitcoinRpcClient.sendTransaction(txhex);
     return res;
   }
-
 }

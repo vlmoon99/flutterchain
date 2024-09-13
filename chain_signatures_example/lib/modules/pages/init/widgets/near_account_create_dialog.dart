@@ -13,7 +13,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -71,8 +70,7 @@ class _NearAccountCreationActionDialogState
         address: "1'",
       );
 
-      final NearBlockChainData nearBlockChainData =
-          await nearBlockChainService.getBlockChainDataByDerivationPath(
+      final nearBlockChainData = await nearBlockChainService.getBlockChainData(
         mnemonic: generatedWallet.mnemonic,
         passphrase: "",
         derivationPath: derivationPathOfNewGeneratedAccount,

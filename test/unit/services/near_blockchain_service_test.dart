@@ -69,12 +69,13 @@ void main() {
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });
 
-    test('getBlockChainDataFromMnemonic', () async {
+    test('getBlockChainData from mnemonic', () async {
       final service = MockNearBlockChainService();
       const mnemonic = 'example mnemonic';
       const passphrase = 'example passphrase';
 
-      when(service.getBlockChainDataFromMnemonic(mnemonic, passphrase))
+      when(service.getBlockChainData(
+              mnemonic: mnemonic, passphrase: passphrase))
           .thenAnswer(
         (_) async => NearBlockChainData(
           publicKey: 'examplePublicKey',
@@ -90,8 +91,8 @@ void main() {
         ),
       );
 
-      final res =
-          await service.getBlockChainDataFromMnemonic(mnemonic, passphrase);
+      final res = await service.getBlockChainData(
+          mnemonic: mnemonic, passphrase: passphrase);
       expect(
           res,
           NearBlockChainData(
@@ -108,7 +109,7 @@ void main() {
           ));
     });
 
-    test('getBlockChainDataByDerivationPath', () async {
+    test('getBlockChainData by DerivationPath', () async {
       final service = MockNearBlockChainService();
       const mnemonic = 'some_mnemonic';
       const passphrase = 'some_passphrase';
@@ -127,13 +128,13 @@ void main() {
         passphrase: '',
       );
 
-      when(service.getBlockChainDataByDerivationPath(
+      when(service.getBlockChainData(
         mnemonic: mnemonic,
         passphrase: passphrase,
         derivationPath: derivationPath,
       )).thenAnswer((_) async => expectedResult);
 
-      final result = await service.getBlockChainDataByDerivationPath(
+      final result = await service.getBlockChainData(
         mnemonic: mnemonic,
         passphrase: passphrase,
         derivationPath: derivationPath,

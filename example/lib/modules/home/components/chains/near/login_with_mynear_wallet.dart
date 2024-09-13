@@ -24,9 +24,9 @@ class LoginWithMyNearWallets extends StatelessWidget {
             .blockchainServices[BlockChains.near] as NearBlockChainService;
 
         final randomNearBlockchainData =
-            await nearBlockchainService.getBlockChainDataFromMnemonic(
-          randomWallet.mnemonic,
-          '',
+            await nearBlockchainService.getBlockChainData(
+          mnemonic: randomWallet.mnemonic,
+          passphrase: '',
         );
 
         final nearAPIJsPrivateKey =

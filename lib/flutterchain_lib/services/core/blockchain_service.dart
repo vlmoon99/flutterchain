@@ -1,13 +1,13 @@
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 abstract class BlockChainService {
-  Future<BlockChainData> getBlockChainDataFromMnemonic(
-    String mnemonic,
-    String passphrase,
-  );
+  Future<BlockChainData> getBlockChainData({
+    required String mnemonic,
+    String? passphrase,
+    DerivationPathData? derivationPath,
+  });
 
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest);
@@ -22,10 +22,5 @@ abstract class BlockChainService {
 
   Set<String> getBlockchainsUrlsByBlockchainType();
 
-  Future<BlockChainData> getBlockChainDataByDerivationPath({
-    required String mnemonic,
-    required String? passphrase,
-    required DerivationPath derivationPath,
-  });
   Future<String> getBlockchainNetworkEnvironment();
 }

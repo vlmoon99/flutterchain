@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
@@ -165,28 +164,19 @@ class NearBlockChainService implements BlockChainService {
     return NearBlockChainNetworkUrls.listOfUrls;
   }
 
-  //Getting private , public key and other information from mnemonic passphrase, and derivation path
+  ///Getting private , public key and other information from mnemonic and passphrase
+  ///this method will give you first standard wallet generated from this mnemonic and passphrase if derivation path is not provided
   @override
-  Future<NearBlockChainData> getBlockChainDataByDerivationPath({
+  Future<BlockChainData> getBlockChainData({
     required String mnemonic,
-    required String? passphrase,
-    required DerivationPath derivationPath,
+    String? passphrase,
+    DerivationPathData? derivationPath,
   }) async {
-    final res = await jsVMService.callJS(
-        """window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${derivationPath.accountNumber}","${derivationPath.change}","${derivationPath.address}")""");
+    final rawFunction = derivationPath == null
+        ? "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
+        : """window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";
+    final res = await jsVMService.callJS(rawFunction);
     final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
-    return blockChainData;
-  }
-
-  //Getting private , public key and other information from mnemonic and passphrase
-  //this method will give you first standard wallet generated from this mnemonic and passphrase
-  @override
-  Future<NearBlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
-    final decodedRes = jsonDecode(res);
-    final blockChainData = NearBlockChainData.fromJson(decodedRes);
     return blockChainData;
   }
 
@@ -229,7 +219,6 @@ class NearBlockChainService implements BlockChainService {
     required List<Map<String, dynamic>> actions,
   }) async {
     nonce++;
-    final lol = jsonEncode(actions);
     final res = await jsVMService.callJS(
         "window.NearBlockchain.signNearActions('$fromAddress','$toAddress','$transferAmount', '$gas' , '$privateKey','$nonce','$blockHash','${jsonEncode(actions)}')");
 

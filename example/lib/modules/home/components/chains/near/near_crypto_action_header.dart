@@ -134,7 +134,7 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
                       items: listOfBlockChainData
                           ?.map((blockChainData) =>
                               DropdownMenuItem<DerivationPath>(
-                                value: blockChainData.derivationPath,
+                                value: blockChainData.derivationPath as DerivationPath,
                                 child: SelectableText(
                                   blockChainData.derivationPath.toString(),
                                   style: nearTextStyles.bodyCopy!.copyWith(
