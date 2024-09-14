@@ -72,7 +72,7 @@ class AvalancheBlockChainService implements BlockChainService {
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() {
-    return EthereumBlockChainNetworkUrls.listOfUrls;
+    return AvalancheBlockChainNetworkUrls.listOfUrls;
   }
 
   @override

@@ -71,7 +71,7 @@ class BNBBlockChainService implements BlockChainService {
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() {
-    return EthereumBlockChainNetworkUrls.listOfUrls;
+    return BNBBlockChainNetworkUrls.listOfUrls;
   }
 
   @override

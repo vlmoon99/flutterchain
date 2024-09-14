@@ -71,7 +71,7 @@ class AuroraBlockChainService implements BlockChainService {
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() {
-    return EthereumBlockChainNetworkUrls.listOfUrls;
+    return AuroraBlockChainNetworkUrls.listOfUrls;
   }
 
   @override

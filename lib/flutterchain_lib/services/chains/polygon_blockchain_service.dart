@@ -72,7 +72,7 @@ class PolygonBlockChainService implements BlockChainService {
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() {
-    return EthereumBlockChainNetworkUrls.listOfUrls;
+    return PolygonBlockChainNetworkUrls.listOfUrls;
   }
 
   @override
