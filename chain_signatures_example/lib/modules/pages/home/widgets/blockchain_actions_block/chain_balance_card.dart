@@ -156,7 +156,7 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final XRPBlockChainService xrpBlockChainService =
                 XRPBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    EvmNetworkEnvironmentSettings(
+                    XrpNetworkEnvironmentSettings(
                       chainUrl: currentNetwork == NearNetworkType.testnet
                           ? XRPBlockChainNetworkUrls.listOfUrls.first
                           : XRPBlockChainNetworkUrls.listOfUrls.last,

@@ -645,7 +645,7 @@ class _ChainActionsState extends State<ChainActions> {
                         final XRPBlockChainService xrpBlockChainService =
                             XRPBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                EvmNetworkEnvironmentSettings(
+                                XrpNetworkEnvironmentSettings(
                                   chainUrl: authController.state.networkType ==
                                           NearNetworkType.testnet
                                       ? XRPBlockChainNetworkUrls
