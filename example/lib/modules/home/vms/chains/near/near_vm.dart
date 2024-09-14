@@ -5,7 +5,6 @@ import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -170,18 +169,15 @@ class NearVM {
     required String method,
     required DerivationPath currentDerivationPath,
   }) {
-    NearTransferRequest nearTransferRequest = NearTransferRequest(
-      currentDerivationPath: currentDerivationPath,
-      walletId: walletId,
-      toAddress: smartContractAddress,
-      arguments: NearBlockChainSmartContractArguments(
-        method: method,
-        args: args,
-        transferAmount: amountOfDeposit,
-      ),
-    );
     final response = cryptoLibrary.callSmartContractFunction(
-        transferRequest: nearTransferRequest);
+      blockchainType: BlockChains.near,
+      derivationPathData: currentDerivationPath,
+      toAddress: smartContractAddress,
+      method: method,
+      args: args,
+      transferAmount: amountOfDeposit,
+      walletId: walletId,
+    );
     return response;
   }
 

@@ -63,14 +63,6 @@ class BitcoinBlockChainService implements BlockChainService {
     return res;
   }
 
-  //Call smart contract function not exist in bitcoin
-  @override
-  Future<BlockchainResponse> callSmartContractFunction(
-    TransferRequest transferRequest,
-  ) async {
-    throw UnimplementedError('callSmartContractFunction does not exist.');
-  }
-
   //Get wallet balance by account ID (on input hex format public key)
   @override
   Future<String> getWalletBalance(

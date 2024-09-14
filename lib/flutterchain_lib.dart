@@ -1,5 +1,8 @@
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
@@ -198,22 +201,34 @@ class FlutterChainLibrary {
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required TransferRequest transferRequest,
+    required String blockchainType,
+    required DerivationPathData derivationPathData,
+    required String toAddress,
+    required String method,
+    required Map<String, dynamic> args,
+    required String transferAmount,
+    required String walletId,
+    String? gas,
   }) async {
+    if (!BlockChains.supportedBlockChainsForSmartContractCall
+        .contains(blockchainType)) {
+      throw Exception('Blockchain does not support smart contract call');
+    }
+
     final wallet = walletsStream.valueOrNull
-        ?.firstWhereOrNull((element) => element.id == transferRequest.walletId);
+        ?.firstWhereOrNull((element) => element.id == walletId);
     if (wallet == null) {
       throw Exception('Does not exist wallet with this name');
     }
 
-    final privateKey = wallet.blockchainsData?[transferRequest.blockchainType]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath == transferRequest.currentDerivationPath)
+    final privateKey = wallet.blockchainsData?[blockchainType]
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == derivationPathData)
         ?.privateKey;
 
-    final publicKey = wallet.blockchainsData?[transferRequest.blockchainType]
-        ?.firstWhereOrNull((element) =>
-            element.derivationPath == transferRequest.currentDerivationPath)
+    final publicKey = wallet.blockchainsData?[blockchainType]
+        ?.firstWhereOrNull(
+            (element) => element.derivationPath == derivationPathData)
         ?.publicKey;
 
     if (privateKey == null) {
@@ -224,10 +239,27 @@ class FlutterChainLibrary {
       throw Exception('Public key is null');
     }
 
-    transferRequest.privateKey = privateKey;
-    transferRequest.publicKey = publicKey;
-    transferRequest.fromAddress = publicKey;
+    late final BlockChainSmartContractArguments smartContractArguments;
+
+    switch (blockchainType) {
+      case BlockChains.near:
+        smartContractArguments = NearBlockChainSmartContractArguments(
+          fromAddress: publicKey,
+          publicKey: publicKey,
+          privateKey: privateKey,
+          toAddress: toAddress,
+          method: method,
+          args: args,
+          transferAmount: transferAmount,
+          gas: gas,
+        );
+        break;
+      default:
+        throw ArgumentError(
+            'This blockchain does not support smart contract call');
+    }
     return blockchainService.callSmartContractFunction(
-        transferRequest: transferRequest);
+      smartContractArguments: smartContractArguments,
+    );
   }
 }

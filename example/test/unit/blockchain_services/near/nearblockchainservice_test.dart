@@ -120,27 +120,24 @@ void main() {
       const privateKey = 'privateKey';
       const publicKey = 'publicKey';
 
-      final arguments = NearBlockChainSmartContractArguments(
-        method: 'exampleMethod',
-        args: {'exampleArg': 'exampleValue'},
-        transferAmount: NearFormatter.nearToYoctoNear('1'),
-      );
-
       final expectedResponse = BlockchainResponse(
         status: 'success',
         data: {'txhash': 'some hash'},
       );
 
-      NearTransferRequest nearTransferRequest = NearTransferRequest(
+      final arguments = NearBlockChainSmartContractArguments(
         toAddress: toAddress,
         fromAddress: fromAddress,
         privateKey: privateKey,
         publicKey: publicKey,
-        arguments: arguments,
+        method: 'exampleMethod',
+        args: {'exampleArg': 'exampleValue'},
+        transferAmount: NearFormatter.nearToYoctoNear('1'),
       );
+
       // Act
-      final response = await mockNearBlockChainService
-          .callSmartContractFunction(nearTransferRequest);
+      final response =
+          await mockNearBlockChainService.callSmartContractFunction(arguments);
 
       // Assert
       expect(response, expectedResponse);

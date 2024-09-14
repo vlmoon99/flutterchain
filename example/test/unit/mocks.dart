@@ -4,6 +4,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_en
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
@@ -165,7 +166,14 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction({
-    required TransferRequest transferRequest,
+    required Map<String, dynamic> args,
+    required String blockchainType,
+    required DerivationPathData derivationPathData,
+    String? gas,
+    required String method,
+    required String toAddress,
+    required String transferAmount,
+    required String walletId,
   }) async {
     return BlockchainResponse(
       status: 'success',
@@ -387,7 +395,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-      TransferRequest transferRequest) async {
+      BlockChainSmartContractArguments blockChainSmartContractArguments) async {
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},

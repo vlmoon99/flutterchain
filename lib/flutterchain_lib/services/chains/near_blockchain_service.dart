@@ -20,6 +20,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transactio
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
@@ -29,7 +30,8 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_e
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 
-class NearBlockChainService implements BlockChainService {
+class NearBlockChainService
+    implements BlockchainServiceWithSmartContractCallSupport {
   final JsVMService jsVMService;
   final NearRpcClient nearRpcClient;
 
@@ -85,42 +87,36 @@ class NearBlockChainService implements BlockChainService {
   //Call smart contract function
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-    TransferRequest transferRequest,
+    BlockChainSmartContractArguments smartContractArguments,
   ) async {
-    NearTransferRequest nearTransferRequest =
-        transferRequest as NearTransferRequest;
-    if (nearTransferRequest.arguments
-        is! NearBlockChainSmartContractArguments) {
-      throw Exception('Incorrect Blockchain Smart Contract Arguments');
+    if (smartContractArguments is! NearBlockChainSmartContractArguments) {
+      throw ArgumentError(
+          "Incorrect Blockchain Smart Contract Arguments. Expected NearBlockChainSmartContractArguments");
     }
+
     final transactionInfo = await getTransactionInfo(
-      accountId: nearTransferRequest.fromAddress!,
-      publicKey: nearTransferRequest.publicKey!,
+      accountId: smartContractArguments.fromAddress,
+      publicKey: smartContractArguments.publicKey,
     );
-    final gas = transferRequest.gas ?? BlockchainGas.gas[BlockChains.near];
-    if (gas == null) {
-      throw Exception('Incorrect Blockchain Gas');
-    }
-    final arg =
-        nearTransferRequest.arguments as NearBlockChainSmartContractArguments;
-    if (arg == null) {
-      throw Exception('Incorrect Blockchain Arg');
-    }
+
+    final gas =
+        smartContractArguments.gas ?? BlockchainGas.gas[BlockChains.near]!;
+
     final List<Map<String, dynamic>> actions = [
       {
         "type": "functionCall",
         "data": {
-          "methodName": arg.method,
-          "args": arg.args,
+          "methodName": smartContractArguments.method,
+          "args": smartContractArguments.args,
         },
       },
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: transferRequest.fromAddress!,
-      toAddress: transferRequest.toAddress!,
-      transferAmount: arg.transferAmount,
-      privateKey: transferRequest.privateKey!,
+      fromAddress: smartContractArguments.fromAddress,
+      toAddress: smartContractArguments.toAddress,
+      transferAmount: smartContractArguments.transferAmount,
+      privateKey: smartContractArguments.privateKey,
       gas: gas,
       nonce: transactionInfo.nonce,
       blockHash: transactionInfo.blockHash,
@@ -569,21 +565,19 @@ class NearBlockChainService implements BlockChainService {
         List<int>.from(unsignedTransaction["payload"].values));
     final reversedPayload = payload.reversed.toList();
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: mpcContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "sign",
-          args: {
-            "payload": reversedPayload,
-            "path": path,
-            "key_version": 0,
-          },
-          transferAmount: '0',
-        ),
+        method: "sign",
+        args: {
+          "payload": reversedPayload,
+          "path": path,
+          "key_version": 0,
+        },
+        transferAmount: '0',
       ),
     );
 
@@ -644,21 +638,19 @@ class NearBlockChainService implements BlockChainService {
       final payload = Uint8List.fromList(List<int>.from(payloadsList[i]));
 
       final nearSignRequest = await callSmartContractFunction(
-        NearTransferRequest(
+        NearBlockChainSmartContractArguments(
           fromAddress: accountId,
           publicKey: publicKey,
           toAddress: mpcContract,
           privateKey: privateKey,
           gas: "300000000000000",
-          arguments: NearBlockChainSmartContractArguments(
-            method: "sign",
-            args: {
-              "payload": payload,
-              "path": path,
-              "key_version": 0,
-            },
-            transferAmount: '0',
-          ),
+          method: "sign",
+          args: {
+            "payload": payload,
+            "path": path,
+            "key_version": 0,
+          },
+          transferAmount: '0',
         ),
       );
 
@@ -700,21 +692,19 @@ class NearBlockChainService implements BlockChainService {
     final reversedPayload = payload.reversed.toList();
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: mpcContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "sign",
-          args: {
-            "payload": reversedPayload,
-            "path": path,
-            "key_version": 0,
-          },
-          transferAmount: '0',
-        ),
+        method: "sign",
+        args: {
+          "payload": reversedPayload,
+          "path": path,
+          "key_version": 0,
+        },
+        transferAmount: '0',
       ),
     );
 
@@ -779,17 +769,15 @@ class NearBlockChainService implements BlockChainService {
       }
     };
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: factoryContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "create_store",
-          args: args,
-          transferAmount: '3700000000000000000000000',
-        ),
+        method: "create_store",
+        args: args,
+        transferAmount: '3700000000000000000000000',
       ),
     );
 
@@ -941,17 +929,15 @@ class NearBlockChainService implements BlockChainService {
     };
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "transfer_store_ownership",
-          args: args,
-          transferAmount: '1',
-        ),
+        method: "transfer_store_ownership",
+        args: args,
+        transferAmount: '1',
       ),
     );
 
@@ -987,17 +973,15 @@ class NearBlockChainService implements BlockChainService {
     }
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "batch_change_minters",
-          args: args,
-          transferAmount: '1',
-        ),
+        method: "batch_change_minters",
+        args: args,
+        transferAmount: '1',
       ),
     );
 
@@ -1019,17 +1003,15 @@ class NearBlockChainService implements BlockChainService {
     final Map<String, dynamic> args = {};
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "list_minters",
-          args: args,
-          transferAmount: '1',
-        ),
+        method: "list_minters",
+        args: args,
+        transferAmount: '1',
       ),
     );
 
@@ -1148,17 +1130,15 @@ class NearBlockChainService implements BlockChainService {
         metadata: metadata);
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "nft_batch_mint",
-          args: args,
-          transferAmount: transferAmount,
-        ),
+        method: "nft_batch_mint",
+        args: args,
+        transferAmount: transferAmount,
       ),
     );
 
@@ -1246,17 +1226,15 @@ class NearBlockChainService implements BlockChainService {
     }
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "nft_batch_transfer",
-          args: args,
-          transferAmount: '1',
-        ),
+        method: "nft_batch_transfer",
+        args: args,
+        transferAmount: '1',
       ),
     );
 
@@ -1342,17 +1320,15 @@ class NearBlockChainService implements BlockChainService {
         metadata: metadata);
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nameNFTCollection,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "nft_batch_mint",
-          args: args,
-          transferAmount: transferAmount,
-        ),
+        method: "nft_batch_mint",
+        args: args,
+        transferAmount: transferAmount,
       ),
     );
     if (nearSignRequest.data["error"] != null) {
@@ -1420,17 +1396,15 @@ class NearBlockChainService implements BlockChainService {
     };
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nameNFTCollection,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "nft_approve",
-          args: args,
-          transferAmount: "1000000000000000000000",
-        ),
+        method: "nft_approve",
+        args: args,
+        transferAmount: "1000000000000000000000",
       ),
     );
 
@@ -1463,17 +1437,15 @@ class NearBlockChainService implements BlockChainService {
     final Map<String, dynamic> args = {"autotransfer": true};
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "deposit_storage",
-          args: args,
-          transferAmount: "10000000000000000000000",
-        ),
+        method: "deposit_storage",
+        args: args,
+        transferAmount: "10000000000000000000000",
       ),
     );
 
@@ -1510,17 +1482,15 @@ class NearBlockChainService implements BlockChainService {
     }
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "unlist",
-          args: args,
-          transferAmount: "1",
-        ),
+        method: "unlist",
+        args: args,
+        transferAmount: "1",
       ),
     );
 
@@ -1557,17 +1527,15 @@ class NearBlockChainService implements BlockChainService {
     }
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "delist",
-          args: args,
-          transferAmount: "1",
-        ),
+        method: "delist",
+        args: args,
+        transferAmount: "1",
       ),
     );
 
@@ -1612,17 +1580,15 @@ class NearBlockChainService implements BlockChainService {
     Decimal formatPrice = Decimal.parse(price);
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "buy",
-          args: args,
-          transferAmount: formatPrice.toString(),
-        ),
+        method: "buy",
+        args: args,
+        transferAmount: formatPrice.toString(),
       ),
     );
 
@@ -1689,17 +1655,15 @@ class NearBlockChainService implements BlockChainService {
     };
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: nameNFTCollection,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "nft_approve",
-          args: args,
-          transferAmount: "1000000000000000000000",
-        ),
+        method: "nft_approve",
+        args: args,
+        transferAmount: "1000000000000000000000",
       ),
     );
 
@@ -1748,17 +1712,15 @@ class NearBlockChainService implements BlockChainService {
     };
 
     final nearSignRequest = await callSmartContractFunction(
-      NearTransferRequest(
+      NearBlockChainSmartContractArguments(
         fromAddress: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
         gas: "300000000000000",
-        arguments: NearBlockChainSmartContractArguments(
-          method: "make_offer",
-          args: args,
-          transferAmount: resultPrice.toString(),
-        ),
+        method: "make_offer",
+        args: args,
+        transferAmount: resultPrice.toString(),
       ),
     );
 

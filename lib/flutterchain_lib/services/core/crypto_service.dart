@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -76,14 +77,16 @@ class FlutterChainService {
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required TransferRequest transferRequest,
+    required BlockChainSmartContractArguments smartContractArguments,
   }) async {
-    if (blockchainServices[transferRequest.blockchainType] == null) {
-      throw Exception('Incorrect Blockchain');
+    if (!BlockChains.supportedBlockChainsForSmartContractCall
+        .contains(smartContractArguments.blockchainType)) {
+      throw Exception('Blockchain does not support smart contract call');
     }
 
-    final res = await blockchainServices[transferRequest.blockchainType]
-        ?.callSmartContractFunction(transferRequest);
+    final res = await (blockchainServices[smartContractArguments.blockchainType]
+            as BlockchainServiceWithSmartContractCallSupport?)
+        ?.callSmartContractFunction(smartContractArguments);
 
     if (res == null) {
       throw Exception('Incorrect Smart Contract Call');

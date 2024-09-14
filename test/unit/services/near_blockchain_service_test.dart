@@ -48,23 +48,21 @@ void main() {
       const fromAddress = 'from_address';
       const privateKey = 'privateKey in Base64';
       const publicKey = 'publicKey in hex';
-      NearTransferRequest nearTransferRequest = NearTransferRequest(
-          toAddress: toAddress,
-          fromAddress: fromAddress,
-          privateKey: privateKey,
-          publicKey: publicKey);
 
       final arguments = NearBlockChainSmartContractArguments(
+        toAddress: toAddress,
+        fromAddress: fromAddress,
+        privateKey: privateKey,
+        publicKey: publicKey,
         method: 'exampleMethod',
         args: {'exampleArg': 'exampleValue'},
         transferAmount: NearFormatter.nearToYoctoNear('1'),
       );
 
-      when(service.callSmartContractFunction(nearTransferRequest)).thenAnswer(
-          (_) async => BlockchainResponse(
-              data: {}, status: BlockchainResponses.success));
+      when(service.callSmartContractFunction(arguments)).thenAnswer((_) async =>
+          BlockchainResponse(data: {}, status: BlockchainResponses.success));
 
-      final res = await service.callSmartContractFunction(nearTransferRequest);
+      final res = await service.callSmartContractFunction(arguments);
       expect(res,
           BlockchainResponse(data: {}, status: BlockchainResponses.success));
     });

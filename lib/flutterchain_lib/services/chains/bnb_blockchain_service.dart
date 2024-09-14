@@ -54,12 +54,6 @@ class BNBBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockchainResponse> callSmartContractFunction(
-      TransferRequest transferRequest) {
-    throw UnimplementedError('callSmartContractFunction does not exist.');
-  }
-
-  @override
   Future<BlockChainData> getBlockChainData({
     required String mnemonic,
     String? passphrase,
