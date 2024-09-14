@@ -167,8 +167,11 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<String> getBlockchainNetworkEnvironment() async {
-    return bitcoinRpcClient.networkClient.dio.options.baseUrl;
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() async {
+    return BitcoinNetworkEnvironmentSettings(
+      chainUrl: bitcoinRpcClient.networkClient.dio.options.baseUrl,
+    );
   }
 
   String? getAccountIdFromWalletRedirectOnTheWeb() {

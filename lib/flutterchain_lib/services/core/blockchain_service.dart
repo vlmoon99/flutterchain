@@ -25,5 +25,5 @@ abstract class BlockChainService {
 
   Set<String> getBlockchainsUrlsByBlockchainType();
 
-  Future<String> getBlockchainNetworkEnvironment();
+  Future<BlockChainNetworkEnvironmentSettings> getBlockchainNetworkEnvironment();
 }

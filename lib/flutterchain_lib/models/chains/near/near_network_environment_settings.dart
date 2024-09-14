@@ -4,5 +4,10 @@ class NearNetworkEnvironmentSettings
     implements BlockChainNetworkEnvironmentSettings {
   final String chainUrl;
 
-  NearNetworkEnvironmentSettings({required this.chainUrl});
+  const NearNetworkEnvironmentSettings({required this.chainUrl});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NearNetworkEnvironmentSettings && chainUrl == other.chainUrl;
 }

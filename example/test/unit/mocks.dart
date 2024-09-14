@@ -309,8 +309,9 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<String> getBlockchainNetworkEnvironment() async {
-    return "url";
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() async {
+    return const NearNetworkEnvironmentSettings(chainUrl: "url");
   }
 
   @override

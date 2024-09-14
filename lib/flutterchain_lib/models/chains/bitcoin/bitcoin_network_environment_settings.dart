@@ -4,5 +4,10 @@ class BitcoinNetworkEnvironmentSettings
     implements BlockChainNetworkEnvironmentSettings {
   final String chainUrl;
 
-  BitcoinNetworkEnvironmentSettings({required this.chainUrl});
+  const BitcoinNetworkEnvironmentSettings({required this.chainUrl});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BitcoinNetworkEnvironmentSettings && chainUrl == other.chainUrl;
 }

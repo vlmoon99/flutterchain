@@ -44,12 +44,12 @@ class FlutterChainService {
         ?.setBlockchainNetworkEnvironment(blockChainNetworkEnvironmentSettings);
   }
 
-  Future<String> getBlockchainNetworkEnvironment({
+  Future<BlockChainNetworkEnvironmentSettings?>
+      getBlockchainNetworkEnvironment({
     required String blockchainType,
   }) async {
     return await blockchainServices[blockchainType]
-            ?.getBlockchainNetworkEnvironment() ??
-        "no link";
+        ?.getBlockchainNetworkEnvironment();
   }
 
   Future<String> getWalletBalance(

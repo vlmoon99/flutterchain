@@ -215,7 +215,7 @@ void main() {
 
     test('getBlockchainNetworkEnvironment', () async {
       // Arrange
-      const expectedUrl = 'url';
+      const expectedUrl = NearNetworkEnvironmentSettings(chainUrl: 'url');
 
       // Act
       final url =

@@ -371,8 +371,11 @@ class NearBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<String> getBlockchainNetworkEnvironment() async {
-    return nearRpcClient.networkClient.dio.options.baseUrl;
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() async {
+    return NearNetworkEnvironmentSettings(
+      chainUrl: nearRpcClient.networkClient.dio.options.baseUrl,
+    );
   }
 
   //Login with Near Wallets

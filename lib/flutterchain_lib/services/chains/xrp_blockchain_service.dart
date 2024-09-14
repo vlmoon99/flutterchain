@@ -55,7 +55,8 @@ class XRPBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<String> getBlockchainNetworkEnvironment() {
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() {
     // TODO: implement getBlockchainNetworkEnvironment
     throw UnimplementedError();
   }
