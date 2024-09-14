@@ -1,6 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/consts/secure_storage_keys.dart';
 import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
@@ -24,9 +25,11 @@ class AuthController extends Disposable {
     required NearNetworkType networkType,
   }) async {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
-      newUrl: networkType == NearNetworkType.mainnet
-          ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
-          : NearBlockChainNetworkUrls.listOfUrls.first,
+      NearNetworkEnvironmentSettings(
+        chainUrl: networkType == NearNetworkType.mainnet
+            ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
+            : NearBlockChainNetworkUrls.listOfUrls.first,
+      ),
     );
     _streamController.add(state.copyWith(
       accountId: accountId,
@@ -44,9 +47,11 @@ class AuthController extends Disposable {
     required NearNetworkType networkType,
   }) async {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
-      newUrl: networkType == NearNetworkType.mainnet
-          ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
-          : NearBlockChainNetworkUrls.listOfUrls.first,
+      NearNetworkEnvironmentSettings(
+        chainUrl: networkType == NearNetworkType.mainnet
+            ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
+            : NearBlockChainNetworkUrls.listOfUrls.first,
+      ),
     );
 
     _streamController.add(state.copyWith(
@@ -64,9 +69,11 @@ class AuthController extends Disposable {
     required NearNetworkType networkType,
   }) async {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
-      newUrl: networkType == NearNetworkType.mainnet
-          ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
-          : NearBlockChainNetworkUrls.listOfUrls.first,
+      NearNetworkEnvironmentSettings(
+        chainUrl: networkType == NearNetworkType.mainnet
+            ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
+            : NearBlockChainNetworkUrls.listOfUrls.first,
+      ),
     );
 
     final privateKey = await nearBlockChainService

@@ -3,8 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/aurora_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/ethereum_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/ethereum_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -91,8 +93,16 @@ class AuroraBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    auroraRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    if (blockChainNetworkEnvironmentSettings
+        is! EvmNetworkEnvironmentSettings) {
+      throw ArgumentError(
+          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `EvmNetworkEnvironmentSettings`");
+    }
+    auroraRpcClient.networkClient
+        .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
   }
 
   //MPC Feature

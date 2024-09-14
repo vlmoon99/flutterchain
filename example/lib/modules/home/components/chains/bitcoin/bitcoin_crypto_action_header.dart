@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -35,7 +36,10 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
       networkUrls.add(url);
       selectedUrl = url;
       bitcoinVM.cryptoLibrary.blockchainService.setBlockchainNetworkEnvironment(
-          blockchainType: BlockChains.near, newUrl: selectedUrl);
+        blockchainType: BlockChains.near,
+        blockChainNetworkEnvironmentSettings:
+            BitcoinNetworkEnvironmentSettings(chainUrl: selectedUrl),
+      );
     });
   }
 
@@ -50,7 +54,8 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
     selectedUrl = networkUrls.first;
     bitcoinVM.cryptoLibrary.blockchainService.setBlockchainNetworkEnvironment(
       blockchainType: BlockChains.bitcoin,
-      newUrl: selectedUrl,
+      blockChainNetworkEnvironmentSettings:
+          BitcoinNetworkEnvironmentSettings(chainUrl: selectedUrl),
     );
   }
 
@@ -130,7 +135,8 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                       items: listOfBlockChainData
                           ?.map((blockChainData) =>
                               DropdownMenuItem<DerivationPath>(
-                                value: blockChainData.derivationPath as DerivationPath,
+                                value: blockChainData.derivationPath
+                                    as DerivationPath,
                                 child: SelectableText(
                                   blockChainData.derivationPath.toString(),
                                   style: nearTextStyles.bodyCopy!.copyWith(
@@ -222,7 +228,9 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                           bitcoinVM.cryptoLibrary.blockchainService
                               .setBlockchainNetworkEnvironment(
                             blockchainType: BlockChains.bitcoin,
-                            newUrl: selectedUrl,
+                            blockChainNetworkEnvironmentSettings:
+                                BitcoinNetworkEnvironmentSettings(
+                                    chainUrl: selectedUrl),
                           );
                         });
                       },

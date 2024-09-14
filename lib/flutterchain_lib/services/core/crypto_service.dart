@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -36,9 +37,11 @@ class FlutterChainService {
   }
 
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required String blockchainType,
+      required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings}) async {
     await blockchainServices[blockchainType]
-        ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
+        ?.setBlockchainNetworkEnvironment(blockChainNetworkEnvironmentSettings);
   }
 
   Future<String> getBlockchainNetworkEnvironment({

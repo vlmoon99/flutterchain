@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -49,10 +50,13 @@ class FlutterChainLibrary {
   }
 
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required String blockchainType,
+      required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings}) async {
     await blockchainService.setBlockchainNetworkEnvironment(
       blockchainType: blockchainType,
-      newUrl: newUrl,
+      blockChainNetworkEnvironmentSettings:
+          blockChainNetworkEnvironmentSettings,
     );
   }
 

@@ -1,8 +1,9 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
@@ -196,10 +197,13 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings,
+      required String blockchainType}) async {
     await blockchainService.setBlockchainNetworkEnvironment(
       blockchainType: blockchainType,
-      newUrl: newUrl,
+      blockChainNetworkEnvironmentSettings:
+          blockChainNetworkEnvironmentSettings,
     );
   }
 
@@ -259,9 +263,11 @@ class MockFlutterChainService extends Mock implements FlutterChainService {
 
   @override
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings,
+      required String blockchainType}) async {
     await blockchainServices[blockchainType]
-        ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
+        ?.setBlockchainNetworkEnvironment(blockChainNetworkEnvironmentSettings);
   }
 }
 
@@ -347,10 +353,10 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<NearBlockChainData> getBlockChainDataByDerivationPath(
-      {required String mnemonic,
-      required String? passphrase,
-      required DerivationPath derivationPath}) async {
+  Future<NearBlockChainData> getBlockChainData(
+      {DerivationPathData? derivationPath,
+      required String mnemonic,
+      String? passphrase}) async {
     return NearBlockChainData(
       publicKey: 'publicKey',
       privateKey: 'privateKey',
@@ -388,8 +394,13 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    nearRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    nearRpcClient.networkClient.setUrl(
+      (blockChainNetworkEnvironmentSettings as NearNetworkEnvironmentSettings)
+          .chainUrl,
+    );
   }
 
   @override

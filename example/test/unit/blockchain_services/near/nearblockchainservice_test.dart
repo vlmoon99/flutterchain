@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
@@ -201,7 +202,7 @@ void main() {
 
       // Act
       await mockNearBlockChainService.setBlockchainNetworkEnvironment(
-          newUrl: newUrl);
+          NearNetworkEnvironmentSettings(chainUrl: newUrl));
 
       // Assert
       expect(
@@ -224,7 +225,7 @@ void main() {
       expect(url, expectedUrl);
     });
 
-    test('getBlockChainDataByDerivationPath', () async {
+    test('getBlockChainData by DerivationPath', () async {
       // Arrange
       const mnemonic = 'mnemonic';
       const passphrase = 'passphrase';
@@ -237,8 +238,7 @@ void main() {
       );
 
       // Act
-      final blockChainData =
-          await mockNearBlockChainService.getBlockChainDataByDerivationPath(
+      final blockChainData = await mockNearBlockChainService.getBlockChainData(
         mnemonic: mnemonic,
         passphrase: passphrase,
         derivationPath: derivationPath,

@@ -4,9 +4,9 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 import '../mocks.dart';
@@ -350,7 +350,8 @@ void main() {
 
       // Act
       await mockCryptoLibrary.setBlockchainNetworkEnvironment(
-        newUrl: newUrl,
+        blockChainNetworkEnvironmentSettings:
+            NearNetworkEnvironmentSettings(chainUrl: newUrl),
         blockchainType: BlockChains.near,
       );
 

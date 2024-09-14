@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -18,7 +19,9 @@ abstract class BlockChainService {
 
   Future<String> getWalletBalance(TransferRequest transferRequest);
 
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl});
+  Future<void> setBlockchainNetworkEnvironment(
+    BlockChainNetworkEnvironmentSettings blockChainNetworkEnvironmentSettings,
+  );
 
   Set<String> getBlockchainsUrlsByBlockchainType();
 

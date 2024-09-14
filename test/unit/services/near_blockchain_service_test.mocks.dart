@@ -4,17 +4,19 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
-import 'dart:io' as _i15;
+import 'dart:io' as _i16;
 
-import 'package:flutter/material.dart' as _i12;
+import 'package:flutter/material.dart' as _i13;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart'
-    as _i14;
+    as _i15;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart'
     as _i7;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart'
-    as _i13;
+    as _i14;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart'
     as _i6;
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart'
+    as _i12;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart'
     as _i4;
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
@@ -217,12 +219,13 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i9.Future<String>);
 
   @override
-  _i9.Future<void> setBlockchainNetworkEnvironment({required String? newUrl}) =>
+  _i9.Future<void> setBlockchainNetworkEnvironment(
+          _i12.BlockChainNetworkEnvironmentSettings?
+              blockChainNetworkEnvironmentSettings) =>
       (super.noSuchMethod(
         Invocation.method(
           #setBlockchainNetworkEnvironment,
-          [],
-          {#newUrl: newUrl},
+          [blockChainNetworkEnvironmentSettings],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
@@ -576,7 +579,7 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i9.Future<String> authWithNearWallets(
-    _i12.BuildContext? context,
+    _i13.BuildContext? context,
     String? privateNearAPIjsFormat,
   ) =>
       (super.noSuchMethod(
@@ -640,7 +643,7 @@ class MockNearBlockChainService extends _i1.Mock
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
-    required _i13.MpcTransactionInfo? mpcTransactionInfo,
+    required _i14.MpcTransactionInfo? mpcTransactionInfo,
     required String? senderAdress,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
@@ -682,7 +685,7 @@ class MockNearBlockChainService extends _i1.Mock
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
-    required _i13.MpcTransactionInfo? transactionInfo,
+    required _i14.MpcTransactionInfo? transactionInfo,
     required String? mpcSenderPublicKey,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
@@ -724,7 +727,7 @@ class MockNearBlockChainService extends _i1.Mock
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
-    required _i13.MpcTransactionInfo? mpcTransactionInfo,
+    required _i14.MpcTransactionInfo? mpcTransactionInfo,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
   }) =>
@@ -946,7 +949,7 @@ class MockNearBlockChainService extends _i1.Mock
     Map<String, int>? split_owners,
     List<String>? tags,
     List<dynamic>? extra,
-    _i14.CategoryNFT? category,
+    _i15.CategoryNFT? category,
     String? document,
     String? baseURL = r'https://arweave.net/',
   }) =>
@@ -1012,7 +1015,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as String);
 
   @override
-  _i9.Future<String> uploadFileToArweave({required _i15.File? file}) =>
+  _i9.Future<String> uploadFileToArweave({required _i16.File? file}) =>
       (super.noSuchMethod(
         Invocation.method(
           #uploadFileToArweave,

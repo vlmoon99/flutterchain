@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/bitcoin_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -83,8 +85,16 @@ class BitcoinBlockChainService implements BlockChainService {
 
   //Setting new blockchain network environment on another url
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    bitcoinRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    if (blockChainNetworkEnvironmentSettings
+        is! BitcoinNetworkEnvironmentSettings) {
+      throw ArgumentError(
+          'Invalid blockChainNetworkEnvironmentSettings. It must be of type `BitcoinNetworkEnvironmentSettings`');
+    }
+    bitcoinRpcClient.networkClient
+        .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
   }
 
   //Getting official blockchain's urls
