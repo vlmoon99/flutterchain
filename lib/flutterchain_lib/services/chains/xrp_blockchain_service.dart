@@ -77,9 +77,9 @@ class XRPBlockChainService implements BlockChainService {
       BlockChainNetworkEnvironmentSettings
           blockChainNetworkEnvironmentSettings) async {
     if (blockChainNetworkEnvironmentSettings
-        is! EvmNetworkEnvironmentSettings) {
+        is! XrpNetworkEnvironmentSettings) {
       throw ArgumentError(
-          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `EvmNetworkEnvironmentSettings`");
+          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `XrpNetworkEnvironmentSettings`");
     }
     xrpRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
