@@ -298,7 +298,7 @@ class FlutterChainLibrary {
     switch (blockchainType) {
       case BlockChains.near:
         smartContractArguments = NearBlockChainSmartContractArguments(
-          fromAddress: publicKey,
+          accountId: publicKey,
           publicKey: publicKey,
           privateKey: privateKey,
           toAddress: toAddress,

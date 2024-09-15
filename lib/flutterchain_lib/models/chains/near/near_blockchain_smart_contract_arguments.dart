@@ -3,17 +3,17 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contr
 
 class NearBlockChainSmartContractArguments
     implements BlockChainSmartContractArguments {
-  final String fromAddress;
+  final String? accountId;
   final String publicKey;
-  final String toAddress;
   final String privateKey;
+  final String toAddress;
   final String method;
   final Map<String, dynamic> args;
   final String transferAmount;
   final String? gas;
 
   NearBlockChainSmartContractArguments({
-    required this.fromAddress,
+    this.accountId,
     required this.publicKey,
     required this.toAddress,
     required this.privateKey,

@@ -93,11 +93,12 @@ class NearBlockChainService
   ) async {
     if (smartContractArguments is! NearBlockChainSmartContractArguments) {
       throw ArgumentError(
-          "Incorrect Blockchain Smart Contract Arguments. Expected NearBlockChainSmartContractArguments");
+          "Incorrect Blockchain Smart Contract Arguments. Expected `NearBlockChainSmartContractArguments`");
     }
 
     final transactionInfo = await getTransactionInfo(
-      accountId: smartContractArguments.fromAddress,
+      accountId:
+          smartContractArguments.accountId ?? smartContractArguments.publicKey,
       publicKey: smartContractArguments.publicKey,
     );
 
@@ -115,7 +116,8 @@ class NearBlockChainService
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: smartContractArguments.fromAddress,
+      fromAddress:
+          smartContractArguments.accountId ?? smartContractArguments.publicKey,
       toAddress: smartContractArguments.toAddress,
       transferAmount: smartContractArguments.transferAmount,
       privateKey: smartContractArguments.privateKey,
@@ -571,7 +573,7 @@ class NearBlockChainService
     final reversedPayload = payload.reversed.toList();
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: mpcContract,
         privateKey: privateKey,
@@ -644,7 +646,7 @@ class NearBlockChainService
 
       final nearSignRequest = await callSmartContractFunction(
         NearBlockChainSmartContractArguments(
-          fromAddress: accountId,
+          accountId: accountId,
           publicKey: publicKey,
           toAddress: mpcContract,
           privateKey: privateKey,
@@ -698,7 +700,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: mpcContract,
         privateKey: privateKey,
@@ -775,7 +777,7 @@ class NearBlockChainService
     };
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: factoryContract,
         privateKey: privateKey,
@@ -935,7 +937,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
@@ -979,7 +981,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
@@ -1009,7 +1011,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
@@ -1136,7 +1138,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
@@ -1232,7 +1234,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nftCollectionContract,
         privateKey: privateKey,
@@ -1326,7 +1328,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nameNFTCollection,
         privateKey: privateKey,
@@ -1402,7 +1404,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nameNFTCollection,
         privateKey: privateKey,
@@ -1443,7 +1445,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
@@ -1488,7 +1490,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
@@ -1533,7 +1535,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
@@ -1586,7 +1588,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,
@@ -1661,7 +1663,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: nameNFTCollection,
         privateKey: privateKey,
@@ -1718,7 +1720,7 @@ class NearBlockChainService
 
     final nearSignRequest = await callSmartContractFunction(
       NearBlockChainSmartContractArguments(
-        fromAddress: accountId,
+        accountId: accountId,
         publicKey: publicKey,
         toAddress: market_account_id,
         privateKey: privateKey,

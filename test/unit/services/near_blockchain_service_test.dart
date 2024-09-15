@@ -53,7 +53,7 @@ void main() {
 
       final arguments = NearBlockChainSmartContractArguments(
         toAddress: toAddress,
-        fromAddress: fromAddress,
+        accountId: fromAddress,
         privateKey: privateKey,
         publicKey: publicKey,
         method: 'exampleMethod',
