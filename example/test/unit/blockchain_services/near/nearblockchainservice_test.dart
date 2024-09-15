@@ -159,7 +159,12 @@ void main() {
       );
 
       NearTransferRequest nearTransferRequest = NearTransferRequest(
-          toAddress: toAddress, transferAmount: transferAmount);
+        publicKey: publicKey,
+        accountId: fromAddress,
+        privateKey: privateKey,
+        toAddress: toAddress,
+        transferAmount: transferAmount,
+      );
 
       // Act
       final response = await mockNearBlockChainService

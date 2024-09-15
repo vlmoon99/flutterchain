@@ -55,33 +55,36 @@ class NearBlockChainService
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest) async {
-    NearTransferRequest nearTransferRequest =
-        transferRequest as NearTransferRequest;
-    final transactionInfo = await getTransactionInfo(
-      accountId: nearTransferRequest.publicKey!,
-      publicKey: nearTransferRequest.publicKey!,
-    );
-    final gas = BlockchainGas.gas[BlockChains.near];
-    if (gas == null) {
-      throw Exception('Incorrect Blockchain Gas');
+    if (transferRequest is! NearTransferRequest) {
+      throw ArgumentError(
+          'Incorrect TransferRequest type. Must be `NearTransferRequest`');
     }
+
+    final transactionInfo = await getTransactionInfo(
+      accountId: transferRequest.accountId ?? transferRequest.publicKey,
+      publicKey: transferRequest.publicKey,
+    );
+
+    final gas = transferRequest.gas ?? BlockchainGas.gas[BlockChains.near]!;
+
     final actions = [
       {
         "type": "transfer",
-        "data": {"amount": nearTransferRequest.transferAmount}
+        "data": {"amount": transferRequest.transferAmount}
       }
     ];
 
     final signedAction = await signNearActions(
-      fromAddress: nearTransferRequest.publicKey!,
-      toAddress: nearTransferRequest.toAddress!,
-      transferAmount: nearTransferRequest.transferAmount!,
-      privateKey: nearTransferRequest.privateKey!,
+      fromAddress: transferRequest.accountId ?? transferRequest.publicKey,
+      toAddress: transferRequest.toAddress,
+      transferAmount: transferRequest.transferAmount,
+      privateKey: transferRequest.privateKey,
       gas: gas,
       nonce: transactionInfo.nonce,
       blockHash: transactionInfo.blockHash,
       actions: actions,
     );
+
     final res = await nearRpcClient.sendSyncTx([signedAction]);
     return res;
   }

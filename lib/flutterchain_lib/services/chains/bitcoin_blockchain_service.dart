@@ -42,24 +42,30 @@ class BitcoinBlockChainService implements BlockChainService {
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest) async {
-    BitcoinTransferRequest bitcoinTransferRequest =
-        transferRequest as BitcoinTransferRequest;
+    if (transferRequest is! BitcoinTransferRequest) {
+      throw ArgumentError(
+          'Incorrect TransferRequest type. Must be `BitcoinTransferRequest`');
+    }
+
     final format = 'SEGWIT';
-    final actuelFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
-    final accountID =
-        await getAdressBTCSegWitFomat(bitcoinTransferRequest.publicKey!);
+    final actualFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
+    final accountID = await getAdressBTCSegWitFomat(transferRequest.publicKey);
     final transactionInfo = await bitcoinRpcClient.getTransactionInfo(
-        accountID, bitcoinTransferRequest.transferAmount!, actuelFees);
+      accountID,
+      transferRequest.transferAmount,
+      actualFees,
+    );
 
     final txHex = await signBitcoinTransfer(
-        bitcoinTransferRequest.toAddress!,
-        accountID,
-        bitcoinTransferRequest.transferAmount!,
-        bitcoinTransferRequest.privateKey!,
-        bitcoinTransferRequest.publicKey!,
-        transactionInfo.data,
-        format,
-        actuelFees);
+      transferRequest.toAddress,
+      accountID,
+      transferRequest.transferAmount,
+      transferRequest.privateKey,
+      transferRequest.publicKey,
+      transactionInfo.data,
+      format,
+      actualFees,
+    );
 
     final res = await bitcoinRpcClient.sendTransaction(txHex);
     return res;

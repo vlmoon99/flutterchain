@@ -6,7 +6,6 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -214,12 +213,18 @@ class NearVM {
           .mnemonic;
 
   Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
-    required NearTransferRequest nearTransferRequest,
+    required String walletId,
+    required DerivationPathData derivationPathData,
+    required String toAddress,
+    required String transferAmount,
   }) async {
-    nearTransferRequest.transferAmount =
-        NearFormatter.nearToYoctoNear(nearTransferRequest.transferAmount!);
     final response = cryptoLibrary.sendTransferNativeCoin(
-        transferRequest: nearTransferRequest);
+      blockchainType: BlockChains.near,
+      derivationPathData: derivationPathData,
+      walletId: walletId,
+      toAddress: toAddress,
+      transferAmount: NearFormatter.nearToYoctoNear(transferAmount),
+    );
     return response;
   }
 

@@ -2,6 +2,7 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
@@ -180,9 +181,14 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
   }
 
   @override
-  Future<BlockchainResponse> sendTransferNativeCoin(
-      {required TransferRequest transferRequest}) async {
-    if (transferRequest.transferAmount == '-1') {
+  Future<BlockchainResponse> sendTransferNativeCoin({
+    required String blockchainType,
+    required DerivationPathData derivationPathData,
+    required String toAddress,
+    required String transferAmount,
+    required String walletId,
+  }) async {
+    if (transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},
@@ -416,7 +422,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest) async {
-    if (transferRequest.transferAmount == '-1') {
+    if ((transferRequest as NearTransferRequest).transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},

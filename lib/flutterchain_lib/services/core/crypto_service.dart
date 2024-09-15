@@ -60,14 +60,16 @@ class FlutterChainService {
     return res ?? 'Error : no balance result';
   }
 
-  Future<BlockchainResponse> sendTransferNativeCoin(
-      {required TransferRequest transferRequest}) async {
-    if (blockchainServices[transferRequest.blockchainType] == null) {
+  Future<BlockchainResponse> sendTransferNativeCoin({
+    required String blockchainType,
+    required TransferRequest transferRequest,
+  }) async {
+    if (blockchainServices[blockchainType] == null) {
       throw Exception('Incorrect Blockchain');
     }
 
     final blockchainService =
-        blockchainServices[transferRequest.blockchainType];
+        blockchainServices[blockchainType];
     final res = blockchainService?.sendTransferNativeCoin(transferRequest);
 
     if (res == null) {

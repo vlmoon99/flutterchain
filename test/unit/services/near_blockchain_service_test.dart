@@ -28,11 +28,12 @@ void main() {
       const privateKey = 'privateKey in Base64';
       const publicKey = 'publicKey in hex';
       NearTransferRequest nearTransferRequest = NearTransferRequest(
-          toAddress: toAddress,
-          fromAddress: fromAddress,
-          transferAmount: nearToYoctoNear,
-          privateKey: privateKey,
-          publicKey: publicKey);
+        accountId: fromAddress,
+        publicKey: publicKey,
+        privateKey: privateKey,
+        toAddress: toAddress,
+        transferAmount: nearToYoctoNear,
+      );
 
       when(
         service.sendTransferNativeCoin(nearTransferRequest),

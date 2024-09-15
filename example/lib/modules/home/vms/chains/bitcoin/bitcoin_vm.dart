@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/services/helper_service.dart';
@@ -64,10 +63,19 @@ class BitcoinVM {
           .firstWhere((element) => element.name == walletName)
           .mnemonic;
 
-  Future<BlockchainResponse> sendNativeCoinTransferByWalletId(
-      {required BitcoinTransferRequest bitcoinTransferRequest}) async {
+  Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
+    required DerivationPathData derivationPathData,
+    required String walletId,
+    required String toAddress,
+    required String transferAmount,
+  }) async {
     final response = cryptoLibrary.sendTransferNativeCoin(
-        transferRequest: bitcoinTransferRequest);
+      blockchainType: BlockChains.bitcoin,
+      derivationPathData: derivationPathData,
+      walletId: walletId,
+      toAddress: toAddress,
+      transferAmount: transferAmount,
+    );
     return response;
   }
 }
