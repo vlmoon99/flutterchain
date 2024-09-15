@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
@@ -330,9 +331,11 @@ void main() {
         derivationPathData: currentDerivationPath,
         walletId: walletID,
         toAddress: smartContractAddress,
-        method: method,
-        args: args,
-        transferAmount: amountOfDeposit,
+        rawSmartContractArguments: RawNearBlockChainSmartContractArguments(
+          method: method,
+          args: args,
+          transferAmount: amountOfDeposit,
+        ),
       );
 
       // Assert

@@ -78,13 +78,14 @@ class FlutterChainService {
 
   Future<BlockchainResponse> callSmartContractFunction({
     required BlockChainSmartContractArguments smartContractArguments,
+    required String blockchainType,
   }) async {
     if (!BlockChains.supportedBlockChainsForSmartContractCall
-        .contains(smartContractArguments.blockchainType)) {
+        .contains(blockchainType)) {
       throw Exception('Blockchain does not support smart contract call');
     }
 
-    final res = await (blockchainServices[smartContractArguments.blockchainType]
+    final res = await (blockchainServices[blockchainType]
             as BlockchainServiceWithSmartContractCallSupport?)
         ?.callSmartContractFunction(smartContractArguments);
 

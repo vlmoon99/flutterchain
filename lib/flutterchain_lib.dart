@@ -257,12 +257,9 @@ class FlutterChainLibrary {
   Future<BlockchainResponse> callSmartContractFunction({
     required String blockchainType,
     required DerivationPathData derivationPathData,
-    required String toAddress,
-    required String method,
-    required Map<String, dynamic> args,
-    required String transferAmount,
     required String walletId,
-    String? gas,
+    required String toAddress,
+    required RawBlockChainSmartContractArguments rawSmartContractArguments,
   }) async {
     if (!BlockChains.supportedBlockChainsForSmartContractCall
         .contains(blockchainType)) {
@@ -302,10 +299,12 @@ class FlutterChainLibrary {
           publicKey: publicKey,
           privateKey: privateKey,
           toAddress: toAddress,
-          method: method,
-          args: args,
-          transferAmount: transferAmount,
-          gas: gas,
+          method: (rawSmartContractArguments
+                  as RawNearBlockChainSmartContractArguments)
+              .method,
+          args: rawSmartContractArguments.args,
+          transferAmount: rawSmartContractArguments.transferAmount,
+          gas: rawSmartContractArguments.gas,
         );
         break;
       default:
@@ -314,6 +313,7 @@ class FlutterChainLibrary {
     }
     return blockchainService.callSmartContractFunction(
       smartContractArguments: smartContractArguments,
+      blockchainType: blockchainType,
     );
   }
 }

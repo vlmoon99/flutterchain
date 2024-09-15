@@ -1,4 +1,3 @@
-import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 
 class NearBlockChainSmartContractArguments
@@ -22,7 +21,18 @@ class NearBlockChainSmartContractArguments
     required this.args,
     required this.transferAmount,
   });
+}
 
-  @override
-  String blockchainType = BlockChains.near;
+class RawNearBlockChainSmartContractArguments implements RawBlockChainSmartContractArguments {
+  final String method;
+  final Map<String, dynamic> args;
+  final String transferAmount;
+  final String? gas;
+
+  RawNearBlockChainSmartContractArguments({
+    required this.method,
+    required this.args,
+    required this.transferAmount,
+    this.gas,
+  });
 }

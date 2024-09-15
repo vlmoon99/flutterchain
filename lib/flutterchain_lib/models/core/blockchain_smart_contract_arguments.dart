@@ -1,3 +1,3 @@
-abstract class BlockChainSmartContractArguments {
-  late final String blockchainType;
-}
+abstract class BlockChainSmartContractArguments {}
+
+abstract class RawBlockChainSmartContractArguments {}

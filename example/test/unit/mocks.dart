@@ -167,13 +167,10 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction({
-    required Map<String, dynamic> args,
     required String blockchainType,
     required DerivationPathData derivationPathData,
-    String? gas,
-    required String method,
+    required RawBlockChainSmartContractArguments rawSmartContractArguments,
     required String toAddress,
-    required String transferAmount,
     required String walletId,
   }) async {
     return BlockchainResponse(
