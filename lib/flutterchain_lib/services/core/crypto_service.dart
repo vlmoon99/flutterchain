@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
@@ -53,10 +54,9 @@ class FlutterChainService {
         ?.getBlockchainNetworkEnvironment();
   }
 
-  Future<String> getWalletBalance(
-      {required TransferRequest transferRequest}) async {
-    final res = await blockchainServices[transferRequest.blockchainType]
-        ?.getWalletBalance(transferRequest);
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) async {
+    final res = await blockchainServices[accountInfoRequest.blockchainType]
+        ?.getWalletBalance(accountInfoRequest);
     return res ?? 'Error : no balance result';
   }
 

@@ -6,7 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
@@ -180,9 +179,10 @@ class _NearCryptoActionHeaderState extends State<NearCryptoActionHeader> {
                     ),
                     FutureBuilder(
                       future: nearVM.getBalanceByDerivationPath(
-                          nearTransferRequest: NearTransferRequest(
-                              walletId: nearVM.userStore.walletIdStream.value,
-                              currentDerivationPath: derivationModel)),
+                        
+                        walletId: nearVM.userStore.walletIdStream.value,
+                        derivationPathData: derivationModel,
+                      ),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Padding(

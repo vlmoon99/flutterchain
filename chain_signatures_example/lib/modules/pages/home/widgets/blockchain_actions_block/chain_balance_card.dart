@@ -14,9 +14,10 @@ import 'package:flutterchain/flutterchain_lib/constants/chains/polygon_blockchai
 import 'package:flutterchain/flutterchain_lib/constants/chains/xrp_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_request.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/avalanche_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -68,8 +69,9 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                     ),
                   );
             balanceInString = await ethereumBlockChainService
-                .getWalletBalance(EVMTransferRequest(
-              accountID: widget.chainAddress,
+                .getWalletBalance(EvmAccountInfoRequest(
+              accountId: widget.chainAddress,
+              blockchainType: BlockChains.ethereum,
             ));
           }
         case BlockChains.bitcoin:
@@ -96,9 +98,10 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                           : BNBBlockChainNetworkUrls.listOfUrls.last,
                     ),
                   );
-            balanceInString =
-                await bnbBlockChainService.getWalletBalance(EVMTransferRequest(
-              accountID: widget.chainAddress,
+            balanceInString = await bnbBlockChainService
+                .getWalletBalance(EvmAccountInfoRequest(
+              accountId: widget.chainAddress,
+              blockchainType: BlockChains.bnb,
             ));
           }
         case BlockChains.aurora:
@@ -113,8 +116,9 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                     ),
                   );
             balanceInString = await auroraBlockChainService.getWalletBalance(
-              EVMTransferRequest(
-                accountID: widget.chainAddress,
+              EvmAccountInfoRequest(
+                accountId: widget.chainAddress,
+                blockchainType: BlockChains.aurora,
               ),
             );
           }
@@ -130,8 +134,9 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                     ),
                   );
             balanceInString = await polygonBlockChainService.getWalletBalance(
-              EVMTransferRequest(
-                accountID: widget.chainAddress,
+              EvmAccountInfoRequest(
+                accountId: widget.chainAddress,
+                blockchainType: BlockChains.polygon,
               ),
             );
           }
@@ -147,8 +152,9 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                     ),
                   );
             balanceInString = await avalancheBlockChainService
-                .getWalletBalance(EVMTransferRequest(
-              accountID: widget.chainAddress,
+                .getWalletBalance(EvmAccountInfoRequest(
+              accountId: widget.chainAddress,
+              blockchainType: BlockChains.avalanche,
             ));
           }
         case BlockChains.xrp:
@@ -162,9 +168,9 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                           : XRPBlockChainNetworkUrls.listOfUrls.last,
                     ),
                   );
-            balanceInString =
-                await xrpBlockChainService.getWalletBalance(XRPTransferRequest(
-              accountID: widget.chainAddress,
+            balanceInString = await xrpBlockChainService
+                .getWalletBalance(XrpAccountInfoRequest(
+              accountId: widget.chainAddress,
             ));
           }
         default:

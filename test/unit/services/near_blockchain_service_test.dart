@@ -1,10 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -143,13 +145,13 @@ void main() {
 
     test('getWalletBalance', () async {
       final service = MockNearBlockChainService();
-      NearTransferRequest nearTransferRequest =
-          NearTransferRequest(accountID: 'test_account_id');
+      final AccountInfoRequest accountInfoRequest =
+          NearAccountInfoRequest(accountId: 'test_account_id');
 
-      when(service.getWalletBalance(nearTransferRequest))
+      when(service.getWalletBalance(accountInfoRequest))
           .thenAnswer((_) async => '1000000000000000000000000');
 
-      final res = await service.getWalletBalance(nearTransferRequest);
+      final res = await service.getWalletBalance(accountInfoRequest);
       expect(res, '1000000000000000000000000');
     });
 

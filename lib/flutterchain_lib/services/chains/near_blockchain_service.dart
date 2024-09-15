@@ -11,6 +11,7 @@ import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_n
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
@@ -18,6 +19,7 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transa
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
@@ -142,10 +144,13 @@ class NearBlockChainService
 
   //Get wallet balance by account ID (hex representation of near account)
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest) async {
-    final nearTransferRequest = transferRequest as NearTransferRequest;
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) async {
+    if (accountInfoRequest is! NearAccountInfoRequest) {
+      throw ArgumentError(
+          "Invalid accountInfoRequest. It must be of type `NearAccountInfoRequest`");
+    }
     final res =
-        await nearRpcClient.getAccountBalance(nearTransferRequest.accountID!);
+        await nearRpcClient.getAccountBalance(accountInfoRequest.accountId);
     return res;
   }
 

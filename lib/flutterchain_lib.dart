@@ -1,5 +1,10 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
@@ -101,22 +106,71 @@ class FlutterChainLibrary {
   }
 
   Future<String> getBalanceOfAddressOnSpecificBlockchain({
-    required TransferRequest transferRequest,
+    String? address,
+    required String blockchainType,
+    String? walletId,
+    DerivationPathData? derivationPathData,
   }) async {
-    if (transferRequest.accountID != null) {
-      return blockchainService.getWalletBalance(
-          transferRequest: transferRequest);
+    late final AccountInfoRequest accountInfoRequest;
+
+    if (address != null) {
+      switch (blockchainType) {
+        case BlockChains.near:
+          accountInfoRequest = NearAccountInfoRequest(accountId: address);
+          break;
+        case BlockChains.bitcoin:
+          accountInfoRequest = BitcoinAccountInfoRequest(accountId: address);
+          break;
+        case BlockChains.aurora ||
+              BlockChains.avalanche ||
+              BlockChains.ethereum ||
+              BlockChains.bnb ||
+              BlockChains.polygon:
+          accountInfoRequest = EvmAccountInfoRequest(
+              accountId: address, blockchainType: blockchainType);
+          break;
+        case BlockChains.xrp:
+          accountInfoRequest = XrpAccountInfoRequest(accountId: address);
+          break;
+        default:
+          throw Exception('Unsupported blockchain type');
+      }
+      return blockchainService.getWalletBalance(accountInfoRequest);
     } else {
-      final wallet = walletsStream.value.firstWhereOrNull(
-          (element) => element.id == transferRequest.walletId);
-      final publicKey = wallet?.blockchainsData?[transferRequest.blockchainType]
-          ?.firstWhereOrNull((element) =>
-              element.derivationPath == transferRequest.currentDerivationPath)
+      if (walletId == null || derivationPathData == null) {
+        throw Exception("Missing walletId or derivationPathData");
+      }
+      final wallet = walletsStream.value
+          .firstWhereOrNull((element) => element.id == walletId);
+      final publicKey = wallet?.blockchainsData?[blockchainType]
+          ?.firstWhereOrNull(
+              (element) => element.derivationPath == derivationPathData)
           ?.publicKey;
       if (publicKey != null) {
-        transferRequest.accountID = publicKey;
+        switch (blockchainType) {
+          case BlockChains.near:
+            accountInfoRequest = NearAccountInfoRequest(accountId: publicKey);
+            break;
+          case BlockChains.bitcoin:
+            accountInfoRequest =
+                BitcoinAccountInfoRequest(accountId: publicKey);
+            break;
+          case BlockChains.aurora ||
+                BlockChains.avalanche ||
+                BlockChains.ethereum ||
+                BlockChains.bnb ||
+                BlockChains.polygon:
+            accountInfoRequest = EvmAccountInfoRequest(
+                accountId: publicKey, blockchainType: blockchainType);
+            break;
+          case BlockChains.xrp:
+            accountInfoRequest = XrpAccountInfoRequest(accountId: publicKey);
+          default:
+            throw Exception('Unsupported blockchain type');
+        }
         return blockchainService.getWalletBalance(
-            transferRequest: transferRequest);
+          accountInfoRequest,
+        );
       } else {
         throw Exception("Public key is null");
       }

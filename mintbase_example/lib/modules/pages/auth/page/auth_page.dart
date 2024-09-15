@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/modules/models/auth_info_model/auth_info.dart';
 import 'package:mintbase_example/modules/pages/auth/page/widgets/add_remove_minters.dart';
@@ -39,7 +39,7 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<String> getWalletBalance({required String account_id}) async {
     return await nearService
-        .getWalletBalance(NearTransferRequest(accountID: account_id));
+        .getWalletBalance(NearAccountInfoRequest(accountId: account_id));
   }
 
   void getInfoStream() async {

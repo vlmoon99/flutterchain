@@ -6,9 +6,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/avalanche_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -550,8 +550,9 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   ethereumBlockChainService =
                                   EthereumBlockChainService.defaultInstance();
                               return ethereumBlockChainService
-                                  .getWalletBalance(EVMTransferRequest(
-                                accountID: mpcAccountInfo!.adress,
+                                  .getWalletBalance(EvmAccountInfoRequest(
+                                accountId: mpcAccountInfo!.adress,
+                                blockchainType: BlockChains.ethereum,
                               ));
                             }
                           case BlockChains.bitcoin:
@@ -568,8 +569,9 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               final BNBBlockChainService bnbBlockChainService =
                                   BNBBlockChainService.defaultInstance();
                               return bnbBlockChainService
-                                  .getWalletBalance(EVMTransferRequest(
-                                accountID: mpcAccountInfo!.adress,
+                                  .getWalletBalance(EvmAccountInfoRequest(
+                                accountId: mpcAccountInfo!.adress,
+                                blockchainType: BlockChains.bnb,
                               ));
                             }
                           case BlockChains.aurora:
@@ -578,8 +580,9 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   auroraBlockChainService =
                                   AuroraBlockChainService.defaultInstance();
                               return auroraBlockChainService
-                                  .getWalletBalance(EVMTransferRequest(
-                                accountID: mpcAccountInfo!.adress,
+                                  .getWalletBalance(EvmAccountInfoRequest(
+                                accountId: mpcAccountInfo!.adress,
+                                blockchainType: BlockChains.aurora,
                               ));
                             }
                           case BlockChains.polygon:
@@ -588,8 +591,9 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   polygonBlockChainService =
                                   PolygonBlockChainService.defaultInstance();
                               return polygonBlockChainService.getWalletBalance(
-                                EVMTransferRequest(
-                                  accountID: mpcAccountInfo!.adress,
+                                EvmAccountInfoRequest(
+                                  accountId: mpcAccountInfo!.adress,
+                                  blockchainType: BlockChains.polygon,
                                 ),
                               );
                             }
@@ -599,8 +603,9 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   avalancheBlockChainService =
                                   AvalancheBlockChainService.defaultInstance();
                               return avalancheBlockChainService
-                                  .getWalletBalance(EVMTransferRequest(
-                                accountID: mpcAccountInfo!.adress,
+                                  .getWalletBalance(EvmAccountInfoRequest(
+                                accountId: mpcAccountInfo!.adress,
+                                blockchainType: BlockChains.avalanche,
                               ));
                             }
                           case BlockChains.xrp:
@@ -608,8 +613,8 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               final XRPBlockChainService xrpBlockChainService =
                                   XRPBlockChainService.defaultInstance();
                               return xrpBlockChainService
-                                  .getWalletBalance(XRPTransferRequest(
-                                accountID: mpcAccountInfo!.adress,
+                                  .getWalletBalance(XrpAccountInfoRequest(
+                                accountId: mpcAccountInfo!.adress,
                               ));
                             }
                           default:

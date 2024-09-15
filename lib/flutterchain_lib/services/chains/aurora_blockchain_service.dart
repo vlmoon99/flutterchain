@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/aurora_blockchain_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/constants/chains/ethereum_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/ethereum_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
@@ -64,7 +65,8 @@ class AuroraBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockChainNetworkEnvironmentSettings> getBlockchainNetworkEnvironment() {
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() {
     // TODO: implement getBlockchainNetworkEnvironment
     throw UnimplementedError();
   }
@@ -75,8 +77,12 @@ class AuroraBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest) {
-    return auroraRpcClient.getAccountBalance(transferRequest.accountID!);
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
+    if (accountInfoRequest is! EvmAccountInfoRequest) {
+      throw ArgumentError(
+          "Invalid accountInfoRequest. It must be of type `EvmAccountInfoRequest`");
+    }
+    return auroraRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
 
   @override

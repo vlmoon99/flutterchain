@@ -1,3 +1,4 @@
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
@@ -14,7 +15,7 @@ abstract class BlockChainService {
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest);
 
-  Future<String> getWalletBalance(TransferRequest transferRequest);
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest);
 
   Future<void> setBlockchainNetworkEnvironment(
     BlockChainNetworkEnvironmentSettings blockChainNetworkEnvironmentSettings,

@@ -21,6 +21,7 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/avalanche_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';

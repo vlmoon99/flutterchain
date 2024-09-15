@@ -182,10 +182,16 @@ class NearVM {
   }
 
   Future<dynamic> getBalanceByDerivationPath({
-    required NearTransferRequest nearTransferRequest,
+    String? address,
+    String? walletId,
+    DerivationPathData? derivationPathData,
   }) async =>
       cryptoLibrary.getBalanceOfAddressOnSpecificBlockchain(
-          transferRequest: nearTransferRequest);
+        address: address,
+        blockchainType: BlockChains.near,
+        walletId: walletId,
+        derivationPathData: derivationPathData,
+      );
 
   Future<String> getWalletPublicKeyAddressByWalletId(
           String walletName, DerivationPath currentDerivationPath) async =>

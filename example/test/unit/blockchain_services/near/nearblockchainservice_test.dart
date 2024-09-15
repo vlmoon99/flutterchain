@@ -1,10 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
@@ -169,12 +171,12 @@ void main() {
 
     test('getWalletBalance', () async {
       // Arrange
-      NearTransferRequest nearTransferRequest =
-          NearTransferRequest(accountID: 'accountId');
+      final AccountInfoRequest accountInfoRequest =
+          NearAccountInfoRequest(accountId: 'accountId');
 
       // Act
       final response = await mockNearBlockChainService.getWalletBalance(
-        nearTransferRequest,
+        accountInfoRequest,
       );
 
       // Assert

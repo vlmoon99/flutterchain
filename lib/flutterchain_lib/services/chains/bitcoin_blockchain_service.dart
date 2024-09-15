@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/bitcoin_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
@@ -66,11 +68,14 @@ class BitcoinBlockChainService implements BlockChainService {
   //Get wallet balance by account ID (on input hex format public key)
   @override
   Future<String> getWalletBalance(
-    TransferRequest transferRequest,
+    AccountInfoRequest accountInfoRequest,
   ) async {
-    final bitcoinTransferRequest = transferRequest as BitcoinTransferRequest;
+    if (accountInfoRequest is! BitcoinAccountInfoRequest) {
+      throw ArgumentError(
+          'Invalid accountInfoRequest. It must be of type `BitcoinAccountInfoRequest`');
+    }
     final addressId =
-        await getAdressBTCSegWitFomat(bitcoinTransferRequest.accountID!);
+        await getAdressBTCSegWitFomat(accountInfoRequest.accountId);
     final res = await bitcoinRpcClient.getAccountBalance(addressId);
     return res;
   }
