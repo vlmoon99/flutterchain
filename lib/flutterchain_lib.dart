@@ -128,8 +128,7 @@ class FlutterChainLibrary {
               BlockChains.ethereum ||
               BlockChains.bnb ||
               BlockChains.polygon:
-          accountInfoRequest = EvmAccountInfoRequest(
-              accountId: address, blockchainType: blockchainType);
+          accountInfoRequest = EvmAccountInfoRequest(accountId: address);
           break;
         case BlockChains.xrp:
           accountInfoRequest = XrpAccountInfoRequest(accountId: address);
@@ -137,7 +136,10 @@ class FlutterChainLibrary {
         default:
           throw Exception('Unsupported blockchain type');
       }
-      return blockchainService.getWalletBalance(accountInfoRequest);
+      return blockchainService.getWalletBalance(
+        accountInfoRequest: accountInfoRequest,
+        blockchainType: blockchainType,
+      );
     } else {
       if (walletId == null || derivationPathData == null) {
         throw Exception("Missing walletId or derivationPathData");
@@ -162,8 +164,7 @@ class FlutterChainLibrary {
                 BlockChains.ethereum ||
                 BlockChains.bnb ||
                 BlockChains.polygon:
-            accountInfoRequest = EvmAccountInfoRequest(
-                accountId: publicKey, blockchainType: blockchainType);
+            accountInfoRequest = EvmAccountInfoRequest(accountId: publicKey);
             break;
           case BlockChains.xrp:
             accountInfoRequest = XrpAccountInfoRequest(accountId: publicKey);
@@ -171,7 +172,8 @@ class FlutterChainLibrary {
             throw Exception('Unsupported blockchain type');
         }
         return blockchainService.getWalletBalance(
-          accountInfoRequest,
+          accountInfoRequest: accountInfoRequest,
+          blockchainType: blockchainType,
         );
       } else {
         throw Exception("Public key is null");
@@ -283,7 +285,6 @@ class FlutterChainLibrary {
       transferRequest: transferRequest,
       blockchainType: blockchainType,
     );
-    
   }
 
   Future<BlockchainResponse> callSmartContractFunction({

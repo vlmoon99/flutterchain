@@ -54,8 +54,11 @@ class FlutterChainService {
         ?.getBlockchainNetworkEnvironment();
   }
 
-  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) async {
-    final res = await blockchainServices[accountInfoRequest.blockchainType]
+  Future<String> getWalletBalance({
+    required AccountInfoRequest accountInfoRequest,
+    required String blockchainType,
+  }) async {
+    final res = await blockchainServices[blockchainType]
         ?.getWalletBalance(accountInfoRequest);
     return res ?? 'Error : no balance result';
   }
@@ -68,8 +71,7 @@ class FlutterChainService {
       throw Exception('Incorrect Blockchain');
     }
 
-    final blockchainService =
-        blockchainServices[blockchainType];
+    final blockchainService = blockchainServices[blockchainType];
     final res = blockchainService?.sendTransferNativeCoin(transferRequest);
 
     if (res == null) {

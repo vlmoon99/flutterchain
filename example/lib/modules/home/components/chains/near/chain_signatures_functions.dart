@@ -552,7 +552,6 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               return ethereumBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
                                 accountId: mpcAccountInfo!.adress,
-                                blockchainType: BlockChains.ethereum,
                               ));
                             }
                           case BlockChains.bitcoin:
@@ -571,7 +570,6 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               return bnbBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
                                 accountId: mpcAccountInfo!.adress,
-                                blockchainType: BlockChains.bnb,
                               ));
                             }
                           case BlockChains.aurora:
@@ -582,7 +580,6 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               return auroraBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
                                 accountId: mpcAccountInfo!.adress,
-                                blockchainType: BlockChains.aurora,
                               ));
                             }
                           case BlockChains.polygon:
@@ -593,7 +590,6 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               return polygonBlockChainService.getWalletBalance(
                                 EvmAccountInfoRequest(
                                   accountId: mpcAccountInfo!.adress,
-                                  blockchainType: BlockChains.polygon,
                                 ),
                               );
                             }
@@ -605,7 +601,6 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                               return avalancheBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
                                 accountId: mpcAccountInfo!.adress,
-                                blockchainType: BlockChains.avalanche,
                               ));
                             }
                           case BlockChains.xrp:

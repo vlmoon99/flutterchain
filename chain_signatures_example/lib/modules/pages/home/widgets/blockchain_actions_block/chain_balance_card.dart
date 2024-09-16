@@ -71,7 +71,6 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             balanceInString = await ethereumBlockChainService
                 .getWalletBalance(EvmAccountInfoRequest(
               accountId: widget.chainAddress,
-              blockchainType: BlockChains.ethereum,
             ));
           }
         case BlockChains.bitcoin:
@@ -101,7 +100,6 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             balanceInString = await bnbBlockChainService
                 .getWalletBalance(EvmAccountInfoRequest(
               accountId: widget.chainAddress,
-              blockchainType: BlockChains.bnb,
             ));
           }
         case BlockChains.aurora:
@@ -118,7 +116,6 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             balanceInString = await auroraBlockChainService.getWalletBalance(
               EvmAccountInfoRequest(
                 accountId: widget.chainAddress,
-                blockchainType: BlockChains.aurora,
               ),
             );
           }
@@ -136,7 +133,6 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             balanceInString = await polygonBlockChainService.getWalletBalance(
               EvmAccountInfoRequest(
                 accountId: widget.chainAddress,
-                blockchainType: BlockChains.polygon,
               ),
             );
           }
@@ -154,7 +150,6 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             balanceInString = await avalancheBlockChainService
                 .getWalletBalance(EvmAccountInfoRequest(
               accountId: widget.chainAddress,
-              blockchainType: BlockChains.avalanche,
             ));
           }
         case BlockChains.xrp:

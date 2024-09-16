@@ -5,9 +5,5 @@ class EvmAccountInfoRequest implements AccountInfoRequest {
 
   EvmAccountInfoRequest({
     required this.accountId,
-    required this.blockchainType,
   });
-
-  @override
-  String blockchainType;
 }

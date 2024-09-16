@@ -1,3 +1,1 @@
-class AccountInfoRequest {
-  late final String blockchainType;
-}
+class AccountInfoRequest {}
