@@ -1,43 +1,53 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/concordium_blockchain_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_network_type.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/protos/generated/service.pbgrpc.dart';
+import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/utils/concordium_utils.dart';
 import 'package:grpc/grpc_connection_interface.dart';
-import 'package:hex/hex.dart';
-import 'protos/generated/types.pb.dart';
+import 'protos/generated/types.pb.dart' as grpcTypes;
 import 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client_io.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client_web.dart';
 
 class ConcordiumRpcClient {
-  final ConcordiumNetworkClient concordiumNetworkClient;
+  final NetworkClient concordiumNetworkClient;
+  final ConcordiumGrpcConnectionClient concordiumGrpcConnectionClient;
   final ConcordiumUtils _concordiumUtils = ConcordiumUtils();
+  final String typeOfNetwork;
 
   late final QueriesClient _queriesClient;
 
-  ConcordiumRpcClient({required this.concordiumNetworkClient}) {
-    _queriesClient = QueriesClient(concordiumNetworkClient.channel);
+  ConcordiumRpcClient({
+    required this.concordiumGrpcConnectionClient,
+    required this.concordiumNetworkClient,
+    required this.typeOfNetwork,
+  }) {
+    _queriesClient = QueriesClient(concordiumGrpcConnectionClient.channel);
   }
 
   factory ConcordiumRpcClient.defaultInstance() {
     return ConcordiumRpcClient(
-      concordiumNetworkClient: ConcordiumNetworkClient(
+      concordiumGrpcConnectionClient: ConcordiumGrpcConnectionClient(
         baseUrl: ConcordiumBlockchainNetworkUrls.listOfUrls.first,
         port: 20000,
-        dio: Dio(),
       ),
+      concordiumNetworkClient: ConcordiumNetworkClient.defaultInstance(),
+      typeOfNetwork: ConcordiumNetwork.testnet,
     );
   }
 
   Future<String> sendCredentialDeploymentTransaction(
       {required List<int> payload, required int expiryEpochSeconds}) async {
     final rawResponse = await _queriesClient.sendBlockItem(
-      SendBlockItemRequest(
-        credentialDeployment: CredentialDeployment(
-            messageExpiry: TransactionTime(value: Int64(expiryEpochSeconds)),
+      grpcTypes.SendBlockItemRequest(
+        credentialDeployment: grpcTypes.CredentialDeployment(
+            messageExpiry:
+                grpcTypes.TransactionTime(value: Int64(expiryEpochSeconds)),
             rawPayload: payload),
       ),
     );
@@ -46,26 +56,26 @@ class ConcordiumRpcClient {
     return txHash;
   }
 
-  Future<List<Map<String, dynamic>>> getIdentityProviders(
-      [String network = "Testnet"]) async {
+  Future<List<Map<String, dynamic>>> getIdentityProviders() async {
     late String url;
-    if (network == "Mainnet") {
+    if (typeOfNetwork == ConcordiumNetwork.mainnet) {
       url = 'https://wallet-proxy.mainnet.concordium.software';
     } else {
       url = 'https://wallet-proxy.testnet.concordium.com';
     }
-    final respose = await concordiumNetworkClient.dio.get("$url/v1/ip_info");
+    final response =
+        await concordiumNetworkClient.getRequest("$url/v1/ip_info");
 
-    return List<Map<String, dynamic>>.from(respose.data);
+    return List<Map<String, dynamic>>.from(response.data);
   }
 
   Future<Map<String, dynamic>> getCryptographicParameters(
       [String? blockHashHex]) async {
-    final BlockHashInput blockHashInput = blockHashHex == null
-        ? BlockHashInput(
-            lastFinal: Empty(),
+    final grpcTypes.BlockHashInput blockHashInput = blockHashHex == null
+        ? grpcTypes.BlockHashInput(
+            lastFinal: grpcTypes.Empty(),
           )
-        : BlockHashInput(
+        : grpcTypes.BlockHashInput(
             given: await _concordiumUtils.getBlockHash(blockHashHex),
           );
 
@@ -87,19 +97,19 @@ class ConcordiumRpcClient {
     final accountAddress =
         await _concordiumUtils.getAccountAddress(base58Address);
 
-    final AccountIdentifierInput accountIdentifierInput =
-        AccountIdentifierInput(address: accountAddress);
+    final grpcTypes.AccountIdentifierInput accountIdentifierInput =
+        grpcTypes.AccountIdentifierInput(address: accountAddress);
 
-    final BlockHashInput blockHashInput = blockHashHex == null
-        ? BlockHashInput(
-            lastFinal: Empty(),
+    final grpcTypes.BlockHashInput blockHashInput = blockHashHex == null
+        ? grpcTypes.BlockHashInput(
+            lastFinal: grpcTypes.Empty(),
           )
-        : BlockHashInput(
+        : grpcTypes.BlockHashInput(
             given: await _concordiumUtils.getBlockHash(blockHashHex),
           );
 
-    final AccountInfo response =
-        await _queriesClient.getAccountInfo(AccountInfoRequest(
+    final grpcTypes.AccountInfo response =
+        await _queriesClient.getAccountInfo(grpcTypes.AccountInfoRequest(
       accountIdentifier: accountIdentifierInput,
       blockHash: blockHashInput,
     ));
@@ -122,7 +132,7 @@ class ConcordiumRpcClient {
   }
 
   Future<Map<String, dynamic>> getIdentityInfo(String url) async {
-    final request = await concordiumNetworkClient.dio.get(url);
+    final request = await concordiumNetworkClient.getRequest(url);
     final response = await request.data;
     if (response["status"] == "error") {
       throw Exception(response["detail"]);
@@ -141,16 +151,16 @@ class ConcordiumRpcClient {
 
   Future<String> sendTransaction(
       {required Map<String, dynamic> accountTransactionParams}) async {
-    Map<int, AccountSignatureMap> convertSignatures(Map input) {
+    Map<int, grpcTypes.AccountSignatureMap> convertSignatures(Map input) {
       return input.map((key, value) {
         return MapEntry(
           int.parse(key),
-          AccountSignatureMap(
+          grpcTypes.AccountSignatureMap(
             signatures:
                 Map.from(value['signatures'] ?? {}).map((innerKey, innerValue) {
               return MapEntry(
                 int.parse(innerKey),
-                Signature(
+                grpcTypes.Signature(
                   value: List<int>.from(innerValue['value']!),
                 ),
               );
@@ -160,27 +170,27 @@ class ConcordiumRpcClient {
       });
     }
 
-    final blockItem = SendBlockItemRequest(
-      accountTransaction: AccountTransaction(
-        header: AccountTransactionHeader(
-          sender: AccountAddress(
+    final blockItem = grpcTypes.SendBlockItemRequest(
+      accountTransaction: grpcTypes.AccountTransaction(
+        header: grpcTypes.AccountTransactionHeader(
+          sender: grpcTypes.AccountAddress(
               value: List<int>.from(
                   accountTransactionParams["header"]["sender"]["value"])),
-          sequenceNumber: SequenceNumber(
+          sequenceNumber: grpcTypes.SequenceNumber(
               value: Int64(accountTransactionParams["header"]["sequenceNumber"]
                   ["value"])),
-          energyAmount: Energy(
+          energyAmount: grpcTypes.Energy(
               value: Int64(
                   accountTransactionParams["header"]["energyAmount"]["value"])),
-          expiry: TransactionTime(
+          expiry: grpcTypes.TransactionTime(
               value:
                   Int64(accountTransactionParams["header"]["expiry"]["value"])),
         ),
-        signature: AccountTransactionSignature(
+        signature: grpcTypes.AccountTransactionSignature(
           signatures: convertSignatures(
               Map.from(accountTransactionParams["signature"]["signatures"])),
         ),
-        payload: AccountTransactionPayload(
+        payload: grpcTypes.AccountTransactionPayload(
           rawPayload:
               List.from(accountTransactionParams["payload"]["rawPayload"]),
         ),
@@ -245,20 +255,44 @@ class ConcordiumRpcClient {
   }
 }
 
-class ConcordiumNetworkClient {
+class ConcordiumGrpcConnectionClient {
   late final ClientChannelBase channel;
   final String baseUrl;
   final int port;
   final ChannelOptions? options;
-  final Dio dio;
 
-  ConcordiumNetworkClient({
+  ConcordiumGrpcConnectionClient({
     required this.baseUrl,
     required this.port,
     this.options,
-    required this.dio,
   }) {
     channel = getGrpcClient(baseUrl: baseUrl, port: port, options: options);
     channel.createConnection();
+  }
+}
+
+class ConcordiumNetworkClient extends NetworkClient {
+  ConcordiumNetworkClient({required super.dio, required super.baseUrl}) {
+    dio.interceptors.add(
+      RetryInterceptor(
+        dio: dio,
+        logPrint: log,
+        retries: 5,
+        retryDelays: const [
+          Duration(seconds: 2),
+          Duration(seconds: 1),
+          Duration(seconds: 1),
+          Duration(seconds: 1),
+          Duration(seconds: 1),
+        ],
+      ),
+    );
+  }
+
+  factory ConcordiumNetworkClient.defaultInstance() {
+    return ConcordiumNetworkClient(
+      baseUrl: '',
+      dio: Dio(),
+    );
   }
 }

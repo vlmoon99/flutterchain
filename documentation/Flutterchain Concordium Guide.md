@@ -1,6 +1,6 @@
 # Flutterchain Concordium Guide
 
-### Registering on Concrodium and account creation:
+### Registering on Concordium and account creation:
 
 First of all, you need initialization of Concordium blockchain service.
 
@@ -9,15 +9,18 @@ final ConcordiumBlockchainService concordiumBlockchainService =
         ConcordiumBlockchainService.defaultInstance();
 ```
 
-Default instance configured to work with testnet. You can change it by calling default constructor or use method `setClientSettings` (to change gRPC settings) and `setTypeOfNetwork` (to change network type).
+Default instance configured to work with testnet. You can change it by calling default constructor or use method `setBlockchainNetworkEnvironment`.
 
-```
-final ConcordiumBlockchainService concordiumBlockchainService =
-        ConcordiumBlockchainService.defaultInstance()
-    ..setClientSettings(
-      baseUrl: ConcordiumBlockchainNetworkUrls.listOfUrls.last,
-      port: 20000,
-    )..setTypeOfNetwork(ConcordiumNetwork.mainnet);
+```dart
+  final ConcordiumBlockchainService concordiumBlockchainService =
+      ConcordiumBlockchainService.defaultInstance()
+        ..setBlockchainNetworkEnvironment(
+          ConcordiumNetworkEnvironmentSettings(
+            baseUrl: ConcordiumBlockchainNetworkUrls.listOfUrls.last,
+            port: 20000,
+            typeOfNetwork: ConcordiumNetwork.mainnet
+          ),
+        );
 ```
 
 Now we can create an account. Steps:

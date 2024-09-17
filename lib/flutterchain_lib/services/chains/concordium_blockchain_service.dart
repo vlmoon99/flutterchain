@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/create_identity_request_params.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/identity_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/identity_provider.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/concordium_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
@@ -21,17 +22,16 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_v
 class ConcordiumBlockchainService {
   final JsVMService jsVMService;
   ConcordiumRpcClient concordiumRpcClient;
-  String typeOfNetwork;
-  ConcordiumBlockchainService(
-      {required this.concordiumRpcClient,
-      required this.jsVMService,
-      required this.typeOfNetwork});
+
+  ConcordiumBlockchainService({
+    required this.concordiumRpcClient,
+    required this.jsVMService,
+  });
 
   factory ConcordiumBlockchainService.defaultInstance() {
     return ConcordiumBlockchainService(
       concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
       jsVMService: getJsVM(),
-      typeOfNetwork: ConcordiumNetwork.testnet,
     );
   }
 
@@ -40,29 +40,44 @@ class ConcordiumBlockchainService {
   /// Parameters:
   ///  - `baseUrl`: The base URL of the Concordium node.
   ///  - `port`: The port number of the Concordium node.
-  ///  - `dio`: The Dio instance to use for HTTP requests. If null, a new Dio instance will be created.
-  ///
-  void setClientSettings({
-    required String baseUrl,
-    required int port,
-    Dio? dio,
-  }) {
+  ///  - `typeOfNetwork`: The type of network for the Concordium node.
+  ///  - `networkClient` (Optional): The network client for the Concordium node.
+  @override
+  Future<void> setBlockchainNetworkEnvironment(
+    BlockChainNetworkEnvironmentSettings blockChainNetworkEnvironmentSettings,
+  ) async {
+    if (blockChainNetworkEnvironmentSettings
+        is! ConcordiumNetworkEnvironmentSettings) {
+      throw ArgumentError(
+        "Invalid blockChainNetworkEnvironmentSettings. It must be of type `ConcordiumNetworkEnvironmentSettings`",
+      );
+    }
     concordiumRpcClient = ConcordiumRpcClient(
-      concordiumNetworkClient: ConcordiumNetworkClient(
-        baseUrl: baseUrl,
-        port: port,
-        dio: dio ?? Dio(),
+      concordiumGrpcConnectionClient: ConcordiumGrpcConnectionClient(
+        baseUrl: blockChainNetworkEnvironmentSettings.baseUrl,
+        port: blockChainNetworkEnvironmentSettings.port,
       ),
+      concordiumNetworkClient:
+          blockChainNetworkEnvironmentSettings.networkClient ??
+              ConcordiumNetworkClient.defaultInstance(),
+      typeOfNetwork: blockChainNetworkEnvironmentSettings.typeOfNetwork,
     );
   }
 
-  /// Sets the type of network for the Concordium blockchain service.
+  /// Returns the current client settings for the Concordium RPC client.
   ///
-  /// Parameters:
-  ///  - `network`: The type of network to set (e.g. 'Testnet', 'Mainnet'). Check the [ConcordiumNetwork] enum for valid values.
-  ///
-  void setTypeOfNetwork(String network) {
-    typeOfNetwork = network;
+  /// Returns an object of type [ConcordiumNetworkEnvironmentSettings] containing
+  /// the base URL, port number, type of network and network client used by the
+  /// Concordium RPC client.
+  @override
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() async {
+    return ConcordiumNetworkEnvironmentSettings(
+      baseUrl: concordiumRpcClient.concordiumGrpcConnectionClient.baseUrl,
+      port: concordiumRpcClient.concordiumGrpcConnectionClient.port,
+      typeOfNetwork: concordiumRpcClient.typeOfNetwork,
+      networkClient: concordiumRpcClient.concordiumNetworkClient,
+    );
   }
 
   /// Generates a mnemonic for the Concordium blockchain.
@@ -77,13 +92,9 @@ class ConcordiumBlockchainService {
 
   /// Returns a list of identity providers for the Concordium blockchain.
   ///
-  /// Parameters:
-  /// - `network`: The type of network to retrieve identity providers for (e.g. 'Testnet', 'Mainnet'). If null, the default network type will be used.
-  ///
-  Future<List<IdentityProvider>> getIdentityProviders({String? network}) async {
-    network ??= typeOfNetwork;
+  Future<List<IdentityProvider>> getIdentityProviders() async {
     final rawListOfIdentityProviders =
-        await concordiumRpcClient.getIdentityProviders(network);
+        await concordiumRpcClient.getIdentityProviders();
     return rawListOfIdentityProviders
         .map((identityProvInfo) => IdentityProvider.fromJson(identityProvInfo))
         .toList();
@@ -95,17 +106,15 @@ class ConcordiumBlockchainService {
   /// - `mnemonic`: The mnemonic phrase generated by the [generateMnemonic] method.
   /// - `identityProvider`: The identity provider chosen from the [getIdentityProviders] method.
   /// - `identityIndex`: The index of the identity to use for generating the identity request parameters. Defaults to 0.
-  /// - `network`: The type of network to use for generating the identity request parameters. If null, the default network type will be used.
   ///
   Future<CreateIdentityRequestParams> getCreateIdentityRequestParams({
     required String mnemonic,
     required IdentityProvider identityProvider,
     int identityIndex = 0,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
     final cryptographicParameters =
         await concordiumRpcClient.getCryptographicParameters();
+    final String network = concordiumRpcClient.typeOfNetwork;
 
     final requestJson = await jsVMService.callJSAsync(
         """window.ConcordiumBlockchain.createIdentityRequestParams('$mnemonic', '$network', '${jsonEncode(identityProvider)}', '${jsonEncode(cryptographicParameters)}', $identityIndex ) """);
@@ -177,17 +186,15 @@ class ConcordiumBlockchainService {
   /// - `mnemonic`: The mnemonic phrase generated by the [generateMnemonic] method.
   /// - `identityProvider`: The identity provider chosen from the [getIdentityProviders] method.
   /// - `identityIndex`: The index of the identity to return. Defaults to 0.
-  /// - `network`: The type of network to use for recovering the identity. If null, the default network type will be used.
   ///
   Future<IdentityInfo> recoverExistingIdentity({
     required String mnemonic,
     required IdentityProvider identityProvider,
     int identityIndex = 0,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
     final cryptographicParameters =
         await concordiumRpcClient.getCryptographicParameters();
+    final String network = concordiumRpcClient.typeOfNetwork;
 
     final requestInfo = jsonDecode(await jsVMService.callJSAsync(
         "window.ConcordiumBlockchain.createIdentityRecoveryParams('$mnemonic', '$network', '${jsonEncode(identityProvider)}', '$identityIndex', '${jsonEncode(cryptographicParameters)}' ) "));
@@ -213,7 +220,6 @@ class ConcordiumBlockchainService {
   /// - `derivationPath`: The derivation path to figure out identity provider index, identity index and credential index(account index).
   /// - `identityInfo`: The identity information got from [getIdentityInfo] or [recoverExistingIdentity].
   /// - `identityProviderInfo`: The identity provider chosen from the [getIdentityProviders] method.
-  /// - `network`: The type of network to use for creating the account. If null, the default network type will be used.
   ///
   /// Returns [BlockchainResponse] with the transaction hash data["txHash"] and account address data["accountAddress"].
   Future<BlockchainResponse> createAccount({
@@ -221,12 +227,11 @@ class ConcordiumBlockchainService {
     required ConcordiumDerivationPath derivationPath,
     required IdentityInfo identityInfo,
     required IdentityProvider identityProviderInfo,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
-
     final cryptographicParameters =
         await concordiumRpcClient.getCryptographicParameters();
+    final String network = concordiumRpcClient.typeOfNetwork;
+
     final createCredentialDeploymentTransaction = await jsVMService.callJSAsync(
         "window.ConcordiumBlockchain.createCredentialDeploymentTransaction('$mnemonic', '$network', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}', '${jsonEncode(identityInfo)}', '${jsonEncode(identityProviderInfo)}', '${jsonEncode(cryptographicParameters)}'  )");
 
@@ -269,17 +274,15 @@ class ConcordiumBlockchainService {
   ///
   /// - `mnemonic`: The mnemonic phrase generated by the [generateMnemonic] method.
   /// - `derivationPath`: The derivation path to figure out identity provider index, identity index and credential index(account index).
-  /// - `network`: The network to use for deriving the account address. If null, the default network will be used.
   ///
   Future<String> getAccountAddressFromMnemonic({
     required String mnemonic,
     required ConcordiumDerivationPath derivationPath,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
-
     final Map<String, dynamic> cryptographicParameters =
         await concordiumRpcClient.getCryptographicParameters();
+    final String network = concordiumRpcClient.typeOfNetwork;
+
     return await jsVMService.callJS(
         "window.ConcordiumBlockchain.getAccountAddressFromMnemonic('$mnemonic', '$network', '${derivationPath.identityProviderIndex}', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}', '${jsonEncode(cryptographicParameters)}' )");
   }
@@ -289,14 +292,13 @@ class ConcordiumBlockchainService {
   /// Parameters:
   /// - `mnemonic`: The mnemonic phrase generated by the [generateMnemonic] method.
   /// - `derivationPath`: The derivation path to figure out identity provider index, identity index and credential index(account index).
-  /// - `network`: The network to use for deriving the account address. If null, the default network will be used.
   ///
   Future<String> getAccountSigningKey({
     required String mnemonic,
     required ConcordiumDerivationPath derivationPath,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
+    final String network = concordiumRpcClient.typeOfNetwork;
+
     return await jsVMService.callJS(
         "window.ConcordiumBlockchain.getAccountSigningKey('$mnemonic', '$network', '${derivationPath.identityProviderIndex}', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}' )");
   }
@@ -306,14 +308,12 @@ class ConcordiumBlockchainService {
   /// Parameters:
   /// - `mnemonic`: The mnemonic phrase generated by the [generateMnemonic] method.
   /// - `derivationPath`: The derivation path to figure out identity provider index, identity index and credential index(account index).
-  /// - `network`: The network to use for deriving the account address. If null, the default network will be used.
   ///
   Future<String> getAccountPublicKey({
     required String mnemonic,
     required ConcordiumDerivationPath derivationPath,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
+    final String network = concordiumRpcClient.typeOfNetwork;
     return await jsVMService.callJS(
         "window.ConcordiumBlockchain.getAccountPublicKey('$mnemonic', '$network', '${derivationPath.identityProviderIndex}', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}' )");
   }
@@ -340,29 +340,22 @@ class ConcordiumBlockchainService {
   /// Parameters:
   /// - `mnemonic`: The mnemonic phrase generated by the [generateMnemonic] method.
   /// - `derivationPath`: The derivation path to figure out identity provider index, identity index and credential index(account index).
-  /// - `network`: The network to use for deriving the account address. If null, the default network will be used.
   ///
   /// Returns a [ConcordiumBlockchainData] object containing the derived account address, public key, signing key, mnemonic, and derivation path.
   Future<ConcordiumBlockchainData> getConcordiumBlockchainData({
     required String mnemonic,
     required ConcordiumDerivationPath derivationPath,
-    String? network,
   }) async {
-    network ??= typeOfNetwork;
-
     final String accountAddress = await getAccountAddressFromMnemonic(
       mnemonic: mnemonic,
-      network: network,
       derivationPath: derivationPath,
     );
     final signingKeyRaw = await getAccountSigningKey(
       mnemonic: mnemonic,
-      network: network,
       derivationPath: derivationPath,
     );
     final publicKeyRaw = await getAccountPublicKey(
       mnemonic: mnemonic,
-      network: network,
       derivationPath: derivationPath,
     );
 
@@ -461,25 +454,24 @@ class ConcordiumBlockchainService {
   /// Parameters:
   /// - `senderAddress`: The address of the sender's account.
   /// - `signingKey`: The signing key of the sender's account.
-  /// 
+  ///
   /// Optional parameters:
   /// - `stakeAmountInMicroCcd`: The stake amount in micro CCD. Minimum stake amount is 14000000000. If set to 0, restakes earnings.
-  /// - `restakeEarnings`: Whether or not to restake earnings. Defaults to true. 
+  /// - `restakeEarnings`: Whether or not to restake earnings. Defaults to true.
   /// - `openStatus`: The open status of the baker. Check the [DelegationOpenStatus] enum for available options.
-  /// - `metadataUrl`: The metadata URL of the baker. 
+  /// - `metadataUrl`: The metadata URL of the baker.
   /// - `transactionFeeCommissionInPercentage`: The transaction fee commission in percentage. Range: 0-100%.
   /// - `bakingRewardCommissionInPercentage`: The baking reward commission in percentage. Range: 0-100%.
   /// - `finalizationRewardCommissionInPercentage`: The finalization reward commission in percentage. Range: 0-100%.
   /// - `bakerKeys`: The baker keys in JSON format. If empty, the keys will be recreated.
-  /// 
+  ///
   /// For initial baker all optional parameters are required (except `bakerKeys`).
   ///
   /// Returns a [BlockchainResponse] object containing the status and information data of the transaction.
   Future<BlockchainResponse> sendBakerTransaction({
     required String senderAddress,
     required String signingKey,
-    int?
-        stakeAmountInMicroCcd,
+    int? stakeAmountInMicroCcd,
     bool? restakeEarnings,
     DelegationOpenStatus? openStatus,
     String? metadataUrl,
@@ -522,11 +514,6 @@ enum DelegationOpenStatus { OpenForAll, ClosedForNew, ClosedForAll }
 class ConcordiumDelegationType {
   static const String passive = "Passive";
   static const String baker = "Baker";
-}
-
-class ConcordiumNetwork {
-  static const String testnet = "Testnet";
-  static const String mainnet = "Mainnet";
 }
 
 class _WebView extends StatefulWidget {
