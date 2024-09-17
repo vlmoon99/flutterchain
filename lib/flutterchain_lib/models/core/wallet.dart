@@ -35,15 +35,13 @@ class BlockChainData {
   final String identifier;
   final String publicKey;
   final String privateKey;
-  final DerivationPath derivationPath;
-  final String passphrase;
+  final DerivationPathData derivationPath;
 
   BlockChainData({
     required this.identifier,
     required this.publicKey,
     required this.privateKey,
     required this.derivationPath,
-    required this.passphrase,
   });
 
   // factory BlockChainData.fromJson(Map<String, dynamic> json) =>
@@ -70,15 +68,11 @@ class BlockChainData {
           // runtimeType == other.runtimeType &&
           publicKey == other.publicKey &&
           privateKey == other.privateKey &&
-          derivationPath == other.derivationPath &&
-          passphrase == other.passphrase;
+          derivationPath == other.derivationPath;
 
   @override
   int get hashCode =>
-      publicKey.hashCode ^
-      privateKey.hashCode ^
-      derivationPath.hashCode ^
-      passphrase.hashCode;
+      publicKey.hashCode ^ privateKey.hashCode ^ derivationPath.hashCode;
 
   @override
   String toString() {
@@ -87,7 +81,23 @@ class BlockChainData {
 }
 
 @JsonSerializable()
-class DerivationPath {
+class DerivationPathData {
+  DerivationPathData();
+
+  factory DerivationPathData.fromJson(Map<String, dynamic> json) {
+    final purpose = json['coinType'] as String?;
+    if (purpose != null) {
+      return DerivationPath.fromJson(json);
+    } else {
+      throw Exception('Invalid derivation path data');
+    }
+  }
+
+  Map<String, dynamic> toJson() => _$DerivationPathDataToJson(this);
+}
+
+@JsonSerializable()
+class DerivationPath implements DerivationPathData {
   // m / purpose’ / coin_type’ / accountNumber / change / address
   final String purpose;
   final String coinType;
@@ -106,6 +116,7 @@ class DerivationPath {
   factory DerivationPath.fromJson(Map<String, dynamic> json) =>
       _$DerivationPathFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$DerivationPathToJson(this);
 
   @override

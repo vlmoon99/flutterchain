@@ -13,8 +13,11 @@ import 'package:flutterchain/flutterchain_lib/constants/chains/ethereum_blockcha
 import 'package:flutterchain/flutterchain_lib/constants/chains/polygon_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/xrp_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transfer_request.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/avalanche_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -59,13 +62,15 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final EthereumBlockChainService ethereumBlockChainService =
                 EthereumBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
-                        ? EthereumBlockChainNetworkUrls.listOfUrls.first
-                        : EthereumBlockChainNetworkUrls.listOfUrls.last,
+                    EvmNetworkEnvironmentSettings(
+                      chainUrl: currentNetwork == NearNetworkType.testnet
+                          ? EthereumBlockChainNetworkUrls.listOfUrls.first
+                          : EthereumBlockChainNetworkUrls.listOfUrls.last,
+                    ),
                   );
             balanceInString = await ethereumBlockChainService
-                .getWalletBalance(EVMTransferRequest(
-              accountID: widget.chainAddress,
+                .getWalletBalance(EvmAccountInfoRequest(
+              accountId: widget.chainAddress,
             ));
           }
         case BlockChains.bitcoin:
@@ -73,10 +78,11 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final BitcoinBlockChainService bitcoinBlockChainService =
                 BitcoinBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
+                      BitcoinNetworkEnvironmentSettings(
+                    chainUrl: currentNetwork == NearNetworkType.testnet
                         ? BitcoinBlockChainNetworkUrls.listOfUrls.first
                         : BitcoinBlockChainNetworkUrls.listOfUrls.last,
-                  );
+                  ));
             balanceInString = await bitcoinBlockChainService.bitcoinRpcClient
                 .getAccountBalanceWithAdress(widget.chainAddress);
           }
@@ -85,13 +91,15 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final BNBBlockChainService bnbBlockChainService =
                 BNBBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
-                        ? BNBBlockChainNetworkUrls.listOfUrls.first
-                        : BNBBlockChainNetworkUrls.listOfUrls.last,
+                    EvmNetworkEnvironmentSettings(
+                      chainUrl: currentNetwork == NearNetworkType.testnet
+                          ? BNBBlockChainNetworkUrls.listOfUrls.first
+                          : BNBBlockChainNetworkUrls.listOfUrls.last,
+                    ),
                   );
-            balanceInString =
-                await bnbBlockChainService.getWalletBalance(EVMTransferRequest(
-              accountID: widget.chainAddress,
+            balanceInString = await bnbBlockChainService
+                .getWalletBalance(EvmAccountInfoRequest(
+              accountId: widget.chainAddress,
             ));
           }
         case BlockChains.aurora:
@@ -99,13 +107,15 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final AuroraBlockChainService auroraBlockChainService =
                 AuroraBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
-                        ? AuroraBlockChainNetworkUrls.listOfUrls.first
-                        : AuroraBlockChainNetworkUrls.listOfUrls.last,
+                    EvmNetworkEnvironmentSettings(
+                      chainUrl: currentNetwork == NearNetworkType.testnet
+                          ? AuroraBlockChainNetworkUrls.listOfUrls.first
+                          : AuroraBlockChainNetworkUrls.listOfUrls.last,
+                    ),
                   );
             balanceInString = await auroraBlockChainService.getWalletBalance(
-              EVMTransferRequest(
-                accountID: widget.chainAddress,
+              EvmAccountInfoRequest(
+                accountId: widget.chainAddress,
               ),
             );
           }
@@ -114,13 +124,15 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final PolygonBlockChainService polygonBlockChainService =
                 PolygonBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
-                        ? PolygonBlockChainNetworkUrls.listOfUrls.first
-                        : PolygonBlockChainNetworkUrls.listOfUrls.last,
+                    EvmNetworkEnvironmentSettings(
+                      chainUrl: currentNetwork == NearNetworkType.testnet
+                          ? PolygonBlockChainNetworkUrls.listOfUrls.first
+                          : PolygonBlockChainNetworkUrls.listOfUrls.last,
+                    ),
                   );
             balanceInString = await polygonBlockChainService.getWalletBalance(
-              EVMTransferRequest(
-                accountID: widget.chainAddress,
+              EvmAccountInfoRequest(
+                accountId: widget.chainAddress,
               ),
             );
           }
@@ -129,13 +141,15 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final AvalancheBlockChainService avalancheBlockChainService =
                 AvalancheBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
-                        ? AvalancheBlockChainNetworkUrls.listOfUrls.first
-                        : AvalancheBlockChainNetworkUrls.listOfUrls.last,
+                    EvmNetworkEnvironmentSettings(
+                      chainUrl: currentNetwork == NearNetworkType.testnet
+                          ? AvalancheBlockChainNetworkUrls.listOfUrls.first
+                          : AvalancheBlockChainNetworkUrls.listOfUrls.last,
+                    ),
                   );
             balanceInString = await avalancheBlockChainService
-                .getWalletBalance(EVMTransferRequest(
-              accountID: widget.chainAddress,
+                .getWalletBalance(EvmAccountInfoRequest(
+              accountId: widget.chainAddress,
             ));
           }
         case BlockChains.xrp:
@@ -143,13 +157,15 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
             final XRPBlockChainService xrpBlockChainService =
                 XRPBlockChainService.defaultInstance()
                   ..setBlockchainNetworkEnvironment(
-                    newUrl: currentNetwork == NearNetworkType.testnet
-                        ? XRPBlockChainNetworkUrls.listOfUrls.first
-                        : XRPBlockChainNetworkUrls.listOfUrls.last,
+                    XrpNetworkEnvironmentSettings(
+                      chainUrl: currentNetwork == NearNetworkType.testnet
+                          ? XRPBlockChainNetworkUrls.listOfUrls.first
+                          : XRPBlockChainNetworkUrls.listOfUrls.last,
+                    ),
                   );
-            balanceInString =
-                await xrpBlockChainService.getWalletBalance(XRPTransferRequest(
-              accountID: widget.chainAddress,
+            balanceInString = await xrpBlockChainService
+                .getWalletBalance(XrpAccountInfoRequest(
+              accountId: widget.chainAddress,
             ));
           }
         default:

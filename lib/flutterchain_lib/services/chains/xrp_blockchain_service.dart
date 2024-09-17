@@ -3,7 +3,11 @@ import 'package:flutterchain/flutterchain_lib/constants/chains/xrp_blockchain_ne
 import 'package:flutterchain/flutterchain_lib/formaters/chains/xrp_formatter.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -37,29 +41,18 @@ class XRPBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockchainResponse> callSmartContractFunction(
-      TransferRequest transferRequest) {
-    throw UnimplementedError('callSmartContractFunction does not exist.');
-  }
-
-  @override
-  Future<BlockChainData> getBlockChainDataByDerivationPath(
-      {required String mnemonic,
-      required String? passphrase,
-      required DerivationPath derivationPath}) {
-    // TODO: implement getBlockChainDataByDerivationPath
+  Future<BlockChainData> getBlockChainData({
+    required String mnemonic,
+    String? passphrase,
+    DerivationPathData? derivationPath,
+  }) {
+    // TODO: implement getBlockChainData
     throw UnimplementedError();
   }
 
   @override
-  Future<BlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) {
-    // TODO: implement getBlockChainDataFromMnemonic
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getBlockchainNetworkEnvironment() {
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() {
     // TODO: implement getBlockchainNetworkEnvironment
     throw UnimplementedError();
   }
@@ -70,8 +63,12 @@ class XRPBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest) {
-    return xrpRpcClient.getAccountBalance(transferRequest.accountID!);
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
+    if (accountInfoRequest is! XrpAccountInfoRequest) {
+      throw ArgumentError(
+          "Invalid accountInfoRequest. It must be of type `XrpAccountInfoRequest`");
+    }
+    return xrpRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
 
   @override
@@ -82,8 +79,16 @@ class XRPBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    xrpRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    if (blockChainNetworkEnvironmentSettings
+        is! XrpNetworkEnvironmentSettings) {
+      throw ArgumentError(
+          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `XrpNetworkEnvironmentSettings`");
+    }
+    xrpRpcClient.networkClient
+        .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
   }
 
   //MPC Feature

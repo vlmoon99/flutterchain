@@ -3,11 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
-import 'package:flutterchain_example/modules/home/components/chains/bitcoin/bitcoin_see_tx_in_explorer.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/bitcoin_vm.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/bitcoin/ui_state_bitcoin.dart';
@@ -54,11 +50,11 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
             bitcoinVM.bitcoinBlockchainStore.currentDerivationPath.value;
         bitcoinVM
             .sendNativeCoinTransferByWalletId(
-                bitcoinTransferRequest: BitcoinTransferRequest(
-                    currentDerivationPath: derivationPath,
-                    toAddress: recipient,
-                    transferAmount: amount,
-                    walletId: walletID))
+          derivationPathData: derivationPath,
+          toAddress: recipient,
+          transferAmount: amount,
+          walletId: walletID,
+        )
             .then(
           (value) {
             bitcoinVM.bitcoinState.add(

@@ -35,9 +35,9 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
     if (mnemonicController.text == null) {
       throw Exception("Input mnemonic");
     }
-    final passphrase = "";
-    return await Modular.get<NearBlockChainService>()
-        .getBlockChainDataFromMnemonic(mnemonic, passphrase);
+    const passphrase = "";
+    return (await Modular.get<NearBlockChainService>().getBlockChainData(
+        mnemonic: mnemonic, passphrase: passphrase) as NearBlockChainData);
   }
 
   @override

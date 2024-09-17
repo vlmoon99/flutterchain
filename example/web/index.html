@@ -33,10 +33,6 @@
   <link rel="manifest" href="manifest.json" />
 
   
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
   <!-- This script adds the flutter initialization JS code -->
   <script type="application/javascript" src="flutter.js" defer></script>
   <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
@@ -50,23 +46,13 @@
 
 <body>
   <script>
-    // Create a Promise that resolves when _flutter is defined
-    const flutterReady = new Promise((resolve) => {
-      const intervalId = setInterval(() => {
-        if (typeof _flutter !== "undefined") {
-          clearInterval(intervalId);
-          resolve();
-        }
-      }, 100);
-    });
-    // Use the Promise to wait for _flutter to be defined
     window.addEventListener("load", async function (ev) {
-      await flutterReady;
+      {{flutter_js}}
+      {{flutter_build_config}}
 
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
+      _flutter.loader.load({
         serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
+          serviceWorkerVersion: '{{flutter_service_worker_version}}',
         },
         onEntrypointLoaded: function (engineInitializer) {
           engineInitializer.initializeEngine().then(function (appRunner) {

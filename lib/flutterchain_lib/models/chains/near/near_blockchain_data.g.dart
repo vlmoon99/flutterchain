@@ -23,6 +23,6 @@ Map<String, dynamic> _$NearBlockChainDataToJson(NearBlockChainData instance) =>
       'publicKey': instance.publicKey,
       'privateKey': instance.privateKey,
       'derivationPath': instance.derivationPath,
-      'passphrase': instance.passphrase,
       'accountId': instance.accountId,
+      'passphrase': instance.passphrase,
     };

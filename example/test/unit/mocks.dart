@@ -1,6 +1,10 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
@@ -164,7 +168,11 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction({
-    required TransferRequest transferRequest,
+    required String blockchainType,
+    required DerivationPathData derivationPathData,
+    required RawBlockChainSmartContractArguments rawSmartContractArguments,
+    required String toAddress,
+    required String walletId,
   }) async {
     return BlockchainResponse(
       status: 'success',
@@ -173,9 +181,14 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
   }
 
   @override
-  Future<BlockchainResponse> sendTransferNativeCoin(
-      {required TransferRequest transferRequest}) async {
-    if (transferRequest.transferAmount == '-1') {
+  Future<BlockchainResponse> sendTransferNativeCoin({
+    required String blockchainType,
+    required DerivationPathData derivationPathData,
+    required String toAddress,
+    required String transferAmount,
+    required String walletId,
+  }) async {
+    if (transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},
@@ -189,17 +202,23 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<String> getBalanceOfAddressOnSpecificBlockchain({
-    required TransferRequest transferRequest,
+    String? address,
+    required String blockchainType,
+    DerivationPathData? derivationPathData,
+    String? walletId,
   }) async {
     return '100';
   }
 
   @override
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings,
+      required String blockchainType}) async {
     await blockchainService.setBlockchainNetworkEnvironment(
       blockchainType: blockchainType,
-      newUrl: newUrl,
+      blockChainNetworkEnvironmentSettings:
+          blockChainNetworkEnvironmentSettings,
     );
   }
 
@@ -259,9 +278,11 @@ class MockFlutterChainService extends Mock implements FlutterChainService {
 
   @override
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings,
+      required String blockchainType}) async {
     await blockchainServices[blockchainType]
-        ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
+        ?.setBlockchainNetworkEnvironment(blockChainNetworkEnvironmentSettings);
   }
 }
 
@@ -303,8 +324,9 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<String> getBlockchainNetworkEnvironment() async {
-    return "url";
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() async {
+    return const NearNetworkEnvironmentSettings(chainUrl: "url");
   }
 
   @override
@@ -347,10 +369,10 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<NearBlockChainData> getBlockChainDataByDerivationPath(
-      {required String mnemonic,
-      required String? passphrase,
-      required DerivationPath derivationPath}) async {
+  Future<NearBlockChainData> getBlockChainData(
+      {DerivationPathData? derivationPath,
+      required String mnemonic,
+      String? passphrase}) async {
     return NearBlockChainData(
       publicKey: 'publicKey',
       privateKey: 'privateKey',
@@ -380,7 +402,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
 
   @override
   Future<BlockchainResponse> callSmartContractFunction(
-      TransferRequest transferRequest) async {
+      BlockChainSmartContractArguments blockChainSmartContractArguments) async {
     return BlockchainResponse(
       status: 'success',
       data: {'txhash': 'some hash'},
@@ -388,14 +410,19 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    nearRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    nearRpcClient.networkClient.setUrl(
+      (blockChainNetworkEnvironmentSettings as NearNetworkEnvironmentSettings)
+          .chainUrl,
+    );
   }
 
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest) async {
-    if (transferRequest.transferAmount == '-1') {
+    if ((transferRequest as NearTransferRequest).transferAmount == '-1') {
       return BlockchainResponse(
         status: 'failure',
         data: {'message': 'Server error'},
@@ -408,7 +435,7 @@ class MockNearBlockChainService extends Mock implements NearBlockChainService {
   }
 
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest) async {
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) async {
     return '100';
   }
 
