@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bs58/bs58.dart';
@@ -13,6 +13,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 import 'dart:async';
 import 'package:hex/hex.dart';
+import 'package:http_parser/http_parser.dart';
 
 class NearRpcClient {
   final NearNetworkClient networkClient;
@@ -69,6 +70,9 @@ class NearRpcClient {
         }
       },
     );
+    if (res.data["error"] != null) {
+      throw Exception("Account not exist");
+    }
     if (res.isSuccess) {
       final decodedRes = res.data['result']['amount'].toString();
       final nearAmount = NearFormatter.yoctoNearToNear(
@@ -106,8 +110,8 @@ class NearRpcClient {
         );
       }
 
-      final decodedResponse =
-          NearFormatter.decodeViewCallResponse(List<int>.from(res.data['result']?['result']));
+      final decodedResponse = NearFormatter.decodeViewCallResponse(
+          List<int>.from(res.data['result']?['result']));
 
       return BlockchainResponse(
         data: {"response": decodedResponse},
@@ -204,6 +208,146 @@ class NearRpcClient {
         },
         status: BlockchainResponses.error,
       );
+    }
+  }
+
+  Future<BlockchainResponse> mintBaseRPCInteractions(
+      {required String query}) async {
+    var uri = "";
+    if (networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.first;
+    } else {
+      uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.last;
+    }
+
+    final heders = {"mb-api-key": "anon", "content-type": "application/json"};
+
+    final res = await networkClient.postHTTP(uri,
+        {"query": query, "variables": {}, "operationName": "MyQuery"}, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
+
+  Future<BlockchainResponse> uploadFileToArweave({required File file}) async {
+    int maxSize = 31457280;
+    FormData formData;
+    if (await file.length() > maxSize) {
+      throw Exception("The file size should be up to 30MB");
+    }
+
+    String uri = 'https://ar.mintbase.xyz';
+
+    Map<String, dynamic> heders = {"mb-api-key": "anon"};
+
+    String fileFormat = checkFileFormat(filePath: file.path);
+
+    switch (fileFormat) {
+      case "pdf":
+        formData = await createFormData(
+            filePath: file.path, mediaType: "application/pdf");
+      case "png":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "image/png");
+      case "jpg":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "image/jpg");
+      case "jpeg":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "image/jpeg");
+      case "gif":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "image/gif");
+      case "zip":
+        formData = await createFormData(
+            filePath: file.path, mediaType: "application/zip");
+      case "ogg":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "audio/ogg");
+      case "mp3":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "audio/mp3");
+      case "mpeg":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "audio/mpeg");
+      case "webm":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "video/webm");
+      case "mp4":
+        formData =
+            await createFormData(filePath: file.path, mediaType: "video/mp4");
+      case "gltf-binar":
+        formData = await createFormData(
+            filePath: file.path, mediaType: "model/gltf-binar");
+      case "octet-stream":
+        formData = await createFormData(
+            filePath: file.path, mediaType: "application/octet-stream");
+      default:
+        throw Exception("This is format file doesn`t supported");
+    }
+
+    final res = await networkClient.postHTTP(uri, formData, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
+
+  Future<FormData> createFormData(
+      {required String filePath, required String mediaType}) async {
+    return FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath,
+          contentType: MediaType.parse(mediaType), filename: "file"),
+    });
+  }
+
+  String checkFileFormat({required String filePath}) {
+    List<String> pathList =
+        filePath.split("/").map((tag) => tag.trim()).toList();
+    List<String> nameFormatFile =
+        pathList.last.split(".").map((toch) => toch.trim()).toList();
+    return nameFormatFile.last;
+  }
+
+  Future<BlockchainResponse> uploadReferenceToArweave(
+      {required Map<String, dynamic> reference}) async {
+    Map<String, dynamic> finalRefetence = {};
+    reference.forEach((key, value) {
+      if (value != null) {
+        finalRefetence[key] = value;
+      }
+    });
+
+    FormData formData = FormData.fromMap(finalRefetence);
+
+    final uri = 'https://ar.mintbase.xyz/reference';
+
+    Map<String, dynamic> heders = {"mb-api-key": "anon"};
+
+    final res = await networkClient.postHTTP(uri, formData, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
     }
   }
 }

@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -77,11 +76,12 @@ class _NearMakeActionWithInjectedPrivateKeyInNearApiJsFormatState
         )}');
         final res = await nearService.sendTransferNativeCoin(
           NearTransferRequest(
-              toAddress: recipient,
-              transferAmount: NearFormatter.nearToYoctoNear(amount),
-              privateKey: privKeyFromSecretKeyNearApiJsFormat,
-              publicKey: pubKeyFromSecretKeyNearApiJsFormat,
-              fromAddress: accountIdOfInjectedKey),
+            toAddress: recipient,
+            transferAmount: NearFormatter.nearToYoctoNear(amount),
+            privateKey: privKeyFromSecretKeyNearApiJsFormat,
+            publicKey: pubKeyFromSecretKeyNearApiJsFormat,
+            accountId: accountIdOfInjectedKey,
+          ),
         );
         nearVM.nearState.add(
           currentState.copyWith(

@@ -72,7 +72,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
         return Column(
           children: [
             SizedBox(
-              height: 10.w,
+              height: 10.h,
             ),
             Text(
               'Total Amount: \$" Not yet implemented"',
@@ -111,7 +111,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10.w,
+                  height: 10.h,
                 ),
                 SizedBox(
                   width: 300,
@@ -165,7 +165,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10.w,
+                  height: 10.h,
                 ),
                 SizedBox(
                   width: 300,
@@ -205,7 +205,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10.w,
+                  height: 10.h,
                 ),
                 SizedBox(
                   width: 300,
@@ -232,10 +232,12 @@ class _CryptoListPageState extends State<CryptoListPage> {
                 ),
               ],
             ),
-            SizedBox(height: 2.w),
+            SizedBox(height: 2.h),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(width * 0.06),
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.06,
+                ),
                 child: StreamBuilder<List<Wallet>>(
                     stream: homeVM.cryptoLibrary.walletsStream,
                     builder: (context, snapshot) {

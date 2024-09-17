@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/avalanche_blockchain_network_urls.dart';
-import 'package:flutterchain/flutterchain_lib/constants/chains/ethereum_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/ethereum_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -53,41 +56,34 @@ class AvalancheBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<BlockchainResponse> callSmartContractFunction(
-      TransferRequest transferRequest) {
-    throw UnimplementedError('callSmartContractFunction does not exist.');
-  }
-
-  @override
-  Future<BlockChainData> getBlockChainDataByDerivationPath(
-      {required String mnemonic,
-      required String? passphrase,
-      required DerivationPath derivationPath}) {
-    // TODO: implement getBlockChainDataByDerivationPath
+  Future<BlockChainData> getBlockChainData({
+    required String mnemonic,
+    String? passphrase,
+    DerivationPathData? derivationPath,
+  }) {
+    // TODO: implement getBlockChainData
     throw UnimplementedError();
   }
 
   @override
-  Future<BlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) {
-    // TODO: implement getBlockChainDataFromMnemonic
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getBlockchainNetworkEnvironment() {
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() {
     // TODO: implement getBlockchainNetworkEnvironment
     throw UnimplementedError();
   }
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() {
-    return EthereumBlockChainNetworkUrls.listOfUrls;
+    return AvalancheBlockChainNetworkUrls.listOfUrls;
   }
 
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest) {
-    return avalancheRpcClient.getAccountBalance(transferRequest.accountID!);
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
+    if (accountInfoRequest is! EvmAccountInfoRequest) {
+      throw ArgumentError(
+          "Invalid accountInfoRequest. It must be of type `EvmAccountInfoRequest`");
+    }
+    return avalancheRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
 
   @override
@@ -98,8 +94,16 @@ class AvalancheBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    avalancheRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    if (blockChainNetworkEnvironmentSettings
+        is! EvmNetworkEnvironmentSettings) {
+      throw ArgumentError(
+          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `EvmNetworkEnvironmentSettings`");
+    }
+    avalancheRpcClient.networkClient
+        .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
   }
 
   //MPC Feature

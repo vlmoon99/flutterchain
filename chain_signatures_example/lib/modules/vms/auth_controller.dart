@@ -3,6 +3,7 @@ import 'package:chain_signatures_example/modules/vms/models/auth_info.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -25,9 +26,11 @@ class AuthController extends Disposable {
   }) async {
     // try {
     await nearBlockChainService.setBlockchainNetworkEnvironment(
-      newUrl: networkType == NearNetworkType.mainnet
-          ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
-          : NearBlockChainNetworkUrls.listOfUrls.first,
+      NearNetworkEnvironmentSettings(
+        chainUrl: networkType == NearNetworkType.mainnet
+            ? NearBlockChainNetworkUrls.listOfUrls.elementAt(1)
+            : NearBlockChainNetworkUrls.listOfUrls.first,
+      ),
     );
 
     final privateKey = await nearBlockChainService

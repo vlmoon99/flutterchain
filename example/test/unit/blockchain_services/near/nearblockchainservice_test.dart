@@ -1,9 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
@@ -119,27 +122,24 @@ void main() {
       const privateKey = 'privateKey';
       const publicKey = 'publicKey';
 
-      final arguments = NearBlockChainSmartContractArguments(
-        method: 'exampleMethod',
-        args: {'exampleArg': 'exampleValue'},
-        transferAmount: NearFormatter.nearToYoctoNear('1'),
-      );
-
       final expectedResponse = BlockchainResponse(
         status: 'success',
         data: {'txhash': 'some hash'},
       );
 
-      NearTransferRequest nearTransferRequest = NearTransferRequest(
+      final arguments = NearBlockChainSmartContractArguments(
         toAddress: toAddress,
-        fromAddress: fromAddress,
+        accountId: fromAddress,
         privateKey: privateKey,
         publicKey: publicKey,
-        arguments: arguments,
+        method: 'exampleMethod',
+        args: {'exampleArg': 'exampleValue'},
+        transferAmount: NearFormatter.nearToYoctoNear('1'),
       );
+
       // Act
-      final response = await mockNearBlockChainService
-          .callSmartContractFunction(nearTransferRequest);
+      final response =
+          await mockNearBlockChainService.callSmartContractFunction(arguments);
 
       // Assert
       expect(response, expectedResponse);
@@ -159,7 +159,12 @@ void main() {
       );
 
       NearTransferRequest nearTransferRequest = NearTransferRequest(
-          toAddress: toAddress, transferAmount: transferAmount);
+        publicKey: publicKey,
+        accountId: fromAddress,
+        privateKey: privateKey,
+        toAddress: toAddress,
+        transferAmount: transferAmount,
+      );
 
       // Act
       final response = await mockNearBlockChainService
@@ -171,12 +176,12 @@ void main() {
 
     test('getWalletBalance', () async {
       // Arrange
-      NearTransferRequest nearTransferRequest =
-          NearTransferRequest(accountID: 'accountId');
+      final AccountInfoRequest accountInfoRequest =
+          NearAccountInfoRequest(accountId: 'accountId');
 
       // Act
       final response = await mockNearBlockChainService.getWalletBalance(
-        nearTransferRequest,
+        accountInfoRequest,
       );
 
       // Assert
@@ -201,7 +206,7 @@ void main() {
 
       // Act
       await mockNearBlockChainService.setBlockchainNetworkEnvironment(
-          newUrl: newUrl);
+          NearNetworkEnvironmentSettings(chainUrl: newUrl));
 
       // Assert
       expect(
@@ -214,7 +219,7 @@ void main() {
 
     test('getBlockchainNetworkEnvironment', () async {
       // Arrange
-      const expectedUrl = 'url';
+      const expectedUrl = NearNetworkEnvironmentSettings(chainUrl: 'url');
 
       // Act
       final url =
@@ -224,7 +229,7 @@ void main() {
       expect(url, expectedUrl);
     });
 
-    test('getBlockChainDataByDerivationPath', () async {
+    test('getBlockChainData by DerivationPath', () async {
       // Arrange
       const mnemonic = 'mnemonic';
       const passphrase = 'passphrase';
@@ -237,8 +242,7 @@ void main() {
       );
 
       // Act
-      final blockChainData =
-          await mockNearBlockChainService.getBlockChainDataByDerivationPath(
+      final blockChainData = await mockNearBlockChainService.getBlockChainData(
         mnemonic: mnemonic,
         passphrase: passphrase,
         derivationPath: derivationPath,

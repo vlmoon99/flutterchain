@@ -1,6 +1,5 @@
 name: flutterchain
-description: Multi-chain library for communication with blockchain systems.
-  Based on WalletCore.
+description: Multi-chain library for communication with blockchain systems. Based on WalletCore.
 version: 1.0.0-beta.15
 repository: https://github.com/vlmoon99/flutterchain
 
@@ -13,6 +12,7 @@ dependencies:
   collection: ^1.17.2
   dio: ^5.4.0
   dio_smart_retry: ^6.0.0
+  decimal: ^3.0.2
   fixnum: ^1.1.0
   flutter:
     sdk: flutter

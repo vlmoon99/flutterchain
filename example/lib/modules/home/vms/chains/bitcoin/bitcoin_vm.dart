@@ -1,15 +1,8 @@
-import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/services/helper_service.dart';
 import 'package:flutterchain_example/modules/home/stores/chains/bitcoin_blockchain_store.dart';
 import 'package:flutterchain_example/modules/home/stores/core/user_store.dart';
@@ -42,10 +35,16 @@ class BitcoinVM {
   }
 
   Future<dynamic> getBalanceByDerivationPath({
-    required BitcoinTransferRequest bitcoinTransferRequest,
+    String? address,
+    String? walletId,
+    DerivationPathData? derivationPathData,
   }) async =>
       cryptoLibrary.getBalanceOfAddressOnSpecificBlockchain(
-          transferRequest: bitcoinTransferRequest);
+        address: address,
+        blockchainType: BlockChains.bitcoin,
+        walletId: walletId,
+        derivationPathData: derivationPathData,
+      );
 
   Future<String> getWalletPublicKeyAddressByWalletId(
           String walletName, DerivationPath currentDerivationPath) async =>
@@ -64,10 +63,19 @@ class BitcoinVM {
           .firstWhere((element) => element.name == walletName)
           .mnemonic;
 
-  Future<BlockchainResponse> sendNativeCoinTransferByWalletId(
-      {required BitcoinTransferRequest bitcoinTransferRequest}) async {
+  Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
+    required DerivationPathData derivationPathData,
+    required String walletId,
+    required String toAddress,
+    required String transferAmount,
+  }) async {
     final response = cryptoLibrary.sendTransferNativeCoin(
-        transferRequest: bitcoinTransferRequest);
+      blockchainType: BlockChains.bitcoin,
+      derivationPathData: derivationPathData,
+      walletId: walletId,
+      toAddress: toAddress,
+      transferAmount: transferAmount,
+    );
     return response;
   }
 }

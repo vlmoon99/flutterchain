@@ -3,30 +3,37 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
+import 'dart:async' as _i10;
+import 'dart:io' as _i18;
 
-import 'package:flutter/material.dart' as _i13;
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart'
-    as _i5;
+import 'package:flutter/material.dart' as _i15;
+import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart'
+    as _i17;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart'
-    as _i7;
+    as _i8;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart'
-    as _i14;
+    as _i16;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart'
     as _i6;
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart'
+    as _i13;
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart'
+    as _i7;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart'
     as _i4;
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart'
+    as _i12;
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
-    as _i10;
-import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart' as _i12;
+    as _i11;
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart' as _i5;
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart'
     as _i3;
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart'
-    as _i8;
+    as _i9;
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i14;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -72,9 +79,9 @@ class _FakeBlockchainResponse_2 extends _i1.SmartFake
         );
 }
 
-class _FakeNearBlockChainData_3 extends _i1.SmartFake
-    implements _i5.NearBlockChainData {
-  _FakeNearBlockChainData_3(
+class _FakeBlockChainData_3 extends _i1.SmartFake
+    implements _i5.BlockChainData {
+  _FakeBlockChainData_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -94,9 +101,20 @@ class _FakeNearTransactionInfoModel_4 extends _i1.SmartFake
         );
 }
 
-class _FakeMPCAccountInfo_5 extends _i1.SmartFake
-    implements _i7.MPCAccountInfo {
-  _FakeMPCAccountInfo_5(
+class _FakeBlockChainNetworkEnvironmentSettings_5 extends _i1.SmartFake
+    implements _i7.BlockChainNetworkEnvironmentSettings {
+  _FakeBlockChainNetworkEnvironmentSettings_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeMPCAccountInfo_6 extends _i1.SmartFake
+    implements _i8.MPCAccountInfo {
+  _FakeMPCAccountInfo_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -109,7 +127,7 @@ class _FakeMPCAccountInfo_5 extends _i1.SmartFake
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockNearBlockChainService extends _i1.Mock
-    implements _i8.NearBlockChainService {
+    implements _i9.NearBlockChainService {
   MockNearBlockChainService() {
     _i1.throwOnMissingStub(this);
   }
@@ -133,43 +151,43 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i3.NearRpcClient);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> sendTransferNativeCoin(
-          _i10.TransferRequest? transferRequest) =>
+  _i10.Future<_i4.BlockchainResponse> sendTransferNativeCoin(
+          _i11.TransferRequest? transferRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendTransferNativeCoin,
           [transferRequest],
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #sendTransferNativeCoin,
             [transferRequest],
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> callSmartContractFunction(
-          _i10.TransferRequest? transferRequest) =>
+  _i10.Future<_i4.BlockchainResponse> callSmartContractFunction(
+          _i12.BlockChainSmartContractArguments? smartContractArguments) =>
       (super.noSuchMethod(
         Invocation.method(
           #callSmartContractFunction,
-          [transferRequest],
+          [smartContractArguments],
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #callSmartContractFunction,
-            [transferRequest],
+            [smartContractArguments],
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> callViewMethod({
+  _i10.Future<_i4.BlockchainResponse> callViewMethod({
     required String? contractId,
     required String? method,
     Map<String, dynamic>? args = const {},
@@ -185,7 +203,7 @@ class MockNearBlockChainService extends _i1.Mock
           },
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #callViewMethod,
@@ -197,35 +215,37 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<String> getWalletBalance(_i10.TransferRequest? transferRequest) =>
+  _i10.Future<String> getWalletBalance(
+          _i13.AccountInfoRequest? accountInfoRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #getWalletBalance,
-          [transferRequest],
+          [accountInfoRequest],
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #getWalletBalance,
-            [transferRequest],
+            [accountInfoRequest],
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<void> setBlockchainNetworkEnvironment({required String? newUrl}) =>
+  _i10.Future<void> setBlockchainNetworkEnvironment(
+          _i7.BlockChainNetworkEnvironmentSettings?
+              blockChainNetworkEnvironmentSettings) =>
       (super.noSuchMethod(
         Invocation.method(
           #setBlockchainNetworkEnvironment,
-          [],
-          {#newUrl: newUrl},
+          [blockChainNetworkEnvironmentSettings],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i10.Future<void>.value(),
+        returnValueForMissingStub: _i10.Future<void>.value(),
+      ) as _i10.Future<void>);
 
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() => (super.noSuchMethod(
@@ -237,14 +257,14 @@ class MockNearBlockChainService extends _i1.Mock
       ) as Set<String>);
 
   @override
-  _i9.Future<_i5.NearBlockChainData> getBlockChainDataByDerivationPath({
+  _i10.Future<_i5.BlockChainData> getBlockChainData({
     required String? mnemonic,
-    required String? passphrase,
-    required _i12.DerivationPath? derivationPath,
+    String? passphrase,
+    _i5.DerivationPathData? derivationPath,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getBlockChainDataByDerivationPath,
+          #getBlockChainData,
           [],
           {
             #mnemonic: mnemonic,
@@ -253,10 +273,10 @@ class MockNearBlockChainService extends _i1.Mock
           },
         ),
         returnValue:
-            _i9.Future<_i5.NearBlockChainData>.value(_FakeNearBlockChainData_3(
+            _i10.Future<_i5.BlockChainData>.value(_FakeBlockChainData_3(
           this,
           Invocation.method(
-            #getBlockChainDataByDerivationPath,
+            #getBlockChainData,
             [],
             {
               #mnemonic: mnemonic,
@@ -265,36 +285,10 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<_i5.NearBlockChainData>);
+      ) as _i10.Future<_i5.BlockChainData>);
 
   @override
-  _i9.Future<_i5.NearBlockChainData> getBlockChainDataFromMnemonic(
-    String? mnemonic,
-    String? passphrase,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getBlockChainDataFromMnemonic,
-          [
-            mnemonic,
-            passphrase,
-          ],
-        ),
-        returnValue:
-            _i9.Future<_i5.NearBlockChainData>.value(_FakeNearBlockChainData_3(
-          this,
-          Invocation.method(
-            #getBlockChainDataFromMnemonic,
-            [
-              mnemonic,
-              passphrase,
-            ],
-          ),
-        )),
-      ) as _i9.Future<_i5.NearBlockChainData>);
-
-  @override
-  _i9.Future<_i6.NearTransactionInfoModel> getTransactionInfo({
+  _i10.Future<_i6.NearTransactionInfoModel> getTransactionInfo({
     required String? accountId,
     required String? publicKey,
   }) =>
@@ -307,7 +301,7 @@ class MockNearBlockChainService extends _i1.Mock
             #publicKey: publicKey,
           },
         ),
-        returnValue: _i9.Future<_i6.NearTransactionInfoModel>.value(
+        returnValue: _i10.Future<_i6.NearTransactionInfoModel>.value(
             _FakeNearTransactionInfoModel_4(
           this,
           Invocation.method(
@@ -319,10 +313,10 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<_i6.NearTransactionInfoModel>);
+      ) as _i10.Future<_i6.NearTransactionInfoModel>);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> sendTransactionNearSync(
+  _i10.Future<_i4.BlockchainResponse> sendTransactionNearSync(
           {required List<String>? params}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -331,7 +325,7 @@ class MockNearBlockChainService extends _i1.Mock
           {#params: params},
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #sendTransactionNearSync,
@@ -339,10 +333,10 @@ class MockNearBlockChainService extends _i1.Mock
             {#params: params},
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> sendTransactionNearAsync(
+  _i10.Future<_i4.BlockchainResponse> sendTransactionNearAsync(
           {required List<String>? params}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -351,7 +345,7 @@ class MockNearBlockChainService extends _i1.Mock
           {#params: params},
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #sendTransactionNearAsync,
@@ -359,10 +353,10 @@ class MockNearBlockChainService extends _i1.Mock
             {#params: params},
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<String> signNearActions({
+  _i10.Future<String> signNearActions({
     required String? fromAddress,
     required String? toAddress,
     required String? transferAmount,
@@ -387,7 +381,7 @@ class MockNearBlockChainService extends _i1.Mock
             #actions: actions,
           },
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #signNearActions,
@@ -404,10 +398,10 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> deleteKey({
+  _i10.Future<_i4.BlockchainResponse> deleteKey({
     required String? accountId,
     required String? deletedPublicKey,
     required String? privateKey,
@@ -425,7 +419,7 @@ class MockNearBlockChainService extends _i1.Mock
           },
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #deleteKey,
@@ -438,14 +432,14 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<_i4.BlockchainResponse> addKey({
+  _i10.Future<_i4.BlockchainResponse> addKey({
     required String? fromAddress,
     required String? mnemonic,
     String? passphrase = r'',
-    required _i12.DerivationPath? derivationPathOfNewGeneratedAccount,
+    required _i5.DerivationPath? derivationPathOfNewGeneratedAccount,
     required String? permission,
     required String? allowance,
     required String? smartContractId,
@@ -472,7 +466,7 @@ class MockNearBlockChainService extends _i1.Mock
           },
         ),
         returnValue:
-            _i9.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
           this,
           Invocation.method(
             #addKey,
@@ -492,18 +486,18 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<_i4.BlockchainResponse>);
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i9.Future<String> exportPrivateKeyToTheNearApiJsFormat(
-          {_i12.BlockChainData? currentBlockchainData}) =>
+  _i10.Future<String> exportPrivateKeyToTheNearApiJsFormat(
+          {_i5.BlockChainData? currentBlockchainData}) =>
       (super.noSuchMethod(
         Invocation.method(
           #exportPrivateKeyToTheNearApiJsFormat,
           [],
           {#currentBlockchainData: currentBlockchainData},
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #exportPrivateKeyToTheNearApiJsFormat,
@@ -511,10 +505,10 @@ class MockNearBlockChainService extends _i1.Mock
             {#currentBlockchainData: currentBlockchainData},
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<String> getBase58PubKeyFromHexValue(
+  _i10.Future<String> getBase58PubKeyFromHexValue(
           {required String? hexEncodedPubKey}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -522,7 +516,7 @@ class MockNearBlockChainService extends _i1.Mock
           [],
           {#hexEncodedPubKey: hexEncodedPubKey},
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #getBase58PubKeyFromHexValue,
@@ -530,59 +524,62 @@ class MockNearBlockChainService extends _i1.Mock
             {#hexEncodedPubKey: hexEncodedPubKey},
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
+  _i10.Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
           String? base58PrivateKey) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPublicKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #getPublicKeyFromSecretKeyFromNearApiJSFormat,
             [base58PrivateKey],
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+  _i10.Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
           String? base58PrivateKey) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
             [base58PrivateKey],
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<String> getBlockchainNetworkEnvironment() => (super.noSuchMethod(
-        Invocation.method(
-          #getBlockchainNetworkEnvironment,
-          [],
-        ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getBlockchainNetworkEnvironment,
-            [],
-          ),
-        )),
-      ) as _i9.Future<String>);
+  _i10.Future<_i7.BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() => (super.noSuchMethod(
+            Invocation.method(
+              #getBlockchainNetworkEnvironment,
+              [],
+            ),
+            returnValue:
+                _i10.Future<_i7.BlockChainNetworkEnvironmentSettings>.value(
+                    _FakeBlockChainNetworkEnvironmentSettings_5(
+              this,
+              Invocation.method(
+                #getBlockchainNetworkEnvironment,
+                [],
+              ),
+            )),
+          ) as _i10.Future<_i7.BlockChainNetworkEnvironmentSettings>);
 
   @override
-  _i9.Future<void> authWithNearWalletsWeb(
+  _i10.Future<void> authWithNearWalletsWeb(
     String? privateNearAPIjsFormat, [
     String? successUrlCallBackWeb,
     String? failureUrlCallBackWeb,
@@ -596,13 +593,13 @@ class MockNearBlockChainService extends _i1.Mock
             failureUrlCallBackWeb,
           ],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i10.Future<void>.value(),
+        returnValueForMissingStub: _i10.Future<void>.value(),
+      ) as _i10.Future<void>);
 
   @override
-  _i9.Future<String> authWithNearWallets(
-    _i13.BuildContext? context,
+  _i10.Future<String> authWithNearWallets(
+    _i15.BuildContext? context,
     String? privateNearAPIjsFormat,
   ) =>
       (super.noSuchMethod(
@@ -613,7 +610,7 @@ class MockNearBlockChainService extends _i1.Mock
             privateNearAPIjsFormat,
           ],
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #authWithNearWallets,
@@ -623,10 +620,10 @@ class MockNearBlockChainService extends _i1.Mock
             ],
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<_i7.MPCAccountInfo> getMPCAccount({
+  _i10.Future<_i8.MPCAccountInfo> getMPCAccount({
     required String? accountId,
     String? path = r'flutterchain',
     String? chain = r'ETHEREUM',
@@ -645,7 +642,8 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcPublicKey: mpcPublicKey,
           },
         ),
-        returnValue: _i9.Future<_i7.MPCAccountInfo>.value(_FakeMPCAccountInfo_5(
+        returnValue:
+            _i10.Future<_i8.MPCAccountInfo>.value(_FakeMPCAccountInfo_6(
           this,
           Invocation.method(
             #getMPCAccount,
@@ -659,14 +657,14 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<_i7.MPCAccountInfo>);
+      ) as _i10.Future<_i8.MPCAccountInfo>);
 
   @override
-  _i9.Future<String> signEVMTransationWithMPC({
+  _i10.Future<String> signEVMTransationWithMPC({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
-    required _i14.MpcTransactionInfo? mpcTransactionInfo,
+    required _i16.MpcTransactionInfo? mpcTransactionInfo,
     required String? senderAdress,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
@@ -685,7 +683,7 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcContract: mpcContract,
           },
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #signEVMTransationWithMPC,
@@ -701,14 +699,14 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<String> signBTCTransactionWithMPC({
+  _i10.Future<String> signBTCTransactionWithMPC({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
-    required _i14.MpcTransactionInfo? transactionInfo,
+    required _i16.MpcTransactionInfo? transactionInfo,
     required String? mpcSenderPublicKey,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
@@ -727,7 +725,7 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcContract: mpcContract,
           },
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #signBTCTransactionWithMPC,
@@ -743,14 +741,14 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
 
   @override
-  _i9.Future<String> signXRPTransactionWithMPC({
+  _i10.Future<String> signXRPTransactionWithMPC({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
-    required _i14.MpcTransactionInfo? mpcTransactionInfo,
+    required _i16.MpcTransactionInfo? mpcTransactionInfo,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
   }) =>
@@ -767,7 +765,7 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcContract: mpcContract,
           },
         ),
-        returnValue: _i9.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
             #signXRPTransactionWithMPC,
@@ -782,5 +780,629 @@ class MockNearBlockChainService extends _i1.Mock
             },
           ),
         )),
-      ) as _i9.Future<String>);
+      ) as _i10.Future<String>);
+
+  @override
+  _i10.Future<bool> deployNFTCollection({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required String? symbol,
+    required String? name,
+    required String? ownerId,
+    String? spec = r'nft-1.0.0',
+    String? icon =
+        r'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEXUlEQVRYR8VXW4hVVRj+vrX3OYbFNBl2eSsoa8pkxMJmzpGGoIwMY0wwImuCXmKKkiikKayHQIpAwbdAswskBYqJSlANek7TUOPURGKCWdmFkJnsoZnhzNn/F2vcZ9gez2UfEVoP+2Gv///Xt771X4mUq6enpz2Kogck3S2pk+R1ki736iT/kfQzyW/N7PNsNrtvcHDwTBrTbCbU1dV1cxiGGyWtA3BJM/l4f1rSLjPbPDQ0dKyRTl0AS5YsubStre11AP0AwiYHi+SJmJGFCdmypG3T09MDIyMjk7Vs1ASQy+VuIrkbQEezG3vqJfXGTzHhnFtlZttIuoTuUQC9hULheLW98wDkcrnbARwkeWWzw+P9ewCsB/AYgBkz6yW5lmRfUl/SOMmVhUJhJPn/HAD+5gCKLRzubS0AMO59MTa828z2Oud2VF8gBtGdZGIOQPzmX6ehPWk4iqKOIAg+BnCr/y/pJUmnnHPv1WHw6NTU1B0Vn5gDkM/ntwB4NiXtc2KS9kdR1B+G4aMA/pD0kaQHGwDwILcUi8UNs37jPz7UgiD4PoW318Qn6QSA/STbJc2T9EkjAAB8dCwuFos/zgLI5/M7YydqlYBa8vvMbFcTAJ6FncVisY/5fP4KT10LSaYZyFQAAEyHYXitB+BD6N1mVlvYTwsAZraeuVxuR3XMNjpM0mFJW0n+VUfub0mnSS6S5JxznQBeBpDMkBXV7R7AKEkv1HRJGiLpvX0rgHYzGyB5S5yuZ/VJHioUCv25XO4Vn/0AHDCzD51z35DMViWnUf8EEwC8H6RZj5O8Py5M3pF+D4JghZn9lFDeB+AtAF9U/vmw9CBJ3lt1yIQHYIks1gzEapJPSlodJ53xcrncmclkTiUOOwRgM8n9iX8Pk/S+tqqKAWsZgJmddM6971kzs+f9W5P0VbOyZmZmZjyo5yStcc4djKJoE8kxkvNrAWjlCVZLugHAYefcpJmtIzkAIKii7ldJL5jZkTAMF0t6A8CNNeidaMkJAXjqNwLobvZWafYljbYahhcVAIDtrSaiiwpgNhGlSMVjAI5J8m3Xm3FILapD8UKSd9XwiVriZ1Ox36lXjCRtMLPPwjC8s1QqHRgeHv6tu7v7IefcNYkQG8tkMqPlcnmNrylm9q9z7lMAlzXyg7li5IXqlOOvADwN4EsAPoOdLpVKHdlsdm/SCUku8/UdwIo4NzxF8noALzYAcG45jlmobkjelnTc014xRPI+Sa8BWJ4w7lsyH8qVtUfSHpLv1ANwXkPiBWu0ZEeiKOoLgsAzMd+nXTNb7pz7geTsQBLfuIvkqwBWnu3I9ASAZSSfqQOgdkvmhaubUpKboij6IAiCpSSH/aAB4JEqw9+VSqXeTCZzm6Q/nXNXA/A94rxqAA2b0opwjbb8JADfzy8FcFWdW01K8kwtqFdZU7XlCRCpB5M0GQ9A+sGkYrDF0awejgsbzZLW/rfhtPpKTcbzM5J+uZDx/D8+0FUx/4DhyAAAAABJRU5ErkJggg==',
+    String? baseUri = r'https://arweave.net',
+    String? reference,
+    String? referenceHash,
+    String? factoryContract,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deployNFTCollection,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #symbol: symbol,
+            #name: name,
+            #ownerId: ownerId,
+            #spec: spec,
+            #icon: icon,
+            #baseUri: baseUri,
+            #reference: reference,
+            #referenceHash: referenceHash,
+            #factoryContract: factoryContract,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<List<dynamic>> checkOwnerCollection(
+          {required String? owner_id}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #checkOwnerCollection,
+          [],
+          {#owner_id: owner_id},
+        ),
+        returnValue: _i10.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i10.Future<List<dynamic>>);
+
+  @override
+  _i10.Future<List<dynamic>> checkMinterCollection(
+          {required String? owner_id}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #checkMinterCollection,
+          [],
+          {#owner_id: owner_id},
+        ),
+        returnValue: _i10.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i10.Future<List<dynamic>>);
+
+  @override
+  _i10.Future<List<dynamic>> checkNFTInfo({required String? owner_id}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #checkNFTInfo,
+          [],
+          {#owner_id: owner_id},
+        ),
+        returnValue: _i10.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i10.Future<List<dynamic>>);
+
+  @override
+  _i10.Future<List<dynamic>> checkListingNFT({required String? ownerId}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #checkListingNFT,
+          [],
+          {#ownerId: ownerId},
+        ),
+        returnValue: _i10.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i10.Future<List<dynamic>>);
+
+  @override
+  _i10.Future<Map<String, String>> checkMaxPriceBidNFT({
+    required String? nftContractId,
+    required int? tokenId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #checkMaxPriceBidNFT,
+          [],
+          {
+            #nftContractId: nftContractId,
+            #tokenId: tokenId,
+          },
+        ),
+        returnValue: _i10.Future<Map<String, String>>.value(<String, String>{}),
+      ) as _i10.Future<Map<String, String>>);
+
+  @override
+  _i10.Future<dynamic> transferNFTCollection({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required String? nftCollectionContract,
+    required String? new_owner,
+    required bool? keep_old_minters,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #transferNFTCollection,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #nftCollectionContract: nftCollectionContract,
+            #new_owner: new_owner,
+            #keep_old_minters: keep_old_minters,
+          },
+        ),
+        returnValue: _i10.Future<dynamic>.value(),
+      ) as _i10.Future<dynamic>);
+
+  @override
+  _i10.Future<dynamic> addDeleteMinters({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required String? nftCollectionContract,
+    required String? name,
+    required bool? isAdd,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addDeleteMinters,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #nftCollectionContract: nftCollectionContract,
+            #name: name,
+            #isAdd: isAdd,
+          },
+        ),
+        returnValue: _i10.Future<dynamic>.value(),
+      ) as _i10.Future<dynamic>);
+
+  @override
+  _i10.Future<List<dynamic>> getMinters({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required String? nftCollectionContract,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMinters,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #nftCollectionContract: nftCollectionContract,
+          },
+        ),
+        returnValue: _i10.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i10.Future<List<dynamic>>);
+
+  @override
+  _i10.Future<bool> mintNFT({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required String? nftCollectionContract,
+    required String? owner_id,
+    required String? description,
+    required String? title,
+    required String? media,
+    String? media_type,
+    String? animation,
+    int? num_to_mint = 1,
+    Map<String, int>? split_between,
+    Map<String, int>? split_owners,
+    List<String>? tags,
+    List<dynamic>? extra,
+    _i17.CategoryNFT? category,
+    String? document,
+    String? baseURL = r'https://arweave.net/',
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #mintNFT,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #nftCollectionContract: nftCollectionContract,
+            #owner_id: owner_id,
+            #description: description,
+            #title: title,
+            #media: media,
+            #media_type: media_type,
+            #animation: animation,
+            #num_to_mint: num_to_mint,
+            #split_between: split_between,
+            #split_owners: split_owners,
+            #tags: tags,
+            #extra: extra,
+            #category: category,
+            #document: document,
+            #baseURL: baseURL,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  String mintingDeposit({
+    required int? nSplits,
+    required int? nTokens,
+    required int? nRoyalties,
+    required Map<String, dynamic>? metadata,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #mintingDeposit,
+          [],
+          {
+            #nSplits: nSplits,
+            #nTokens: nTokens,
+            #nRoyalties: nRoyalties,
+            #metadata: metadata,
+          },
+        ),
+        returnValue: _i14.dummyValue<String>(
+          this,
+          Invocation.method(
+            #mintingDeposit,
+            [],
+            {
+              #nSplits: nSplits,
+              #nTokens: nTokens,
+              #nRoyalties: nRoyalties,
+              #metadata: metadata,
+            },
+          ),
+        ),
+      ) as String);
+
+  @override
+  _i10.Future<String> uploadFileToArweave({required _i18.File? file}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #uploadFileToArweave,
+          [],
+          {#file: file},
+        ),
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+          this,
+          Invocation.method(
+            #uploadFileToArweave,
+            [],
+            {#file: file},
+          ),
+        )),
+      ) as _i10.Future<String>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> uploadReferenceToArweave(
+          {required Map<String, dynamic>? reference}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #uploadReferenceToArweave,
+          [],
+          {#reference: reference},
+        ),
+        returnValue:
+            _i10.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  Map<String, int> calculateRoyalty({
+    required Map<String, int>? noCompletelyRoyalty,
+    required int? totalSum,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #calculateRoyalty,
+          [],
+          {
+            #noCompletelyRoyalty: noCompletelyRoyalty,
+            #totalSum: totalSum,
+          },
+        ),
+        returnValue: <String, int>{},
+      ) as Map<String, int>);
+
+  @override
+  _i10.Future<bool> transferNFT({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required String? nftCollectionContract,
+    required List<List<String>>? tokenIds,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #transferNFT,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #nftCollectionContract: nftCollectionContract,
+            #tokenIds: tokenIds,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<_i4.BlockchainResponse> NFTInteractionPermission({
+    required String? nameNFTCollection,
+    required String? tokenId,
+    required String? ownerId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #NFTInteractionPermission,
+          [],
+          {
+            #nameNFTCollection: nameNFTCollection,
+            #tokenId: tokenId,
+            #ownerId: ownerId,
+          },
+        ),
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #NFTInteractionPermission,
+            [],
+            {
+              #nameNFTCollection: nameNFTCollection,
+              #tokenId: tokenId,
+              #ownerId: ownerId,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
+
+  @override
+  _i10.Future<bool> multiplyNFT({
+    required String? nameNFTCollection,
+    required String? nameNFT,
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    required int? numToMint,
+    String? media,
+    String? reference,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #multiplyNFT,
+          [],
+          {
+            #nameNFTCollection: nameNFTCollection,
+            #nameNFT: nameNFT,
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #numToMint: numToMint,
+            #media: media,
+            #reference: reference,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<_i4.BlockchainResponse> getInfoForMultiply({
+    required String? nameNFTCollection,
+    required String? ownerId,
+    required String? nameNFT,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getInfoForMultiply,
+          [],
+          {
+            #nameNFTCollection: nameNFTCollection,
+            #ownerId: ownerId,
+            #nameNFT: nameNFT,
+          },
+        ),
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #getInfoForMultiply,
+            [],
+            {
+              #nameNFTCollection: nameNFTCollection,
+              #ownerId: ownerId,
+              #nameNFT: nameNFT,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
+
+  @override
+  _i10.Future<bool> simpleListNFT({
+    required String? nameNFTCollection,
+    required String? tokenId,
+    required String? price,
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #simpleListNFT,
+          [],
+          {
+            #nameNFTCollection: nameNFTCollection,
+            #tokenId: tokenId,
+            #price: price,
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> listingActivate({
+    required String? accountId,
+    required String? publicKey,
+    required String? privateKey,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #listingActivate,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #privateKey: privateKey,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> unlistNFT({
+    required String? accountId,
+    required String? publicKey,
+    required String? nameNFTCollection,
+    required String? privateKey,
+    required int? tokenId,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #unlistNFT,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #nameNFTCollection: nameNFTCollection,
+            #privateKey: privateKey,
+            #tokenId: tokenId,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> delistNFT({
+    required String? accountId,
+    required String? publicKey,
+    required String? nameNFTCollection,
+    required String? privateKey,
+    required int? tokenId,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #delistNFT,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #nameNFTCollection: nameNFTCollection,
+            #privateKey: privateKey,
+            #tokenId: tokenId,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> buySimpleListNFT({
+    required String? accountId,
+    required String? publicKey,
+    required String? nameNFTCollection,
+    required String? privateKey,
+    required int? tokenId,
+    String? referrer_id,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #buySimpleListNFT,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #nameNFTCollection: nameNFTCollection,
+            #privateKey: privateKey,
+            #tokenId: tokenId,
+            #referrer_id: referrer_id,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<String> getPriceForBuySimpleListNFT({
+    required String? nftContractId,
+    required int? tokenId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPriceForBuySimpleListNFT,
+          [],
+          {
+            #nftContractId: nftContractId,
+            #tokenId: tokenId,
+          },
+        ),
+        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getPriceForBuySimpleListNFT,
+            [],
+            {
+              #nftContractId: nftContractId,
+              #tokenId: tokenId,
+            },
+          ),
+        )),
+      ) as _i10.Future<String>);
+
+  @override
+  _i10.Future<bool> rollingAuctionNft({
+    required String? accountId,
+    required String? publicKey,
+    required String? nameNFTCollection,
+    required String? privateKey,
+    required int? tokenId,
+    required String? price,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #rollingAuctionNft,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #nameNFTCollection: nameNFTCollection,
+            #privateKey: privateKey,
+            #tokenId: tokenId,
+            #price: price,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> offersToRollingAuction({
+    required String? accountId,
+    required String? publicKey,
+    required String? nameNFTCollection,
+    required String? privateKey,
+    required int? tokenId,
+    required String? priceBid,
+    int? timeoutInHours,
+    String? market_account_id,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #offersToRollingAuction,
+          [],
+          {
+            #accountId: accountId,
+            #publicKey: publicKey,
+            #nameNFTCollection: nameNFTCollection,
+            #privateKey: privateKey,
+            #tokenId: tokenId,
+            #priceBid: priceBid,
+            #timeoutInHours: timeoutInHours,
+            #market_account_id: market_account_id,
+          },
+        ),
+        returnValue: _i10.Future<bool>.value(false),
+      ) as _i10.Future<bool>);
 }

@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -36,34 +39,39 @@ class FlutterChainService {
   }
 
   Future<void> setBlockchainNetworkEnvironment(
-      {required String blockchainType, required String newUrl}) async {
+      {required String blockchainType,
+      required BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings}) async {
     await blockchainServices[blockchainType]
-        ?.setBlockchainNetworkEnvironment(newUrl: newUrl);
+        ?.setBlockchainNetworkEnvironment(blockChainNetworkEnvironmentSettings);
   }
 
-  Future<String> getBlockchainNetworkEnvironment({
+  Future<BlockChainNetworkEnvironmentSettings?>
+      getBlockchainNetworkEnvironment({
     required String blockchainType,
   }) async {
     return await blockchainServices[blockchainType]
-            ?.getBlockchainNetworkEnvironment() ??
-        "no link";
+        ?.getBlockchainNetworkEnvironment();
   }
 
-  Future<String> getWalletBalance(
-      {required TransferRequest transferRequest}) async {
-    final res = await blockchainServices[transferRequest.blockchainType]
-        ?.getWalletBalance(transferRequest);
+  Future<String> getWalletBalance({
+    required AccountInfoRequest accountInfoRequest,
+    required String blockchainType,
+  }) async {
+    final res = await blockchainServices[blockchainType]
+        ?.getWalletBalance(accountInfoRequest);
     return res ?? 'Error : no balance result';
   }
 
-  Future<BlockchainResponse> sendTransferNativeCoin(
-      {required TransferRequest transferRequest}) async {
-    if (blockchainServices[transferRequest.blockchainType] == null) {
+  Future<BlockchainResponse> sendTransferNativeCoin({
+    required String blockchainType,
+    required TransferRequest transferRequest,
+  }) async {
+    if (blockchainServices[blockchainType] == null) {
       throw Exception('Incorrect Blockchain');
     }
 
-    final blockchainService =
-        blockchainServices[transferRequest.blockchainType];
+    final blockchainService = blockchainServices[blockchainType];
     final res = blockchainService?.sendTransferNativeCoin(transferRequest);
 
     if (res == null) {
@@ -73,14 +81,17 @@ class FlutterChainService {
   }
 
   Future<BlockchainResponse> callSmartContractFunction({
-    required TransferRequest transferRequest,
+    required BlockChainSmartContractArguments smartContractArguments,
+    required String blockchainType,
   }) async {
-    if (blockchainServices[transferRequest.blockchainType] == null) {
-      throw Exception('Incorrect Blockchain');
+    if (!BlockChains.supportedBlockChainsForSmartContractCall
+        .contains(blockchainType)) {
+      throw Exception('Blockchain does not support smart contract call');
     }
 
-    final res = await blockchainServices[transferRequest.blockchainType]
-        ?.callSmartContractFunction(transferRequest);
+    final res = await (blockchainServices[blockchainType]
+            as BlockchainServiceWithSmartContractCallSupport?)
+        ?.callSmartContractFunction(smartContractArguments);
 
     if (res == null) {
       throw Exception('Incorrect Smart Contract Call');
@@ -101,7 +112,7 @@ class FlutterChainService {
         throw Exception('Incorrect Blockchain');
       }
       final blockChainData = await blockchainServices[chain]!
-          .getBlockChainDataFromMnemonic(mnemonic, passphrase);
+          .getBlockChainData(mnemonic: mnemonic, passphrase: passphrase);
 
       blockchainsData.putIfAbsent(chain, () => {blockChainData});
     });
