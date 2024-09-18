@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain_example/assets/images/icons.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //this is an action buttons
 Widget _buildButton(BuildContext context, AppIcon icon, String label) {
@@ -15,10 +16,9 @@ Widget _buildButton(BuildContext context, AppIcon icon, String label) {
   return Column(
     children: [
       Container(
-        padding: EdgeInsets.all(16),
+        // padding: EdgeInsets.all(16.w),
         child: icon,
       ),
-      SizedBox(height: 8),
       Text(label,
           style: nearTextStyles.label!.copyWith(color: nearColors.nearBlack)),
     ],
@@ -109,7 +109,7 @@ Widget _buildTokensAndNfts() {
               token['price']!,
             ),
             SizedBox(
-              width: 3,
+              width: 3.w,
             ),
             Text(
               token['change']!,
@@ -126,10 +126,10 @@ Widget _buildTokensAndNfts() {
                 style: nearTextStyles.label!.copyWith(
                     color: nearColors.nearBlack,
                     fontWeight: FontWeight.w700,
-                    fontSize: 16)),
+                    fontSize: 16.sp)),
             Text(token['total price']!,
                 style: nearTextStyles.label!
-                    .copyWith(color: nearColors.nearGray, fontSize: 12)),
+                    .copyWith(color: nearColors.nearGray, fontSize: 12.sp)),
           ],
         ),
       );
@@ -148,155 +148,153 @@ class WalletPageTab extends StatelessWidget {
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
 
     return Scaffold(
-      backgroundColor: nearColors.nearWhite,
-      // body: SafeArea(
-      // child: Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //this is TopBar
-          Container(
-            color: const Color.fromARGB(255, 241, 240, 240),
-            height: 330,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 45, horizontal: 24.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const AppIcon(
-                        iconType: IconType.settingsIcon,
-                        size: 24,
-                      ),
-                      Text('Wallet',
-                          style: nearTextStyles.label!.copyWith(
-                              fontWeight: FontWeight.w700, fontSize: 25)),
-                      const AppIcon(
-                        iconType: IconType.scanIcon,
-                        size: 30,
-                      )
-                    ],
-                  ),
-
-                  // this is Balance
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: Text('Total balance',
-                        style: nearTextStyles.label!.copyWith(
-                            color: nearColors.nearGray, fontSize: 16)),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Center(
-                    child: Text('\$2.663.56',
-                        style: nearTextStyles.bodyCopy!.copyWith(
-                            color: nearColors.nearBlack,
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700)),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildButton(
-                          context,
-                          const AppIcon(
-                            iconType: IconType.send,
-                            size: 56,
-                          ),
-                          'Send'),
-                      _buildButton(
-                          context,
-                          const AppIcon(
-                            iconType: IconType.receive,
-                            size: 56,
-                          ),
-                          'Receive'),
-                      _buildButton(
-                          context,
-                          const AppIcon(iconType: IconType.buy, size: 56),
-                          'Buy'),
-                      _buildButton(
-                          context,
-                          const AppIcon(
-                            iconType: IconType.swap,
-                            size: 56,
-                          ),
-                          'Swap'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 10),
-          // this is a Tokens/NFTs tab
-          Container(
-            color: nearColors.nearWhite,
-            child: DefaultTabController(
-              length: 2,
-              child: Column(
-                children: [
-                  Container(
-                    width: 327,
-                    height: 56,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: const Color.fromARGB(255, 241, 240, 240)),
-                    child: TabBar(
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicatorPadding: const EdgeInsets.all(4.5),
-                      indicator: BoxDecoration(
-                        color: nearColors.nearBlack,
-                        borderRadius: BorderRadius.circular(17),
-                      ),
-                      labelColor: nearColors.nearWhite,
-                      labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-                      unselectedLabelColor: Colors.black,
-                      tabs: const [
-                        Tab(
-                          text: 'Tokens',
-                        ),
-                        Tab(
-                          text: 'NFTs',
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    color: nearColors.nearWhite,
-                    height: 400,
-                    child: TabBarView(
+        backgroundColor: const Color.fromARGB(255, 241, 240, 240),
+        body: SafeArea(
+          child: Column(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: SizedBox(
+                    height: 28.h,
+                    width: 375.w,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildTokensAndNfts(),
-                        const Center(
-                          child: Text(
-                            'this is nft tab',
-                            style: TextStyle(color: Colors.black),
-                          ),
+                        Icon(Icons.settings),
+                        Text(
+                          'Wallet',
+                          style: TextStyle(
+                              color: nearColors.nearBlack,
+                              fontFamily: 'Manrope',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20.sp),
                         ),
+                        Icon(Icons.qr_code_scanner)
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+              SizedBox(
+                height: 15.h,
+              ),
+
+              Center(
+                child: SizedBox(
+                  width: 166.w,
+                  height: 64.h,
+                  child: Column(
+                    children: [
+                      Text('Total balance',
+                          style: nearTextStyles.label!.copyWith(
+                              color: nearColors.nearGray, fontSize: 16.sp)),
+                      Text('\$2.663.56',
+                          style: nearTextStyles.bodyCopy!.copyWith(
+                              color: nearColors.nearBlack,
+                              fontSize: 32.sp,
+                              fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                width: 326.w,
+                height: 80.h,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildButton(
+                        context,
+                        AppIcon(
+                          iconType: IconType.send,
+                          size: 56.h,
+                        ),
+                        'Send'),
+                    _buildButton(
+                        context,
+                        AppIcon(
+                          iconType: IconType.receive,
+                          size: 56.h,
+                        ),
+                        'Receive'),
+                    _buildButton(context,
+                        AppIcon(iconType: IconType.buy, size: 56.h), 'Buy'),
+                    _buildButton(
+                        context,
+                        AppIcon(
+                          iconType: IconType.swap,
+                          size: 56.h,
+                        ),
+                        'Swap'),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              // this is a Tokens/NFTs tab
+
+              Container(
+                color: nearColors.nearWhite,
+                child: DefaultTabController(
+                  length: 2,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 327,
+                        height: 56,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.dg),
+                            color: const Color.fromARGB(255, 241, 240, 240)),
+                        child: TabBar(
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicatorPadding: EdgeInsets.all(4.5),
+                          indicator: BoxDecoration(
+                            color: nearColors.nearBlack,
+                            borderRadius: BorderRadius.circular(17),
+                          ),
+                          labelColor: nearColors.nearWhite,
+                          labelStyle:
+                              const TextStyle(fontWeight: FontWeight.w600),
+                          unselectedLabelColor: Colors.black,
+                          tabs: const [
+                            Tab(
+                              text: 'Tokens',
+                            ),
+                            Tab(
+                              text: 'NFTs',
+                            )
+                          ],
+                        ),
+                      ),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
+                      Container(
+                        color: nearColors.nearWhite,
+                        height: 320.h,
+                        child: TabBarView(
+                          children: [
+                            _buildTokensAndNfts(),
+                            const Center(
+                              child: Text(
+                                'this is nft tab',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
 
@@ -333,14 +331,14 @@ class HistoryTab extends StatelessWidget {
   }
 }
 
-class WalletPageBottomBar extends StatefulWidget {
-  const WalletPageBottomBar({super.key});
+class WalletPage extends StatefulWidget {
+  const WalletPage({super.key});
 
   @override
-  State<WalletPageBottomBar> createState() => _WalletPageBottomBarState();
+  State<WalletPage> createState() => _WalletPageState();
 }
 
-class _WalletPageBottomBarState extends State<WalletPageBottomBar> {
+class _WalletPageState extends State<WalletPage> {
   final PageController _pageController = PageController();
 
   int _currentPageIndex = 0;
@@ -400,23 +398,173 @@ class _WalletPageBottomBarState extends State<WalletPageBottomBar> {
   }
 }
 
-class WalletPage extends StatefulWidget {
-  const WalletPage({super.key});
 
-  @override
-  State<WalletPage> createState() => _WalletPageState();
-}
 
-class _WalletPageState extends State<WalletPage> {
-  @override
-  Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: Size(375, 812),
-      builder: (context, child) {
-        return MaterialApp(
-          home: WalletPageBottomBar(),
-        );
-      },
-    );
-  }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// caffold(
+//       backgroundColor: nearColors.nearWhite,
+//       // body: SafeArea(
+//       // child: Padding(
+//       //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//       body: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           //this is TopBar
+//           Container(
+//             color: const Color.fromARGB(255, 241, 240, 240),
+//             height: 260.h,
+//             child: Padding(
+//               padding:
+//                   const EdgeInsets.symmetric(vertical: 45, horizontal: 19.0),
+//               child: Column(
+//                 children: [
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       const AppIcon(
+//                         iconType: IconType.settingsIcon,
+//                         size: 24,
+//                       ),
+//                       Text('Wallet',
+//                           style: nearTextStyles.label!.copyWith(
+//                               fontWeight: FontWeight.w700, fontSize: 25.sp)),
+//                       const AppIcon(
+//                         iconType: IconType.scanIcon,
+//                         size: 30,
+//                       )
+//                     ],
+//                   ),
+
+//                   // this is Balance
+//                   const SizedBox(
+//                     height: 10,
+//                   ),
+//                   Center(
+//                     child: Text('Total balance',
+//                         style: nearTextStyles.label!.copyWith(
+//                             color: nearColors.nearGray, fontSize: 16)),
+//                   ),
+//                   const SizedBox(
+//                     width: 10,
+//                   ),
+//                   Center(
+//                     child: Text('\$2.663.56',
+//                         style: nearTextStyles.bodyCopy!.copyWith(
+//                             color: nearColors.nearBlack,
+//                             fontSize: 32,
+//                             fontWeight: FontWeight.w700)),
+//                   ),
+//                   const SizedBox(
+//                     width: 20,
+//                   ),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                     children: [
+//                       _buildButton(
+//                           context,
+//                           const AppIcon(
+//                             iconType: IconType.send,
+//                             size: 56,
+//                           ),
+//                           'Send'),
+//                       _buildButton(
+//                           context,
+//                           const AppIcon(
+//                             iconType: IconType.receive,
+//                             size: 56,
+//                           ),
+//                           'Receive'),
+//                       _buildButton(
+//                           context,
+//                           const AppIcon(iconType: IconType.buy, size: 56),
+//                           'Buy'),
+//                       _buildButton(
+//                           context,
+//                           const AppIcon(
+//                             iconType: IconType.swap,
+//                             size: 56,
+//                           ),
+//                           'Swap'),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+
+//           const SizedBox(height: 10),
+//           // this is a Tokens/NFTs tab
+//           Container(
+//             color: nearColors.nearWhite,
+//             child: DefaultTabController(
+//               length: 2,
+//               child: Column(
+//                 children: [
+//                   Container(
+//                     width: 327,
+//                     height: 56,
+//                     decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(16),
+//                         color: const Color.fromARGB(255, 241, 240, 240)),
+//                     child: TabBar(
+//                       indicatorSize: TabBarIndicatorSize.tab,
+//                       indicatorPadding: const EdgeInsets.all(4.5),
+//                       indicator: BoxDecoration(
+//                         color: nearColors.nearBlack,
+//                         borderRadius: BorderRadius.circular(17),
+//                       ),
+//                       labelColor: nearColors.nearWhite,
+//                       labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+//                       unselectedLabelColor: Colors.black,
+//                       tabs: const [
+//                         Tab(
+//                           text: 'Tokens',
+//                         ),
+//                         Tab(
+//                           text: 'NFTs',
+//                         )
+//                       ],
+//                     ),
+//                   ),
+//                   const SizedBox(
+//                     height: 10,
+//                   ),
+//                   Container(
+//                     color: nearColors.nearWhite,
+//                     height: 400,
+//                     child: TabBarView(
+//                       children: [
+//                         _buildTokensAndNfts(),
+//                         const Center(
+//                           child: Text(
+//                             'this is nft tab',
+//                             style: TextStyle(color: Colors.black),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

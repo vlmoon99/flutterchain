@@ -22,6 +22,7 @@ dependencies:
   flutter_inappwebview: ^6.0.0
   dio_smart_retry: ^6.0.0
   json_annotation: ^4.8.1
+  
 
 dev_dependencies:
   flutter_test:
