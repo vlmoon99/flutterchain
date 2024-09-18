@@ -5,12 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/create_identity_request_params.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/identity_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/identity_provider.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -50,7 +52,7 @@ class ConcordiumBlockchainService {
     if (blockChainNetworkEnvironmentSettings
         is! ConcordiumNetworkEnvironmentSettings) {
       throw ArgumentError(
-        "Invalid blockChainNetworkEnvironmentSettings. It must be of type `ConcordiumNetworkEnvironmentSettings`",
+        "Invalid blockChainNetworkEnvironmentSettings type. Expected: `ConcordiumNetworkEnvironmentSettings`",
       );
     }
     concordiumRpcClient = ConcordiumRpcClient(
@@ -261,14 +263,32 @@ class ConcordiumBlockchainService {
   /// - `blockHash`: The hash of the block to retrieve the account information from. If null, the latest block will be used.
   ///
   /// Returns a [ConcordiumAccountInfo] object containing information about the account.
-  Future<ConcordiumAccountInfo> getAccountInfo({
-    required String accountAddress,
-    String? blockHash,
-  }) async {
-    final rawAccountInfo =
-        await concordiumRpcClient.getAccountInfo(accountAddress, blockHash);
+  Future<ConcordiumAccountInfo> getAccountInfo(
+      AccountInfoRequest accountInfoRequest) async {
+    if (accountInfoRequest is! ConcordiumAccountInfoRequest) {
+      throw ArgumentError(
+          "Invalid accountInfoRequest type. Expected: `ConcordiumAccountInfoRequest`");
+    }
+    final rawAccountInfo = await concordiumRpcClient.getAccountInfo(
+      accountInfoRequest.accountAddress,
+      accountInfoRequest.blockHash,
+    );
 
     return ConcordiumAccountInfo.fromJson(rawAccountInfo);
+  }
+
+  @override
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) async {
+    if (accountInfoRequest is! ConcordiumAccountInfoRequest) {
+      throw ArgumentError(
+          "Invalid accountInfoRequest type. Expected: `ConcordiumAccountInfoRequest`");
+    }
+    final rawAccountInfo = await concordiumRpcClient.getAccountInfo(
+      accountInfoRequest.accountAddress,
+      accountInfoRequest.blockHash,
+    );
+
+    return ConcordiumAccountInfo.fromJson(rawAccountInfo).accountAmount;
   }
 
   /// Returns the account address derived from the given mnemonic and derivation path.
@@ -353,7 +373,7 @@ class ConcordiumBlockchainService {
       throw ArgumentError("Missing derivation path data");
     } else if (derivationPath is! ConcordiumDerivationPath) {
       throw ArgumentError(
-          "Invalid derivation path data type. Expected `ConcordiumDerivationPath`");
+          "Invalid derivationPath type. Expected: `ConcordiumDerivationPath`");
     }
 
     final String accountAddress = await getAccountAddressFromMnemonic(

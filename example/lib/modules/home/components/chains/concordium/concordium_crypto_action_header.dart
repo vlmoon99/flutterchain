@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/concordium_formatter.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
@@ -112,8 +113,9 @@ class _ConcordiumCryptoActionHeaderState
                   const SizedBox(height: 20),
                   FutureBuilder(
                     future: concordiumBlockchainService.getAccountInfo(
-                        accountAddress:
-                            concordiumBlockchainData!.accountAddress),
+                        ConcordiumAccountInfoRequest(
+                            accountAddress:
+                                concordiumBlockchainData!.accountAddress)),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Text(
