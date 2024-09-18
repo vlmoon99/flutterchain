@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
@@ -19,15 +22,31 @@ class FlutterChainService {
   final JsVMService jsVMService;
   final Map<String, BlockChainService> blockchainServices = {};
 
-  FlutterChainService(
-      {required this.jsVMService,
-      required final NearBlockChainService nearBlockchainService,
-      required final BitcoinBlockChainService bitcoinBlockchainService}) {
+  FlutterChainService({
+    required this.jsVMService,
+    NearBlockChainService? nearBlockchainService,
+    BitcoinBlockChainService? bitcoinBlockchainService,
+    ConcordiumBlockChainService? concordiumBlockchainService,
+  }) {
     //Add blockChainServices
-    blockchainServices.putIfAbsent(
-        BlockChains.near, () => nearBlockchainService);
-    blockchainServices.putIfAbsent(
-        BlockChains.bitcoin, () => bitcoinBlockchainService);
+    if (nearBlockchainService != null) {
+      blockchainServices.putIfAbsent(
+        BlockChains.near,
+        () => nearBlockchainService,
+      );
+    }
+    if (bitcoinBlockchainService != null) {
+      blockchainServices.putIfAbsent(
+        BlockChains.bitcoin,
+        () => bitcoinBlockchainService,
+      );
+    }
+    if (concordiumBlockchainService != null) {
+      blockchainServices.putIfAbsent(
+        BlockChains.concordium,
+        () => concordiumBlockchainService,
+      );
+    }
   }
 
   factory FlutterChainService.defaultInstance() {
@@ -35,6 +54,8 @@ class FlutterChainService {
       jsVMService: getJsVM(),
       nearBlockchainService: NearBlockChainService.defaultInstance(),
       bitcoinBlockchainService: BitcoinBlockChainService.defaultInstance(),
+      concordiumBlockchainService:
+          ConcordiumBlockChainService.defaultInstance(),
     );
   }
 
@@ -109,10 +130,29 @@ class FlutterChainService {
     await Future.forEach(BlockChains.supportedBlockChains, (chain) async {
       final chainService = blockchainServices[chain];
       if (chainService == null) {
-        throw Exception('Incorrect Blockchain');
+        log("$chain is not provided. Skipping...");
+        return;
       }
-      final blockChainData = await blockchainServices[chain]!
-          .getBlockChainData(mnemonic: mnemonic, passphrase: passphrase);
+
+      late final BlockChainData blockChainData;
+
+      if (chain == BlockChains.concordium) {
+        final int identityProviderIndex =
+            (await (chainService as ConcordiumBlockChainService)
+                    .getIdentityProviders())
+                .first
+                .ipInfo["ipIdentity"];
+
+        blockChainData = await chainService.getBlockChainData(
+          mnemonic: mnemonic,
+          derivationPath: ConcordiumDerivationPath(
+            identityProviderIndex: identityProviderIndex,
+          ),
+        );
+      } else {
+        blockChainData = await chainService.getBlockChainData(
+            mnemonic: mnemonic, passphrase: passphrase);
+      }
 
       blockchainsData.putIfAbsent(chain, () => {blockChainData});
     });

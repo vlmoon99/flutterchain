@@ -4,10 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/concordium_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/bitcoin_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
@@ -83,6 +85,12 @@ class AppModule extends Module {
       (i) => BitcoinBlockChainService(
         jsVMService: i(),
         bitcoinRpcClient: i(),
+      ),
+    ),
+    Bind.singleton(
+      (i) => ConcordiumBlockChainService(
+        jsVMService: i(),
+        concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
       ),
     ),
 

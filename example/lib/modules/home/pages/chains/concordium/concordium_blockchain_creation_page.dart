@@ -243,7 +243,8 @@ class _ConcordiumBlockchainCreationPageState
                         await Modular.to.pushNamed(
                           ".${Routes.home.redirect}",
                           arguments: {
-                            "identityProvider": identityProviders.first,
+                            "identityProvider": selectedIdentityProvider ??
+                                identityProviders.first,
                             "createIdentityRequestParams":
                                 createIdentityRequestParams
                           },

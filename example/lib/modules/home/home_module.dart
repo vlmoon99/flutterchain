@@ -1,5 +1,4 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/pages/chains/concordium/concordium_blockchain_creation_page.dart';
 import 'package:flutterchain_example/modules/home/pages/chains/concordium/concordium_blockchain_page.dart';
 import 'package:flutterchain_example/modules/home/pages/core/crypto_actions_page.dart';
@@ -22,9 +21,6 @@ class HomeModule extends Module {
     Bind.singleton((i) => UserStore()),
     Bind.singleton((i) => NearBlockchainStore()),
     Bind.singleton((i) => BitcoinBlockchainStore()),
-    Bind.singleton(
-      (i) => ConcordiumBlockChainService.defaultInstance(),
-    ),
 
     Bind.singleton(
       (i) => ConcordiumVm(

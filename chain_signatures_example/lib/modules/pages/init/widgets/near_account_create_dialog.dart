@@ -59,7 +59,6 @@ class _NearAccountCreationActionDialogState
       final flutterChainService = FlutterChainService(
         jsVMService: getJsVM(),
         nearBlockchainService: nearBlockChainService,
-        bitcoinBlockchainService: BitcoinBlockChainService.defaultInstance(),
       );
 
       final generatedWallet = await flutterChainService.generateNewWallet(

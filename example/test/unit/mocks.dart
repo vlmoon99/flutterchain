@@ -137,7 +137,7 @@ class MockFlutterChainLibrary extends Mock implements FlutterChainLibrary {
 
   @override
   Future<BlockChainData> addBlockChainDataByDerivationPath({
-    required DerivationPath derivationPath,
+    required DerivationPathData derivationPath,
     required String blockchainType,
     required String walletID,
   }) async {
