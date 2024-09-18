@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/concordium_formatter.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
@@ -53,14 +54,14 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
           final choosenBlockchain =
               concordiumVm.state.blockchainsData.firstWhere(
             (element) =>
-                element.derivationPath.credentialIndex ==
+                (element.derivationPath as ConcordiumDerivationPath).credentialIndex ==
                 concordiumVm.state.currentBlockchainIndex,
           );
           if (delegationType == ConcordiumDelegationType.passive) {
             final res =
                 await concordiumBlockchainService.sendDelegationTransaction(
               senderAddress: choosenBlockchain.accountAddress,
-              signingKey: choosenBlockchain.signingKey,
+              privateKey: choosenBlockchain.privateKey,
               restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
               amountInMicroCcd: updateAmount
                   ? ConcordiumFormatter.convertCcdToMicroCcd(
@@ -77,7 +78,7 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
             final res =
                 await concordiumBlockchainService.sendDelegationTransaction(
               senderAddress: choosenBlockchain.accountAddress,
-              signingKey: choosenBlockchain.signingKey,
+              privateKey: choosenBlockchain.privateKey,
               restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
               amountInMicroCcd: updateAmount
                   ? ConcordiumFormatter.convertCcdToMicroCcd(

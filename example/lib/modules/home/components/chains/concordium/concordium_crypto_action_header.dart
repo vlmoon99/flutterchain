@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/concordium_formatter.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/concordium_vm.dart';
@@ -21,7 +22,7 @@ class ConcordiumCryptoActionHeader extends StatefulWidget {
 
 class _ConcordiumCryptoActionHeaderState
     extends State<ConcordiumCryptoActionHeader> {
-  ConcordiumBlockchainData? concordiumBlockchainData;
+  ConcordiumBlockChainData? concordiumBlockchainData;
   bool gettingTestNetMoney = false;
   late final Timer updateTimer;
 
@@ -31,7 +32,8 @@ class _ConcordiumCryptoActionHeaderState
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     concordiumBlockchainData = concordiumVm.state.blockchainsData.firstWhere(
       (element) =>
-          element.derivationPath.credentialIndex ==
+          (element.derivationPath as ConcordiumDerivationPath)
+              .credentialIndex ==
           concordiumVm.state.currentBlockchainIndex,
     );
     updateTimer = Timer.periodic(
@@ -69,24 +71,25 @@ class _ConcordiumCryptoActionHeaderState
                 children: [
                   const Text("Choosen Account: "),
                   FittedBox(
-                    child: DropdownButton<ConcordiumBlockchainData>(
+                    child: DropdownButton<ConcordiumBlockChainData>(
                       value: concordiumBlockchainData,
                       items: concordiumVm.state.blockchainsData
-                          .map((ConcordiumBlockchainData value) {
-                        return DropdownMenuItem<ConcordiumBlockchainData>(
+                          .map((ConcordiumBlockChainData value) {
+                        return DropdownMenuItem<ConcordiumBlockChainData>(
                           value: value,
                           child: Text(
-                            "${value.derivationPath.credentialIndex}: ${value.accountAddress}",
+                            "${(value.derivationPath as ConcordiumDerivationPath).credentialIndex}: ${value.accountAddress}",
                           ),
                         );
                       }).toList(),
-                      onChanged: (ConcordiumBlockchainData? newValue) async {
+                      onChanged: (ConcordiumBlockChainData? newValue) async {
                         setState(() {
                           concordiumBlockchainData = newValue;
                         });
                         await concordiumVm.updateState(
-                          currentBlockchainIndex:
-                              newValue!.derivationPath.credentialIndex,
+                          currentBlockchainIndex: (newValue!.derivationPath
+                                  as ConcordiumDerivationPath)
+                              .credentialIndex,
                         );
                       },
                     ),
@@ -103,7 +106,7 @@ class _ConcordiumCryptoActionHeaderState
                   ),
                   const SizedBox(height: 20),
                   SelectableText(
-                    "Signing Key: ${concordiumBlockchainData!.signingKey}",
+                    "Signing Key: ${concordiumBlockchainData!.privateKey}",
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),

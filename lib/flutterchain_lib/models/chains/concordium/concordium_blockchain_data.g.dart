@@ -6,23 +6,23 @@ part of 'concordium_blockchain_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ConcordiumBlockchainData _$ConcordiumBlockchainDataFromJson(
+ConcordiumBlockChainData _$ConcordiumBlockChainDataFromJson(
         Map<String, dynamic> json) =>
-    ConcordiumBlockchainData(
-      mnemonic: json['mnemonic'] as String,
+    ConcordiumBlockChainData(
       accountAddress: json['accountAddress'] as String,
       publicKey: json['publicKey'] as String,
-      signingKey: json['signingKey'] as String,
+      privateKey: json['privateKey'] as String,
       derivationPath: ConcordiumDerivationPath.fromJson(
           json['derivationPath'] as Map<String, dynamic>),
+      identifier: json['identifier'] as String? ?? BlockChains.concordium,
     );
 
-Map<String, dynamic> _$ConcordiumBlockchainDataToJson(
-        ConcordiumBlockchainData instance) =>
+Map<String, dynamic> _$ConcordiumBlockChainDataToJson(
+        ConcordiumBlockChainData instance) =>
     <String, dynamic>{
-      'mnemonic': instance.mnemonic,
-      'accountAddress': instance.accountAddress,
+      'identifier': instance.identifier,
       'publicKey': instance.publicKey,
-      'signingKey': instance.signingKey,
+      'privateKey': instance.privateKey,
       'derivationPath': instance.derivationPath,
+      'accountAddress': instance.accountAddress,
     };

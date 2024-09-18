@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
 import 'package:rxdart/rxdart.dart';
@@ -21,7 +20,7 @@ class ConcordiumVm {
     String? mnemonic,
     int? identityProviderIndex,
     int? currentBlockchainIndex,
-    List<ConcordiumBlockchainData>? blockchainsData,
+    List<ConcordiumBlockChainData>? blockchainsData,
   }) async {
     final newState = state.copyWith(
       mnemonic: mnemonic,
@@ -53,7 +52,7 @@ class ConcordiumVmState {
   final String mnemonic;
   final int identityProviderIndex;
   final int currentBlockchainIndex;
-  final List<ConcordiumBlockchainData> blockchainsData;
+  final List<ConcordiumBlockChainData> blockchainsData;
 
   ConcordiumVmState(
       {this.mnemonic = "",
@@ -65,7 +64,7 @@ class ConcordiumVmState {
       {String? mnemonic,
       int? identityProviderIndex,
       int? currentBlockchainIndex,
-      List<ConcordiumBlockchainData>? blockchainsData}) {
+      List<ConcordiumBlockChainData>? blockchainsData}) {
     return ConcordiumVmState(
       mnemonic: mnemonic ?? this.mnemonic,
       identityProviderIndex:
@@ -86,14 +85,14 @@ class ConcordiumVmState {
   factory ConcordiumVmState.fromJson(Map<String, dynamic> json) {
     final rawBlockChainsData = jsonDecode(json["blockchainsData"] ?? "[]");
     final listOfBlockChainsData = rawBlockChainsData
-        .map((e) => ConcordiumBlockchainData.fromJson(e))
+        .map((e) => ConcordiumBlockChainData.fromJson(e))
         .toList();
     return ConcordiumVmState(
       mnemonic: json["mnemonic"] ?? "",
       identityProviderIndex: json["identityProviderIndex"] ?? 0,
       currentBlockchainIndex: json["currentBlockchainIndex"] ?? 0,
       blockchainsData:
-          List<ConcordiumBlockchainData>.from(listOfBlockChainsData),
+          List<ConcordiumBlockChainData>.from(listOfBlockChainsData),
     );
   }
 }

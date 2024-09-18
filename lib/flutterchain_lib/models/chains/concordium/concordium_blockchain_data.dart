@@ -1,30 +1,29 @@
+import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'concordium_blockchain_data.g.dart';
 
 @JsonSerializable()
-class ConcordiumBlockchainData {
-  final String mnemonic;
+class ConcordiumBlockChainData extends BlockChainData {
   final String accountAddress;
-  final String publicKey;
-  final String signingKey;
-  final ConcordiumDerivationPath derivationPath;
 
-  ConcordiumBlockchainData({
-    required this.mnemonic,
+  factory ConcordiumBlockChainData.fromJson(Map<String, dynamic> json) =>
+      _$ConcordiumBlockChainDataFromJson(json);
+
+  ConcordiumBlockChainData({
     required this.accountAddress,
-    required this.publicKey,
-    required this.signingKey,
-    required this.derivationPath,
+    required super.publicKey,
+    required super.privateKey,
+    required ConcordiumDerivationPath super.derivationPath,
+    super.identifier = BlockChains.concordium,
   });
 
-  factory ConcordiumBlockchainData.fromJson(Map<String, dynamic> json) =>
-      _$ConcordiumBlockchainDataFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ConcordiumBlockchainDataToJson(this);
+  @override
+  Map<String, dynamic> toJson() => _$ConcordiumBlockChainDataToJson(this);
 
   @override
   String toString() {
-    return 'ConcordiumBlockchainData(mnemonic: $mnemonic, accountAddress: $accountAddress, publicKey: $publicKey, signingKey: $signingKey, derivationPath: $derivationPath)';
+    return 'ConcordiumBlockchainData(accountAddress: $accountAddress, publicKey: $publicKey, privateKey: $privateKey, derivationPath: $derivationPath)';
   }
 }

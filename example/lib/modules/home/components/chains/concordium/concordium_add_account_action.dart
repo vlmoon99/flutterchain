@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
@@ -76,7 +77,7 @@ class _ConcordiumAddAccountActionState
           await concordiumVm.updateState(
             blockchainsData: [
               ...concordiumVm.state.blockchainsData,
-              await concordiumBlockchainService.getConcordiumBlockchainData(
+              await concordiumBlockchainService.getBlockChainData(
                 mnemonic: concordiumVm.state.mnemonic,
                 derivationPath: ConcordiumDerivationPath(
                   identityProviderIndex:
@@ -86,7 +87,7 @@ class _ConcordiumAddAccountActionState
                     newAccountIndexTextController.text,
                   ),
                 ),
-              ),
+              ) as ConcordiumBlockChainData,
             ],
           );
 

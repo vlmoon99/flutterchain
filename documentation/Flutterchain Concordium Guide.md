@@ -29,7 +29,7 @@ Now we can create an account. Steps:
 
 To create identity we need to generate mnemonic and choose identityProvider. After that we generaing CreateIdentityRequestParams which used for forming request to create identity.
 
-```
+```dart
 final identityProviders = await concordiumBlockchainService.getIdentityProviders();
 
 final identityProvider = identityProviders.first; // for example we take first
@@ -48,13 +48,13 @@ final creationUrl = await concordiumBlockchainService.getIdentityCreateRequestUr
 
 For another platforms you can use `createIdentityDialog` to open registration page. And after registration you can get identity url info from it.
 
-```
+```dart
 final urlForIdentityInfo = await concordiumBlockchainService.createIdentityDialog(context: context,creationUrl: creationUrl);
 ```
 
 #### Creating account:
 
-```
+```dart
 const int identityProviderIndex = 0; // how to get it you can found above
 const int identityIndex = 0; // index of identity
 const int credsNumber = 0; // account number
@@ -86,7 +86,7 @@ Method `createAccount` creates account and returns `BlockchainResponse` with the
 
 To retrieve identity info from method `recoverExistingIdentity`:
 
-```
+```dart
 final identityInfo = await concordiumBlockchainService.recoverExistingIdentity(mnemonic: mnemonic, identityProvider: identityProvider,identityIndex: identityIndex);
 ```
 
@@ -94,7 +94,7 @@ final identityInfo = await concordiumBlockchainService.recoverExistingIdentity(m
 
 We can get Account Information from `getAccountInfo` method:
 
-```
+```dart
 final accountInfo = await concordiumBlockchainService.getAccountInfo(accountAddress: "3ZbX3pvwGeb4Wxx6tV9swEphAaSLXJPqQPQV7sa7nHDZ3aqiNe");
 ```
 
@@ -102,7 +102,7 @@ It contains all information which can be obtain from chain. For more info consid
 
 We can get transaction information from `getTransactionInfo` method:
 
-```
+```dart
 final res = await concordiumBlockchainService.getTransactionStatus(transactionHash:
 "5d8ed983caa2c168a6be67...");
 ```
@@ -111,7 +111,7 @@ It returns `BlockchainResponse` with current transaction status and outcome info
 
 There are also methods to get account adress, public key and private key:
 
-```
+```dart
 final accAdress = await concordiumBlockchainService
     .getAccountAddressFromMnemonic(
   mnemonic: mnemonic,
@@ -129,15 +129,15 @@ final publicKey =
           identityProviderIndex: 0,
 ));
 
-final signingKey =
-    await concordiumBlockchainService.getAccountSigningKey(
+final privateKey =
+    await concordiumBlockchainService.getAccountPrivateKey(
         mnemonic: mnemonic,
         derivationPath: ConcordiumDerivationPath(
           identityProviderIndex: 0,
 ));
 
 final res = await concordiumBlockchainService
-    .getConcordiumBlockchainData(
+    .getBlockChainData(
   mnemonic: mnemonic,
   derivationPath: ConcordiumDerivationPath(
     identityProviderIndex: 0,
@@ -145,7 +145,7 @@ final res = await concordiumBlockchainService
 );
 ```
 
-Method `getConcordiumBlockchainData` returns `ConcordiumBlockchainData` instance which contains mnemonic, derivation path, account address, public key and private key.
+Method `getBlockChainData` returns `ConcordiumBlockchainData` instance which contains mnemonic, derivation path, account address, public key and private key.
 
 ### Transactions:
 
@@ -153,12 +153,12 @@ Method `getConcordiumBlockchainData` returns `ConcordiumBlockchainData` instance
 
 To send coin transfer transaction we can use `sendTransferTransaction` method:
 
-```
+```dart
 const senderAddress = "3LuHCzrXjxAnPaiRqQAyk7MeEd4...";
 const toAddress = "4ZZ5wvTLoiokBv3huUomRmEpvAT...";
 const transferAmountInMicroCcd = 100000000;
 
-final signingKey = await concordiumBlockchainService.getAccountSigningKey(
+final privateKey = await concordiumBlockchainService.getAccountPrivateKey(
  mnemonic: mnemonic,
 derivationPath: ConcordiumDerivationPath(
   identityProviderIndex: 0,
@@ -170,7 +170,7 @@ final res = await concordiumBlockchainService.sendTransferTransaction(
   senderAddress: senderAddress,
   toAddress: toAddress,
   transferAmountInMicroCcd: transferAmountInMicroCcd,
-  signingKey: signingKey,
+  privateKey: privateKey,
 );
 ```
 
@@ -178,18 +178,18 @@ Returns `BlockchainResponse` with transaction hash data["txHash"].
 
 We also can use methods from `ConcordiumFormatter` class to convert CCD to microCCD and vice versa:
 
-```
+```dart
 final amountInCcd = ConcordiumFormatter.convertMicroCcdToCcd(14000000000);
 final amountInMicroCcd = ConcordiumFormatter.convertCcdToMicroCcd(14000);
 ```
 
 #### Delegation transaction:
 
-```
+```dart
 const senderAddress = "3ZbX3pvwGeb4Wxx6tV9s...";
 const amountInMicroCcd = 14000000000;
 
-final signingKey = await concordiumBlockchainService.getAccountSigningKey(
+final privateKey = await concordiumBlockchainService.getAccountPrivateKey(
  mnemonic: mnemonic,
 derivationPath: ConcordiumDerivationPath(
   identityProviderIndex: 0,
@@ -200,7 +200,7 @@ final res = await concordiumBlockchainService
     .sendDelegationTransaction(
   senderAddress: senderAddress,
   amountInMicroCcd: amountInMicroCcd,
-  signingKey: signingKey,
+  privateKey: privateKey,
   // delegationType: ConcordiumDelegationType.baker,
   // bakerId: '12369',
   restakeEarnings: true,
@@ -213,11 +213,11 @@ For more info check in `ConcordiumBlockchainService` class.
 
 #### Baker transaction:
 
-```
+```dart
 const senderAddress = "3ZbX3pvwGeb4Wxx6tV9s...";
 const amountInMicroCcd = 14000000000;
 
-final signingKey = await concordiumBlockchainService.getAccountSigningKey(
+final privateKey = await concordiumBlockchainService.getAccountPrivateKey(
  mnemonic: mnemonic,
 derivationPath: ConcordiumDerivationPath(
   identityProviderIndex: 0,
@@ -228,7 +228,7 @@ derivationPath: ConcordiumDerivationPath(
 final res =
     await concordiumBlockchainService.sendBakerTransaction(
   senderAddress: senderAddress,
-  signingKey: signingKey,
+  privateKey: privateKey,
   restakeEarnings: true,
   metadataUrl: "www.url.for.metadata",
   openStatus: DelegationOpenStatus.OpenForAll,

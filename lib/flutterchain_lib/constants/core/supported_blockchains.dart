@@ -7,10 +7,11 @@ class BlockChains {
   static const xrp = "XRP";
   static const polygon = "POLYGON";
   static const avalanche = "AVALANCHE";
+  static const concordium = "CONCORDIUM";
   static const List<String> supportedBlockChains = [near, bitcoin];
   static const List<String> supportedBlockChainsForSmartContractCall = [near];
   static const List<String> supportedBlockChainsForNearMPC = [
-    ethereum,
+    ethereum, 
     bitcoin,
     bnb,
     aurora,
