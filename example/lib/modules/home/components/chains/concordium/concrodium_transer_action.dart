@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/concordium_formatter.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/near_action_text_field.dart';
 import 'package:flutterchain_example/modules/home/components/core/crypto_actions_card.dart';
@@ -48,7 +49,7 @@ class _ConcrodiumTransferActionState extends State<ConcrodiumTransferAction> {
                 sendTransaction = true;
               });
 
-              final choosenBlockchain =
+              final chosenBlockchain =
                   concordiumVm.state.blockchainsData.firstWhere(
                 (element) =>
                     (element.derivationPath as ConcordiumDerivationPath)
@@ -61,14 +62,14 @@ class _ConcrodiumTransferActionState extends State<ConcrodiumTransferAction> {
               if (recipient.isEmpty || amount.isEmpty) {
                 return;
               }
-              final txResult =
-                  await concordiumBlockchainService.sendTransferTransaction(
-                senderAddress: choosenBlockchain.accountAddress,
+              final txResult = await concordiumBlockchainService
+                  .sendTransferNativeCoin(ConcordiumTransferRequest(
+                senderAddress: chosenBlockchain.accountAddress,
                 toAddress: recipient,
                 transferAmountInMicroCcd:
                     ConcordiumFormatter.convertCcdToMicroCcd(int.parse(amount)),
-                privateKey: choosenBlockchain.privateKey,
-              );
+                privateKey: chosenBlockchain.privateKey,
+              ));
 
               setState(() {
                 txHash = txResult.data['txHash'];

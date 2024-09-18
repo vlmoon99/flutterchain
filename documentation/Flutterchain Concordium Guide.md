@@ -152,7 +152,7 @@ Method `getBlockChainData` returns `ConcordiumBlockchainData` instance which con
 
 #### Coin transfer:
 
-To send coin transfer transaction we can use `sendTransferTransaction` method:
+To send coin transfer transaction we can use `sendTransferNativeCoin` method:
 
 ```dart
 const senderAddress = "3LuHCzrXjxAnPaiRqQAyk7MeEd4...";
@@ -167,11 +167,11 @@ derivationPath: ConcordiumDerivationPath(
   credentialIndex: 0,
 ));
 
-final res = await concordiumBlockchainService.sendTransferTransaction(
-  senderAddress: senderAddress,
+final res = await concordiumBlockchainService.sendTransferNativeCoin(
+ConcordiumTransferRequest(senderAddress: senderAddress,
   toAddress: toAddress,
   transferAmountInMicroCcd: transferAmountInMicroCcd,
-  privateKey: privateKey,
+  privateKey: privateKey)
 );
 ```
 

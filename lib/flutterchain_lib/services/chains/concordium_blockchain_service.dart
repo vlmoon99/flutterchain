@@ -10,20 +10,23 @@ import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordiu
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_network_environment_settings.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/create_identity_request_params.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/identity_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/identity_provider.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/concordium_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 
-class ConcordiumBlockchainService {
+class ConcordiumBlockchainService implements BlockChainService {
   final JsVMService jsVMService;
   ConcordiumRpcClient concordiumRpcClient;
 
@@ -85,7 +88,7 @@ class ConcordiumBlockchainService {
   }
 
   /// Returns a set of URLs of RPC endpoints for the Concordium blockchain.
-  /// 
+  ///
   @override
   Set<String> getBlockchainsUrlsByBlockchainType() {
     return ConcordiumBlockchainNetworkUrls.listOfUrls;
@@ -414,15 +417,17 @@ class ConcordiumBlockchainService {
   /// - `privateKey`: The signing key of the sender's account.
   ///
   /// Returns a [BlockchainResponse] object containing the status and information data of the transaction.
-  Future<BlockchainResponse> sendTransferTransaction({
-    required String senderAddress,
-    required String toAddress,
-    required int transferAmountInMicroCcd,
-    required String privateKey,
-  }) async {
-    final nonce = await concordiumRpcClient.getNextAccountNonce(senderAddress);
+  @override
+  Future<BlockchainResponse> sendTransferNativeCoin(
+      TransferRequest transferRequest) async {
+    if (transferRequest is! ConcordiumTransferRequest) {
+      throw ArgumentError(
+          "Invalid transferRequest type. Expected: `ConcordiumTransferRequest`");
+    }
+    final nonce = await concordiumRpcClient
+        .getNextAccountNonce(transferRequest.senderAddress);
     final txParams = jsonDecode(await jsVMService.callJSAsync(
-        "window.ConcordiumBlockchain.createTransferTransactionParams('$senderAddress', '$toAddress', '$transferAmountInMicroCcd', '$privateKey', '$nonce' )"));
+        "window.ConcordiumBlockchain.createTransferTransactionParams('${transferRequest.senderAddress}', '${transferRequest.toAddress}', '${transferRequest.transferAmountInMicroCcd}', '${transferRequest.privateKey}', '$nonce' )"));
     final txHash = await concordiumRpcClient.sendTransaction(
       accountTransactionParams: txParams,
     );
