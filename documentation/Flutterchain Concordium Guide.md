@@ -95,10 +95,11 @@ final identityInfo = await concordiumBlockchainService.recoverExistingIdentity(m
 We can get Account Information from `getAccountInfo` method:
 
 ```dart
-final accountInfo = await concordiumBlockchainService.getAccountInfo(accountAddress: "3ZbX3pvwGeb4Wxx6tV9swEphAaSLXJPqQPQV7sa7nHDZ3aqiNe");
+final accountInfo = await concordiumBlockchainService.getAccountInfo(ConcordiumAccountInfoRequest(accountAddress: "3ZbX3pvwGeb4Wxx6tV9swEphAaSLXJPqQPQV7sa7nHDZ3aqiNe"));
 ```
 
 It contains all information which can be obtain from chain. For more info consider `ConcordiumAccountInfo` class.
+Or to get only wallet balance with `getWalletBalance` method.
 
 We can get transaction information from `getTransactionInfo` method:
 
