@@ -28,8 +28,8 @@ class _ConcordiumAddAccountActionState
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -45,7 +45,7 @@ class _ConcordiumAddAccountActionState
           });
 
           final identityProvider =
-              (await concordiumBlockchainService.getIdentityProviders())
+              (await concordiumBlockChainService.getIdentityProviders())
                   .firstWhere(
             (element) {
               return element.ipInfo["ipIdentity"] ==
@@ -55,14 +55,14 @@ class _ConcordiumAddAccountActionState
 
           // we dont have to store all time url to get identity info. we can recover it anytime
           final identityInfo =
-              await concordiumBlockchainService.recoverExistingIdentity(
+              await concordiumBlockChainService.recoverExistingIdentity(
             mnemonic: concordiumVm.state.mnemonic,
             identityProvider: identityProvider,
             identityIndex:
                 0, // hardcoded to 0 but can be any number from existing identitys
           );
 
-          final res = await concordiumBlockchainService.createAccount(
+          final res = await concordiumBlockChainService.createAccount(
             mnemonic: concordiumVm.state.mnemonic,
             identityInfo: identityInfo,
             identityProviderInfo: identityProvider,
@@ -77,7 +77,7 @@ class _ConcordiumAddAccountActionState
           await concordiumVm.updateState(
             blockchainsData: [
               ...concordiumVm.state.blockchainsData,
-              await concordiumBlockchainService.getBlockChainData(
+              await concordiumBlockChainService.getBlockChainData(
                 mnemonic: concordiumVm.state.mnemonic,
                 derivationPath: ConcordiumDerivationPath(
                   identityProviderIndex:

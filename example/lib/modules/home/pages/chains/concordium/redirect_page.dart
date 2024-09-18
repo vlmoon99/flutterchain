@@ -31,17 +31,20 @@ class _RedirectPageState extends State<RedirectPage> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () async {
-      final ConcordiumBlockchainService concordiumBlockchainService =
-          ConcordiumBlockchainService.defaultInstance();
+      final ConcordiumBlockChainService concordiumBlockChainService =
+          ConcordiumBlockChainService.defaultInstance();
       if (widget.args == null) {
         final url = await extractUrlToCreateConcordiumIdentity();
         log(url.toString());
-        final FlutterSecureStorage storage = Modular.get<FlutterSecureStorage>();
+        final FlutterSecureStorage storage =
+            Modular.get<FlutterSecureStorage>();
         await storage.write(key: "code_uri", value: url);
-        Modular.to.navigate(Routes.home.getRoute(Routes.home.concordiumCreateAccount), arguments: true);
+        Modular.to.navigate(
+            Routes.home.getRoute(Routes.home.concordiumCreateAccount),
+            arguments: true);
       }
       final initUrl =
-          await concordiumBlockchainService.getIdentityCreateRequestUrl(
+          await concordiumBlockChainService.getIdentityCreateRequestUrl(
         identityProvider: widget.args!["identityProvider"],
         createIdentityRequestParams:
             widget.args!["createIdentityRequestParams"],

@@ -14,8 +14,8 @@ class ConcordiumIdentityInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final FlutterSecureStorage storage = Modular.get<FlutterSecureStorage>();
     final theme = Modular.get<AppTheme>();
@@ -33,11 +33,11 @@ class ConcordiumIdentityInfo extends StatelessWidget {
               () async {
                 if (kIsWeb) {
                   final savedIdentityUrl = await storage.read(key: "code_uri");
-                  return concordiumBlockchainService
+                  return concordiumBlockChainService
                       .getIdentityInfo(savedIdentityUrl!);
                 } else {
                   final identityProvider =
-                      (await concordiumBlockchainService.getIdentityProviders())
+                      (await concordiumBlockChainService.getIdentityProviders())
                           .firstWhere(
                     (element) {
                       return element.ipInfo["ipIdentity"] ==
@@ -46,7 +46,7 @@ class ConcordiumIdentityInfo extends StatelessWidget {
                   );
 
                   // we dont have to store all time url to get identity info. we can recover it anytime
-                  return concordiumBlockchainService.recoverExistingIdentity(
+                  return concordiumBlockChainService.recoverExistingIdentity(
                     mnemonic: concordiumVm.state.mnemonic,
                     identityProvider: identityProvider,
                     identityIndex:

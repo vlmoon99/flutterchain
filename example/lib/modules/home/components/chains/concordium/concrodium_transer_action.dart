@@ -30,8 +30,8 @@ class _ConcrodiumTransferActionState extends State<ConcrodiumTransferAction> {
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -62,7 +62,7 @@ class _ConcrodiumTransferActionState extends State<ConcrodiumTransferAction> {
               if (recipient.isEmpty || amount.isEmpty) {
                 return;
               }
-              final txResult = await concordiumBlockchainService
+              final txResult = await concordiumBlockChainService
                   .sendTransferNativeCoin(ConcordiumTransferRequest(
                 senderAddress: chosenBlockchain.accountAddress,
                 toAddress: recipient,

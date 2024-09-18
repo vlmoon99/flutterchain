@@ -26,17 +26,17 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_e
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 
-class ConcordiumBlockchainService implements BlockChainService {
+class ConcordiumBlockChainService implements BlockChainService {
   final JsVMService jsVMService;
   ConcordiumRpcClient concordiumRpcClient;
 
-  ConcordiumBlockchainService({
+  ConcordiumBlockChainService({
     required this.concordiumRpcClient,
     required this.jsVMService,
   });
 
-  factory ConcordiumBlockchainService.defaultInstance() {
-    return ConcordiumBlockchainService(
+  factory ConcordiumBlockChainService.defaultInstance() {
+    return ConcordiumBlockChainService(
       concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
       jsVMService: getJsVM(),
     );

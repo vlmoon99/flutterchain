@@ -53,8 +53,8 @@ class _ConcordiumCryptoActionHeaderState
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -112,7 +112,7 @@ class _ConcordiumCryptoActionHeaderState
                   ),
                   const SizedBox(height: 20),
                   FutureBuilder(
-                    future: concordiumBlockchainService.getAccountInfo(
+                    future: concordiumBlockChainService.getAccountInfo(
                         ConcordiumAccountInfoRequest(
                             accountAddress:
                                 concordiumBlockchainData!.accountAddress)),

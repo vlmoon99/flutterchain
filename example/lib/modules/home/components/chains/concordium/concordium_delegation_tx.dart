@@ -32,8 +32,8 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -54,12 +54,13 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
           final choosenBlockchain =
               concordiumVm.state.blockchainsData.firstWhere(
             (element) =>
-                (element.derivationPath as ConcordiumDerivationPath).credentialIndex ==
+                (element.derivationPath as ConcordiumDerivationPath)
+                    .credentialIndex ==
                 concordiumVm.state.currentBlockchainIndex,
           );
           if (delegationType == ConcordiumDelegationType.passive) {
             final res =
-                await concordiumBlockchainService.sendDelegationTransaction(
+                await concordiumBlockChainService.sendDelegationTransaction(
               senderAddress: choosenBlockchain.accountAddress,
               privateKey: choosenBlockchain.privateKey,
               restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
@@ -76,7 +77,7 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
             });
           } else {
             final res =
-                await concordiumBlockchainService.sendDelegationTransaction(
+                await concordiumBlockChainService.sendDelegationTransaction(
               senderAddress: choosenBlockchain.accountAddress,
               privateKey: choosenBlockchain.privateKey,
               restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,

@@ -35,17 +35,17 @@ class _ConcordiumBlockchainCreationPageState
   void didChangeDependencies() {
     super.didChangeDependencies();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final ConcordiumBlockchainService concordiumBlockchainService =
-          Modular.get<ConcordiumBlockchainService>();
+      final ConcordiumBlockChainService concordiumBlockChainService =
+          Modular.get<ConcordiumBlockChainService>();
       final FlutterSecureStorage storage = Modular.get<FlutterSecureStorage>();
       if (widget.identityCatched) {
         final savedIdentityUrl = await storage.read(key: "code_uri");
         createCredential(savedIdentityUrl!);
       } else {
         final generatedMnemonic =
-            await concordiumBlockchainService.generateMnemonic();
+            await concordiumBlockChainService.generateMnemonic();
         final loadedIdentityProviders =
-            await concordiumBlockchainService.getIdentityProviders();
+            await concordiumBlockChainService.getIdentityProviders();
         setState(() {
           mnemonic = generatedMnemonic;
           identityProviders = loadedIdentityProviders;
@@ -57,8 +57,8 @@ class _ConcordiumBlockchainCreationPageState
   }
 
   Future<void> createCredential(String identityInfoUrl) async {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
 
     setState(() {
@@ -69,10 +69,10 @@ class _ConcordiumBlockchainCreationPageState
     }
 
     final identityInfo =
-        await concordiumBlockchainService.getIdentityInfo(identityInfoUrl);
+        await concordiumBlockChainService.getIdentityInfo(identityInfoUrl);
 
     final identityProvider =
-        (await concordiumBlockchainService.getIdentityProviders()).firstWhere(
+        (await concordiumBlockChainService.getIdentityProviders()).firstWhere(
       (element) {
         return element.ipInfo["ipIdentity"] ==
             concordiumVm.state.identityProviderIndex;
@@ -86,7 +86,7 @@ class _ConcordiumBlockchainCreationPageState
       currentStatus = "Creating account";
     });
 
-    final resultOfOperation = await concordiumBlockchainService.createAccount(
+    final resultOfOperation = await concordiumBlockChainService.createAccount(
       mnemonic: concordiumVm.state.mnemonic,
       derivationPath: ConcordiumDerivationPath(
         identityProviderIndex: concordiumVm.state.identityProviderIndex,
@@ -103,7 +103,7 @@ class _ConcordiumBlockchainCreationPageState
 
     concordiumVm.updateState(
       blockchainsData: [
-        await concordiumBlockchainService.getBlockChainData(
+        await concordiumBlockChainService.getBlockChainData(
           mnemonic: concordiumVm.state.mnemonic,
           derivationPath: ConcordiumDerivationPath(
             identityProviderIndex: concordiumVm.state.identityProviderIndex,
@@ -149,8 +149,8 @@ class _ConcordiumBlockchainCreationPageState
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -224,7 +224,7 @@ class _ConcordiumBlockchainCreationPageState
                       );
 
                       final createIdentityRequestParams =
-                          await concordiumBlockchainService
+                          await concordiumBlockChainService
                               .getCreateIdentityRequestParams(
                         mnemonic: mnemonic,
                         identityProvider: selectedIdentityProvider!,
@@ -250,14 +250,14 @@ class _ConcordiumBlockchainCreationPageState
                         );
                       } else {
                         // for another platforms we can use integrated method with iframe
-                        final creationUrl = await concordiumBlockchainService
+                        final creationUrl = await concordiumBlockChainService
                             .getIdentityCreateRequestUrl(
                           identityProvider: identityProviders.first,
                           createIdentityRequestParams:
                               createIdentityRequestParams,
                         );
                         final urlForIdentityInfo =
-                            await concordiumBlockchainService
+                            await concordiumBlockChainService
                                 .createIdentityDialog(
                           context: Modular
                               .routerDelegate.navigatorKey.currentContext!,

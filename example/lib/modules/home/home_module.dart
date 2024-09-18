@@ -23,7 +23,7 @@ class HomeModule extends Module {
     Bind.singleton((i) => NearBlockchainStore()),
     Bind.singleton((i) => BitcoinBlockchainStore()),
     Bind.singleton(
-      (i) => ConcordiumBlockchainService.defaultInstance(),
+      (i) => ConcordiumBlockChainService.defaultInstance(),
     ),
 
     Bind.singleton(

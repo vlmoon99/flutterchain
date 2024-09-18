@@ -47,8 +47,8 @@ class _ConcordiumBakerTxState extends State<ConcordiumBakerTx> {
 
   @override
   Widget build(BuildContext context) {
-    final ConcordiumBlockchainService concordiumBlockchainService =
-        Modular.get<ConcordiumBlockchainService>();
+    final ConcordiumBlockChainService concordiumBlockChainService =
+        Modular.get<ConcordiumBlockChainService>();
     final ConcordiumVm concordiumVm = Modular.get<ConcordiumVm>();
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
@@ -71,7 +71,7 @@ class _ConcordiumBakerTxState extends State<ConcordiumBakerTx> {
                 concordiumVm.state.currentBlockchainIndex,
           );
 
-          final res = await concordiumBlockchainService.sendBakerTransaction(
+          final res = await concordiumBlockChainService.sendBakerTransaction(
             senderAddress: choosenBlockchain.accountAddress,
             privateKey: choosenBlockchain.privateKey,
             restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
