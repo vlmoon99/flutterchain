@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutterchain/flutterchain_lib/constants/chains/concordium_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
@@ -81,6 +82,13 @@ class ConcordiumBlockchainService {
       typeOfNetwork: concordiumRpcClient.typeOfNetwork,
       networkClient: concordiumRpcClient.concordiumNetworkClient,
     );
+  }
+
+  /// Returns a set of URLs of RPC endpoints for the Concordium blockchain.
+  /// 
+  @override
+  Set<String> getBlockchainsUrlsByBlockchainType() {
+    return ConcordiumBlockchainNetworkUrls.listOfUrls;
   }
 
   /// Generates a mnemonic for the Concordium blockchain.
