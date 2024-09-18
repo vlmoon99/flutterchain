@@ -80,7 +80,7 @@ class BNBBlockChainService implements BlockChainService {
   Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
     if (accountInfoRequest is! EvmAccountInfoRequest) {
       throw ArgumentError(
-          "Invalid accountInfoRequest. It must be of type `EvmAccountInfoRequest`");
+          "Invalid accountInfoRequest type. Expected: `EvmAccountInfoRequest`");
     }
     return bnbRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
@@ -99,7 +99,7 @@ class BNBBlockChainService implements BlockChainService {
     if (blockChainNetworkEnvironmentSettings
         is! EvmNetworkEnvironmentSettings) {
       throw ArgumentError(
-          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `EvmNetworkEnvironmentSettings`");
+          "Invalid blockChainNetworkEnvironmentSettings type. Expected: `EvmNetworkEnvironmentSettings`");
     }
     bnbRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);

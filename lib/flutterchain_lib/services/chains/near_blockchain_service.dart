@@ -57,7 +57,7 @@ class NearBlockChainService
       TransferRequest transferRequest) async {
     if (transferRequest is! NearTransferRequest) {
       throw ArgumentError(
-          'Incorrect TransferRequest type. Must be `NearTransferRequest`');
+          'Incorrect TransferRequest type. Expected: `NearTransferRequest`');
     }
 
     final transactionInfo = await getTransactionInfo(
@@ -96,7 +96,7 @@ class NearBlockChainService
   ) async {
     if (smartContractArguments is! NearBlockChainSmartContractArguments) {
       throw ArgumentError(
-          "Incorrect Blockchain Smart Contract Arguments. Expected `NearBlockChainSmartContractArguments`");
+          "Incorrect smartContractArguments type. Expected: `NearBlockChainSmartContractArguments`");
     }
 
     final transactionInfo = await getTransactionInfo(
@@ -152,7 +152,7 @@ class NearBlockChainService
   Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) async {
     if (accountInfoRequest is! NearAccountInfoRequest) {
       throw ArgumentError(
-          "Invalid accountInfoRequest. It must be of type `NearAccountInfoRequest`");
+          "Invalid accountInfoRequest type. Expected: `NearAccountInfoRequest`");
     }
     final res =
         await nearRpcClient.getAccountBalance(accountInfoRequest.accountId);
@@ -168,7 +168,7 @@ class NearBlockChainService
     if (blockChainNetworkEnvironmentSettings
         is! NearNetworkEnvironmentSettings) {
       throw ArgumentError(
-          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `NearNetworkEnvironmentSettings`");
+          "Invalid blockChainNetworkEnvironmentSettings type. Expected: `NearNetworkEnvironmentSettings`");
     }
     nearRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);

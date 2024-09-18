@@ -44,7 +44,7 @@ class BitcoinBlockChainService implements BlockChainService {
       TransferRequest transferRequest) async {
     if (transferRequest is! BitcoinTransferRequest) {
       throw ArgumentError(
-          'Incorrect TransferRequest type. Must be `BitcoinTransferRequest`');
+          'Invalid transferRequest type. Expected: `BitcoinTransferRequest`');
     }
 
     final format = 'SEGWIT';
@@ -78,7 +78,7 @@ class BitcoinBlockChainService implements BlockChainService {
   ) async {
     if (accountInfoRequest is! BitcoinAccountInfoRequest) {
       throw ArgumentError(
-          'Invalid accountInfoRequest. It must be of type `BitcoinAccountInfoRequest`');
+          'Invalid accountInfoRequest type. Expected: `BitcoinAccountInfoRequest`');
     }
     final addressId =
         await getAdressBTCSegWitFomat(accountInfoRequest.accountId);
@@ -94,7 +94,7 @@ class BitcoinBlockChainService implements BlockChainService {
     if (blockChainNetworkEnvironmentSettings
         is! BitcoinNetworkEnvironmentSettings) {
       throw ArgumentError(
-          'Invalid blockChainNetworkEnvironmentSettings. It must be of type `BitcoinNetworkEnvironmentSettings`');
+          'Invalid blockChainNetworkEnvironmentSettings type. Expected: `BitcoinNetworkEnvironmentSettings`');
     }
     bitcoinRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);

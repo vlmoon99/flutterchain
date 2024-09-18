@@ -66,7 +66,7 @@ class XRPBlockChainService implements BlockChainService {
   Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
     if (accountInfoRequest is! XrpAccountInfoRequest) {
       throw ArgumentError(
-          "Invalid accountInfoRequest. It must be of type `XrpAccountInfoRequest`");
+          "Invalid accountInfoRequest type. Expected: `XrpAccountInfoRequest`");
     }
     return xrpRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
@@ -85,7 +85,7 @@ class XRPBlockChainService implements BlockChainService {
     if (blockChainNetworkEnvironmentSettings
         is! XrpNetworkEnvironmentSettings) {
       throw ArgumentError(
-          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `XrpNetworkEnvironmentSettings`");
+          "Invalid blockChainNetworkEnvironmentSettings type. Expected: `XrpNetworkEnvironmentSettings`");
     }
     xrpRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
