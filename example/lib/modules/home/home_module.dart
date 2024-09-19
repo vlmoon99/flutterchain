@@ -71,7 +71,7 @@ class HomeModule extends Module {
     ChildRoute(
       Routes.home.concordiumCreateAccount,
       child: (_, args) => ConcordiumBlockchainCreationPage(
-        identityCatched: args.data ?? false,
+        identityCaught: args.data ?? false,
       ),
     ),
     ChildRoute(

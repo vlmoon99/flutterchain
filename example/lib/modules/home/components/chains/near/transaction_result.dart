@@ -28,7 +28,7 @@ class _TransactionResultState extends State<TransactionResult> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SelectableText(
-            'Result: ${(widget.response.toString().length ?? 0) > 50 ? "${widget.response.toString().substring(0, 50)}..." : widget.response.toString()}',
+            'Result: ${(widget.response.toString().length) > 50 ? "${widget.response.toString().substring(0, 50)}..." : widget.response.toString()}',
             style: nearTextStyles.headline!.copyWith(
               fontWeight: FontWeight.bold,
               color: nearColors.nearBlack,

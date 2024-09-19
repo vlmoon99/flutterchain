@@ -22,13 +22,13 @@ class EVMRpcClient {
   EVMRpcClient({required this.networkClient});
 
   Future<String> getAccountBalance(
-    String adress,
+    String address,
   ) async {
     final res = await networkClient.postHTTP('', {
       'jsonrpc': '2.0',
       'id': 'dontcare',
       'method': 'eth_getBalance',
-      'params': [adress, 'latest']
+      'params': [address, 'latest']
     });
     if (res.isSuccess) {
       final hexAmount = res.data['result'].toString();

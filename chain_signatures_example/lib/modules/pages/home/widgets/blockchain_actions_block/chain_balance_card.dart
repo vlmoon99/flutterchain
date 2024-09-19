@@ -84,7 +84,7 @@ class _ChainBalanceInfoState extends State<ChainBalanceInfo>
                         : BitcoinBlockChainNetworkUrls.listOfUrls.last,
                   ));
             balanceInString = await bitcoinBlockChainService.bitcoinRpcClient
-                .getAccountBalanceWithAdress(widget.chainAddress);
+                .getAccountBalanceWithAddress(widget.chainAddress);
           }
         case BlockChains.bnb:
           {

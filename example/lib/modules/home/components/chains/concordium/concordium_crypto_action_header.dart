@@ -38,7 +38,7 @@ class _ConcordiumCryptoActionHeaderState
           concordiumVm.state.currentBlockchainIndex,
     );
     updateTimer = Timer.periodic(
-      Duration(seconds: 10),
+      const Duration(seconds: 10),
       (timer) {
         setState(() {});
       },
@@ -70,7 +70,7 @@ class _ConcordiumCryptoActionHeaderState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Choosen Account: "),
+                  const Text("Chosen Account: "),
                   FittedBox(
                     child: DropdownButton<ConcordiumBlockChainData>(
                       value: concordiumBlockchainData,
@@ -98,17 +98,17 @@ class _ConcordiumCryptoActionHeaderState
                   const SizedBox(height: 20),
                   SelectableText(
                     "Account Address: ${concordiumBlockchainData!.accountAddress}",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
                   SelectableText(
                     "Public Key: ${concordiumBlockchainData!.publicKey}",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
                   SelectableText(
                     "Signing Key: ${concordiumBlockchainData!.privateKey}",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
                   FutureBuilder(
@@ -120,7 +120,7 @@ class _ConcordiumCryptoActionHeaderState
                       if (snapshot.hasData) {
                         return Text(
                           "Amount: ${ConcordiumFormatter.convertMicroCcdToCcd(int.parse(snapshot.data!.accountAmount))} CCD",
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         );
                       } else {
                         return const Text("Loading...");

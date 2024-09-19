@@ -1,8 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 
-import 'package:bs58/bs58.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
@@ -12,7 +9,6 @@ import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_tran
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 import 'dart:async';
-import 'package:hex/hex.dart';
 
 class BitcoinRpcClient {
   final BitcoinNetworkClient networkClient;
@@ -28,27 +24,27 @@ class BitcoinRpcClient {
   BitcoinRpcClient({required this.networkClient});
 
   Future<BitcoinTransactionInfoModel> getTransactionInfo(
-      String accountID, String transferAmount, int actuelFees) async {
+      String accountID, String transferAmount, int actualFees) async {
     final res = await networkClient.getRequest(
       BitcoinBlockChainNetworkUrls.listOfUrls.first +
           '/addrs/$accountID?unspentOnly=true',
     );
     if (res.isSuccess) {
       num currentSum = 0;
-      var indexWhithBigestSum = 0;
+      var indexWithBiggestSum = 0;
       List<dynamic> listWithTXrefs = res.data['txrefs'];
       for (int i = 0; i < listWithTXrefs.length; i++) {
         if (currentSum < listWithTXrefs[i]['value']) {
           currentSum = listWithTXrefs[i]['value'];
-          indexWhithBigestSum = i;
+          indexWithBiggestSum = i;
         }
       }
-      if (currentSum > num.parse(transferAmount) + actuelFees * 200) {
+      if (currentSum > num.parse(transferAmount) + actualFees * 200) {
         final tx_hash =
-            listWithTXrefs[indexWhithBigestSum]['tx_hash'].toString();
+            listWithTXrefs[indexWithBiggestSum]['tx_hash'].toString();
         final ref_balance =
-            listWithTXrefs[indexWhithBigestSum]['value'].toString();
-        final tx_output = int.tryParse(listWithTXrefs[indexWhithBigestSum]
+            listWithTXrefs[indexWithBiggestSum]['value'].toString();
+        final tx_output = int.tryParse(listWithTXrefs[indexWithBiggestSum]
                     ['tx_output_n']
                 .toString()) ??
             0;
@@ -83,11 +79,11 @@ class BitcoinRpcClient {
   }
 
   Future<String> getAccountBalance(
-    String adressId,
+    String addressId,
   ) async {
     final res = await networkClient.getRequest(
       BitcoinBlockChainNetworkUrls.listOfUrls.first +
-          '/addrs/$adressId/balance',
+          '/addrs/$addressId/balance',
     );
     if (res.isSuccess) {
       final amount = res.data['balance'].toString();
@@ -101,9 +97,9 @@ class BitcoinRpcClient {
     }
   }
 
-  Future<String> getAccountBalanceWithAdress(String adress,
+  Future<String> getAccountBalanceWithAddress(String address,
       [bool testNetwork = true]) async {
-    final utxos = await getUTXOs(address: adress, testNetwork: testNetwork);
+    final utxos = await getUTXOs(address: address, testNetwork: testNetwork);
     int satoshis = 0;
 
     for (var utxo in utxos) {

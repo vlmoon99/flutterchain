@@ -35,8 +35,8 @@ class XRPBlockChainService implements BlockChainService {
   }
 
   Future<XRPTransactionInfo> getTransactionInfo(
-      {required String senderAdress}) async {
-    final res = await xrpRpcClient.getTransactionInfo(senderAdress);
+      {required String senderAddress}) async {
+    final res = await xrpRpcClient.getTransactionInfo(senderAddress);
     return res;
   }
 
@@ -104,7 +104,7 @@ class XRPBlockChainService implements BlockChainService {
 
     final txInJsonFormat = {
       "TransactionType": 'Payment',
-      "Account": mpcAccountInfo.adress,
+      "Account": mpcAccountInfo.address,
       "Amount": amountInDrops.toString(),
       "Destination": receiverAddress,
       "SigningPubKey": mpcAccountInfo.publicKey,

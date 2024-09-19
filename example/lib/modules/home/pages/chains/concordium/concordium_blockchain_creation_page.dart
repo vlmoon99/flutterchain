@@ -13,9 +13,9 @@ import 'package:flutterchain_example/theme/app_theme.dart';
 
 class ConcordiumBlockchainCreationPage extends StatefulWidget {
   const ConcordiumBlockchainCreationPage(
-      {super.key, required this.identityCatched});
+      {super.key, required this.identityCaught});
 
-  final bool identityCatched;
+  final bool identityCaught;
 
   @override
   State<ConcordiumBlockchainCreationPage> createState() =>
@@ -38,7 +38,7 @@ class _ConcordiumBlockchainCreationPageState
       final ConcordiumBlockChainService concordiumBlockChainService =
           Modular.get<ConcordiumBlockChainService>();
       final FlutterSecureStorage storage = Modular.get<FlutterSecureStorage>();
-      if (widget.identityCatched) {
+      if (widget.identityCaught) {
         final savedIdentityUrl = await storage.read(key: "code_uri");
         createCredential(savedIdentityUrl!);
       } else {
@@ -128,7 +128,7 @@ class _ConcordiumBlockchainCreationPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SelectableText(
-                  "Adress: ${resultOfOperation.data["accountAddress"]}"),
+                  "Address: ${resultOfOperation.data["accountAddress"]}"),
               const SizedBox(height: 20),
               SelectableText(
                   "Transaction hash: ${resultOfOperation.data["txHash"]}"),

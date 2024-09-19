@@ -63,7 +63,7 @@ class _ConcordiumBakerTxState extends State<ConcordiumBakerTx> {
             sendTransaction = true;
           });
 
-          final choosenBlockchain =
+          final chosenBlockchain =
               concordiumVm.state.blockchainsData.firstWhere(
             (element) =>
                 (element.derivationPath as ConcordiumDerivationPath)
@@ -72,8 +72,8 @@ class _ConcordiumBakerTxState extends State<ConcordiumBakerTx> {
           );
 
           final res = await concordiumBlockChainService.sendBakerTransaction(
-            senderAddress: choosenBlockchain.accountAddress,
-            privateKey: choosenBlockchain.privateKey,
+            senderAddress: chosenBlockchain.accountAddress,
+            privateKey: chosenBlockchain.privateKey,
             restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
             stakeAmountInMicroCcd: updateAmount
                 ? ConcordiumFormatter.convertCcdToMicroCcd(

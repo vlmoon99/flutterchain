@@ -5,7 +5,7 @@ import 'package:flutterchain_example/modules/home/components/chains/concordium/c
 import 'package:flutterchain_example/modules/home/components/chains/concordium/concordium_crypto_action_header.dart';
 import 'package:flutterchain_example/modules/home/components/chains/concordium/concordium_delegation_tx.dart';
 import 'package:flutterchain_example/modules/home/components/chains/concordium/concordium_identity_info.dart';
-import 'package:flutterchain_example/modules/home/components/chains/concordium/concrodium_transer_action.dart';
+import 'package:flutterchain_example/modules/home/components/chains/concordium/concrodium_transfer_action.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/concordium_vm.dart';
 
 class ConcordiumBlockchainPage extends StatefulWidget {

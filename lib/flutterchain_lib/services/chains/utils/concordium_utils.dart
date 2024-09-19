@@ -16,8 +16,8 @@ class ConcordiumUtils {
   }
 
   Future<AccountAddress> getAccountAddress(String base58Address) async {
-    final decodedBase58Adress = base58.decode(base58Address).sublist(1, 33);
-    return AccountAddress(value: List<int>.from(decodedBase58Adress));
+    final decodedBase58Address = base58.decode(base58Address).sublist(1, 33);
+    return AccountAddress(value: List<int>.from(decodedBase58Address));
   }
 
   Future<BlockHash> getBlockHash(String blockHash) async {
@@ -37,8 +37,8 @@ class ConcordiumUtils {
   }
 
   Future<Map<String, dynamic>> cryptographicParametersFromProtoFormat(
-      String jsonEncodedcryptographicParameters) async {
-    final param = jsonEncode(jsonEncodedcryptographicParameters);
+      String jsonEncodedCryptographicParameters) async {
+    final param = jsonEncode(jsonEncodedCryptographicParameters);
     final value = await _jsVMService.callJS(
         '''window.ConcordiumBlockchain.cryptographicParametersFromProtoFormat($param)''');
     return jsonDecode(value);

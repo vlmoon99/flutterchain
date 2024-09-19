@@ -49,7 +49,7 @@ class BitcoinBlockChainService implements BlockChainService {
 
     final format = 'SEGWIT';
     final actualFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
-    final accountID = await getAdressBTCSegWitFomat(transferRequest.publicKey);
+    final accountID = await getAddressBTCSegWitFormat(transferRequest.publicKey);
     final transactionInfo = await bitcoinRpcClient.getTransactionInfo(
       accountID,
       transferRequest.transferAmount,
@@ -81,7 +81,7 @@ class BitcoinBlockChainService implements BlockChainService {
           'Invalid accountInfoRequest type. Expected: `BitcoinAccountInfoRequest`');
     }
     final addressId =
-        await getAdressBTCSegWitFomat(accountInfoRequest.accountId);
+        await getAddressBTCSegWitFormat(accountInfoRequest.accountId);
     final res = await bitcoinRpcClient.getAccountBalance(addressId);
     return res;
   }
@@ -149,7 +149,7 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //This method getting Address BTC in P2PKH format from Public Key in Hex format, if needKeyHash = true, return key hash
-  Future<String> getAdressBTCP2PKHFomat(
+  Future<String> getAddressBTCP2PKHFormat(
       String publicKeyHEX, bool needKeyHash) async {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeyP2PKH('$publicKeyHEX', $needKeyHash)");
@@ -157,7 +157,7 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //This method getting Address BTC in SegWit format from Public Key in Hex format
-  Future<String> getAdressBTCSegWitFomat(String publicKeyHEX) async {
+  Future<String> getAddressBTCSegWitFormat(String publicKeyHEX) async {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeySegWit('$publicKeyHEX')");
     return res.toString();

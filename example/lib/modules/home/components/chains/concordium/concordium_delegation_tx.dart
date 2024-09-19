@@ -51,7 +51,7 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
           setState(() {
             sendTransaction = true;
           });
-          final choosenBlockchain =
+          final chosenBlockchain =
               concordiumVm.state.blockchainsData.firstWhere(
             (element) =>
                 (element.derivationPath as ConcordiumDerivationPath)
@@ -61,8 +61,8 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
           if (delegationType == ConcordiumDelegationType.passive) {
             final res =
                 await concordiumBlockChainService.sendDelegationTransaction(
-              senderAddress: choosenBlockchain.accountAddress,
-              privateKey: choosenBlockchain.privateKey,
+              senderAddress: chosenBlockchain.accountAddress,
+              privateKey: chosenBlockchain.privateKey,
               restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
               amountInMicroCcd: updateAmount
                   ? ConcordiumFormatter.convertCcdToMicroCcd(
@@ -78,8 +78,8 @@ class _ConcordiumDelegationTxState extends State<ConcordiumDelegationTx> {
           } else {
             final res =
                 await concordiumBlockChainService.sendDelegationTransaction(
-              senderAddress: choosenBlockchain.accountAddress,
-              privateKey: choosenBlockchain.privateKey,
+              senderAddress: chosenBlockchain.accountAddress,
+              privateKey: chosenBlockchain.privateKey,
               restakeEarnings: updateRestakeEarnings ? restakeEarnings : null,
               amountInMicroCcd: updateAmount
                   ? ConcordiumFormatter.convertCcdToMicroCcd(

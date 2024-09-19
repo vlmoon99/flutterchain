@@ -84,7 +84,7 @@ class _CheckInfoState extends State<CheckInfo> {
                               'NFT ${nftInfo["title"]}: in ${nftInfo["nft_contract_id"]} collection whit NFT ID - ${nftInfo["token_id"]}. $burnedInfo',
                               maxLines: null,
                               style: const TextStyle(
-                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  color: Color.fromARGB(255, 0, 0, 0),
                                   fontSize: 16),
                             );
                           }).toList(),
@@ -134,7 +134,7 @@ class _CheckInfoState extends State<CheckInfo> {
                               'NFT ${nftInfo["title"]}: in ${nftInfo["nft_contract_id"]} collection whit NFT ID - ${nftInfo["token_id"]}.',
                               maxLines: null,
                               style: const TextStyle(
-                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  color: Color.fromARGB(255, 0, 0, 0),
                                   fontSize: 16),
                             );
                           }).toList(),

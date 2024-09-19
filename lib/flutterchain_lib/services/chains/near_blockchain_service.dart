@@ -481,7 +481,7 @@ class NearBlockChainService
           decoration: const BoxDecoration(),
           child: InAppWebView(
             initialUrlRequest: URLRequest(
-              url: WebUri(WebViewConstants.nearLoginThroughtWebView),
+              url: WebUri(WebViewConstants.nearLoginThroughWebView),
             ),
             initialSettings: settings,
             onWebViewCreated: (controller) {},
@@ -544,7 +544,7 @@ class NearBlockChainService
     final mpcAccountInfo =
         json.decode(mpcAccountInfoData) as Map<String, dynamic>;
     return MPCAccountInfo(
-      adress: mpcAccountInfo["address"],
+      address: mpcAccountInfo["address"],
       publicKey: mpcAccountInfo["publicKey"],
     );
   }
@@ -556,17 +556,17 @@ class NearBlockChainService
   /// - [publicKey]: The public key of the Near sender.
   /// - [privateKey]: The private key of the Near sender.
   /// - [mpcTransactionInfo]: The transaction information obtained from the MPC.
-  /// - [senderAdress]: The address of the sender provided by the MPC.
+  /// - [senderAddress]: The address of the sender provided by the MPC.
   /// - [path]: The path used for the MPC signing.
   /// - [mpcContract]: The contract address of the MPC.
   ///
   /// Returns the signed transaction as a string.
-  Future<String> signEVMTransationWithMPC({
+  Future<String> signEVMTransactionWithMPC({
     required String accountId,
     required String publicKey,
     required String privateKey,
     required MpcTransactionInfo mpcTransactionInfo,
-    required String senderAdress,
+    required String senderAddress,
     String path = "flutterchain",
     String mpcContract = 'v2.multichain-mpc.testnet',
   }) async {
@@ -607,7 +607,7 @@ class NearBlockChainService
         List<int>.from(unsignedTransaction["transaction"].values));
 
     final signedTransaction = await jsVMService.callJS(
-      "window.EVMUtils.signTransactionWithMPCSignature('$signatureData', '${jsonEncode(serializedUnsignedTransaction)}', '$senderAdress', '${unsignedTransaction["typeOfTransaction"]}', '${jsonEncode(unsignedTransaction['chainInfo'])}')",
+      "window.EVMUtils.signTransactionWithMPCSignature('$signatureData', '${jsonEncode(serializedUnsignedTransaction)}', '$senderAddress', '${unsignedTransaction["typeOfTransaction"]}', '${jsonEncode(unsignedTransaction['chainInfo'])}')",
     );
 
     return signedTransaction;

@@ -37,7 +37,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
         '';
 
     if (accountId.isNotEmpty) {
-      log("accountId was sucsessfuly added $accountId from The Flutter WEB Enviroment");
+      log("accountId was successfully added $accountId from The Flutter WEB Environment");
     }
   }
 

@@ -62,7 +62,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
             style:
                 TextStyle(fontSize: 17, color: Color.fromARGB(255, 245, 79, 1)),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           TextField(
             controller: nameController,
             decoration: const InputDecoration(labelText: 'Input account id'),
@@ -72,7 +72,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
             decoration: const InputDecoration(
                 labelText: 'Input name collection(full name contract)'),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -92,7 +92,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                     backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary)),
               ),
-              SizedBox(width: 45),
+              const SizedBox(width: 45),
               FilledButton(
                 onPressed: () async {
                   setState(() {
@@ -186,7 +186,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                                     '${minters}',
                                     style: const TextStyle(
                                         color:
-                                            const Color.fromARGB(255, 0, 0, 0),
+                                            Color.fromARGB(255, 0, 0, 0),
                                         fontSize: 16),
                                   );
                                 }).toList(),
@@ -202,7 +202,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                       ),
                     ),
               IconButton(
-                icon: Icon(Icons.replay_outlined),
+                icon: const Icon(Icons.replay_outlined),
                 onPressed: () => setState(() {
                   nameMinters = getMinters();
                 }),

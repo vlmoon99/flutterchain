@@ -45,12 +45,12 @@ class ConcordiumIdentityInfo extends StatelessWidget {
                     },
                   );
 
-                  // we dont have to store all time url to get identity info. we can recover it anytime
+                  // we don't have to store all time url to get identity info. we can recover it anytime
                   return concordiumBlockChainService.recoverExistingIdentity(
                     mnemonic: concordiumVm.state.mnemonic,
                     identityProvider: identityProvider,
                     identityIndex:
-                        0, // hardcoded to 0 but can be any number from existing identitys
+                        0, // hardcoded to 0 but can be any number from existing identities
                   );
                 }
               },
@@ -63,37 +63,37 @@ class ConcordiumIdentityInfo extends StatelessWidget {
                       "First Name: " +
                           identity.attributeList["chosenAttributes"]
                               ["firstName"],
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                         "Last Name: " +
                             identity.attributeList["chosenAttributes"]
                                 ["lastName"],
-                        style: TextStyle(fontSize: 20)),
-                    SizedBox(height: 10),
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 10),
                     Text(
                         "Nationality: " +
                             identity.attributeList["chosenAttributes"]
                                 ["nationality"],
-                        style: TextStyle(fontSize: 20)),
-                    SizedBox(height: 10),
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 10),
                     Text(
                       "Country of residence: " +
                           identity.attributeList["chosenAttributes"]
                               ["countryOfResidence"],
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                         "Account created at: " +
                             identity.attributeList["createdAt"],
-                        style: TextStyle(fontSize: 20)),
-                    SizedBox(height: 10),
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 10),
                     Text(
                         "Account valid to: " +
                             identity.attributeList["validTo"],
-                        style: TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                   ],
                 );
               } else {

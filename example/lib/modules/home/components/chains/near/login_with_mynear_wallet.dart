@@ -43,8 +43,8 @@ class LoginWithMyNearWallets extends StatelessWidget {
         nearBlockchainService
             .authWithNearWallets(context, nearAPIJsPrivateKey)
             .then((addedAccountId) {
-          log("addedAccountId $addedAccountId was added sucsessfuly");
-          log("nearAPIJsPrivateKey $nearAPIJsPrivateKey was added sucsessfuly");
+          log("addedAccountId $addedAccountId was added successfully");
+          log("nearAPIJsPrivateKey $nearAPIJsPrivateKey was added successfully");
         });
       },
       child: Container(

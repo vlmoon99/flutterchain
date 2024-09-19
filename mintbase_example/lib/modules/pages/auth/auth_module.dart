@@ -8,6 +8,6 @@ class AuthModule extends Module {
 
   @override
   void routes(r) {
-    r.child(CoreRoutes.init, child: (context) => AuthPage());
+    r.child(CoreRoutes.init, child: (context) => const AuthPage());
   }
 }

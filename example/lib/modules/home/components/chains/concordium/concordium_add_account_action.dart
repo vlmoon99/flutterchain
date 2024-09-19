@@ -22,7 +22,7 @@ class _ConcordiumAddAccountActionState
   final TextEditingController newAccountIndexTextController =
       TextEditingController();
 
-  String accountAdress = '';
+  String accountAddress = '';
   String txHash = '';
   bool creatingNewAccount = false;
 
@@ -53,13 +53,13 @@ class _ConcordiumAddAccountActionState
             },
           );
 
-          // we dont have to store all time url to get identity info. we can recover it anytime
+          // we don't have to store all time url to get identity info. we can recover it anytime
           final identityInfo =
               await concordiumBlockChainService.recoverExistingIdentity(
             mnemonic: concordiumVm.state.mnemonic,
             identityProvider: identityProvider,
             identityIndex:
-                0, // hardcoded to 0 but can be any number from existing identitys
+                0, // hardcoded to 0 but can be any number from existing identities
           );
 
           final res = await concordiumBlockChainService.createAccount(
@@ -69,7 +69,7 @@ class _ConcordiumAddAccountActionState
             derivationPath: ConcordiumDerivationPath(
               identityProviderIndex: concordiumVm.state.identityProviderIndex,
               identityIndex:
-                  0, // hardcoded to 0 but can be any number from existing identitys
+                  0, // hardcoded to 0 but can be any number from existing identities
               credentialIndex: int.parse(newAccountIndexTextController.text),
             ),
           );
@@ -92,7 +92,7 @@ class _ConcordiumAddAccountActionState
           );
 
           setState(() {
-            accountAdress = res.data["accountAddress"];
+            accountAddress = res.data["accountAddress"];
             txHash = res.data["txHash"];
           });
         } finally {
@@ -115,7 +115,7 @@ class _ConcordiumAddAccountActionState
             ],
             if (txHash.isNotEmpty) ...[
               SelectableText(
-                'Account address: $accountAdress',
+                'Account address: $accountAddress',
                 style: const TextStyle(fontSize: 16),
               ),
               SelectableText(
