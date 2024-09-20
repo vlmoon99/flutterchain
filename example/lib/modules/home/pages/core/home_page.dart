@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -73,7 +72,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
         return Column(
           children: [
             SizedBox(
-              height: 10.w,
+              height: 10.h,
             ),
             Text(
               'Total Amount: \$" Not yet implemented"',
@@ -112,7 +111,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10.w,
+                  height: 10.h,
                 ),
                 SizedBox(
                   width: 300,
@@ -166,7 +165,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10.w,
+                  height: 10.h,
                 ),
                 SizedBox(
                   width: 300,
@@ -205,12 +204,40 @@ class _CryptoListPageState extends State<CryptoListPage> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                SizedBox(
+                  width: 300,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Modular.to
+                          .navigate(".${Routes.home.concordiumCreateAccount}");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: nearColors.nearPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text(
+                      'Create Concordium Wallet',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 2.w),
+            SizedBox(height: 2.h),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(width * 0.06),
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.06,
+                ),
                 child: StreamBuilder<List<Wallet>>(
                     stream: homeVM.cryptoLibrary.walletsStream,
                     builder: (context, snapshot) {

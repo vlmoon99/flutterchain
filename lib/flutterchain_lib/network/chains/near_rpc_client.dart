@@ -221,10 +221,10 @@ class NearRpcClient {
       uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.last;
     }
 
-    final heders = {"mb-api-key": "anon", "content-type": "application/json"};
+    final headers = {"mb-api-key": "anon", "content-type": "application/json"};
 
     final res = await networkClient.postHTTP(uri,
-        {"query": query, "variables": {}, "operationName": "MyQuery"}, heders);
+        {"query": query, "variables": {}, "operationName": "MyQuery"}, headers);
 
     if (res.data['error'] != null) {
       return BlockchainResponse(
@@ -336,9 +336,9 @@ class NearRpcClient {
 
     final uri = 'https://ar.mintbase.xyz/reference';
 
-    Map<String, dynamic> heders = {"mb-api-key": "anon"};
+    Map<String, dynamic> headers = {"mb-api-key": "anon"};
 
-    final res = await networkClient.postHTTP(uri, formData, heders);
+    final res = await networkClient.postHTTP(uri, formData, headers);
 
     if (res.data['error'] != null) {
       return BlockchainResponse(

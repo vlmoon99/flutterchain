@@ -81,7 +81,7 @@ class AvalancheBlockChainService implements BlockChainService {
   Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
     if (accountInfoRequest is! EvmAccountInfoRequest) {
       throw ArgumentError(
-          "Invalid accountInfoRequest. It must be of type `EvmAccountInfoRequest`");
+          "Invalid accountInfoRequest type. Expected: `EvmAccountInfoRequest`");
     }
     return avalancheRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
@@ -100,7 +100,7 @@ class AvalancheBlockChainService implements BlockChainService {
     if (blockChainNetworkEnvironmentSettings
         is! EvmNetworkEnvironmentSettings) {
       throw ArgumentError(
-          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `EvmNetworkEnvironmentSettings`");
+          "Invalid blockChainNetworkEnvironmentSettings type. Expected: `EvmNetworkEnvironmentSettings`");
     }
     avalancheRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);

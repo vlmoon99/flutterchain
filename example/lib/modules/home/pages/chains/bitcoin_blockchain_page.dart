@@ -29,7 +29,7 @@ class _BitcoinBlockchainPageState extends State<BitcoinBlockchainPage>
         '';
 
     if (accountId.isNotEmpty) {
-      log("accountId was sucsessfuly added $accountId from The Flutter WEB Enviroment");
+      log("accountId was successfully added $accountId from The Flutter WEB Environment");
     }
   }
 

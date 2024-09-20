@@ -35,8 +35,8 @@ class XRPBlockChainService implements BlockChainService {
   }
 
   Future<XRPTransactionInfo> getTransactionInfo(
-      {required String senderAdress}) async {
-    final res = await xrpRpcClient.getTransactionInfo(senderAdress);
+      {required String senderAddress}) async {
+    final res = await xrpRpcClient.getTransactionInfo(senderAddress);
     return res;
   }
 
@@ -66,7 +66,7 @@ class XRPBlockChainService implements BlockChainService {
   Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest) {
     if (accountInfoRequest is! XrpAccountInfoRequest) {
       throw ArgumentError(
-          "Invalid accountInfoRequest. It must be of type `XrpAccountInfoRequest`");
+          "Invalid accountInfoRequest type. Expected: `XrpAccountInfoRequest`");
     }
     return xrpRpcClient.getAccountBalance(accountInfoRequest.accountId);
   }
@@ -85,7 +85,7 @@ class XRPBlockChainService implements BlockChainService {
     if (blockChainNetworkEnvironmentSettings
         is! XrpNetworkEnvironmentSettings) {
       throw ArgumentError(
-          "Invalid blockChainNetworkEnvironmentSettings. It must be of type `XrpNetworkEnvironmentSettings`");
+          "Invalid blockChainNetworkEnvironmentSettings type. Expected: `XrpNetworkEnvironmentSettings`");
     }
     xrpRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
@@ -104,7 +104,7 @@ class XRPBlockChainService implements BlockChainService {
 
     final txInJsonFormat = {
       "TransactionType": 'Payment',
-      "Account": mpcAccountInfo.adress,
+      "Account": mpcAccountInfo.address,
       "Amount": amountInDrops.toString(),
       "Destination": receiverAddress,
       "SigningPubKey": mpcAccountInfo.publicKey,

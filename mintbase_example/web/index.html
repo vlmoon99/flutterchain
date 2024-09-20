@@ -35,8 +35,9 @@
   <!-- This script adds the flutter initialization JS code -->
   <script type="application/javascript" src="flutter.js" defer></script>
   <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
-  <script type="application/javascript" src="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle.js"
-    defer></script>
+  <script type="module" src="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle.js"></script>
+  <script type="application/javascript" src="/assets/packages/flutterchain/assets/crypto-lib/dist/dop_bundle.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle2.js">
 
 </head>
 <body>

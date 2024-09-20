@@ -660,25 +660,25 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<_i8.MPCAccountInfo>);
 
   @override
-  _i10.Future<String> signEVMTransationWithMPC({
+  _i10.Future<String> signEVMTransactionWithMPC({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
     required _i16.MpcTransactionInfo? mpcTransactionInfo,
-    required String? senderAdress,
+    required String? senderAddress,
     String? path = r'flutterchain',
     String? mpcContract = r'v2.multichain-mpc.testnet',
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #signEVMTransationWithMPC,
+          #signEVMTransactionWithMPC,
           [],
           {
             #accountId: accountId,
             #publicKey: publicKey,
             #privateKey: privateKey,
             #mpcTransactionInfo: mpcTransactionInfo,
-            #senderAdress: senderAdress,
+            #senderAddress: senderAddress,
             #path: path,
             #mpcContract: mpcContract,
           },
@@ -686,14 +686,14 @@ class MockNearBlockChainService extends _i1.Mock
         returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
           this,
           Invocation.method(
-            #signEVMTransationWithMPC,
+            #signEVMTransactionWithMPC,
             [],
             {
               #accountId: accountId,
               #publicKey: publicKey,
               #privateKey: privateKey,
               #mpcTransactionInfo: mpcTransactionInfo,
-              #senderAdress: senderAdress,
+              #senderAddress: senderAddress,
               #path: path,
               #mpcContract: mpcContract,
             },

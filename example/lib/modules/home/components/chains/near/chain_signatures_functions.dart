@@ -131,7 +131,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             final transactionInfo =
                 await ethereumBlockChainService.getTransactionInfo(
-              from: mpcAccountInfo!.adress,
+              from: mpcAccountInfo!.address,
               to: sendToController.text,
               data: smartContractData,
               amountInEth: double.parse(amountController.text),
@@ -148,12 +148,12 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             log("Signing transaction...");
             final signedTX =
-                await nearBlockChainService.signEVMTransationWithMPC(
+                await nearBlockChainService.signEVMTransactionWithMPC(
               accountId: accountId!,
               publicKey: currentBlockchainData?.publicKey ?? accountId,
               privateKey: privateKey!,
               mpcTransactionInfo: unsignedTx,
-              senderAdress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
               path: pathController.text,
               mpcContract: mpcContractController.text,
             );
@@ -177,7 +177,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
             log("Creating payload...");
             final unsignedTransaction =
                 await bitcoinBlockChainService.createPayloadForNearMPC(
-              senderAddress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
               receiverAddress: sendToController.text,
               amountOfBTC: amountController.text,
             );
@@ -213,7 +213,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             final transactionInfo =
                 await bnbBlockChainService.getTransactionInfo(
-              from: mpcAccountInfo!.adress,
+              from: mpcAccountInfo!.address,
               to: sendToController.text,
               amountInEth: double.parse(amountController.text),
               data: smartContractData,
@@ -231,12 +231,12 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             log("Signing transaction...");
             final signedTx =
-                await nearBlockChainService.signEVMTransationWithMPC(
+                await nearBlockChainService.signEVMTransactionWithMPC(
               accountId: accountId!,
               publicKey: accountId,
               privateKey: privateKey!,
               mpcTransactionInfo: unsignedTx,
-              senderAdress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
               mpcContract: mpcContractController.text,
             );
 
@@ -260,7 +260,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             final transactionInfo =
                 await auroraBlockChainService.getTransactionInfo(
-              from: mpcAccountInfo!.adress,
+              from: mpcAccountInfo!.address,
               to: sendToController.text,
               amountInEth: double.parse(amountController.text),
               data: smartContractData,
@@ -278,12 +278,12 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             log("Signing transaction...");
             final signedTx =
-                await nearBlockChainService.signEVMTransationWithMPC(
+                await nearBlockChainService.signEVMTransactionWithMPC(
               accountId: accountId!,
               publicKey: accountId,
               privateKey: privateKey!,
               mpcTransactionInfo: unsignedTx,
-              senderAdress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
               mpcContract: mpcContractController.text,
             );
 
@@ -307,7 +307,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             final transactionInfo =
                 await polygonBlockChainService.getTransactionInfo(
-              from: mpcAccountInfo!.adress,
+              from: mpcAccountInfo!.address,
               to: sendToController.text,
               amountInMatic: double.parse(amountController.text),
               data: smartContractData,
@@ -325,12 +325,12 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             log("Signing transaction...");
             final signedTx =
-                await nearBlockChainService.signEVMTransationWithMPC(
+                await nearBlockChainService.signEVMTransactionWithMPC(
               accountId: accountId!,
               publicKey: accountId,
               privateKey: privateKey!,
               mpcTransactionInfo: unsignedTx,
-              senderAdress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
               mpcContract: mpcContractController.text,
             );
 
@@ -354,7 +354,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             final transactionInfo =
                 await avalancheBlockChainService.getTransactionInfo(
-              from: mpcAccountInfo!.adress,
+              from: mpcAccountInfo!.address,
               to: sendToController.text,
               amountInAvax: double.parse(amountController.text),
               data: smartContractData,
@@ -372,12 +372,12 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
 
             log("Signing transaction...");
             final signedTx =
-                await nearBlockChainService.signEVMTransationWithMPC(
+                await nearBlockChainService.signEVMTransactionWithMPC(
               accountId: accountId!,
               publicKey: accountId,
               privateKey: privateKey!,
               mpcTransactionInfo: unsignedTx,
-              senderAdress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
               mpcContract: mpcContractController.text,
             );
 
@@ -398,7 +398,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                 XRPBlockChainService.defaultInstance();
 
             final txInfo = await xrpBlockChainService.getTransactionInfo(
-              senderAdress: mpcAccountInfo!.adress,
+              senderAddress: mpcAccountInfo!.address,
             );
 
             final mpcTransactionInfo =
@@ -515,7 +515,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                       children: [
                         Expanded(
                           child: SelectableText(
-                            "Adress: ${mpcAccountInfo!.adress}",
+                            "Address: ${mpcAccountInfo!.address}",
                             style:
                                 nearTextStyles.label?.copyWith(fontSize: 16.sp),
                           ),
@@ -528,7 +528,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                 return Dialog(
                                   child: FittedBox(
                                     child: QrImageView(
-                                      data: mpcAccountInfo!.adress,
+                                      data: mpcAccountInfo!.address,
                                       version: QrVersions.auto,
                                       size: 200.0,
                                     ),
@@ -551,7 +551,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   EthereumBlockChainService.defaultInstance();
                               return ethereumBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
-                                accountId: mpcAccountInfo!.adress,
+                                accountId: mpcAccountInfo!.address,
                               ));
                             }
                           case BlockChains.bitcoin:
@@ -560,8 +560,8 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   bitcoinBlockChainService =
                                   BitcoinBlockChainService.defaultInstance();
                               return bitcoinBlockChainService.bitcoinRpcClient
-                                  .getAccountBalanceWithAdress(
-                                      mpcAccountInfo!.adress);
+                                  .getAccountBalanceWithAddress(
+                                      mpcAccountInfo!.address);
                             }
                           case BlockChains.bnb:
                             {
@@ -569,7 +569,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   BNBBlockChainService.defaultInstance();
                               return bnbBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
-                                accountId: mpcAccountInfo!.adress,
+                                accountId: mpcAccountInfo!.address,
                               ));
                             }
                           case BlockChains.aurora:
@@ -579,7 +579,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   AuroraBlockChainService.defaultInstance();
                               return auroraBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
-                                accountId: mpcAccountInfo!.adress,
+                                accountId: mpcAccountInfo!.address,
                               ));
                             }
                           case BlockChains.polygon:
@@ -589,7 +589,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   PolygonBlockChainService.defaultInstance();
                               return polygonBlockChainService.getWalletBalance(
                                 EvmAccountInfoRequest(
-                                  accountId: mpcAccountInfo!.adress,
+                                  accountId: mpcAccountInfo!.address,
                                 ),
                               );
                             }
@@ -600,7 +600,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   AvalancheBlockChainService.defaultInstance();
                               return avalancheBlockChainService
                                   .getWalletBalance(EvmAccountInfoRequest(
-                                accountId: mpcAccountInfo!.adress,
+                                accountId: mpcAccountInfo!.address,
                               ));
                             }
                           case BlockChains.xrp:
@@ -609,7 +609,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                                   XRPBlockChainService.defaultInstance();
                               return xrpBlockChainService
                                   .getWalletBalance(XrpAccountInfoRequest(
-                                accountId: mpcAccountInfo!.adress,
+                                accountId: mpcAccountInfo!.address,
                               ));
                             }
                           default:
@@ -648,7 +648,7 @@ class _ChainSignatureFunctionsState extends State<ChainSignatureFunctions> {
                           "Format: functionName(typeOfArg1, typeOfArg2, ...)"),
                       SizedBox(height: 5.h),
                       NearActionTextField(
-                        labelText: 'Smart Contract Fuction',
+                        labelText: 'Smart Contract Function',
                         textEditingController: smartContractFunctionController,
                       ),
                       SizedBox(height: 20.h),

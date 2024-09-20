@@ -22,12 +22,12 @@ class XRPRpcClient {
   }
   XRPRpcClient({required this.networkClient});
 
-  Future<Map<String, dynamic>> getAccountInfo(String adress) async {
+  Future<Map<String, dynamic>> getAccountInfo(String address) async {
     final res = await networkClient.postHTTP('', {
       "method": "account_info",
       "params": [
         {
-          "account": adress,
+          "account": address,
           "strict": true,
           "ledger_index": "current",
           "queue": true
@@ -44,10 +44,10 @@ class XRPRpcClient {
   }
 
   Future<String> getAccountBalance(
-    String adress,
+    String address,
   ) async {
     try {
-      final accountData = await getAccountInfo(adress);
+      final accountData = await getAccountInfo(address);
       final amountInDrops = accountData['account_data']['Balance'] as String;
       final amountInXrp = XrpFormatter.dropsToXrp(int.parse(amountInDrops));
       return amountInXrp.toString();
@@ -64,7 +64,7 @@ class XRPRpcClient {
   }
 
   Future<XRPTransactionInfo> getTransactionInfo(
-    String adress,
+    String address,
   ) async {
     final serverInfoRequest = await networkClient.postHTTP('', {
       "method": "server_info",
@@ -75,7 +75,7 @@ class XRPRpcClient {
     final serverInfo = serverInfoRequest.data['result']['info'] as Map;
     late Map<String, dynamic> accountData;
     try {
-      accountData = await getAccountInfo(adress);
+      accountData = await getAccountInfo(address);
     } catch (err) {
       if (err is Map) {
         throw Exception(err['result']["error_message"]);

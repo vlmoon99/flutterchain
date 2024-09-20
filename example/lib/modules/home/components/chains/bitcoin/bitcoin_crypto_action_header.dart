@@ -85,10 +85,7 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                   ?.firstWhereOrNull(
                       (element) => element.derivationPath == derivationModel)
               as BitcoinBlockChainData;
-          // if (bitcoinBlocchanData is BitcoinBlockChainData) {
-          // bitcoinBlocchanData = bitcoinBlocchanData as BitcoinBlockChainData;
-          // log(bitcoinBlocchanData.toString());
-          // }
+
           final currentPublicAddress = bitcoinBlockChainData.publicKey;
 
           final currentPrivAddress = bitcoinBlockChainData.privateKey;
@@ -316,13 +313,13 @@ class _BitcoinCryptoActionHeaderState extends State<BitcoinCryptoActionHeader> {
                         if (snapshot.hasData) {
                           var data = snapshot.data?.data.values.first as Map;
                           var interevlData = data.keys
-                              .map((e) => "${e}: ${data[e] + 7}\n")
+                              .map((e) => "$e: ${data[e] + 7}\n")
                               .join(" ");
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: SelectableText(
-                              '${interevlData}',
-                              style: TextStyle(
+                              interevlData,
+                              style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),

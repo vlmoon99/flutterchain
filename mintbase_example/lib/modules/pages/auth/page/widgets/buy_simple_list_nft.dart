@@ -67,7 +67,7 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
             decoration:
                 const InputDecoration(labelText: 'Input referrer id(optional)'),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           FilledButton(
             onPressed: () async {
               setState(() {
@@ -101,8 +101,8 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
                     }
                   },
                 ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "You can check price nft",
             style: TextStyle(fontSize: 16),
           ),
@@ -133,7 +133,7 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
                     } else {
                       return SelectableText(
                         "Price: ${snapshot.data}",
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       );
                     }
                   },

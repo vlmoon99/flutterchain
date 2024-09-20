@@ -27,4 +27,9 @@ class BlockchainResponse {
 
   @override
   int get hashCode => status.hashCode ^ data.hashCode;
+
+  @override
+  String toString() {
+    return 'BlockchainResponse{status: $status, data: $data}';
+  }
 }

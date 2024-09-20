@@ -29,7 +29,7 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
   bool loading = false;
 
   final TextEditingController mnemonicController = TextEditingController();
-  final TextEditingController acountIDController = TextEditingController();
+  final TextEditingController accountIDController = TextEditingController();
 
   Future<NearBlockChainData> getAccountInfo({required String mnemonic}) async {
     if (mnemonicController.text == null) {
@@ -52,8 +52,8 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
         children: [
           SizedBox(height: 30.h),
           RoundedTextField(
-            textEditingController: acountIDController,
-            labelText: "AcountID",
+            textEditingController: accountIDController,
+            labelText: "AccountID",
           ),
           SizedBox(height: 30.h),
           SizedBox(height: 30.h),
@@ -74,7 +74,7 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
 
                 await Modular.get<AuthController>(key: "AuthController")
                     .loginWithMnemonic(
-                        accountId: acountIDController.text,
+                        accountId: accountIDController.text,
                         publicKey: accountInfo.publicKey,
                         secretKey: accountInfo.privateKey,
                         networkType: widget.networkType);
@@ -85,7 +85,7 @@ class _NearAccountImportMnemonicState extends State<NearAccountImportMnemonic> {
                   key: SecureStorageKeys.info,
                   value: jsonEncode(
                     Authorized(
-                      acountIDController.text,
+                      accountIDController.text,
                       accountInfo.privateKey,
                       widget.networkType,
                     ),

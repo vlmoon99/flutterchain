@@ -69,7 +69,7 @@ class _BitcoinTransferActionState extends State<BitcoinTransferAction> {
                 ),
               ),
             );
-            log("Result of transfer ${value}");
+            log("Result of transfer $value");
           },
         );
       },

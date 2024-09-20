@@ -44,12 +44,12 @@ class BitcoinBlockChainService implements BlockChainService {
       TransferRequest transferRequest) async {
     if (transferRequest is! BitcoinTransferRequest) {
       throw ArgumentError(
-          'Incorrect TransferRequest type. Must be `BitcoinTransferRequest`');
+          'Invalid transferRequest type. Expected: `BitcoinTransferRequest`');
     }
 
     final format = 'SEGWIT';
     final actualFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
-    final accountID = await getAdressBTCSegWitFomat(transferRequest.publicKey);
+    final accountID = await getAddressBTCSegWitFormat(transferRequest.publicKey);
     final transactionInfo = await bitcoinRpcClient.getTransactionInfo(
       accountID,
       transferRequest.transferAmount,
@@ -78,10 +78,10 @@ class BitcoinBlockChainService implements BlockChainService {
   ) async {
     if (accountInfoRequest is! BitcoinAccountInfoRequest) {
       throw ArgumentError(
-          'Invalid accountInfoRequest. It must be of type `BitcoinAccountInfoRequest`');
+          'Invalid accountInfoRequest type. Expected: `BitcoinAccountInfoRequest`');
     }
     final addressId =
-        await getAdressBTCSegWitFomat(accountInfoRequest.accountId);
+        await getAddressBTCSegWitFormat(accountInfoRequest.accountId);
     final res = await bitcoinRpcClient.getAccountBalance(addressId);
     return res;
   }
@@ -94,7 +94,7 @@ class BitcoinBlockChainService implements BlockChainService {
     if (blockChainNetworkEnvironmentSettings
         is! BitcoinNetworkEnvironmentSettings) {
       throw ArgumentError(
-          'Invalid blockChainNetworkEnvironmentSettings. It must be of type `BitcoinNetworkEnvironmentSettings`');
+          'Invalid blockChainNetworkEnvironmentSettings type. Expected: `BitcoinNetworkEnvironmentSettings`');
     }
     bitcoinRpcClient.networkClient
         .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
@@ -149,7 +149,7 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //This method getting Address BTC in P2PKH format from Public Key in Hex format, if needKeyHash = true, return key hash
-  Future<String> getAdressBTCP2PKHFomat(
+  Future<String> getAddressBTCP2PKHFormat(
       String publicKeyHEX, bool needKeyHash) async {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeyP2PKH('$publicKeyHEX', $needKeyHash)");
@@ -157,7 +157,7 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //This method getting Address BTC in SegWit format from Public Key in Hex format
-  Future<String> getAdressBTCSegWitFomat(String publicKeyHEX) async {
+  Future<String> getAddressBTCSegWitFormat(String publicKeyHEX) async {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeySegWit('$publicKeyHEX')");
     return res.toString();

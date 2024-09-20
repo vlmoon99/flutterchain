@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutterchain/flutterchain_lib/network/core/network_interceptors/loggin_intereptor.dart';
+import 'package:flutterchain/flutterchain_lib/network/core/network_interceptors/login_interceptor.dart';
 
 class NetworkClient {
   final Dio dio;

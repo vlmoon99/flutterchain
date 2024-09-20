@@ -259,7 +259,7 @@ class _ChainAccountInfoAndActionsState
             text: "Address: ",
             children: [
               TextSpan(
-                text: widget.accountInfo.adress,
+                text: widget.accountInfo.address,
                 style: const TextStyle(color: AppColors.black),
               ),
             ],
@@ -267,7 +267,7 @@ class _ChainAccountInfoAndActionsState
         ),
         SizedBox(height: 19.h),
         ChainBalanceInfo(
-          chainAddress: widget.accountInfo.adress,
+          chainAddress: widget.accountInfo.address,
           chain: widget.chain,
         ),
         SizedBox(height: 19.h),

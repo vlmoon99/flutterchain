@@ -1,6 +1,10 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
@@ -15,6 +19,7 @@ import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/core/core_repository.dart';
 import 'package:flutterchain/flutterchain_lib/repositories/wallet_repository.dart';
+import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -75,7 +80,7 @@ class FlutterChainLibrary {
   }
 
   Future<BlockChainData> addBlockChainDataByDerivationPath({
-    required DerivationPath derivationPath,
+    required DerivationPathData derivationPath,
     required String blockchainType,
     required String walletID,
   }) async {
@@ -91,11 +96,37 @@ class FlutterChainLibrary {
       throw Exception('Does not exist blockchain service with this name');
     }
 
+    if (blockchainType == BlockChains.concordium) {
+      final identityProvider =
+          (await (blockChainService as ConcordiumBlockChainService)
+                  .getIdentityProviders())
+              .firstWhere(
+        (element) {
+          return element.ipInfo["ipIdentity"] ==
+              (derivationPath as ConcordiumDerivationPath)
+                  .identityProviderIndex;
+        },
+      );
+      final identityInfo = await blockChainService.recoverExistingIdentity(
+        mnemonic: wallet.mnemonic,
+        identityProvider: identityProvider,
+        identityIndex:
+            (derivationPath as ConcordiumDerivationPath).identityIndex,
+      );
+      await blockChainService.createAccount(
+        mnemonic: wallet.mnemonic,
+        identityInfo: identityInfo,
+        identityProviderInfo: identityProvider,
+        derivationPath: derivationPath,
+      );
+    }
+
     final blockChainData = await blockChainService.getBlockChainData(
       mnemonic: wallet.mnemonic,
       passphrase: wallet.passphrase,
       derivationPath: derivationPath,
     );
+
     wallet.blockchainsData![blockchainType] = {
       ...wallet.blockchainsData![blockchainType] ?? {},
       blockChainData
@@ -133,6 +164,9 @@ class FlutterChainLibrary {
         case BlockChains.xrp:
           accountInfoRequest = XrpAccountInfoRequest(accountId: address);
           break;
+        case BlockChains.concordium:
+          accountInfoRequest =
+              ConcordiumAccountInfoRequest(accountAddress: address);
         default:
           throw Exception('Unsupported blockchain type');
       }
@@ -168,6 +202,14 @@ class FlutterChainLibrary {
             break;
           case BlockChains.xrp:
             accountInfoRequest = XrpAccountInfoRequest(accountId: publicKey);
+          case BlockChains.concordium:
+            final address = (wallet?.blockchainsData?[blockchainType]
+                        ?.firstWhereOrNull((element) =>
+                            element.derivationPath == derivationPathData)
+                    as ConcordiumBlockChainData)
+                .accountAddress;
+            accountInfoRequest =
+                ConcordiumAccountInfoRequest(accountAddress: address);
           default:
             throw Exception('Unsupported blockchain type');
         }
@@ -277,6 +319,18 @@ class FlutterChainLibrary {
           transferAmount: transferAmount,
         );
         break;
+      case BlockChains.concordium:
+        final address = (wallet.blockchainsData?[blockchainType]
+                    ?.firstWhereOrNull((element) =>
+                        element.derivationPath == derivationPathData)
+                as ConcordiumBlockChainData)
+            .accountAddress;
+        transferRequest = ConcordiumTransferRequest(
+          senderAddress: address,
+          toAddress: toAddress,
+          privateKey: privateKey,
+          transferAmountInMicroCcd: int.parse(transferAmount),
+        );
       default:
         throw Exception('Unsupported blockchain type');
     }

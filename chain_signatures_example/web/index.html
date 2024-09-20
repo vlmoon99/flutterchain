@@ -32,15 +32,12 @@
   <title>example</title>
   <link rel="manifest" href="manifest.json" />
 
-  
   <!-- This script adds the flutter initialization JS code -->
   <script type="application/javascript" src="flutter.js" defer></script>
   <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
-  <script type="application/javascript" src="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle.js"
-    defer></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/near-api-js@0.44.2/dist/near-api-js.min.js"
-    integrity="sha256-W5o4c5DRZZXMKjuL41jsaoBpE/UHMkrGvIxN9HcjNSY=" crossorigin="anonymous"></script> -->
-
+  <script type="module" src="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle.js"></script>
+  <script type="application/javascript" src="/assets/packages/flutterchain/assets/crypto-lib/dist/dop_bundle.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/packages/flutterchain/assets/crypto-lib/dist/bundle2.js">
 
 </head>
 
