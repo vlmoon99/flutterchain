@@ -14,4 +14,12 @@ class ConcordiumNetworkEnvironmentSettings
     required this.typeOfNetwork,
     this.networkClient,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ConcordiumNetworkEnvironmentSettings &&
+          baseUrl == other.baseUrl &&
+          port == other.port &&
+          typeOfNetwork == other.typeOfNetwork;
 }
