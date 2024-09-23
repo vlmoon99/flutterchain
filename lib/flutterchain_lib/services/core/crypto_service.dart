@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
@@ -20,6 +19,7 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_v
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class FlutterChainService {
   final JsVMService jsVMService;
@@ -174,13 +174,12 @@ class FlutterChainService {
 
   Future<Wallet> generateNewWallet(
       {String passphrase = '', required String walletName}) async {
-    final res =
-        await jsVMService.callJS("window.generateMnemonic('$passphrase')");
-    final data = jsonDecode(res);
+    final mnemonic =
+        await MnemonicGenerator(jsVMService: jsVMService).generateMnemonic();
 
     return Wallet(
       id: '',
-      mnemonic: data['mnemonic'],
+      mnemonic: mnemonic,
       passphrase: passphrase,
       blockchainsData: {},
       name: walletName,

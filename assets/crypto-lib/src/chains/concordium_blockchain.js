@@ -1,5 +1,3 @@
-import { generateMnemonic } from "@scure/bip39";
-import { wordlist } from "@scure/bip39/wordlists/english";
 import * as concordium from "@concordium/web-sdk";
 import * as translator from "../utils/concroduim_rpc_translator";
 import { createIdentityWorker } from "../core/workers/concordiumCreateIdentity.service";
@@ -7,10 +5,6 @@ import { createAccountWorker } from "../core/workers/concordiumCreateAccount.ser
 import { recoverIdentityWorker } from "../core/workers/concrodiumRecoverIdentity.service";
 
 export class ConcordiumBlockchain {
-  generateMnemonic(strength = 128) {
-    strength = parseInt(strength);
-    return generateMnemonic(wordlist, strength);
-  }
 
   async createIdentityRequestParams(
     mnemonic,
