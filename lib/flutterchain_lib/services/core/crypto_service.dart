@@ -9,6 +9,9 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/bitcoin_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/concordium_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -50,12 +53,21 @@ class FlutterChainService {
   }
 
   factory FlutterChainService.defaultInstance() {
+    final jsVmService = getJsVM();
     return FlutterChainService(
-      jsVMService: getJsVM(),
-      nearBlockchainService: NearBlockChainService.defaultInstance(),
-      bitcoinBlockchainService: BitcoinBlockChainService.defaultInstance(),
-      concordiumBlockchainService:
-          ConcordiumBlockChainService.defaultInstance(),
+      jsVMService: jsVmService,
+      nearBlockchainService: NearBlockChainService(
+        jsVMService: jsVmService,
+        nearRpcClient: NearRpcClient.defaultInstance(),
+      ),
+      bitcoinBlockchainService: BitcoinBlockChainService(
+        jsVMService: jsVmService,
+        bitcoinRpcClient: BitcoinRpcClient.defaultInstance(),
+      ),
+      concordiumBlockchainService: ConcordiumBlockChainService(
+        jsVMService: jsVmService,
+        concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
+      ),
     );
   }
 
