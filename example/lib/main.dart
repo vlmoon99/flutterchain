@@ -17,7 +17,7 @@ void main() {
       yield LicenseEntryWithLineBreaks(['assets/fonts/manrope'], license);
     });
     WidgetsFlutterBinding.ensureInitialized();
-    await initFlutterChainLib();
+    initFlutterChainLib();
     await EasyLocalization.ensureInitialized();
     final isAuthorized = await checkIfUserAuthorized();
 
