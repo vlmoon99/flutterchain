@@ -6,7 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutterchain_example/assets/images/icons.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //this is an action buttons
 Widget _buildButton(BuildContext context, AppIcon icon, String label) {
@@ -126,7 +125,7 @@ Widget _buildTokensAndNfts() {
                 style: nearTextStyles.label!.copyWith(
                     color: nearColors.nearBlack,
                     fontWeight: FontWeight.w700,
-                    fontSize: 16.sp)),
+                    fontSize: 10.sp)),
             Text(token['total price']!,
                 style: nearTextStyles.label!
                     .copyWith(color: nearColors.nearGray, fontSize: 12.sp)),
@@ -138,6 +137,7 @@ Widget _buildTokensAndNfts() {
 }
 
 //this is a Wallet page,it's the main page of UI.
+
 class WalletPageTab extends StatelessWidget {
   const WalletPageTab({super.key});
 
@@ -151,144 +151,145 @@ class WalletPageTab extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 241, 240, 240),
         body: SafeArea(
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+              //wallet and icons
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.r),
+                child: SizedBox(
+                  height: 28.h,
+                  width: 375.w,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.settings),
+                      Text(
+                        'Wallet',
+                        style: TextStyle(
+                            color: nearColors.nearBlack,
+                            fontFamily: 'Manrope',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20.sp),
+                      ),
+                      Icon(Icons.qr_code_scanner)
+                    ],
+                  ),
+                ),
+              ),
+
+//balance
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.r),
+                child: Center(
                   child: SizedBox(
-                    height: 28.h,
-                    width: 375.w,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    width: 166.w,
+                    height: 64.h,
+                    child: Column(
                       children: [
-                        Icon(Icons.settings),
-                        Text(
-                          'Wallet',
-                          style: TextStyle(
-                              color: nearColors.nearBlack,
-                              fontFamily: 'Manrope',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.sp),
-                        ),
-                        Icon(Icons.qr_code_scanner)
+                        Text('Total balance',
+                            style: nearTextStyles.label!.copyWith(
+                                color: nearColors.nearGray, fontSize: 16.sp)),
+                        Text('\$2,663.56',
+                            style: nearTextStyles.bodyCopy!.copyWith(
+                                color: nearColors.nearBlack,
+                                fontSize: 26.sp,
+                                fontWeight: FontWeight.w700)),
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.h,
-              ),
-
-              Center(
-                child: SizedBox(
-                  width: 166.w,
-                  height: 64.h,
-                  child: Column(
-                    children: [
-                      Text('Total balance',
-                          style: nearTextStyles.label!.copyWith(
-                              color: nearColors.nearGray, fontSize: 16.sp)),
-                      Text('\$2.663.56',
-                          style: nearTextStyles.bodyCopy!.copyWith(
-                              color: nearColors.nearBlack,
-                              fontSize: 32.sp,
-                              fontWeight: FontWeight.w700)),
-                    ],
+//buttons
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.r),
+                child: Center(
+                  child: SizedBox(
+                    width: 326.w,
+                    height: 80.h,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildButton(
+                            context,
+                            AppIcon(
+                              iconType: IconType.send,
+                              size: 56.h,
+                            ),
+                            'Send'),
+                        _buildButton(
+                            context,
+                            AppIcon(
+                              iconType: IconType.receive,
+                              size: 56.h,
+                            ),
+                            'Receive'),
+                        _buildButton(context,
+                            AppIcon(iconType: IconType.buy, size: 56.h), 'Buy'),
+                        _buildButton(
+                            context,
+                            AppIcon(
+                              iconType: IconType.swap,
+                              size: 56.h,
+                            ),
+                            'Swap'),
+                      ],
+                    ),
                   ),
                 ),
               ),
 
-              SizedBox(
-                width: 326.w,
-                height: 80.h,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildButton(
-                        context,
-                        AppIcon(
-                          iconType: IconType.send,
-                          size: 56.h,
-                        ),
-                        'Send'),
-                    _buildButton(
-                        context,
-                        AppIcon(
-                          iconType: IconType.receive,
-                          size: 56.h,
-                        ),
-                        'Receive'),
-                    _buildButton(context,
-                        AppIcon(iconType: IconType.buy, size: 56.h), 'Buy'),
-                    _buildButton(
-                        context,
-                        AppIcon(
-                          iconType: IconType.swap,
-                          size: 56.h,
-                        ),
-                        'Swap'),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
               // this is a Tokens/NFTs tab
-
-              Container(
-                color: nearColors.nearWhite,
-                child: DefaultTabController(
-                  length: 2,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 327,
-                        height: 56,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16.dg),
-                            color: const Color.fromARGB(255, 241, 240, 240)),
-                        child: TabBar(
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorPadding: EdgeInsets.all(4.5),
-                          indicator: BoxDecoration(
-                            color: nearColors.nearBlack,
-                            borderRadius: BorderRadius.circular(17),
-                          ),
-                          labelColor: nearColors.nearWhite,
-                          labelStyle:
-                              const TextStyle(fontWeight: FontWeight.w600),
-                          unselectedLabelColor: Colors.black,
-                          tabs: const [
-                            Tab(
-                              text: 'Tokens',
+              Expanded(
+                child: Container(
+                  color: nearColors.nearWhite,
+                  child: DefaultTabController(
+                    length: 2,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 327.w,
+                          height: 56.h,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.dg),
+                              color: const Color.fromARGB(255, 241, 240, 240)),
+                          child: TabBar(
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            indicatorPadding: EdgeInsets.all(4.5.r),
+                            indicator: BoxDecoration(
+                              color: nearColors.nearBlack,
+                              borderRadius: BorderRadius.circular(17),
                             ),
-                            Tab(
-                              text: 'NFTs',
-                            )
-                          ],
-                        ),
-                      ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
-                      Container(
-                        color: nearColors.nearWhite,
-                        height: 320.h,
-                        child: TabBarView(
-                          children: [
-                            _buildTokensAndNfts(),
-                            const Center(
-                              child: Text(
-                                'this is nft tab',
-                                style: TextStyle(color: Colors.black),
+                            labelColor: nearColors.nearWhite,
+                            labelStyle:
+                                const TextStyle(fontWeight: FontWeight.w600),
+                            unselectedLabelColor: Colors.black,
+                            tabs: const [
+                              Tab(
+                                text: 'Tokens',
                               ),
-                            ),
-                          ],
+                              Tab(
+                                text: 'NFTs',
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              _buildTokensAndNfts(),
+                              const Center(
+                                child: Text(
+                                  'this is nft tab',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -331,14 +332,14 @@ class HistoryTab extends StatelessWidget {
   }
 }
 
-class WalletPage extends StatefulWidget {
-  const WalletPage({super.key});
+class MobileWalletScaffold extends StatefulWidget {
+  const MobileWalletScaffold({super.key});
 
   @override
-  State<WalletPage> createState() => _WalletPageState();
+  State<MobileWalletScaffold> createState() => _MobileWalletScaffoldState();
 }
 
-class _WalletPageState extends State<WalletPage> {
+class _MobileWalletScaffoldState extends State<MobileWalletScaffold> {
   final PageController _pageController = PageController();
 
   int _currentPageIndex = 0;
