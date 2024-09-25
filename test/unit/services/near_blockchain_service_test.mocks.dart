@@ -16,15 +16,15 @@ import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transa
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transaction_info.dart'
     as _i6;
 import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart'
-    as _i13;
+    as _i14;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart'
     as _i7;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart'
     as _i4;
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart'
-    as _i12;
+    as _i13;
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
-    as _i11;
+    as _i12;
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart' as _i5;
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart'
     as _i3;
@@ -33,7 +33,7 @@ import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_se
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i14;
+import 'package:mockito/src/dummies.dart' as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -151,8 +151,26 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i3.NearRpcClient);
 
   @override
+  _i10.Future<String> generateMnemonic({int? strength = 128}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateMnemonic,
+          [],
+          {#strength: strength},
+        ),
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
+          this,
+          Invocation.method(
+            #generateMnemonic,
+            [],
+            {#strength: strength},
+          ),
+        )),
+      ) as _i10.Future<String>);
+
+  @override
   _i10.Future<_i4.BlockchainResponse> sendTransferNativeCoin(
-          _i11.TransferRequest? transferRequest) =>
+          _i12.TransferRequest? transferRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendTransferNativeCoin,
@@ -170,7 +188,7 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i10.Future<_i4.BlockchainResponse> callSmartContractFunction(
-          _i12.BlockChainSmartContractArguments? smartContractArguments) =>
+          _i13.BlockChainSmartContractArguments? smartContractArguments) =>
       (super.noSuchMethod(
         Invocation.method(
           #callSmartContractFunction,
@@ -219,13 +237,13 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i10.Future<String> getWalletBalance(
-          _i13.AccountInfoRequest? accountInfoRequest) =>
+          _i14.AccountInfoRequest? accountInfoRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #getWalletBalance,
           [accountInfoRequest],
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getWalletBalance,
@@ -381,7 +399,7 @@ class MockNearBlockChainService extends _i1.Mock
             #actions: actions,
           },
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #signNearActions,
@@ -497,7 +515,7 @@ class MockNearBlockChainService extends _i1.Mock
           [],
           {#currentBlockchainData: currentBlockchainData},
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #exportPrivateKeyToTheNearApiJsFormat,
@@ -516,7 +534,7 @@ class MockNearBlockChainService extends _i1.Mock
           [],
           {#hexEncodedPubKey: hexEncodedPubKey},
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getBase58PubKeyFromHexValue,
@@ -534,7 +552,7 @@ class MockNearBlockChainService extends _i1.Mock
           #getPublicKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getPublicKeyFromSecretKeyFromNearApiJSFormat,
@@ -551,7 +569,7 @@ class MockNearBlockChainService extends _i1.Mock
           #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
           [base58PrivateKey],
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getPrivateKeyFromSecretKeyFromNearApiJSFormat,
@@ -610,7 +628,7 @@ class MockNearBlockChainService extends _i1.Mock
             privateNearAPIjsFormat,
           ],
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #authWithNearWallets,
@@ -683,7 +701,7 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcContract: mpcContract,
           },
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #signEVMTransactionWithMPC,
@@ -725,7 +743,7 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcContract: mpcContract,
           },
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #signBTCTransactionWithMPC,
@@ -765,7 +783,7 @@ class MockNearBlockChainService extends _i1.Mock
             #mpcContract: mpcContract,
           },
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #signXRPTransactionWithMPC,
@@ -1021,7 +1039,7 @@ class MockNearBlockChainService extends _i1.Mock
             #metadata: metadata,
           },
         ),
-        returnValue: _i14.dummyValue<String>(
+        returnValue: _i11.dummyValue<String>(
           this,
           Invocation.method(
             #mintingDeposit,
@@ -1044,7 +1062,7 @@ class MockNearBlockChainService extends _i1.Mock
           [],
           {#file: file},
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #uploadFileToArweave,
@@ -1337,7 +1355,7 @@ class MockNearBlockChainService extends _i1.Mock
             #tokenId: tokenId,
           },
         ),
-        returnValue: _i10.Future<String>.value(_i14.dummyValue<String>(
+        returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #getPriceForBuySimpleListNFT,

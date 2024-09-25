@@ -25,15 +25,16 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_e
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class ConcordiumBlockChainService implements BlockChainService {
   final JsVMService jsVMService;
   ConcordiumRpcClient concordiumRpcClient;
 
   ConcordiumBlockChainService({
+    JsVMService? jsVMService,
     required this.concordiumRpcClient,
-    required this.jsVMService,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory ConcordiumBlockChainService.defaultInstance() {
     return ConcordiumBlockChainService(
@@ -99,9 +100,11 @@ class ConcordiumBlockChainService implements BlockChainService {
   /// Parameters:
   /// - `strength`: The strength of the mnemonic in bits (128-256).
   ///
-  Future<String> generateMnemonic({int strength = 128}) async {
-    return await jsVMService
-        .callJS("window.ConcordiumBlockchain.generateMnemonic('$strength')");
+  Future<String> generateMnemonic({
+    int strength = 128,
+  }) async {
+    return MnemonicGenerator(jsVMService: jsVMService)
+        .generateMnemonic(strength: strength);
   }
 
   /// Returns a list of identity providers for the Concordium blockchain.

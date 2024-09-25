@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
@@ -9,6 +8,9 @@ import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.da
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/bitcoin_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/concordium_rpc_client.dart';
+import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -17,17 +19,18 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_v
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class FlutterChainService {
   final JsVMService jsVMService;
   final Map<String, BlockChainService> blockchainServices = {};
 
   FlutterChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     NearBlockChainService? nearBlockchainService,
     BitcoinBlockChainService? bitcoinBlockchainService,
     ConcordiumBlockChainService? concordiumBlockchainService,
-  }) {
+  }) : jsVMService = jsVMService ?? getJsVM() {
     //Add blockChainServices
     if (nearBlockchainService != null) {
       blockchainServices.putIfAbsent(
@@ -50,12 +53,21 @@ class FlutterChainService {
   }
 
   factory FlutterChainService.defaultInstance() {
+    final jsVmService = getJsVM();
     return FlutterChainService(
-      jsVMService: getJsVM(),
-      nearBlockchainService: NearBlockChainService.defaultInstance(),
-      bitcoinBlockchainService: BitcoinBlockChainService.defaultInstance(),
-      concordiumBlockchainService:
-          ConcordiumBlockChainService.defaultInstance(),
+      jsVMService: jsVmService,
+      nearBlockchainService: NearBlockChainService(
+        jsVMService: jsVmService,
+        nearRpcClient: NearRpcClient.defaultInstance(),
+      ),
+      bitcoinBlockchainService: BitcoinBlockChainService(
+        jsVMService: jsVmService,
+        bitcoinRpcClient: BitcoinRpcClient.defaultInstance(),
+      ),
+      concordiumBlockchainService: ConcordiumBlockChainService(
+        jsVMService: jsVmService,
+        concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
+      ),
     );
   }
 
@@ -162,13 +174,12 @@ class FlutterChainService {
 
   Future<Wallet> generateNewWallet(
       {String passphrase = '', required String walletName}) async {
-    final res =
-        await jsVMService.callJS("window.generateMnemonic('$passphrase')");
-    final data = jsonDecode(res);
+    final mnemonic =
+        await MnemonicGenerator(jsVMService: jsVMService).generateMnemonic();
 
     return Wallet(
       id: '',
-      mnemonic: data['mnemonic'],
+      mnemonic: mnemonic,
       passphrase: passphrase,
       blockchainsData: {},
       name: walletName,

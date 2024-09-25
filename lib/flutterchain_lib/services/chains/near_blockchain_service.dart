@@ -31,6 +31,7 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_v
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class NearBlockChainService
     implements BlockchainServiceWithSmartContractCallSupport {
@@ -38,9 +39,9 @@ class NearBlockChainService
   final NearRpcClient nearRpcClient;
 
   NearBlockChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     required this.nearRpcClient,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory NearBlockChainService.defaultInstance() {
     return NearBlockChainService(
@@ -50,6 +51,14 @@ class NearBlockChainService
   }
 
   //Core
+
+  //Generate mnemonic
+  Future<String> generateMnemonic({
+    int strength = 128,
+  }) async {
+    return MnemonicGenerator(jsVMService: jsVMService)
+        .generateMnemonic(strength: strength);
+  }
 
   //Send Near tokens thought near blockchain
   @override
@@ -188,6 +197,7 @@ class NearBlockChainService
     String? passphrase,
     DerivationPathData? derivationPath,
   }) async {
+    passphrase ??= "";
     final rawFunction = derivationPath == null
         ? "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
         : """window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";

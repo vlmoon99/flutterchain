@@ -174,8 +174,8 @@ class EVMRpcClient {
 }
 
 class EVMNetworkClient extends NetworkClient {
-  EVMNetworkClient({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(
+  EVMNetworkClient({required super.baseUrl, super.dio}) {
+    super.dio.interceptors.add(
       RetryInterceptor(
         dio: dio,
         logPrint: log,

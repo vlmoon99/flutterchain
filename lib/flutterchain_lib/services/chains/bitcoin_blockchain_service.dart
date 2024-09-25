@@ -19,15 +19,16 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_v
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class BitcoinBlockChainService implements BlockChainService {
   final JsVMService jsVMService;
   final BitcoinRpcClient bitcoinRpcClient;
 
   BitcoinBlockChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     required this.bitcoinRpcClient,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory BitcoinBlockChainService.defaultInstance() {
     return BitcoinBlockChainService(
@@ -37,6 +38,14 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //Core
+
+  //Generate mnemonic
+  Future<String> generateMnemonic({
+    int strength = 128,
+  }) async {
+    return MnemonicGenerator(jsVMService: jsVMService)
+        .generateMnemonic(strength: strength);
+  }
 
   //Send Bitcoin tokens thought bitcoin blockchain
   @override
@@ -49,7 +58,8 @@ class BitcoinBlockChainService implements BlockChainService {
 
     final format = 'SEGWIT';
     final actualFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
-    final accountID = await getAddressBTCSegWitFormat(transferRequest.publicKey);
+    final accountID =
+        await getAddressBTCSegWitFormat(transferRequest.publicKey);
     final transactionInfo = await bitcoinRpcClient.getTransactionInfo(
       accountID,
       transferRequest.transferAmount,
