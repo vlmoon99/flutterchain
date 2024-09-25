@@ -1,6 +1,6 @@
 <div align="center">
 
-![](https://i.ibb.co/zx28GX3/Flutter-Chain-Logo.png)
+![](https://raw.githubusercontent.com/ArturLevchuk/media_storage/refs/heads/main/FlutterChainLogo.png)
 
 </div>
 
