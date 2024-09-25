@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutterchain_example/modules/wallet/pages/core/responsiveUI/scaffolds/desktopWalletScaffold.dart';
-import 'package:flutterchain_example/modules/wallet/pages/core/responsiveUI/scaffolds/mobileWalletScaffold.dart';
-import 'package:flutterchain_example/modules/wallet/pages/core/responsiveUI/scaffolds/tabletWalletScaffold.dart';
+import 'package:flutterchain_example/modules/wallet/pages/core/components/scaffolds/desktopWalletScaffold.dart';
+import 'package:flutterchain_example/modules/wallet/pages/core/components/scaffolds/mobileWalletScaffold.dart';
+import 'package:flutterchain_example/modules/wallet/pages/core/components/scaffolds/tabletWalletScaffold.dart';
 
 class ResponsiveWalletUi extends StatelessWidget {
   final mobileWalletScaffold;
   final tabletWalletScaffold;
   final desktopWalletScaffold;
+  
   const ResponsiveWalletUi(
       {super.key,
       this.mobileWalletScaffold,

@@ -1,5 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/modules/wallet/pages/WalletPage.dart';
+import 'package:flutterchain_example/modules/wallet/pages/walletPage.dart';
 
 import 'package:flutterchain_example/routes/routes.dart';
 
