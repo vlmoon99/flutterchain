@@ -39,9 +39,9 @@ class NearBlockChainService
   final NearRpcClient nearRpcClient;
 
   NearBlockChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     required this.nearRpcClient,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory NearBlockChainService.defaultInstance() {
     return NearBlockChainService(

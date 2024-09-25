@@ -32,9 +32,9 @@ class ConcordiumBlockChainService implements BlockChainService {
   ConcordiumRpcClient concordiumRpcClient;
 
   ConcordiumBlockChainService({
+    JsVMService? jsVMService,
     required this.concordiumRpcClient,
-    required this.jsVMService,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory ConcordiumBlockChainService.defaultInstance() {
     return ConcordiumBlockChainService(

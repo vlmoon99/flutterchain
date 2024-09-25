@@ -26,11 +26,11 @@ class FlutterChainService {
   final Map<String, BlockChainService> blockchainServices = {};
 
   FlutterChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     NearBlockChainService? nearBlockchainService,
     BitcoinBlockChainService? bitcoinBlockchainService,
     ConcordiumBlockChainService? concordiumBlockchainService,
-  }) {
+  }) : jsVMService = jsVMService ?? getJsVM() {
     //Add blockChainServices
     if (nearBlockchainService != null) {
       blockchainServices.putIfAbsent(

@@ -153,8 +153,8 @@ class XRPRpcClient {
 }
 
 class XRPNetworkClient extends NetworkClient {
-  XRPNetworkClient({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(
+  XRPNetworkClient({required super.baseUrl, super.dio}) {
+    super.dio.interceptors.add(
       RetryInterceptor(
         dio: dio,
         logPrint: dev.log,

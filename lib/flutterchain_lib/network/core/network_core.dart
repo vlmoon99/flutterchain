@@ -4,15 +4,16 @@ import 'package:dio/dio.dart';
 import 'package:flutterchain/flutterchain_lib/network/core/network_interceptors/login_interceptor.dart';
 
 class NetworkClient {
-  final Dio dio;
+  late final Dio dio;
   NetworkClient({
-    required this.dio,
+    Dio? dio,
     required String baseUrl,
   }) {
-    dio.options.baseUrl = baseUrl;
-    dio.options.connectTimeout = const Duration(milliseconds: 5000);
-    dio.options.receiveTimeout = const Duration(milliseconds: 5000);
-    dio.interceptors.add(LoggingInterceptor());
+    this.dio = dio ?? Dio();
+    this.dio.options.baseUrl = baseUrl;
+    this.dio.options.connectTimeout = const Duration(milliseconds: 5000);
+    this.dio.options.receiveTimeout = const Duration(milliseconds: 5000);
+    this.dio.interceptors.add(LoggingInterceptor());
   }
 
   void setUrl(String newUrl) {

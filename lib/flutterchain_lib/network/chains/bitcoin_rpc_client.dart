@@ -205,8 +205,8 @@ class BitcoinRpcClient {
 }
 
 class BitcoinNetworkClient extends NetworkClient {
-  BitcoinNetworkClient({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(
+  BitcoinNetworkClient({required super.baseUrl, super.dio}) {
+    super.dio.interceptors.add(
       RetryInterceptor(
         dio: dio,
         logPrint: log,

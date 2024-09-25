@@ -272,21 +272,21 @@ class ConcordiumGrpcConnectionClient {
 }
 
 class ConcordiumNetworkClient extends NetworkClient {
-  ConcordiumNetworkClient({required super.dio, required super.baseUrl}) {
-    dio.interceptors.add(
-      RetryInterceptor(
-        dio: dio,
-        logPrint: log,
-        retries: 5,
-        retryDelays: const [
-          Duration(seconds: 2),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-        ],
-      ),
-    );
+  ConcordiumNetworkClient({super.dio, required super.baseUrl}) {
+    super.dio.interceptors.add(
+          RetryInterceptor(
+            dio: dio,
+            logPrint: log,
+            retries: 5,
+            retryDelays: const [
+              Duration(seconds: 2),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+            ],
+          ),
+        );
   }
 
   factory ConcordiumNetworkClient.defaultInstance() {

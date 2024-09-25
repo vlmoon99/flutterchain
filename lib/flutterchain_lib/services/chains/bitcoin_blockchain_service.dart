@@ -26,9 +26,9 @@ class BitcoinBlockChainService implements BlockChainService {
   final BitcoinRpcClient bitcoinRpcClient;
 
   BitcoinBlockChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     required this.bitcoinRpcClient,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory BitcoinBlockChainService.defaultInstance() {
     return BitcoinBlockChainService(

@@ -353,20 +353,20 @@ class NearRpcClient {
 }
 
 class NearNetworkClient extends NetworkClient {
-  NearNetworkClient({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(
-      RetryInterceptor(
-        dio: dio,
-        logPrint: log,
-        retries: 5,
-        retryDelays: const [
-          Duration(seconds: 2),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-        ],
-      ),
-    );
+  NearNetworkClient({required super.baseUrl, super.dio}) {
+    super.dio.interceptors.add(
+          RetryInterceptor(
+            dio: dio,
+            logPrint: log,
+            retries: 5,
+            retryDelays: const [
+              Duration(seconds: 2),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+            ],
+          ),
+        );
   }
 }
