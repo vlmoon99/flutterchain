@@ -197,6 +197,7 @@ class NearBlockChainService
     String? passphrase,
     DerivationPathData? derivationPath,
   }) async {
+    passphrase ??= "";
     final rawFunction = derivationPath == null
         ? "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
         : """window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";
