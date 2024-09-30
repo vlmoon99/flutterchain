@@ -27,13 +27,14 @@ dependencies:
   flutter_modular: 5.0.3
   flutter_screenutil: ^5.7.0
   fluentui_system_icons: ^1.1.255
+  flutter_inappwebview_ios: 1.1.1
   flutterchain:
     path: ../
   hex: 0.2.0
   json_serializable: 6.6.1
   mockito: ^5.4.4
   qr_flutter: ^4.1.0
-  rxdart: 0.27.7
+  rxdart: 0.28.0
   tap_debouncer: 2.0.2
   url_launcher: ^6.1.11
 dev_dependencies:
@@ -54,7 +55,7 @@ flutter:
   assets:
     - assets/translations/
     - assets/fonts/
-    - assets/images/icons/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

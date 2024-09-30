@@ -1,0 +1,12 @@
+// This is a generated file; do not edit or check into version control.
+FLUTTER_ROOT=/Users/hello/fvm/versions/stable
+FLUTTER_APPLICATION_PATH=/Users/hello/flutterchain-4/example
+COCOAPODS_PARALLEL_CODE_SIGN=true
+FLUTTER_TARGET=/Users/hello/flutterchain-4/example/lib/main.dart
+FLUTTER_BUILD_DIR=build
+FLUTTER_BUILD_NAME=1.0.0
+FLUTTER_BUILD_NUMBER=1.0.0
+DART_OBFUSCATION=false
+TRACK_WIDGET_CREATION=true
+TREE_SHAKE_ICONS=false
+PACKAGE_CONFIG=/Users/hello/flutterchain-4/example/.dart_tool/package_config.json
