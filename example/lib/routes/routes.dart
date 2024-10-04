@@ -10,6 +10,7 @@ class _Wallet extends RouteClass {
   @override
   String module = '/wallet';
   String home = '/';
+  String send = '/send';
 }
 
 class _Auth extends RouteClass {

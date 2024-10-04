@@ -28,6 +28,10 @@ class Images {
       '/Users/hello/flutterchain-4/example/lib/assets/images/button_icons/auroraTokenIcon.png';
   static const usnIcon =
       '/Users/hello/flutterchain-4/example/lib/assets/images/button_icons/usnTokenIcon.png';
+  static const tomasNftICon =
+      '/Users/hello/flutterchain-4/example/lib/assets/images/nft_icons/tomas_nft_icon.png';
+  static const clausNftICon =
+      '/Users/hello/flutterchain-4/example/lib/assets/images/nft_icons/claus_nft_icon.png';
 }
 
 enum IconType {
@@ -43,7 +47,9 @@ enum IconType {
   nearIcon,
   deipIcon,
   auroraIcon,
-  usnIcon
+  usnIcon,
+  tomasNftIcon,
+  clausNftIcon,
 }
 
 class AppIcon extends StatelessWidget {
@@ -99,6 +105,12 @@ class AppIcon extends StatelessWidget {
         break;
       case IconType.usnIcon:
         iconPath = Images.usnIcon;
+        break;
+      case IconType.tomasNftIcon:
+        iconPath = Images.tomasNftICon;
+        break;
+      case IconType.clausNftIcon:
+        iconPath = Images.clausNftICon;
         break;
     }
     return Image.asset(

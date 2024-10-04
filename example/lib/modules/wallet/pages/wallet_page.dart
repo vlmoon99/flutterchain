@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutterchain_example/modules/wallet/pages/core/components/scaffolds/desktop_wallet_scaffold.dart';
-import 'package:flutterchain_example/modules/wallet/pages/core/components/scaffolds/mobile_wallet_scaffold.dart';
-import 'package:flutterchain_example/modules/wallet/pages/core/components/scaffolds/tablet_wallet_scaffold.dart';
+
+import 'package:flutterchain_example/modules/wallet/pages/core/wallet_page_scaffolds/desktop_wallet_scaffold.dart';
+import 'package:flutterchain_example/modules/wallet/pages/core/wallet_page_scaffolds/mobile_wallet_scaffold.dart';
+import 'package:flutterchain_example/modules/wallet/pages/core/wallet_page_scaffolds/tablet_wallet_scaffold.dart';
 
 class ResponsiveWalletUi extends StatelessWidget {
   final mobileWalletScaffold;
@@ -37,10 +37,9 @@ class WalletPage extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: ResponsiveWalletUi(
-        mobileWalletScaffold: MobileWalletScaffold(),
-        tabletWalletScaffold: TabletWalletScaffold(),
-        desktopWalletScaffold: DesktopWalletScaffold(),
-      ),
+          mobileWalletScaffold: MobileWalletScaffold(),
+          tabletWalletScaffold: TabletWalletScaffold(),
+          desktopWalletScaffold: DesktopWalletScaffold()),
     );
   }
 }
