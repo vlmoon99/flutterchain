@@ -8,6 +8,6 @@ class WalletModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(Routes.wallet.home, child: (_, args) => const WalletPage()),
-    ChildRoute(Routes.wallet.send, child: (_, args) => const SendPage()),
+    ChildRoute(Routes.wallet.send, child: (_, args) => const SettingsPage()),
   ];
 }

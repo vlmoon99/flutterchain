@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 
-class SendPage extends StatelessWidget {
-  const SendPage({
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({
     super.key,
   });
 
