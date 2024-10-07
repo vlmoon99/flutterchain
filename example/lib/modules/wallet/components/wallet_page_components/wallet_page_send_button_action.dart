@@ -1,17 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain_example/routes/routes.dart';
 
-class SendPage extends StatelessWidget {
-  const SendPage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 115, 111, 111),
-      body: Center(
-        child: Container(
+Widget WalletPageSendButton() {
+  {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+      child: AlertDialog(
+        title: const Center(child: Text('Send Crypto')),
+        content: Container(
             padding: const EdgeInsets.only(top: 33),
             height: 470,
             width: 384,
@@ -47,48 +46,50 @@ class SendPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  // ignore: non_constant_identifier_names
-  Widget _BuildId(
-    String name,
-    dynamic second,
-  ) {
-    return Column(
-      children: [
-        const Padding(padding: EdgeInsets.only(top: 28)),
-        Text(name),
-        SizedBox(
-          height: 38,
-          width: 286,
-          child: TextField(
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintText: second,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget buildButton(String textt, Color color, Color textcolor) {
-    return Container(
-      height: 40,
-      width: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        color: color,
-      ),
-      child: Center(
-        child: InkWell(
-          onTap: () => Modular.to.navigate('/'),
-          child: Text(
-            textt,
-            style: TextStyle(
-                color: textcolor, fontSize: 16, fontWeight: FontWeight.bold),
+Widget _BuildId(
+  String name,
+  dynamic second,
+) {
+  return Column(
+    children: [
+      const Padding(padding: EdgeInsets.only(top: 28)),
+      Text(name),
+      SizedBox(
+        height: 38,
+        width: 286,
+        child: TextField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: second,
           ),
         ),
+      )
+    ],
+  );
+}
+
+Widget buildButton(String textt, Color color, Color textcolor) {
+  return Container(
+    height: 40,
+    width: 70,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(4),
+      color: color,
+    ),
+    child: Center(
+      child: TextButton(
+        onPressed: () {
+          Modular.to.pop();
+        },
+        child: Center(
+            child: Text(
+          textt,
+          style: TextStyle(
+              color: textcolor, fontSize: 16, fontWeight: FontWeight.bold),
+        )),
       ),
-    );
-  }
+    ),
+  );
 }

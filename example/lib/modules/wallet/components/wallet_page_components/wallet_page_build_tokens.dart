@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutterchain_example/assets/images/icons.dart';
+import '../../../../../assets/icon_images/icons.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 Widget buildTokens() {
@@ -41,6 +41,61 @@ Widget buildTokens() {
       'price': '\$0.34',
       'amount': '555.94874 DEIP',
       'change': '⌄  0,97%',
+      'total price': '\$0.76'
+    },
+    {
+      'icon': const AppIcon(
+        iconType: IconType.auroraIcon,
+        size: 40,
+      ),
+      'name': "Aurora",
+      'price': '\$6.34',
+      'amount': '300 Aurora',
+      'change': '^ 2.6%',
+      'total price': '\$1137'
+    },
+    {
+      'icon': const AppIcon(
+        iconType: IconType.usnIcon,
+        size: 40,
+      ),
+      'name': "USN",
+      'price': '\$1.33',
+      'amount': '205 USN',
+      'change': '^ 38.76%',
+      'total price': '\$276.65'
+    },
+    {
+      'icon': const AppIcon(
+        iconType: IconType.nearIcon,
+        size: 40,
+      ),
+      'name': "NEAR",
+      'price': '\$6.34',
+      'amount': '198.24 NEAR',
+      'change': '^ 2.6%',
+      'total price': '\$1251.44'
+    },
+    {
+      'icon': const AppIcon(
+        iconType: IconType.octopusIcon,
+        size: 40,
+      ),
+      'name': "Octopus Network",
+      'price': '\$0.34',
+      'amount': '0.6317 OCT',
+      'change': '^ 3.6%',
+      'total price': '\$0.70'
+    },
+    {
+      'icon': const AppIcon(
+        iconType: IconType.deipIcon,
+        size: 40,
+      ),
+      'name': "DEIP Token",
+      'price': '\$0.34',
+      'amount': '555.94874 DEIP',
+      'change': ' ⌄  0,97%',
       'total price': '\$0.76'
     },
     {

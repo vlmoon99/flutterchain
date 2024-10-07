@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/assets/images/icons.dart';
+import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_qr_code_button.dart';
+import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_send_button_action.dart';
+import 'package:flutterchain_example/routes/routes.dart';
+import '../../../../assets/icon_images/icons.dart';
 import 'package:flutterchain_example/modules/wallet/components/wallet_page_build_nfts.dart';
 import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_build_button.dart';
 import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_build_tokens.dart';
@@ -60,14 +63,13 @@ class WalletPageTab extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.r),
                 child: SizedBox(
-                  height: 28.h,
-                  width: 375.w,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
                         onTap: () {
-                          Modular.to.navigate('/send');
+                          Modular.to.navigate(
+                              Routes.wallet.getRoute(Routes.wallet.send));
                         },
                         child: const Icon(Icons.settings),
                       ),
@@ -79,7 +81,17 @@ class WalletPageTab extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             fontSize: 20.sp),
                       ),
-                      const Icon(Icons.qr_code_scanner)
+                      IconButton(
+                        icon: Icon(Icons.qr_code),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return WalletPageQrCodeButton();
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -117,29 +129,47 @@ class WalletPageTab extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        buildButton(
-                            context,
-                            AppIcon(
-                              iconType: IconType.send,
-                              size: 56.h,
-                            ),
-                            'Send'),
-                        buildButton(
-                            context,
-                            AppIcon(
-                              iconType: IconType.receive,
-                              size: 56.h,
-                            ),
-                            'Receive'),
-                        buildButton(context,
-                            AppIcon(iconType: IconType.buy, size: 56.h), 'Buy'),
-                        buildButton(
-                            context,
-                            AppIcon(
-                              iconType: IconType.swap,
-                              size: 56.h,
-                            ),
-                            'Swap'),
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return WalletPageSendButton();
+                              },
+                            );
+                          },
+                          child: buildActionButtons(
+                              context,
+                              AppIcon(
+                                iconType: IconType.send,
+                                size: 56.h,
+                              ),
+                              'Send'),
+                        ),
+                        InkWell(
+                          child: buildActionButtons(
+                              context,
+                              AppIcon(
+                                iconType: IconType.receive,
+                                size: 56.h,
+                              ),
+                              'Receive'),
+                        ),
+                        InkWell(
+                          child: buildActionButtons(
+                              context,
+                              AppIcon(iconType: IconType.buy, size: 56.h),
+                              'Buy'),
+                        ),
+                        InkWell(
+                          child: buildActionButtons(
+                              context,
+                              AppIcon(
+                                iconType: IconType.swap,
+                                size: 56.h,
+                              ),
+                              'Swap'),
+                        ),
                       ],
                     ),
                   ),
@@ -186,16 +216,7 @@ class WalletPageTab extends StatelessWidget {
                         ),
                         Expanded(
                           child: TabBarView(
-                            children: [
-                              buildTokens(),
-                              BuildNft()
-                              // const Center(
-                              //   child: Text(
-                              //     'this is nft tab',
-                              //     style: TextStyle(color: Colors.black),
-                              //   ),
-                              // ),
-                            ],
+                            children: [buildTokens(), BuildNft()],
                           ),
                         ),
                       ],

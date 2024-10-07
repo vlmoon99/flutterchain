@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutterchain_example/assets/images/icons.dart';
+import '../../../../assets/icon_images/icons.dart';
 
 Widget BuildNft() {
   List<Map<dynamic, dynamic>> nfts = [

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/assets/images/icons.dart';
+import '../../../../../assets/icon_images/icons.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
-Widget buildButton(BuildContext context, AppIcon icon, String label) {
+Widget buildActionButtons(
+  BuildContext context,
+  AppIcon icon,
+  String label,
+) {
   final theme = Modular.get<AppTheme>();
   final nearColors = theme.getTheme().extension<NearColors>()!;
   final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
