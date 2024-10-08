@@ -71,7 +71,7 @@ class WalletPageTab extends StatelessWidget {
                           Modular.to.navigate(
                               Routes.wallet.getRoute(Routes.wallet.send));
                         },
-                        child: const Icon(Icons.settings),
+                        child: const AppIcon(iconType: IconType.settingsIcon),
                       ),
                       Text(
                         'Wallet',
@@ -82,7 +82,7 @@ class WalletPageTab extends StatelessWidget {
                             fontSize: 20.sp),
                       ),
                       IconButton(
-                        icon: Icon(Icons.qr_code),
+                        icon: const AppIcon(iconType: IconType.scanIcon),
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -106,14 +106,14 @@ class WalletPageTab extends StatelessWidget {
                     height: 64.h,
                     child: Column(
                       children: [
-                        Text('Total balance',
+                        Text('Total Balance',
                             style: nearTextStyles.label!.copyWith(
                                 color: nearColors.nearGray, fontSize: 16.sp)),
                         Text('\$2,663.56',
                             style: nearTextStyles.bodyCopy!.copyWith(
                                 color: nearColors.nearBlack,
-                                fontSize: 26.sp,
-                                fontWeight: FontWeight.w700)),
+                                fontSize: 33.sp,
+                                fontWeight: FontWeight.w900)),
                       ],
                     ),
                   ),
@@ -121,7 +121,7 @@ class WalletPageTab extends StatelessWidget {
               ),
 //buttons
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.r),
+                padding: EdgeInsets.symmetric(vertical: 10.r),
                 child: Center(
                   child: SizedBox(
                     width: 326.w,
@@ -179,11 +179,19 @@ class WalletPageTab extends StatelessWidget {
               // this is a Tokens/NFTs tab
               Expanded(
                 child: Container(
-                  color: nearColors.nearWhite,
+                  decoration: BoxDecoration(
+                      color: nearColors.nearWhite,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16.dg),
+                          topRight: Radius.circular(16.dg))),
                   child: DefaultTabController(
                     length: 2,
                     child: Column(
                       children: [
+                        SizedBox(
+                          width: 375.w,
+                          height: 10.h,
+                        ),
                         Container(
                           width: 327.w,
                           height: 56.h,
@@ -195,7 +203,7 @@ class WalletPageTab extends StatelessWidget {
                             indicatorPadding: EdgeInsets.all(4.5.r),
                             indicator: BoxDecoration(
                               color: nearColors.nearBlack,
-                              borderRadius: BorderRadius.circular(17),
+                              borderRadius: BorderRadius.circular(17.dg),
                             ),
                             labelColor: nearColors.nearWhite,
                             labelStyle:
@@ -203,10 +211,16 @@ class WalletPageTab extends StatelessWidget {
                             unselectedLabelColor: Colors.black,
                             tabs: const [
                               Tab(
-                                text: 'Tokens',
+                                child: Text(
+                                  "Tokens",
+                                  style: TextStyle(fontSize: 17),
+                                ),
                               ),
                               Tab(
-                                text: 'NFTs',
+                                child: Text(
+                                  "NFTs",
+                                  style: TextStyle(fontSize: 17),
+                                ),
                               )
                             ],
                           ),

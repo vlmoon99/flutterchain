@@ -16,7 +16,7 @@ environment:
 dependencies:
   bs58: 1.0.2
   collection: ^1.17.1
-  connectivity_plus: 3.0.3
+  connectivity_plus: ^6.0.5
   cupertino_icons: ^1.0.2
   dio: ^5.4.0
   dio_smart_retry: ^6.0.0

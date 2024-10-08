@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/routes/routes.dart';
 
 Widget WalletPageSendButton() {
   {
@@ -25,9 +24,9 @@ Widget WalletPageSendButton() {
               child: Column(
                 children: [
                   const Text('SendPage Crypto'),
-                  _BuildId("Account ID", 'Enter account  ID'),
-                  _BuildId('Amount', '0.00'),
-                  _BuildId('Memo(Optional)', 'Enter account  ID'),
+                  _buildId("Account ID", 'Enter account  ID'),
+                  _buildId('Amount', '0.00'),
+                  _buildId('Memo(Optional)', 'Enter account  ID'),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: buildButton('Send',
@@ -48,7 +47,7 @@ Widget WalletPageSendButton() {
   }
 }
 
-Widget _BuildId(
+Widget _buildId(
   String name,
   dynamic second,
 ) {
