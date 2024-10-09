@@ -10,10 +10,10 @@ class DesktopWalletScaffold extends StatefulWidget {
   const DesktopWalletScaffold({super.key});
 
   @override
-  State<DesktopWalletScaffold> createState() => _MobileWalletScaffoldState();
+  State<DesktopWalletScaffold> createState() => _DesktopWalletScaffoldState();
 }
 
-class _MobileWalletScaffoldState extends State<DesktopWalletScaffold> {
+class _DesktopWalletScaffoldState extends State<DesktopWalletScaffold> {
   final PageController _pageController = PageController();
 
   int _currentPageIndex = 0;

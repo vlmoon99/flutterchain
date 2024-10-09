@@ -4,7 +4,7 @@ import 'package:flutterchain_example/modules/wallet/components/wallet_page_compo
 import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_send_button_action.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import '../../../../assets/icon_images/icons.dart';
-import 'package:flutterchain_example/modules/wallet/components/wallet_page_build_nfts.dart';
+import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_build_nfts.dart';
 import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_build_button.dart';
 import 'package:flutterchain_example/modules/wallet/components/wallet_page_components/wallet_page_build_tokens.dart';
 
@@ -17,6 +17,8 @@ class StackingTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return const Center(
       child: Text('this is Stacking tab'),
     );
@@ -55,55 +57,75 @@ class WalletPageTab extends StatelessWidget {
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
 
     return Scaffold(
+        appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 241, 240, 240),
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const AppIcon(iconType: IconType.settingsIcon),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            ),
+            title: Text(
+              'Wallet',
+              style: TextStyle(
+                  color: nearColors.nearBlack,
+                  fontFamily: 'Manrope',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20.sp),
+            ),
+            actions: [
+              IconButton(
+                  icon: const AppIcon(iconType: IconType.scanIcon),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return WalletPageQrCodeButton();
+                      },
+                    );
+                  })
+            ]),
         backgroundColor: const Color.fromARGB(255, 241, 240, 240),
+        drawer: Drawer(
+          child: Column(children: [
+            const DrawerHeader(
+              child: Icon(Icons.abc),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings_rounded),
+              title: const Text("SETTINGS"),
+              onTap: () {
+                Modular.to
+                    .navigate(Routes.wallet.getRoute(Routes.wallet.settings));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.contact_support_rounded),
+              title: const Text(" SUPPORT"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text(" ABOUT US"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app_rounded),
+              title: const Text(" LOGOUT"),
+              onTap: () {},
+            ),
+          ]),
+        ),
         body: SafeArea(
           child: Column(
             children: [
-              //wallet and icons
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.r),
-                child: SizedBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Modular.to.navigate(
-                              Routes.wallet.getRoute(Routes.wallet.send));
-                        },
-                        child: const AppIcon(iconType: IconType.settingsIcon),
-                      ),
-                      Text(
-                        'Wallet',
-                        style: TextStyle(
-                            color: nearColors.nearBlack,
-                            fontFamily: 'Manrope',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20.sp),
-                      ),
-                      IconButton(
-                        icon: const AppIcon(iconType: IconType.scanIcon),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return WalletPageQrCodeButton();
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
 //balance
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.r),
                 child: Center(
                   child: SizedBox(
-                    width: 166.w,
-                    height: 64.h,
                     child: Column(
                       children: [
                         Text('Total Balance',
@@ -194,7 +216,7 @@ class WalletPageTab extends StatelessWidget {
                         ),
                         Container(
                           width: 327.w,
-                          height: 56.h,
+                          height: 53.h,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16.dg),
                               color: const Color.fromARGB(255, 241, 240, 240)),
@@ -203,23 +225,23 @@ class WalletPageTab extends StatelessWidget {
                             indicatorPadding: EdgeInsets.all(4.5.r),
                             indicator: BoxDecoration(
                               color: nearColors.nearBlack,
-                              borderRadius: BorderRadius.circular(17.dg),
+                              borderRadius: BorderRadius.circular(12.dg),
                             ),
                             labelColor: nearColors.nearWhite,
                             labelStyle:
                                 const TextStyle(fontWeight: FontWeight.w600),
                             unselectedLabelColor: Colors.black,
-                            tabs: const [
+                            tabs: [
                               Tab(
                                 child: Text(
                                   "Tokens",
-                                  style: TextStyle(fontSize: 17),
+                                  style: TextStyle(fontSize: 14.sp),
                                 ),
                               ),
                               Tab(
                                 child: Text(
                                   "NFTs",
-                                  style: TextStyle(fontSize: 17),
+                                  style: TextStyle(fontSize: 14.sp),
                                 ),
                               )
                             ],
@@ -230,7 +252,7 @@ class WalletPageTab extends StatelessWidget {
                         ),
                         Expanded(
                           child: TabBarView(
-                            children: [buildTokens(), BuildNft()],
+                            children: [const BuilTokens(), BuildNft()],
                           ),
                         ),
                       ],
