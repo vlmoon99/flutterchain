@@ -746,7 +746,7 @@ class NearBlockChainService
     return signedTransaction;
   }
 
-  Future<bool> deployNFTCollection({
+  Future<BlockchainResponse> deployNFTCollection({
     required String accountId,
     required String publicKey,
     required String privateKey,
@@ -809,7 +809,7 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
   Future<List<dynamic>> checkOwnerCollection({required String owner_id}) async {
@@ -1044,7 +1044,7 @@ class NearBlockChainService
     return jsonDecode(names);
   }
 
-  Future<bool> mintNFT({
+  Future<BlockchainResponse> mintNFT({
     required String accountId,
     required String publicKey,
     required String privateKey,
@@ -1052,16 +1052,16 @@ class NearBlockChainService
     required String owner_id,
     required String description,
     required String title,
-    required String media,
+    required Uint8List media,
     String? media_type,
-    String? animation,
+    Uint8List? animation,
     int num_to_mint = 1,
     Map<String, int>? split_between,
     Map<String, int>? split_owners,
     List<String>? tags,
     List<dynamic>? extra,
     CategoryNFT? category,
-    String? document,
+    Uint8List? document,
     String? baseURL = "https://arweave.net/",
   }) async {
     int? splitBetweenSum;
@@ -1093,22 +1093,20 @@ class NearBlockChainService
         "percentage": splitBetweenSum * 100
       };
     }
-    final mediaFile = File(media);
-    if (!mediaFile.existsSync()) {
-      throw Exception("Media file does not exist");
+
+    if (media.length == 0) {
+      throw Exception("Media is required");
     }
-    String mediaUpload = await uploadFileToArweave(file: mediaFile);
+    String mediaUpload = await uploadFileToArweave(fileBytes: media);
     mediaUploadURL = baseURL! + mediaUpload;
 
     if (animation != null && animation.length > 0) {
-      final animationFile = File(animation);
-      animationUpload = await uploadFileToArweave(file: animationFile);
+      animationUpload = await uploadFileToArweave(fileBytes: animation);
       animationUpload = baseURL + animationUpload;
     }
 
     if (document != null && document.length > 0) {
-      final documentFile = File(document);
-      documentUpload = await uploadFileToArweave(file: documentFile);
+      documentUpload = await uploadFileToArweave(fileBytes: document);
       documentUpload = baseURL + documentUpload;
     }
 
@@ -1170,7 +1168,7 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
   String mintingDeposit({
@@ -1199,8 +1197,9 @@ class NearBlockChainService
     return "${(totalBytes).ceil()}${'0' * STORAGE_PRICE_PER_BYTE_EXPONENT}";
   }
 
-  Future<String> uploadFileToArweave({required File file}) async {
-    final response = await nearRpcClient.uploadFileToArweave(file: file);
+  Future<String> uploadFileToArweave({required Uint8List fileBytes}) async {
+    final response =
+        await nearRpcClient.uploadFileToArweave(fileBytes: fileBytes);
     if (response.status == "error") {
       throw Exception("${response.data}");
     }
@@ -1226,7 +1225,7 @@ class NearBlockChainService
     return updatedRoyalty;
   }
 
-  Future<bool> transferNFT(
+  Future<BlockchainResponse> transferNFT(
       {required String accountId,
       required String publicKey,
       required String privateKey,
@@ -1266,7 +1265,7 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
   Future<BlockchainResponse> NFTInteractionPermission(
@@ -1285,7 +1284,7 @@ class NearBlockChainService
     return await nearRpcClient.mintBaseRPCInteractions(query: query);
   }
 
-  Future<bool> multiplyNFT({
+  Future<BlockchainResponse> multiplyNFT({
     required String nameNFTCollection,
     required String nameNFT,
     required String accountId,
@@ -1359,7 +1358,7 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
   Future<BlockchainResponse> getInfoForMultiply(
@@ -1383,7 +1382,7 @@ class NearBlockChainService
     return await nearRpcClient.mintBaseRPCInteractions(query: query);
   }
 
-  Future<bool> simpleListNFT({
+  Future<BlockchainResponse> simpleListNFT({
     required String nameNFTCollection,
     required String tokenId,
     required String price,
@@ -1436,10 +1435,10 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
-  Future<bool> listingActivate({
+  Future<BlockchainResponse> listingActivate({
     required String accountId,
     required String publicKey,
     required String privateKey,
@@ -1477,10 +1476,10 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
-  Future<bool> unlistNFT(
+  Future<BlockchainResponse> unlistNFT(
       {required String accountId,
       required String publicKey,
       required String nameNFTCollection,
@@ -1522,10 +1521,10 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
-  Future<bool> delistNFT(
+  Future<BlockchainResponse> delistNFT(
       {required String accountId,
       required String publicKey,
       required String nameNFTCollection,
@@ -1567,10 +1566,10 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
-  Future<bool> buySimpleListNFT({
+  Future<BlockchainResponse> buySimpleListNFT({
     required String accountId,
     required String publicKey,
     required String nameNFTCollection,
@@ -1620,7 +1619,7 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
   Future<String> getPriceForBuySimpleListNFT(
@@ -1646,7 +1645,7 @@ class NearBlockChainService
     return price.toString();
   }
 
-  Future<bool> rollingAuctionNft(
+  Future<BlockchainResponse> rollingAuctionNft(
       {required String accountId,
       required String publicKey,
       required String nameNFTCollection,
@@ -1695,10 +1694,10 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
-  Future<bool> offersToRollingAuction({
+  Future<BlockchainResponse> offersToRollingAuction({
     required String accountId,
     required String publicKey,
     required String nameNFTCollection,
@@ -1752,6 +1751,6 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 }

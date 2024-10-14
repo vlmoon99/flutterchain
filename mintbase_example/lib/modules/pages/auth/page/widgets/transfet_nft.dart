@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -23,7 +24,7 @@ class _TransfetNftState extends State<TransfetNft> {
     TextEditingController()
   ];
 
-  Future<bool>? isAdd;
+  Future<BlockchainResponse>? isAdd;
 
   List<List<String>> convertToTokenIds(
       {required List<TextEditingController> idNFTControllers,
@@ -38,7 +39,7 @@ class _TransfetNftState extends State<TransfetNft> {
     return finalTokenIds;
   }
 
-  Future<bool> transferNFT(
+  Future<BlockchainResponse> transferNFT(
       {required String nftCollectionContract,
       required List<List<String>> tokenIds}) async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
@@ -181,10 +182,10 @@ class _TransfetNftState extends State<TransfetNft> {
           ),
           isAdd == null
               ? const Text("No action on transfer")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: isAdd,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {

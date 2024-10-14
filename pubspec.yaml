@@ -22,7 +22,6 @@ dependencies:
     sdk: flutter
   grpc: ^4.0.0
   hex: ^0.2.0
-  http_parser: ^4.0.2
   json_annotation: ^4.8.1
   plugin_platform_interface: ^2.1.8
   protobuf: ^3.1.0

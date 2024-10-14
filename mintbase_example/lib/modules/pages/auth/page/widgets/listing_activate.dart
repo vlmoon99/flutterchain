@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
 import 'package:mintbase_example/thems/thems.dart';
@@ -13,9 +14,9 @@ class ListingActivate extends StatefulWidget {
 
 class _ListingActivateState extends State<ListingActivate> {
   final nearService = Modular.get<NearBlockChainService>();
-  Future<bool>? isActivate;
+  Future<BlockchainResponse>? isActivate;
 
-  Future<bool> storageListingActivate() async {
+  Future<BlockchainResponse> storageListingActivate() async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
 
     return await nearService.listingActivate(
@@ -55,10 +56,10 @@ class _ListingActivateState extends State<ListingActivate> {
           ),
           isActivate == null
               ? const Text("No action on listing")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: isActivate,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {

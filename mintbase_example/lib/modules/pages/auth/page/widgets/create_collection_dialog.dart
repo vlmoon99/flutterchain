@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -24,9 +25,9 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
   final referenceHashController = TextEditingController();
 
   final nearService = Modular.get<NearBlockChainService>();
-  Future<bool>? responseCollection;
+  Future<BlockchainResponse>? responseCollection;
 
-  Future<bool> deployNFTCollection(
+  Future<BlockchainResponse> deployNFTCollection(
       {required String symbol,
       required String name,
       required String ownerId,
@@ -128,10 +129,10 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
           ),
           responseCollection == null
               ? const Text("There were no interactions")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: responseCollection,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
