@@ -4,11 +4,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i10;
-import 'dart:io' as _i18;
+import 'dart:typed_data' as _i17;
 
 import 'package:flutter/material.dart' as _i15;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart'
-    as _i17;
+    as _i18;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart'
     as _i8;
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart'
@@ -801,7 +801,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<String>);
 
   @override
-  _i10.Future<bool> deployNFTCollection({
+  _i10.Future<_i4.BlockchainResponse> deployNFTCollection({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
@@ -835,8 +835,29 @@ class MockNearBlockChainService extends _i1.Mock
             #factoryContract: factoryContract,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #deployNFTCollection,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #symbol: symbol,
+              #name: name,
+              #ownerId: ownerId,
+              #spec: spec,
+              #icon: icon,
+              #baseUri: baseUri,
+              #reference: reference,
+              #referenceHash: referenceHash,
+              #factoryContract: factoryContract,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
   _i10.Future<List<dynamic>> checkOwnerCollection(
@@ -973,7 +994,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<List<dynamic>>);
 
   @override
-  _i10.Future<bool> mintNFT({
+  _i10.Future<_i4.BlockchainResponse> mintNFT({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
@@ -981,16 +1002,16 @@ class MockNearBlockChainService extends _i1.Mock
     required String? owner_id,
     required String? description,
     required String? title,
-    required String? media,
+    required _i17.Uint8List? media,
     String? media_type,
-    String? animation,
+    _i17.Uint8List? animation,
     int? num_to_mint = 1,
     Map<String, int>? split_between,
     Map<String, int>? split_owners,
     List<String>? tags,
     List<dynamic>? extra,
-    _i17.CategoryNFT? category,
-    String? document,
+    _i18.CategoryNFT? category,
+    _i17.Uint8List? document,
     String? baseURL = r'https://arweave.net/',
   }) =>
       (super.noSuchMethod(
@@ -1018,8 +1039,35 @@ class MockNearBlockChainService extends _i1.Mock
             #baseURL: baseURL,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #mintNFT,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #nftCollectionContract: nftCollectionContract,
+              #owner_id: owner_id,
+              #description: description,
+              #title: title,
+              #media: media,
+              #media_type: media_type,
+              #animation: animation,
+              #num_to_mint: num_to_mint,
+              #split_between: split_between,
+              #split_owners: split_owners,
+              #tags: tags,
+              #extra: extra,
+              #category: category,
+              #document: document,
+              #baseURL: baseURL,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
   String mintingDeposit({
@@ -1055,19 +1103,20 @@ class MockNearBlockChainService extends _i1.Mock
       ) as String);
 
   @override
-  _i10.Future<String> uploadFileToArweave({required _i18.File? file}) =>
+  _i10.Future<String> uploadFileToArweave(
+          {required _i17.Uint8List? fileBytes}) =>
       (super.noSuchMethod(
         Invocation.method(
           #uploadFileToArweave,
           [],
-          {#file: file},
+          {#fileBytes: fileBytes},
         ),
         returnValue: _i10.Future<String>.value(_i11.dummyValue<String>(
           this,
           Invocation.method(
             #uploadFileToArweave,
             [],
-            {#file: file},
+            {#fileBytes: fileBytes},
           ),
         )),
       ) as _i10.Future<String>);
@@ -1103,7 +1152,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as Map<String, int>);
 
   @override
-  _i10.Future<bool> transferNFT({
+  _i10.Future<_i4.BlockchainResponse> transferNFT({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
@@ -1122,8 +1171,22 @@ class MockNearBlockChainService extends _i1.Mock
             #tokenIds: tokenIds,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #transferNFT,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #nftCollectionContract: nftCollectionContract,
+              #tokenIds: tokenIds,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
   _i10.Future<_i4.BlockchainResponse> NFTInteractionPermission({
@@ -1157,7 +1220,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> multiplyNFT({
+  _i10.Future<_i4.BlockchainResponse> multiplyNFT({
     required String? nameNFTCollection,
     required String? nameNFT,
     required String? accountId,
@@ -1182,8 +1245,25 @@ class MockNearBlockChainService extends _i1.Mock
             #reference: reference,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #multiplyNFT,
+            [],
+            {
+              #nameNFTCollection: nameNFTCollection,
+              #nameNFT: nameNFT,
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #numToMint: numToMint,
+              #media: media,
+              #reference: reference,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
   _i10.Future<_i4.BlockchainResponse> getInfoForMultiply({
@@ -1217,7 +1297,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> simpleListNFT({
+  _i10.Future<_i4.BlockchainResponse> simpleListNFT({
     required String? nameNFTCollection,
     required String? tokenId,
     required String? price,
@@ -1240,11 +1320,27 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #simpleListNFT,
+            [],
+            {
+              #nameNFTCollection: nameNFTCollection,
+              #tokenId: tokenId,
+              #price: price,
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> listingActivate({
+  _i10.Future<_i4.BlockchainResponse> listingActivate({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
@@ -1261,11 +1357,24 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #listingActivate,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> unlistNFT({
+  _i10.Future<_i4.BlockchainResponse> unlistNFT({
     required String? accountId,
     required String? publicKey,
     required String? nameNFTCollection,
@@ -1286,11 +1395,26 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #unlistNFT,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #nameNFTCollection: nameNFTCollection,
+              #privateKey: privateKey,
+              #tokenId: tokenId,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> delistNFT({
+  _i10.Future<_i4.BlockchainResponse> delistNFT({
     required String? accountId,
     required String? publicKey,
     required String? nameNFTCollection,
@@ -1311,11 +1435,26 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #delistNFT,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #nameNFTCollection: nameNFTCollection,
+              #privateKey: privateKey,
+              #tokenId: tokenId,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> buySimpleListNFT({
+  _i10.Future<_i4.BlockchainResponse> buySimpleListNFT({
     required String? accountId,
     required String? publicKey,
     required String? nameNFTCollection,
@@ -1338,8 +1477,24 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #buySimpleListNFT,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #nameNFTCollection: nameNFTCollection,
+              #privateKey: privateKey,
+              #tokenId: tokenId,
+              #referrer_id: referrer_id,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
   _i10.Future<String> getPriceForBuySimpleListNFT({
@@ -1369,7 +1524,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<String>);
 
   @override
-  _i10.Future<bool> rollingAuctionNft({
+  _i10.Future<_i4.BlockchainResponse> rollingAuctionNft({
     required String? accountId,
     required String? publicKey,
     required String? nameNFTCollection,
@@ -1392,11 +1547,27 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #rollingAuctionNft,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #nameNFTCollection: nameNFTCollection,
+              #privateKey: privateKey,
+              #tokenId: tokenId,
+              #price: price,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<bool> offersToRollingAuction({
+  _i10.Future<_i4.BlockchainResponse> offersToRollingAuction({
     required String? accountId,
     required String? publicKey,
     required String? nameNFTCollection,
@@ -1421,6 +1592,23 @@ class MockNearBlockChainService extends _i1.Mock
             #market_account_id: market_account_id,
           },
         ),
-        returnValue: _i10.Future<bool>.value(false),
-      ) as _i10.Future<bool>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #offersToRollingAuction,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #nameNFTCollection: nameNFTCollection,
+              #privateKey: privateKey,
+              #tokenId: tokenId,
+              #priceBid: priceBid,
+              #timeoutInHours: timeoutInHours,
+              #market_account_id: market_account_id,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 }

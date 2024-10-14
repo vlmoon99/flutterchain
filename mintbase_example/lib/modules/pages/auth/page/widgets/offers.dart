@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -19,10 +20,10 @@ class _OffersState extends State<Offers> {
   final priceBidController = TextEditingController();
   final timeoutInHoursController = TextEditingController();
 
-  Future<bool>? isOffering;
+  Future<BlockchainResponse>? isOffering;
   Future<Map<String, String>>? pricesOffers;
 
-  Future<bool> offersToRollingAuction(
+  Future<BlockchainResponse> offersToRollingAuction(
       {required String nameNFTCollection,
       required int tokenId,
       required String priceBid,
@@ -95,10 +96,10 @@ class _OffersState extends State<Offers> {
           ),
           isOffering == null
               ? const Text("No action on rolling")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: isOffering,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {

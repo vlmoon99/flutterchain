@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -18,10 +19,10 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
   final tokenIdController = TextEditingController();
   final referrerIdController = TextEditingController();
 
-  Future<bool>? isBuy;
+  Future<BlockchainResponse>? isBuy;
   Future<String>? price;
 
-  Future<bool> buySimpleListNft(
+  Future<BlockchainResponse> buySimpleListNft(
       {required String nameNFTCollection,
       required int tokenId,
       String? referrer_id}) async {
@@ -85,10 +86,10 @@ class _BuySimpleListNftState extends State<BuySimpleListNft> {
           ),
           isBuy == null
               ? const Text("There were no interactions")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: isBuy,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {

@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/mintbase_category_nft.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -16,7 +21,7 @@ class Mintnft extends StatefulWidget {
 class _MintnftState extends State<Mintnft> {
   final nearService = Modular.get<NearBlockChainService>();
 
-  Future<bool>? isMint;
+  Future<BlockchainResponse>? isMint;
 
   final nftCollectionContractController = TextEditingController();
   final ownerIDController = TextEditingController();
@@ -26,9 +31,9 @@ class _MintnftState extends State<Mintnft> {
   final numToMintController = TextEditingController();
   final tagsController = TextEditingController();
 
-  final pickMediaController = TextEditingController();
-  final pickDocumentController = TextEditingController();
-  final pickAnimationController = TextEditingController();
+  Uint8List? media;
+  Uint8List? document;
+  Uint8List? animation;
 
   CategoryNFT? categoryNFT;
 
@@ -108,20 +113,20 @@ class _MintnftState extends State<Mintnft> {
     return extra;
   }
 
-  Future<bool> mintNFT(
+  Future<BlockchainResponse> mintNFT(
       {required String nftCollectionContract,
       required String owner_id,
       required int num_to_mint,
       required String title,
-      required String mediaPath,
+      required Uint8List mediaBytes,
       required String description,
       Map<String, int>? split_between,
       Map<String, int>? split_owners,
       String? tags,
       List<dynamic>? extra,
       CategoryNFT? category,
-      String? documentPath,
-      String? animationPath}) async {
+      Uint8List? documentBytes,
+      Uint8List? animationBytes}) async {
     final infoAccount =
         Modular.get<AuthController>(key: "AuthController").state;
     List<String>? tagsList;
@@ -136,8 +141,8 @@ class _MintnftState extends State<Mintnft> {
       nftCollectionContract: nftCollectionContract,
       owner_id: owner_id,
       title: title,
-      media: mediaPath,
-      animation: animationPath,
+      media: mediaBytes,
+      animation: animationBytes,
       description: description,
       num_to_mint: num_to_mint,
       split_between: split_between,
@@ -145,17 +150,92 @@ class _MintnftState extends State<Mintnft> {
       tags: tagsList,
       extra: extra,
       category: category,
-      document: documentPath,
+      document: documentBytes,
     );
   }
 
-  Future<String?> pickFile({required TextEditingController controller}) async {
+  Future<Uint8List?> pickFileMedia() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      setState(() {
-        controller.text = result.files.single.path!;
-      });
+      if (kIsWeb == true) {
+        final bytes = result.files.first.bytes;
+        if (bytes != null && bytes.isNotEmpty) {
+          setState(() {
+            media = bytes;
+          });
+        } else {
+          throw Exception("Bytes file not exist");
+        }
+      } else {
+        final file = File(result.files.single.path!);
+        if (await file.exists()) {
+          final bytes = file.readAsBytesSync();
+          setState(() {
+            media = bytes;
+          });
+        } else {
+          throw Exception("File not exist");
+        }
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<Uint8List?> pickFileAnimation() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      if (kIsWeb == true) {
+        final bytes = result.files.first.bytes;
+        if (bytes != null && bytes.isNotEmpty) {
+          setState(() {
+            animation = bytes;
+          });
+        } else {
+          throw Exception("Bytes file not exist");
+        }
+      } else {
+        final file = File(result.files.single.path!);
+        if (await file.exists()) {
+          final bytes = file.readAsBytesSync();
+          setState(() {
+            animation = bytes;
+          });
+        } else {
+          throw Exception("File not exist");
+        }
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<Uint8List?> pickFileDocument() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      if (kIsWeb == true) {
+        final bytes = result.files.first.bytes;
+        if (bytes != null && bytes.isNotEmpty) {
+          setState(() {
+            document = bytes;
+          });
+        } else {
+          throw Exception("Bytes file not exist");
+        }
+      } else {
+        final file = File(result.files.single.path!);
+        if (await file.exists()) {
+          final bytes = file.readAsBytesSync();
+          setState(() {
+            document = bytes;
+          });
+        } else {
+          throw Exception("File not exist");
+        }
+      }
     } else {
       return null;
     }
@@ -224,53 +304,48 @@ class _MintnftState extends State<Mintnft> {
           Column(
             children: [
               FilledButton(
-                onPressed: () => pickFile(controller: pickMediaController),
+                onPressed: () => pickFileMedia(),
                 child: const Text('Pick media File**',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
                 style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary)),
               ),
-              pickMediaController.text.isNotEmpty
-                  ? Text(
-                      'Selected File: ${pickMediaController.text.split("/").toList().last}')
-                  : Text('No file selected.'),
+              media != null
+                  ? Text('File was selected')
+                  : Text('No file selected'),
             ],
           ),
           SizedBox(height: 10),
           Column(
             children: [
               FilledButton(
-                onPressed: () => pickFile(controller: pickAnimationController),
+                onPressed: () => pickFileAnimation(),
                 child: const Text('Pick animation File',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
                 style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary)),
               ),
-              Text(
-                pickAnimationController.text.isNotEmpty
-                    ? 'Selected File: ${pickAnimationController.text.split("/").toList().last}'
-                    : 'No file selected.',
-              ),
+              animation != null
+                  ? Text('File was selected')
+                  : Text('No file selected'),
             ],
           ),
           SizedBox(height: 10),
           Column(
             children: [
               FilledButton(
-                onPressed: () => pickFile(controller: pickDocumentController),
+                onPressed: () => pickFileDocument(),
                 child: Text('Pick document File',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
                 style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary)),
               ),
-              Text(
-                pickDocumentController.text.isNotEmpty
-                    ? 'Selected File: ${pickDocumentController.text.split("/").toList().last}'
-                    : 'No file selected.',
-              ),
+              document != null
+                  ? Text('File was selected')
+                  : Text('No file selected'),
             ],
           ),
           SizedBox(height: 10),
@@ -512,22 +587,25 @@ class _MintnftState extends State<Mintnft> {
                     accountIdControllers: _accountIdRoyaltiesControllers,
                     isRoyalties: true);
               }
-              setState(() {
-                isMint = mintNFT(
-                    nftCollectionContract: nftCollectionContractController.text,
-                    owner_id: ownerIDController.text,
-                    num_to_mint: int.tryParse(numToMintController.text) ?? 1,
-                    title: titleController.text,
-                    mediaPath: pickMediaController.text,
-                    description: descriptionController.text,
-                    split_between: split_between,
-                    split_owners: split_owners,
-                    tags: tagsController.text,
-                    category: categoryNFT,
-                    documentPath: pickDocumentController.text,
-                    animationPath: pickAnimationController.text,
-                    extra: extra);
-              });
+              if (media != null) {
+                setState(() {
+                  isMint = mintNFT(
+                      nftCollectionContract:
+                          nftCollectionContractController.text,
+                      owner_id: ownerIDController.text,
+                      num_to_mint: int.tryParse(numToMintController.text) ?? 1,
+                      title: titleController.text,
+                      mediaBytes: media!,
+                      description: descriptionController.text,
+                      split_between: split_between,
+                      split_owners: split_owners,
+                      tags: tagsController.text,
+                      category: categoryNFT,
+                      documentBytes: document,
+                      animationBytes: animation,
+                      extra: extra);
+                });
+              }
             },
             child: const Text('Mint NFT',
                 style: TextStyle(color: Colors.white, fontSize: 15)),
@@ -537,10 +615,10 @@ class _MintnftState extends State<Mintnft> {
           ),
           isMint == null
               ? const Text("No action on minting")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: isMint,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {

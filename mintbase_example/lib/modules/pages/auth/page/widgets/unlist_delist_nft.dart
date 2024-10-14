@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -17,11 +18,11 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
   final nftCollectionController = TextEditingController();
   final tokenIdController = TextEditingController();
 
-  Future<bool>? response;
+  Future<BlockchainResponse>? response;
 
   String? output;
 
-  Future<bool> unlistNFT(
+  Future<BlockchainResponse> unlistNFT(
       {required String nameNFTCollection, required int tokenId}) async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
 
@@ -33,7 +34,7 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
         tokenId: tokenId);
   }
 
-  Future<bool> delistNFT(
+  Future<BlockchainResponse> delistNFT(
       {required String nameNFTCollection, required int tokenId}) async {
     final infocrypto = Modular.get<AuthController>(key: "AuthController").state;
 
@@ -106,10 +107,10 @@ class _UnlistDelistNFTState extends State<UnlistDelistNFT> {
           ),
           response == null
               ? const Text("There were no interactions")
-              : FutureBuilder<bool>(
+              : FutureBuilder<BlockchainResponse>(
                   future: response,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<BlockchainResponse> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
