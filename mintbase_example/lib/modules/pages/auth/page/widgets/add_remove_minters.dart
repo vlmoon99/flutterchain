@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -17,7 +18,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
   final nftCollectionController = TextEditingController();
   final nameController = TextEditingController();
   Future<List<dynamic>>? nameMinters;
-  Future<bool>? response;
+  Future<BlockchainResponse>? response;
   bool? _isAdd;
 
   Future<List<dynamic>> getMinters() async {
@@ -33,7 +34,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
         nftCollectionContract: nftCollectionController.text);
   }
 
-  Future<bool> addDeleteMinters({
+  Future<BlockchainResponse> addDeleteMinters({
     required String nftCollectionContract,
     required String name,
     required bool isAdd,
@@ -114,10 +115,10 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
           response == null
               ? const Text("There was no interaction")
               : Flexible(
-                  child: FutureBuilder<bool>(
+                  child: FutureBuilder<BlockchainResponse>(
                     future: response,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<BlockchainResponse> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
@@ -185,8 +186,7 @@ class _AddRemoveMintersState extends State<AddRemoveMinters> {
                                     maxLines: null,
                                     '${minters}',
                                     style: const TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 0, 0, 0),
+                                        color: Color.fromARGB(255, 0, 0, 0),
                                         fontSize: 16),
                                   );
                                 }).toList(),

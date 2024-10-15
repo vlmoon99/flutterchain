@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:mintbase_example/thems/thems.dart';
 import 'package:mintbase_example/modules/controllers/auth_controller.dart';
@@ -22,9 +23,9 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
 
   bool keep_old_minters = true;
 
-  Future<bool>? responseTransfer;
+  Future<BlockchainResponse>? responseTransfer;
 
-  Future<bool> transferNFTCollection(
+  Future<BlockchainResponse> transferNFTCollection(
       {required String nftCollectionContract,
       required String new_owner,
       required bool keep_old_minters}) async {
@@ -108,10 +109,10 @@ class _TransferCollectionDialogState extends State<TransferCollectionDialog> {
           responseTransfer == null
               ? const Text("There were no transfers")
               : Flexible(
-                  child: FutureBuilder<bool>(
+                  child: FutureBuilder<BlockchainResponse>(
                     future: responseTransfer,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<BlockchainResponse> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {

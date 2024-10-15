@@ -44,6 +44,7 @@ void main() {
 
     test("Add or delete minters", () async {
       final nearService = MockNearBlockChainService();
+      final response = BlockchainResponse(data: {}, status: "success");
 
       when(nearService.addDeleteMinters(
               accountId: "Your account id",
@@ -52,7 +53,7 @@ void main() {
               nftCollectionContract: "Full id collection",
               name: "Name collection",
               isAdd: true))
-          .thenAnswer((_) async => true);
+          .thenAnswer((_) async => response);
 
       final res = await nearService.addDeleteMinters(
           accountId: "Your account id",
@@ -61,11 +62,12 @@ void main() {
           nftCollectionContract: "Full id collection",
           name: "Name collection",
           isAdd: true);
-      expect(res, true);
+      expect(res, response);
     });
 
     test("Transfer NFT collection", () async {
       final nearService = MockNearBlockChainService();
+      final response = BlockchainResponse(data: {}, status: "success");
 
       when(nearService.transferNFTCollection(
               accountId: "Your account id",
@@ -74,7 +76,7 @@ void main() {
               nftCollectionContract: "Full id collection",
               new_owner: "new owner id",
               keep_old_minters: true))
-          .thenAnswer((_) async => true);
+          .thenAnswer((_) async => response);
 
       final res = await nearService.transferNFTCollection(
           accountId: "Your account id",
@@ -83,7 +85,7 @@ void main() {
           nftCollectionContract: "Full id collection",
           new_owner: "new owner id",
           keep_old_minters: true);
-      expect(res, true);
+      expect(res, response);
     });
 
     test("Get minters by NFT collection", () async {
