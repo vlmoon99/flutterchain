@@ -935,7 +935,7 @@ class NearBlockChainService
     return responseBid;
   }
 
-  Future<dynamic> transferNFTCollection({
+  Future<BlockchainResponse> transferNFTCollection({
     required String accountId,
     required String publicKey,
     required String privateKey,
@@ -969,10 +969,10 @@ class NearBlockChainService
       throw Exception("Operation invalid, try again");
     }
 
-    return true;
+    return nearSignRequest;
   }
 
-  Future<dynamic> addDeleteMinters({
+  Future<BlockchainResponse> addDeleteMinters({
     required String accountId,
     required String publicKey,
     required String privateKey,
@@ -1007,11 +1007,12 @@ class NearBlockChainService
 
     if (nearSignRequest.data["error"] != null) {
       throw Exception(nearSignRequest.data["error"]);
-    } else if (nearSignRequest.data["success"] != null) {
-      return true;
-    } else {
-      return false;
     }
+    if (nearSignRequest.data["success"] == null) {
+      throw Exception("Operation invalid, try again");
+    }
+
+    return nearSignRequest;
   }
 
   Future<List<dynamic>> getMinters({

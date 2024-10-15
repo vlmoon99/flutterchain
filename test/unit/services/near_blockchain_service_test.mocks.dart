@@ -923,7 +923,7 @@ class MockNearBlockChainService extends _i1.Mock
       ) as _i10.Future<Map<String, String>>);
 
   @override
-  _i10.Future<dynamic> transferNFTCollection({
+  _i10.Future<_i4.BlockchainResponse> transferNFTCollection({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
@@ -944,11 +944,26 @@ class MockNearBlockChainService extends _i1.Mock
             #keep_old_minters: keep_old_minters,
           },
         ),
-        returnValue: _i10.Future<dynamic>.value(),
-      ) as _i10.Future<dynamic>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #transferNFTCollection,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #nftCollectionContract: nftCollectionContract,
+              #new_owner: new_owner,
+              #keep_old_minters: keep_old_minters,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
-  _i10.Future<dynamic> addDeleteMinters({
+  _i10.Future<_i4.BlockchainResponse> addDeleteMinters({
     required String? accountId,
     required String? publicKey,
     required String? privateKey,
@@ -969,8 +984,23 @@ class MockNearBlockChainService extends _i1.Mock
             #isAdd: isAdd,
           },
         ),
-        returnValue: _i10.Future<dynamic>.value(),
-      ) as _i10.Future<dynamic>);
+        returnValue:
+            _i10.Future<_i4.BlockchainResponse>.value(_FakeBlockchainResponse_2(
+          this,
+          Invocation.method(
+            #addDeleteMinters,
+            [],
+            {
+              #accountId: accountId,
+              #publicKey: publicKey,
+              #privateKey: privateKey,
+              #nftCollectionContract: nftCollectionContract,
+              #name: name,
+              #isAdd: isAdd,
+            },
+          ),
+        )),
+      ) as _i10.Future<_i4.BlockchainResponse>);
 
   @override
   _i10.Future<List<dynamic>> getMinters({
