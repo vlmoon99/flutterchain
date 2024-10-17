@@ -2,9 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutterchain_example/routes/routes.dart';
 
-Widget WalletPageQrCodeButton() {
+Widget walletPageQrCodeButton() {
   {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),

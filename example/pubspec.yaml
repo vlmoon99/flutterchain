@@ -28,6 +28,7 @@ dependencies:
   flutter_screenutil: ^5.7.0
   fluentui_system_icons: ^1.1.255
   flutter_inappwebview_ios: 1.1.1
+  
   flutterchain:
     path: ../
   hex: 0.2.0
@@ -58,7 +59,7 @@ flutter:
     - assets/images/
     - lib/assets/icon_images/button_icons/
     - lib/assets/icon_images/nft_icons/
-
+    - lib/assets/icon_svg/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

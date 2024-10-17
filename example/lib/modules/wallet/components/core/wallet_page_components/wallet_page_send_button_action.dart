@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget WalletPageSendButton() {
   {
@@ -57,7 +58,7 @@ Widget _buildId(
       Text(name),
       SizedBox(
         height: 38,
-        width: 286,
+        width: 286.w,
         child: TextField(
           decoration: InputDecoration(
             border: const OutlineInputBorder(),

@@ -114,8 +114,6 @@ class AppModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ModuleRoute(
-      // Routes.home.module,
-      // module:HomeModule()
       Routes.wallet.module,
       module: WalletModule(),
     ),

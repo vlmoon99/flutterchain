@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-
-import 'package:flutterchain_example/modules/wallet/components/wallet_page_tabs.dart';
+import 'package:flutterchain_example/modules/wallet/components/core/wallet_page_tabs.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TabletWalletScaffold extends StatefulWidget {
   const TabletWalletScaffold({super.key});
@@ -14,13 +13,13 @@ class TabletWalletScaffold extends StatefulWidget {
 
 class _TabletWalletScaffoldState extends State<TabletWalletScaffold> {
   final PageController _pageController = PageController();
-
   int _currentPageIndex = 0;
+
   final List<Widget> _pages = const [
     WalletPageTab(),
     StackingTab(),
     ProfileTab(),
-    HistoryTab()
+    HistoryTab(),
   ];
 
   @override
@@ -29,29 +28,68 @@ class _TabletWalletScaffoldState extends State<TabletWalletScaffold> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
 
     return Scaffold(
-        backgroundColor: nearColors.nearWhite,
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: _onPageChanged,
-          children: _pages,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentPageIndex,
-            selectedItemColor: nearColors.nearBlack,
-            unselectedItemColor: nearColors.nearGray,
-            onTap: _onPageSelected,
-            items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.account_balance_wallet), label: 'Wallet1'),
-              BottomNavigationBarItem(
-                  icon: Icon(FluentIcons.stack_24_regular), label: 'Stacking'),
-              BottomNavigationBarItem(
-                  icon: Icon(FluentIcons.person_24_regular), label: 'Profile'),
-              BottomNavigationBarItem(
-                icon: Icon(FluentIcons.history_24_regular),
-                label: ('History'),
-              )
-            ]));
+      backgroundColor: nearColors.nearWhite,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentPageIndex,
+        selectedItemColor: nearColors.nearBlack,
+        unselectedItemColor: nearColors.nearGray,
+        showUnselectedLabels: true,
+        onTap: _onPageSelected,
+        items: [
+          BottomNavigationBarItem(
+            icon: _buildSvgIcon(
+              'lib/assets/icon_svg/icon_wallet.svg',
+              _currentPageIndex == 0,
+              nearColors.nearBlack,
+              nearColors.nearGray,
+            ),
+            label: 'Wallet',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildSvgIcon(
+              'lib/assets/icon_svg/icon_stacking.svg',
+              _currentPageIndex == 1,
+              nearColors.nearBlack,
+              nearColors.nearGray,
+            ),
+            label: 'Stacking',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildSvgIcon(
+              'lib/assets/icon_svg/icon_profile.svg',
+              _currentPageIndex == 2,
+              nearColors.nearBlack,
+              nearColors.nearGray,
+            ),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildSvgIcon(
+              'lib/assets/icon_svg/icon_history.svg',
+              _currentPageIndex == 3,
+              nearColors.nearBlack,
+              nearColors.nearGray,
+            ),
+            label: 'History',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSvgIcon(String assetName, bool isSelected, Color selectedColor,
+      Color unselectedColor) {
+    return SvgPicture.asset(
+      assetName,
+      color: isSelected ? selectedColor : unselectedColor,
+      width: 24,
+      height: 24,
+    );
   }
 
   void _onPageChanged(int index) {
@@ -66,7 +104,7 @@ class _TabletWalletScaffoldState extends State<TabletWalletScaffold> {
       _pageController.animateToPage(
         index,
         duration: const Duration(milliseconds: 500),
-        curve: Curves.linear,
+        curve: Curves.easeIn,
       );
     });
   }

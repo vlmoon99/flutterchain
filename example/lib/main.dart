@@ -28,7 +28,7 @@ void main() {
       //TODO add catcher
     };
     SystemChrome.setPreferredOrientations([
-      // DeviceOrientation.portraitUp,
+      // DeviceOrientation.portraitUp,/usr/libexec/java_home -V
       // DeviceOrientation.portraitDown,
     ]).then((value) => runApp(EasyLocalization(
           supportedLocales: const [

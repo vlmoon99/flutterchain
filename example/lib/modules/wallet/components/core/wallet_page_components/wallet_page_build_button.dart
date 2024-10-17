@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../../../../assets/icon_images/icons.dart';
+import '../../../../../../assets/icon_images/icons.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
