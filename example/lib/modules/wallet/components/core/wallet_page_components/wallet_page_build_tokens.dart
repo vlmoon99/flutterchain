@@ -137,7 +137,6 @@ class BuilTokens extends StatelessWidget {
         final token = tokens[index];
 
         return Container(
-          width: 375.w,
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
           child: Row(
             children: [
