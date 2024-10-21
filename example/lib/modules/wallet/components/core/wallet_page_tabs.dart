@@ -61,7 +61,7 @@ class WalletPageTab extends StatelessWidget {
         drawer: Drawer(
           child: Column(children: [
             const DrawerHeader(
-              child: Icon(Icons.abc),
+              child: Icon(Icons.home),
             ),
             ListTile(
               leading: const Icon(Icons.settings_rounded),
@@ -127,6 +127,7 @@ class WalletPageTab extends StatelessWidget {
                       icon: const AppIcon(iconType: IconType.scanIcon),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
+
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {

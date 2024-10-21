@@ -28,6 +28,7 @@ dependencies:
   flutter_screenutil: ^5.7.0
   fluentui_system_icons: ^1.1.255
   flutter_inappwebview_ios: 1.1.1
+  qr_code_scanner: ^1.0.0
   
   flutterchain:
     path: ../

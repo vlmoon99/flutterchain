@@ -11,7 +11,6 @@ Widget WalletPageSendButton() {
       child: AlertDialog(
         title: const Center(child: Text('Send Crypto')),
         content: Container(
-            padding: const EdgeInsets.only(top: 33),
             height: 470,
             width: 384,
             decoration: BoxDecoration(
@@ -24,7 +23,6 @@ Widget WalletPageSendButton() {
               width: 341,
               child: Column(
                 children: [
-                  const Text('SendPage Crypto'),
                   _buildId("Account ID", 'Enter account  ID'),
                   _buildId('Amount', '0.00'),
                   _buildId('Memo(Optional)', 'Enter account  ID'),

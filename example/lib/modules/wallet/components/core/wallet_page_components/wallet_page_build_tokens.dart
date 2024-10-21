@@ -167,13 +167,13 @@ class BuilTokens extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       fontSize: screenWidth < 500
                           ? 16.sp
-                          : (screenWidth < 1100.w ? 10.sp : 40.sp))),
+                          : (screenWidth < 1100.w ? 18.sp : 40.sp))),
               Text(token['total price']!,
                   style: nearTextStyles.label!.copyWith(
                       color: nearColors.nearGray,
                       fontSize: screenWidth < 500
                           ? 12.sp
-                          : (screenWidth < 1100 ? 8.sp : 18.sp))),
+                          : (screenWidth < 1100 ? 14.sp : 18.sp))),
             ],
           ),
         );

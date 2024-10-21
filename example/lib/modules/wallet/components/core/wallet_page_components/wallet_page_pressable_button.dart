@@ -31,26 +31,33 @@ class _PresableIconButtonState extends State<PressableIconButton> {
           isTapped = true;
         });
       },
-      onTapUp: (_) async {
-        setState(() {
-          isTapped = false;
-        });
-        await Future.delayed(const Duration(milliseconds: 200));
-        widget.onTapped();
-      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         child: Transform.scale(
           scale: isTapped ? 0.85 : 1.0,
-          child: Column(
-            children: [
-              widget.icon,
-              if (widget.title != null)
-                Text(widget.title!,
-                    style: nearTextStyles.label!.copyWith(
-                        color: nearColors.nearBlack,
-                        fontSize: screenWidth < 500 ? 14.sp : 15.sp))
-            ],
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16.dg),
+              highlightColor: nearColors.nearGray,
+              onTap: () async {
+                setState(() {
+                  isTapped = false;
+                });
+                await Future.delayed(const Duration(milliseconds: 200));
+                widget.onTapped();
+              },
+              child: Column(
+                children: [
+                  widget.icon,
+                  if (widget.title != null)
+                    Text(widget.title!,
+                        style: nearTextStyles.label!.copyWith(
+                            color: nearColors.nearBlack,
+                            fontSize: screenWidth < 500 ? 14.sp : 15.sp))
+                ],
+              ),
+            ),
           ),
         ),
       ),
