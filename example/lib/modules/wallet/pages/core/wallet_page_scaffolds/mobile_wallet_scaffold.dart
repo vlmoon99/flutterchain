@@ -28,7 +28,6 @@ class _MobileWalletScaffoldState extends State<MobileWalletScaffold> {
     final nearColors = theme.getTheme().extension<NearColors>()!;
 
     return Scaffold(
-      backgroundColor: nearColors.nearWhite,
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,

@@ -41,6 +41,7 @@ class _PresableIconButtonState extends State<PressableIconButton> {
               borderRadius: BorderRadius.circular(16.dg),
               highlightColor: nearColors.nearGray,
               onTap: () async {
+                HapticFeedback.lightImpact();
                 setState(() {
                   isTapped = false;
                 });

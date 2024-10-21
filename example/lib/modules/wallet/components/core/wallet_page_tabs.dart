@@ -67,6 +67,7 @@ class WalletPageTab extends StatelessWidget {
               leading: const Icon(Icons.settings_rounded),
               title: const Text("SETTINGS"),
               onTap: () {
+                HapticFeedback.lightImpact();
                 Modular.to
                     .navigate(Routes.wallet.getRoute(Routes.wallet.settings));
               },
@@ -107,8 +108,10 @@ class WalletPageTab extends StatelessWidget {
                                       const Duration(milliseconds: 300));
                                   Scaffold.of(context).openDrawer();
                                 },
-                                icon: const AppIcon(
-                                    iconType: IconType.settingsIcon),
+                                icon: AppIcon(
+                                  iconType: IconType.settingsIcon,
+                                  size: 24.w,
+                                ),
                               ))),
                   Center(
                     child: Text(
@@ -124,7 +127,10 @@ class WalletPageTab extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(right: 10.r),
                     child: IconButton(
-                      icon: const AppIcon(iconType: IconType.scanIcon),
+                      icon: AppIcon(
+                        iconType: IconType.scanIcon,
+                        size: 24.w,
+                      ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
 
@@ -283,7 +289,7 @@ class WalletPageTab extends StatelessWidget {
                       ),
                       Expanded(
                         child: TabBarView(
-                          children: [const BuilTokens(), BuildNft()],
+                          children: [BuilTokens(), BuildNft()],
                         ),
                       ),
                     ],

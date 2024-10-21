@@ -16,9 +16,9 @@ class BuilTokens extends StatelessWidget {
 
     List<Map<dynamic, dynamic>> tokens = [
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.nearIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "NEAR",
         'price': '\$6.34',
@@ -27,9 +27,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$1251.44'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.octopusIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "Octopus Network",
         'price': '\$0.34',
@@ -38,9 +38,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$0.70'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.deipIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "DEIP Token",
         'price': '\$0.34',
@@ -49,9 +49,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$0.76'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.auroraIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "Aurora",
         'price': '\$6.34',
@@ -60,9 +60,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$1137'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.usnIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "USN",
         'price': '\$1.33',
@@ -71,9 +71,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$276.65'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.nearIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "NEAR",
         'price': '\$6.34',
@@ -82,9 +82,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$1251.44'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.octopusIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "Octopus Network",
         'price': '\$0.34',
@@ -93,9 +93,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$0.70'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.deipIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "DEIP Token",
         'price': '\$0.34',
@@ -104,9 +104,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$0.76'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.auroraIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "Aurora",
         'price': '\$6.34',
@@ -115,9 +115,9 @@ class BuilTokens extends StatelessWidget {
         'total price': '\$1137'
       },
       {
-        'icon': const AppIcon(
+        'icon': AppIcon(
           iconType: IconType.usnIcon,
-          size: 40,
+          size: 40.h,
         ),
         'name': "USN",
         'price': '\$1.33',
@@ -130,50 +130,71 @@ class BuilTokens extends StatelessWidget {
     return ListView.separated(
       separatorBuilder: (context, index) => Divider(
         color: nearColors.nearGray,
-        thickness: 0.1,
+        thickness: 0.2,
       ),
       itemCount: tokens.length,
       itemBuilder: (context, index) {
         final token = tokens[index];
-        return ListTile(
-          leading: token['icon'] as Widget,
-          title: Text(
-            token['name']!,
-            style: nearTextStyles.highlight!.copyWith(
-                color: nearColors.nearBlack, fontWeight: FontWeight.w700),
-          ),
-          subtitle: Row(
+
+        return Container(
+          width: 375.w,
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+          child: Row(
             children: [
-              Text(
-                token['price']!,
+              token['icon'] as Widget,
+              const SizedBox(width: 16.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      token['name']!,
+                      style: nearTextStyles.highlight!.copyWith(
+                          color: nearColors.nearBlack,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.sp),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          token['price']!,
+                          style: nearTextStyles.highlight!
+                              .copyWith(fontSize: 12.sp),
+                        ),
+                        SizedBox(width: 3.w),
+                        Text(
+                          token['change']!,
+                          style: nearTextStyles.highlight!.copyWith(
+                              color: token['change']!.contains('⌄ ')
+                                  ? nearColors.nearRed
+                                  : nearColors.nearGreen,
+                              fontSize: 12.sp),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(
-                width: 3.w,
-              ),
-              Text(
-                token['change']!,
-                style: TextStyle(
-                    color: token['change']!.contains('⌄ ')
-                        ? Colors.red
-                        : Colors.green),
-              ),
-            ],
-          ),
-          trailing: Column(
-            children: [
-              Text(token['amount']!,
-                  style: nearTextStyles.label!.copyWith(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    token['amount']!,
+                    style: nearTextStyles.label!.copyWith(
                       color: nearColors.nearBlack,
                       fontWeight: FontWeight.w700,
-                      fontSize: screenWidth < 500
-                          ? 16.sp
-                          : (screenWidth < 1100.w ? 18.sp : 40.sp))),
-              Text(token['total price']!,
-                  style: nearTextStyles.label!.copyWith(
+                      fontSize: 16.sp,
+                    ),
+                  ),
+                  Text(
+                    token['total price']!,
+                    style: nearTextStyles.label!.copyWith(
                       color: nearColors.nearGray,
-                      fontSize: screenWidth < 500
-                          ? 12.sp
-                          : (screenWidth < 1100 ? 14.sp : 18.sp))),
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         );
