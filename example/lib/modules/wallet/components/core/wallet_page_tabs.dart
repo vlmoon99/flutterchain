@@ -110,7 +110,7 @@ class WalletPageTab extends StatelessWidget {
                                 },
                                 icon: AppIcon(
                                   iconType: IconType.settingsIcon,
-                                  size: 24.w,
+                                  size: 20.w,
                                 ),
                               ))),
                   Center(
