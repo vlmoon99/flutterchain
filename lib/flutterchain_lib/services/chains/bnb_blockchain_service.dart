@@ -13,23 +13,19 @@ import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/evm_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/evm/evm_blockchain_js_runner.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/evm/evm_blockchain_js_runner_interface.dart';
 
 class BNBBlockChainService implements BlockChainService {
-  final JsVMService jsVMService;
+  final EvmBlockChainJSRunner jsRunner = getEVMJsRunner();
   final EVMRpcClient bnbRpcClient;
 
   BNBBlockChainService({
-    required this.jsVMService,
     required this.bnbRpcClient,
   });
 
   factory BNBBlockChainService.defaultInstance() {
     return BNBBlockChainService(
-      jsVMService: getJsVM(),
       bnbRpcClient: EVMRpcClient(
         networkClient: EVMNetworkClient(
           baseUrl: BNBBlockChainNetworkUrls.listOfUrls.first,
@@ -127,13 +123,13 @@ class BNBBlockChainService implements BlockChainService {
       "name": "bnb",
       "chainId": chainId,
     };
-
-    final unsignedTransactionData = await jsVMService.callJS(
-      """window.EVMUtils.createUnsignedTransaction('$receiverAddress', $amountInWei, 
-      '${jsonEncode(chainInfo)}', '${jsonEncode(transactionInfo)}', 
-       ${smartContractCallEncoded != null ? """'$smartContractCallEncoded'""" : 'undefined'} )""",
+    final unsignedTransactionData = await jsRunner.createUnsignedTransaction(
+      receiver: receiverAddress,
+      weiAmount: amountInWei,
+      chainInfo: jsonEncode(chainInfo),
+      txCreatingInfo: jsonEncode(transactionInfo),
+      smartContractCallEncoded: smartContractCallEncoded,
     );
-
     final unsignedTransaction =
         json.decode(unsignedTransactionData) as Map<String, dynamic>;
     return MpcTransactionInfo(transactionInfo: unsignedTransaction);
@@ -153,8 +149,10 @@ class BNBBlockChainService implements BlockChainService {
     List<dynamic> parameters = const [],
   }) async {
     final cleanedFunctionSignature = functionSignature.replaceAll(' ', '');
-    return await jsVMService.callJS(
-        """window.EVMUtils.getAbiEncodedSmartContractArgs('$cleanedFunctionSignature', '${jsonEncode(parameters)}' )""");
+    return jsRunner.getAbiEncodedSmartContractArgs(
+      functionSignature: cleanedFunctionSignature,
+      parameters: jsonEncode(parameters),
+    );
   }
 
   Future<BlockchainResponse> sendTransaction(String txhex) async {

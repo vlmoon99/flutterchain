@@ -157,7 +157,7 @@ bitcoinTransferAction(toAddress, accountID, transferAmount, privateKeyHex, publi
     
     const input = TW.Bitcoin.Proto.SigningInput.create({
       hashType: BitcoinScript.hashTypeForCoin(CoinType.bitcoin),
-      amount: transferAmount,
+      amount: BigInt(transferAmount),
       byteFee: feeBayte,
       toAddress: toAddress,
       changeAddress: accountID,

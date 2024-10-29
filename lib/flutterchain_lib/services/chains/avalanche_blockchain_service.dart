@@ -13,24 +13,20 @@ import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/evm_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/evm/evm_blockchain_js_runner.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/evm/evm_blockchain_js_runner_interface.dart';
 
 /// Avalanche C-Chain BlockChain Service
 class AvalancheBlockChainService implements BlockChainService {
-  final JsVMService jsVMService;
   final EVMRpcClient avalancheRpcClient;
+  final EvmBlockChainJSRunner jsRunner = getEVMJsRunner();
 
   AvalancheBlockChainService({
-    required this.jsVMService,
     required this.avalancheRpcClient,
   });
 
   factory AvalancheBlockChainService.defaultInstance() {
     return AvalancheBlockChainService(
-      jsVMService: getJsVM(),
       avalancheRpcClient: EVMRpcClient(
         networkClient: EVMNetworkClient(
           baseUrl: AvalancheBlockChainNetworkUrls.listOfUrls.first,
@@ -128,13 +124,13 @@ class AvalancheBlockChainService implements BlockChainService {
       "name": "avalanche",
       "chainId": chainId,
     };
-
-    final unsignedTransactionData = await jsVMService.callJS(
-      """window.EVMUtils.createUnsignedTransaction('$receiverAddress', $amountInWei, 
-      '${jsonEncode(chainInfo)}', '${jsonEncode(transactionInfo)}', 
-       ${smartContractCallEncoded != null ? """'$smartContractCallEncoded'""" : 'undefined'} )""",
+    final unsignedTransactionData = await jsRunner.createUnsignedTransaction(
+      receiver: receiverAddress,
+      weiAmount: amountInWei,
+      chainInfo: jsonEncode(chainInfo),
+      txCreatingInfo: jsonEncode(transactionInfo),
+      smartContractCallEncoded: smartContractCallEncoded,
     );
-
     final unsignedTransaction =
         json.decode(unsignedTransactionData) as Map<String, dynamic>;
     return MpcTransactionInfo(transactionInfo: unsignedTransaction);
@@ -154,8 +150,10 @@ class AvalancheBlockChainService implements BlockChainService {
     List<dynamic> parameters = const [],
   }) async {
     final cleanedFunctionSignature = functionSignature.replaceAll(' ', '');
-    return await jsVMService.callJS(
-        """window.EVMUtils.getAbiEncodedSmartContractArgs('$cleanedFunctionSignature', '${jsonEncode(parameters)}' )""");
+    return jsRunner.getAbiEncodedSmartContractArgs(
+      functionSignature: cleanedFunctionSignature,
+      parameters: jsonEncode(parameters),
+    );
   }
 
   Future<BlockchainResponse> sendTransaction(String txhex) async {

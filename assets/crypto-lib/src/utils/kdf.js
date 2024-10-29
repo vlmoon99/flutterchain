@@ -108,7 +108,7 @@ export function uncompressedHexPointToXRPAddress(childPublicKey) {
   return {address, childPublicKey};
 }
 
-export async function generateAddressForNearMPC(accountId, path, chain, publicMPCKey = MPC_PUBLIC_KEY, network = "testnet") {
+export async function generateAddressForNearMPC(accountId, path, chain, network = "testnet", publicMPCKey = MPC_PUBLIC_KEY) {
   let childPublicKey = await deriveChildPublicKey(
     najPublicKeyStrToUncompressedHexPoint(publicMPCKey),
     accountId,
