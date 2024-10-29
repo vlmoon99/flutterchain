@@ -2,8 +2,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
-import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
 class SeeTheLastTxNearBlockchainComponent extends StatelessWidget {
@@ -18,7 +16,6 @@ class SeeTheLastTxNearBlockchainComponent extends StatelessWidget {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
-    final nearVM = Modular.get<NearVM>();
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
@@ -54,7 +51,7 @@ class SeeTheLastTxNearBlockchainComponent extends StatelessWidget {
         width: width * 0.85,
         height: height * 0.07,
         decoration: BoxDecoration(
-          color: tx == null ? nearColors.nearGray : nearColors.nearAqua,
+          color: nearColors.nearGray,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(

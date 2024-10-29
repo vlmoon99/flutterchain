@@ -1,10 +1,7 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/near/chain_signatures_functions.dart';
@@ -40,7 +37,7 @@ class _NearBlockchainPageState extends State<NearBlockchainPage>
         '';
 
     if (accountId.isNotEmpty) {
-      log("accountId was sucsessfuly added $accountId from The Flutter WEB Enviroment");
+      log("accountId was successfully added $accountId from The Flutter WEB Environment");
     }
   }
 

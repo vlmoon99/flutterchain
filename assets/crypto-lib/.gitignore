@@ -5,6 +5,7 @@ coverage/
 !dist/index.html
 node_modules/
 *.log
+public/
 
 # OS generated files
 .DS_Store

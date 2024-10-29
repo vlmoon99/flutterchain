@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/bitcoin_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/formaters/chains/bitcoin_formater.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_transaction_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -15,15 +19,16 @@ import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_v
 import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
     if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
     if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class BitcoinBlockChainService implements BlockChainService {
   final JsVMService jsVMService;
   final BitcoinRpcClient bitcoinRpcClient;
 
   BitcoinBlockChainService({
-    required this.jsVMService,
+    JsVMService? jsVMService,
     required this.bitcoinRpcClient,
-  });
+  }) : jsVMService = jsVMService ?? getJsVM();
 
   factory BitcoinBlockChainService.defaultInstance() {
     return BitcoinBlockChainService(
@@ -34,55 +39,75 @@ class BitcoinBlockChainService implements BlockChainService {
 
   //Core
 
+  //Generate mnemonic
+  Future<String> generateMnemonic({
+    int strength = 128,
+  }) async {
+    return MnemonicGenerator(jsVMService: jsVMService)
+        .generateMnemonic(strength: strength);
+  }
+
   //Send Bitcoin tokens thought bitcoin blockchain
   @override
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest) async {
-    BitcoinTransferRequest bitcoinTransferRequest =
-        transferRequest as BitcoinTransferRequest;
+    if (transferRequest is! BitcoinTransferRequest) {
+      throw ArgumentError(
+          'Invalid transferRequest type. Expected: `BitcoinTransferRequest`');
+    }
+
     final format = 'SEGWIT';
-    final actuelFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
+    final actualFees = await bitcoinRpcClient.getActualPricesFeeSHigher();
     final accountID =
-        await getAdressBTCSegWitFomat(bitcoinTransferRequest.publicKey!);
+        await getAddressBTCSegWitFormat(transferRequest.publicKey);
     final transactionInfo = await bitcoinRpcClient.getTransactionInfo(
-        accountID, bitcoinTransferRequest.transferAmount!, actuelFees);
+      accountID,
+      transferRequest.transferAmount,
+      actualFees,
+    );
 
     final txHex = await signBitcoinTransfer(
-        bitcoinTransferRequest.toAddress!,
-        accountID,
-        bitcoinTransferRequest.transferAmount!,
-        bitcoinTransferRequest.privateKey!,
-        bitcoinTransferRequest.publicKey!,
-        transactionInfo.data,
-        format,
-        actuelFees);
+      transferRequest.toAddress,
+      accountID,
+      transferRequest.transferAmount,
+      transferRequest.privateKey,
+      transferRequest.publicKey,
+      transactionInfo.data,
+      format,
+      actualFees,
+    );
 
     final res = await bitcoinRpcClient.sendTransaction(txHex);
     return res;
   }
 
-  //Call smart contract function not exist in bitcoin
-  @override
-  Future<BlockchainResponse> callSmartContractFunction(
-    TransferRequest transferRequest,
-  ) async {
-    throw UnimplementedError('callSmartContractFunction does not exist.');
-  }
-
   //Get wallet balance by account ID (on input hex format public key)
   @override
-  Future<String> getWalletBalance(TransferRequest transferRequest, ) async {
-    final bitcoinTransferRequest = transferRequest as BitcoinTransferRequest;
+  Future<String> getWalletBalance(
+    AccountInfoRequest accountInfoRequest,
+  ) async {
+    if (accountInfoRequest is! BitcoinAccountInfoRequest) {
+      throw ArgumentError(
+          'Invalid accountInfoRequest type. Expected: `BitcoinAccountInfoRequest`');
+    }
     final addressId =
-        await getAdressBTCSegWitFomat(bitcoinTransferRequest.accountID!);
+        await getAddressBTCSegWitFormat(accountInfoRequest.accountId);
     final res = await bitcoinRpcClient.getAccountBalance(addressId);
     return res;
   }
 
   //Setting new blockchain network environment on another url
   @override
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl}) async {
-    bitcoinRpcClient.networkClient.setUrl(newUrl);
+  Future<void> setBlockchainNetworkEnvironment(
+      BlockChainNetworkEnvironmentSettings
+          blockChainNetworkEnvironmentSettings) async {
+    if (blockChainNetworkEnvironmentSettings
+        is! BitcoinNetworkEnvironmentSettings) {
+      throw ArgumentError(
+          'Invalid blockChainNetworkEnvironmentSettings type. Expected: `BitcoinNetworkEnvironmentSettings`');
+    }
+    bitcoinRpcClient.networkClient
+        .setUrl(blockChainNetworkEnvironmentSettings.chainUrl);
   }
 
   //Getting official blockchain's urls
@@ -91,28 +116,17 @@ class BitcoinBlockChainService implements BlockChainService {
     return BitcoinBlockChainNetworkUrls.listOfUrls;
   }
 
-  //Getting private , public key and other information from mnemonic passphrase, and derivation path
   @override
-  Future<BitcoinBlockChainData> getBlockChainDataByDerivationPath({
+  Future<BlockChainData> getBlockChainData({
     required String mnemonic,
-    required String? passphrase,
-    required DerivationPath derivationPath,
+    String? passphrase,
+    DerivationPathData? derivationPath,
   }) async {
-    final res = await jsVMService.callJS(
-        """window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${derivationPath.accountNumber}","${derivationPath.change}","${derivationPath.address}")""");
+    final rawFunction = derivationPath == null
+        ? "window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
+        : """window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";
+    final res = await jsVMService.callJS(rawFunction);
     final blockChainData = BitcoinBlockChainData.fromJson(jsonDecode(res));
-    return blockChainData;
-  }
-
-  //Getting private , public key and other information from mnemonic and passphrase
-  //this method will give you first standard wallet generated from this mnemonic and passphrase
-  @override
-  Future<BitcoinBlockChainData> getBlockChainDataFromMnemonic(
-      String mnemonic, String passphrase) async {
-    final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')");
-    final decodedRes = jsonDecode(res);
-    final blockChainData = BitcoinBlockChainData.fromJson(decodedRes);
     return blockChainData;
   }
 
@@ -145,7 +159,7 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //This method getting Address BTC in P2PKH format from Public Key in Hex format, if needKeyHash = true, return key hash
-  Future<String> getAdressBTCP2PKHFomat(
+  Future<String> getAddressBTCP2PKHFormat(
       String publicKeyHEX, bool needKeyHash) async {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeyP2PKH('$publicKeyHEX', $needKeyHash)");
@@ -153,7 +167,7 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   //This method getting Address BTC in SegWit format from Public Key in Hex format
-  Future<String> getAdressBTCSegWitFomat(String publicKeyHEX) async {
+  Future<String> getAddressBTCSegWitFormat(String publicKeyHEX) async {
     final res = await jsVMService.callJS(
         "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeySegWit('$publicKeyHEX')");
     return res.toString();
@@ -166,8 +180,11 @@ class BitcoinBlockChainService implements BlockChainService {
   }
 
   @override
-  Future<String> getBlockchainNetworkEnvironment() async {
-    return bitcoinRpcClient.networkClient.dio.options.baseUrl;
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment() async {
+    return BitcoinNetworkEnvironmentSettings(
+      chainUrl: bitcoinRpcClient.networkClient.dio.options.baseUrl,
+    );
   }
 
   String? getAccountIdFromWalletRedirectOnTheWeb() {
@@ -216,5 +233,4 @@ class BitcoinBlockChainService implements BlockChainService {
     final res = await bitcoinRpcClient.sendTransaction(txhex);
     return res;
   }
-
 }

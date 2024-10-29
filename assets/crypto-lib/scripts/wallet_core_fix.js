@@ -1,4 +1,4 @@
-const fs = require('fs');
+import * as fs from 'node:fs';
 
 const filePath = './node_modules/@trustwallet/wallet-core/dist/src/keystore/fs-storage.js';
 const searchString = 'fs/promises';

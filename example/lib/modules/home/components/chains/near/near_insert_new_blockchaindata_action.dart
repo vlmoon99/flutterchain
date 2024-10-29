@@ -62,7 +62,7 @@ class _NearInsertNewBlockchainDataInsideWalletState
             .then(
           (value) {
             nearVM.nearBlockchainStore.currentDerivationPath
-                .add(value.derivationPath);
+                .add(value.derivationPath as DerivationPath);
             nearVM.nearState.add(
               currentState.copyWith(
                 blockchainsDataCreatedByDerivationPath:

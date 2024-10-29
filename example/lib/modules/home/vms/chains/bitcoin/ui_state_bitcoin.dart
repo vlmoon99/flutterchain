@@ -4,7 +4,7 @@ class SuccessBitcoinBlockchainState extends BitcoinState {
   final dynamic addKeyResult;
   final dynamic deleteKeyResult;
   final dynamic transferResult;
-  final dynamic adressID;
+  final dynamic addressID;
 
   SuccessBitcoinBlockchainState({
     this.blockchainsDataCreatedByDerivationPath,
@@ -12,7 +12,7 @@ class SuccessBitcoinBlockchainState extends BitcoinState {
     this.addKeyResult,
     this.deleteKeyResult,
     this.transferResult,
-    this.adressID,
+    this.addressID,
   });
 
   SuccessBitcoinBlockchainState copyWith({
@@ -21,7 +21,7 @@ class SuccessBitcoinBlockchainState extends BitcoinState {
     dynamic addKeyResult,
     dynamic deleteKeyResult,
     dynamic transferResult,
-    dynamic adressID,
+    dynamic addressID,
   }) {
     return SuccessBitcoinBlockchainState(
       blockchainsDataCreatedByDerivationPath:
@@ -32,7 +32,7 @@ class SuccessBitcoinBlockchainState extends BitcoinState {
       addKeyResult: addKeyResult ?? this.addKeyResult,
       deleteKeyResult: deleteKeyResult ?? this.deleteKeyResult,
       transferResult: transferResult ?? this.transferResult,
-      adressID: adressID ?? this.adressID,
+      addressID: addressID ?? this.addressID,
     );
   }
 }

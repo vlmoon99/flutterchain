@@ -32,7 +32,6 @@ class _NearActivateTestNetAccountState
     // final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
     final nearVM = Modular.get<NearVM>();
     final currentState = nearVM.nearState.value as SuccessNearBlockchainState;
-    final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     return CryptoActionCard(

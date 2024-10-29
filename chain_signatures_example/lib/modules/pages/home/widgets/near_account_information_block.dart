@@ -5,7 +5,7 @@ import 'package:chain_signatures_example/modules/vms/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_account_info_request.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 
 class NearAccountInformationBlock extends StatefulWidget {
@@ -34,7 +34,7 @@ class _NearAccountInformationBlockState
       balanceAnimationController.repeat();
       final nearBlockChainService = context.read<NearBlockChainService>();
       final balanceInString = await nearBlockChainService
-          .getWalletBalance(NearTransferRequest(accountID: accountId));
+          .getWalletBalance(NearAccountInfoRequest(accountId: accountId));
       setState(() {
         balance = double.parse(balanceInString);
       });

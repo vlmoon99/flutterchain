@@ -24,9 +24,9 @@ class LoginWithMyNearWallets extends StatelessWidget {
             .blockchainServices[BlockChains.near] as NearBlockChainService;
 
         final randomNearBlockchainData =
-            await nearBlockchainService.getBlockChainDataFromMnemonic(
-          randomWallet.mnemonic,
-          '',
+            await nearBlockchainService.getBlockChainData(
+          mnemonic: randomWallet.mnemonic,
+          passphrase: '',
         );
 
         final nearAPIJsPrivateKey =
@@ -43,8 +43,8 @@ class LoginWithMyNearWallets extends StatelessWidget {
         nearBlockchainService
             .authWithNearWallets(context, nearAPIJsPrivateKey)
             .then((addedAccountId) {
-          log("addedAccountId $addedAccountId was added sucsessfuly");
-          log("nearAPIJsPrivateKey $nearAPIJsPrivateKey was added sucsessfuly");
+          log("addedAccountId $addedAccountId was added successfully");
+          log("nearAPIJsPrivateKey $nearAPIJsPrivateKey was added successfully");
         });
       },
       child: Container(

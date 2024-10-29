@@ -1,18 +1,19 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutterchain/flutterchain_lib/network/core/network_interceptors/loggin_intereptor.dart';
+import 'package:flutterchain/flutterchain_lib/network/core/network_interceptors/login_interceptor.dart';
 
 class NetworkClient {
-  final Dio dio;
+  late final Dio dio;
   NetworkClient({
-    required this.dio,
+    Dio? dio,
     required String baseUrl,
   }) {
-    dio.options.baseUrl = baseUrl;
-    dio.options.connectTimeout = const Duration(milliseconds: 5000);
-    dio.options.receiveTimeout = const Duration(milliseconds: 5000);
-    dio.interceptors.add(LoggingInterceptor());
+    this.dio = dio ?? Dio();
+    this.dio.options.baseUrl = baseUrl;
+    this.dio.options.connectTimeout = const Duration(milliseconds: 5000);
+    this.dio.options.receiveTimeout = const Duration(milliseconds: 5000);
+    this.dio.interceptors.add(LoggingInterceptor());
   }
 
   void setUrl(String newUrl) {
@@ -40,14 +41,21 @@ class NetworkClient {
         appExceptions.messageForDev, appExceptions.statusCode, false);
   }
 
-  Future<ApiResponse> postHTTP(String url, dynamic data) async {
+  Future<ApiResponse> postHTTP(String url, dynamic data,
+      [Map<String, dynamic>? headers]) async {
     AppExceptions? appExceptions;
+    late Response response;
 
     try {
-      Response response = await dio.post(
-        url,
-        data: data,
-      );
+      if (headers != null) {
+        response =
+            await dio.post(url, data: data, options: Options(headers: headers));
+      } else {
+        response = await dio.post(
+          url,
+          data: data,
+        );
+      }
       return ApiResponse.success(response.data, response.statusCode!, true);
     } on DioException catch (e) {
       appExceptions = _handleError(e);

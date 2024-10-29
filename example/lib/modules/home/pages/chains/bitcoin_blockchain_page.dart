@@ -1,10 +1,7 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain_example/modules/home/components/chains/bitcoin/bitcoin_crypto_action_header.dart';
@@ -32,7 +29,7 @@ class _BitcoinBlockchainPageState extends State<BitcoinBlockchainPage>
         '';
 
     if (accountId.isNotEmpty) {
-      log("accountId was sucsessfuly added $accountId from The Flutter WEB Enviroment");
+      log("accountId was successfully added $accountId from The Flutter WEB Environment");
     }
   }
 

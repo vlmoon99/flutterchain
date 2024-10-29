@@ -1,11 +1,11 @@
 class MPCAccountInfo {
-  final String adress;
+  final String address;
   final String publicKey;
 
-  MPCAccountInfo({required this.adress, required this.publicKey});
+  MPCAccountInfo({required this.address, required this.publicKey});
 
   @override
   String toString() {
-    return 'MPCAccountInfo(adress: $adress, publicKey: $publicKey)';
+    return 'MPCAccountInfo(address: $address, publicKey: $publicKey)';
   }
 }

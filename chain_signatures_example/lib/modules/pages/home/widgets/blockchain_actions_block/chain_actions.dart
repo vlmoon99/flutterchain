@@ -18,7 +18,10 @@ import 'package:flutterchain/flutterchain_lib/constants/chains/polygon_blockchai
 import 'package:flutterchain/flutterchain_lib/constants/chains/xrp_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_network_environment_settings.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/evm/evm_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_mpc_account_info.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/xrp/xrp_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/aurora_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/avalanche_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
@@ -248,12 +251,14 @@ class _ChainActionsState extends State<ChainActions> {
                             ethereumBlockChainService =
                             EthereumBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? EthereumBlockChainNetworkUrls
-                                        .listOfUrls.first
-                                    : EthereumBlockChainNetworkUrls
-                                        .listOfUrls.last,
+                                EvmNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? EthereumBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : EthereumBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
 
                         setState(() {
@@ -263,7 +268,7 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final transactionInfo =
                             await ethereumBlockChainService.getTransactionInfo(
-                          from: widget.accountInfo.adress,
+                          from: widget.accountInfo.address,
                           to: receiverAddressController.text,
                           data: smartContractData,
                           amountInEth: double.parse(amountController.text),
@@ -288,12 +293,12 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final signedTX = await context
                             .read<NearBlockChainService>()
-                            .signEVMTransationWithMPC(
+                            .signEVMTransactionWithMPC(
                               accountId: authController.state.accountId,
                               publicKey: authController.state.publicKey,
                               privateKey: authController.state.privateKey,
                               mpcTransactionInfo: unsignedTx,
-                              senderAdress: widget.accountInfo.adress,
+                              senderAddress: widget.accountInfo.address,
                               path: widget.derivationPath,
                             );
 
@@ -316,12 +321,14 @@ class _ChainActionsState extends State<ChainActions> {
                             bitcoinBlockChainService =
                             BitcoinBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? BitcoinBlockChainNetworkUrls
-                                        .listOfUrls.first
-                                    : BitcoinBlockChainNetworkUrls
-                                        .listOfUrls.last,
+                                BitcoinNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? BitcoinBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : BitcoinBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
 
                         setState(() {
@@ -331,7 +338,7 @@ class _ChainActionsState extends State<ChainActions> {
                         final unsignedTransaction =
                             await bitcoinBlockChainService
                                 .createPayloadForNearMPC(
-                          senderAddress: widget.accountInfo.adress,
+                          senderAddress: widget.accountInfo.address,
                           receiverAddress: receiverAddressController.text,
                           amountOfBTC: amountController.text,
                         );
@@ -369,10 +376,14 @@ class _ChainActionsState extends State<ChainActions> {
                         final BNBBlockChainService bnbBlockChainService =
                             BNBBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? BNBBlockChainNetworkUrls.listOfUrls.first
-                                    : BNBBlockChainNetworkUrls.listOfUrls.last,
+                                EvmNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? BNBBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : BNBBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
 
                         setState(() {
@@ -382,7 +393,7 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final transactionInfo =
                             await bnbBlockChainService.getTransactionInfo(
-                          from: widget.accountInfo.adress,
+                          from: widget.accountInfo.address,
                           to: receiverAddressController.text,
                           amountInEth: double.parse(amountController.text),
                           data: smartContractData,
@@ -407,12 +418,12 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final signedTx = await context
                             .read<NearBlockChainService>()
-                            .signEVMTransationWithMPC(
+                            .signEVMTransactionWithMPC(
                               accountId: authController.state.accountId,
                               publicKey: authController.state.publicKey,
                               privateKey: authController.state.privateKey,
                               mpcTransactionInfo: unsignedTx,
-                              senderAdress: widget.accountInfo.adress,
+                              senderAddress: widget.accountInfo.address,
                             );
 
                         setState(() {
@@ -432,12 +443,14 @@ class _ChainActionsState extends State<ChainActions> {
                         final AuroraBlockChainService auroraBlockChainService =
                             AuroraBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? AuroraBlockChainNetworkUrls
-                                        .listOfUrls.first
-                                    : AuroraBlockChainNetworkUrls
-                                        .listOfUrls.last,
+                                EvmNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? AuroraBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : AuroraBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
 
                         setState(() {
@@ -447,7 +460,7 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final transactionInfo =
                             await auroraBlockChainService.getTransactionInfo(
-                          from: widget.accountInfo.adress,
+                          from: widget.accountInfo.address,
                           to: receiverAddressController.text,
                           amountInEth: double.parse(amountController.text),
                           data: smartContractData,
@@ -472,12 +485,12 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final signedTx = await context
                             .read<NearBlockChainService>()
-                            .signEVMTransationWithMPC(
+                            .signEVMTransactionWithMPC(
                               accountId: authController.state.accountId,
                               publicKey: authController.state.publicKey,
                               privateKey: authController.state.privateKey,
                               mpcTransactionInfo: unsignedTx,
-                              senderAdress: widget.accountInfo.adress,
+                              senderAddress: widget.accountInfo.address,
                             );
 
                         setState(() {
@@ -498,12 +511,14 @@ class _ChainActionsState extends State<ChainActions> {
                             polygonBlockChainService =
                             PolygonBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? PolygonBlockChainNetworkUrls
-                                        .listOfUrls.first
-                                    : PolygonBlockChainNetworkUrls
-                                        .listOfUrls.last,
+                                EvmNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? PolygonBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : PolygonBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
 
                         setState(() {
@@ -513,7 +528,7 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final transactionInfo =
                             await polygonBlockChainService.getTransactionInfo(
-                          from: widget.accountInfo.adress,
+                          from: widget.accountInfo.address,
                           to: receiverAddressController.text,
                           amountInMatic: double.parse(amountController.text),
                           data: smartContractData,
@@ -538,12 +553,12 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final signedTx = await context
                             .read<NearBlockChainService>()
-                            .signEVMTransationWithMPC(
+                            .signEVMTransactionWithMPC(
                               accountId: authController.state.accountId,
                               publicKey: authController.state.publicKey,
                               privateKey: authController.state.privateKey,
                               mpcTransactionInfo: unsignedTx,
-                              senderAdress: widget.accountInfo.adress,
+                              senderAddress: widget.accountInfo.address,
                             );
 
                         setState(() {
@@ -564,12 +579,14 @@ class _ChainActionsState extends State<ChainActions> {
                             avalancheBlockChainService =
                             AvalancheBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? AvalancheBlockChainNetworkUrls
-                                        .listOfUrls.first
-                                    : AvalancheBlockChainNetworkUrls
-                                        .listOfUrls.last,
+                                EvmNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? AvalancheBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : AvalancheBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
 
                         setState(() {
@@ -579,7 +596,7 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final transactionInfo =
                             await avalancheBlockChainService.getTransactionInfo(
-                          from: widget.accountInfo.adress,
+                          from: widget.accountInfo.address,
                           to: receiverAddressController.text,
                           amountInAvax: double.parse(amountController.text),
                           data: smartContractData,
@@ -604,12 +621,12 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final signedTx = await context
                             .read<NearBlockChainService>()
-                            .signEVMTransationWithMPC(
+                            .signEVMTransactionWithMPC(
                               accountId: authController.state.accountId,
                               publicKey: authController.state.publicKey,
                               privateKey: authController.state.privateKey,
                               mpcTransactionInfo: unsignedTx,
-                              senderAdress: widget.accountInfo.adress,
+                              senderAddress: widget.accountInfo.address,
                             );
 
                         setState(() {
@@ -629,10 +646,14 @@ class _ChainActionsState extends State<ChainActions> {
                         final XRPBlockChainService xrpBlockChainService =
                             XRPBlockChainService.defaultInstance()
                               ..setBlockchainNetworkEnvironment(
-                                newUrl: authController.state.networkType ==
-                                        NearNetworkType.testnet
-                                    ? XRPBlockChainNetworkUrls.listOfUrls.first
-                                    : XRPBlockChainNetworkUrls.listOfUrls.last,
+                                XrpNetworkEnvironmentSettings(
+                                  chainUrl: authController.state.networkType ==
+                                          NearNetworkType.testnet
+                                      ? XRPBlockChainNetworkUrls
+                                          .listOfUrls.first
+                                      : XRPBlockChainNetworkUrls
+                                          .listOfUrls.last,
+                                ),
                               );
                         setState(() {
                           txSendingStatus =
@@ -641,7 +662,7 @@ class _ChainActionsState extends State<ChainActions> {
 
                         final txInfo =
                             await xrpBlockChainService.getTransactionInfo(
-                          senderAdress: widget.accountInfo.adress,
+                          senderAddress: widget.accountInfo.address,
                         );
 
                         setState(() {

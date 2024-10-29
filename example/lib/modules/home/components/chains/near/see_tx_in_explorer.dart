@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain_example/modules/home/vms/chains/near/near_vm.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
@@ -29,7 +30,11 @@ class _SeeTransactionInfoNearBlockchainState
         final currentEnvironment = await nearVM.cryptoLibrary.blockchainService
             .getBlockchainNetworkEnvironment(
           blockchainType: BlockChains.near,
-        );
+        ) as NearNetworkEnvironmentSettings?;
+
+        if (currentEnvironment == null) {
+          throw Exception('No current environment');
+        }
 
         if (widget.tx == null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +49,7 @@ class _SeeTransactionInfoNearBlockchainState
         }
         await nearVM.nearHelperService.launchInBrowser(
           Uri.parse(
-              'https://explorer.${currentEnvironment.split('.').sublist(1).join('.')}/transactions/${widget.tx}'),
+              'https://explorer.${currentEnvironment.chainUrl.split('.').sublist(1).join('.')}/transactions/${widget.tx}'),
         );
       },
       child: Container(

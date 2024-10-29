@@ -6,7 +6,6 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
@@ -66,10 +65,10 @@ class NearVM {
         .generateNewWallet(walletName: "GeneratedRandom ${DateTime.now()}");
     final randomBlockchainData = await cryptoLibrary
         .blockchainService.blockchainServices[BlockChains.near]!
-        .getBlockChainDataByDerivationPath(
-      derivationPath: randomWalletDerivationPath,
+        .getBlockChainData(
       mnemonic: generatedWallet.mnemonic,
       passphrase: '',
+      derivationPath: randomWalletDerivationPath,
     );
     log("New Public Key ${randomBlockchainData.publicKey}");
     final currentWallet = cryptoLibrary.walletsStream.value
@@ -170,26 +169,31 @@ class NearVM {
     required String method,
     required DerivationPath currentDerivationPath,
   }) {
-    NearTransferRequest nearTransferRequest = NearTransferRequest(
-      currentDerivationPath: currentDerivationPath,
-      walletId: walletId,
+    final response = cryptoLibrary.callSmartContractFunction(
+      blockchainType: BlockChains.near,
+      derivationPathData: currentDerivationPath,
       toAddress: smartContractAddress,
-      arguments: NearBlockChainSmartContractArguments(
+      rawSmartContractArguments: RawNearBlockChainSmartContractArguments(
         method: method,
         args: args,
         transferAmount: amountOfDeposit,
       ),
+      walletId: walletId,
     );
-    final response = cryptoLibrary.callSmartContractFunction(
-        transferRequest: nearTransferRequest);
     return response;
   }
 
   Future<dynamic> getBalanceByDerivationPath({
-    required NearTransferRequest nearTransferRequest,
+    String? address,
+    String? walletId,
+    DerivationPathData? derivationPathData,
   }) async =>
       cryptoLibrary.getBalanceOfAddressOnSpecificBlockchain(
-          transferRequest: nearTransferRequest);
+        address: address,
+        blockchainType: BlockChains.near,
+        walletId: walletId,
+        derivationPathData: derivationPathData,
+      );
 
   Future<String> getWalletPublicKeyAddressByWalletId(
           String walletName, DerivationPath currentDerivationPath) async =>
@@ -209,12 +213,18 @@ class NearVM {
           .mnemonic;
 
   Future<BlockchainResponse> sendNativeCoinTransferByWalletId({
-    required NearTransferRequest nearTransferRequest,
+    required String walletId,
+    required DerivationPathData derivationPathData,
+    required String toAddress,
+    required String transferAmount,
   }) async {
-    nearTransferRequest.transferAmount =
-        NearFormatter.nearToYoctoNear(nearTransferRequest.transferAmount!);
     final response = cryptoLibrary.sendTransferNativeCoin(
-        transferRequest: nearTransferRequest);
+      blockchainType: BlockChains.near,
+      derivationPathData: derivationPathData,
+      walletId: walletId,
+      toAddress: toAddress,
+      transferAmount: NearFormatter.nearToYoctoNear(transferAmount),
+    );
     return response;
   }
 

@@ -26,10 +26,11 @@ dependencies:
   flutter_svg: ^2.0.1
   flutter_modular: 5.0.3
   flutter_screenutil: ^5.7.0
+
   fluentui_system_icons: ^1.1.255
   flutter_inappwebview_ios: 1.1.1
   qr_code_scanner: ^1.0.0
-  
+
   flutterchain:
     path: ../
   hex: 0.2.0
@@ -39,6 +40,7 @@ dependencies:
   rxdart: 0.28.0
   tap_debouncer: 2.0.2
   url_launcher: ^6.1.11
+  web: ^1.0.0
 dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:

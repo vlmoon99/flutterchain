@@ -7,22 +7,17 @@ part 'near_blockchain_data.g.dart';
 @JsonSerializable()
 class NearBlockChainData extends BlockChainData {
   String? accountId;
+  final String passphrase;
   NearBlockChainData({
     this.accountId,
     //Standard near ed25519 public key
-    required String publicKey,
+    required super.publicKey,
     //Base 64 encoded
-    required String privateKey,
-    required DerivationPath derivationPath,
-    required String passphrase,
-    String identifier = BlockChains.near,
-  }) : super(
-          identifier: identifier,
-          publicKey: publicKey,
-          privateKey: privateKey,
-          derivationPath: derivationPath,
-          passphrase: passphrase,
-        );
+    required super.privateKey,
+    required DerivationPath super.derivationPath,
+    required this.passphrase,
+    super.identifier = BlockChains.near,
+  });
 
   factory NearBlockChainData.fromJson(Map<String, dynamic> json) =>
       _$NearBlockChainDataFromJson(json);

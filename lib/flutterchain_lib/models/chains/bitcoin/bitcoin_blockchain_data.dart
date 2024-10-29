@@ -9,23 +9,18 @@ part 'bitcoin_blockchain_data.g.dart';
 @JsonSerializable()
 class BitcoinBlockChainData extends BlockChainData {
   String? accountId;
+  final String passphrase;
   BitcoinBlockChainData({
     // Standard bitcoin SegWit address
     this.accountId,
     //Standard bitcoin Base 58 encoded public key
-    required String publicKey,
+    required super.publicKey,
     //Base 58 encoded
-    required String privateKey,
-    required DerivationPath derivationPath,
-    required String passphrase,
-    String identifier = BlockChains.bitcoin,
-  }) : super(
-          identifier: identifier,
-          publicKey: publicKey,
-          privateKey: privateKey,
-          derivationPath: derivationPath,
-          passphrase: passphrase,
-        );
+    required super.privateKey,
+    required DerivationPath super.derivationPath,
+    required this.passphrase,
+    super.identifier = BlockChains.bitcoin,
+  });
 
   factory BitcoinBlockChainData.fromJson(Map<String, dynamic> json) =>
       _$BitcoinBlockChainDataFromJson(json);
@@ -39,6 +34,6 @@ class BitcoinBlockChainData extends BlockChainData {
   }
 
   String get() {
-    return this.accountId!;
+    return accountId!;
   }
 }

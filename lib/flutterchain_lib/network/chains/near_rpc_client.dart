@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bs58/bs58.dart';
@@ -69,6 +69,9 @@ class NearRpcClient {
         }
       },
     );
+    if (res.data["error"] != null) {
+      throw Exception("Account not exist");
+    }
     if (res.isSuccess) {
       final decodedRes = res.data['result']['amount'].toString();
       final nearAmount = NearFormatter.yoctoNearToNear(
@@ -106,8 +109,8 @@ class NearRpcClient {
         );
       }
 
-      final decodedResponse =
-          NearFormatter.decodeViewCallResponse(List<int>.from(res.data['result']?['result']));
+      final decodedResponse = NearFormatter.decodeViewCallResponse(
+          List<int>.from(res.data['result']?['result']));
 
       return BlockchainResponse(
         data: {"response": decodedResponse},
@@ -206,23 +209,109 @@ class NearRpcClient {
       );
     }
   }
+
+  Future<BlockchainResponse> mintBaseRPCInteractions(
+      {required String query}) async {
+    var uri = "";
+    if (networkClient.dio.options.baseUrl ==
+        NearBlockChainNetworkUrls.listOfUrls.first) {
+      uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.first;
+    } else {
+      uri = NearBlockChainNetworkUrls.listOfUrlsMintbase.last;
+    }
+
+    final headers = {"mb-api-key": "anon", "content-type": "application/json"};
+
+    final res = await networkClient.postHTTP(uri,
+        {"query": query, "variables": {}, "operationName": "MyQuery"}, headers);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
+
+  Future<BlockchainResponse> uploadFileToArweave(
+      {required Uint8List fileBytes}) async {
+    int maxSize = 31457280;
+    if (await fileBytes.length > maxSize) {
+      throw Exception("The file size should be up to 30MB");
+    }
+
+    String uri = 'https://ar.mintbase.xyz';
+
+    Map<String, dynamic> heders = {"mb-api-key": "anon"};
+
+    final formData = await createFormData(fileBytes: fileBytes);
+
+    final res = await networkClient.postHTTP(uri, formData, heders);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
+
+  Future<FormData> createFormData({required Uint8List fileBytes}) async {
+    return FormData.fromMap({
+      'file': await MultipartFile.fromBytes(fileBytes, filename: "file"),
+    });
+  }
+
+  Future<BlockchainResponse> uploadReferenceToArweave(
+      {required Map<String, dynamic> reference}) async {
+    Map<String, dynamic> finalRefetence = {};
+    reference.forEach((key, value) {
+      if (value != null) {
+        finalRefetence[key] = value;
+      }
+    });
+
+    FormData formData = FormData.fromMap(finalRefetence);
+
+    final uri = 'https://ar.mintbase.xyz/reference';
+
+    Map<String, dynamic> headers = {"mb-api-key": "anon"};
+
+    final res = await networkClient.postHTTP(uri, formData, headers);
+
+    if (res.data['error'] != null) {
+      return BlockchainResponse(
+        data: res.data['error'],
+        status: BlockchainResponses.error,
+      );
+    } else {
+      return BlockchainResponse(
+          data: res.data, status: BlockchainResponses.success);
+    }
+  }
 }
 
 class NearNetworkClient extends NetworkClient {
-  NearNetworkClient({required super.baseUrl, required super.dio}) {
-    dio.interceptors.add(
-      RetryInterceptor(
-        dio: dio,
-        logPrint: log,
-        retries: 5,
-        retryDelays: const [
-          Duration(seconds: 2),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-          Duration(seconds: 1),
-        ],
-      ),
-    );
+  NearNetworkClient({required super.baseUrl, super.dio}) {
+    super.dio.interceptors.add(
+          RetryInterceptor(
+            dio: dio,
+            logPrint: log,
+            retries: 5,
+            retryDelays: const [
+              Duration(seconds: 2),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+              Duration(seconds: 1),
+            ],
+          ),
+        );
   }
 }

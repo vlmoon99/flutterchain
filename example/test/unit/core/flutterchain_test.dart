@@ -4,9 +4,8 @@ import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchai
 import 'package:flutterchain/flutterchain_lib/formaters/chains/near_formater.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_smart_contract_arguments.dart';
-import 'package:flutterchain/flutterchain_lib/models/chains/near/near_transfer_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
-import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 import '../mocks.dart';
@@ -260,15 +259,14 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
-      NearTransferRequest nearTransferRequest = NearTransferRequest(
-          toAddress: toAddress,
-          transferAmount: transferAmount,
-          walletId: walletId,
-          currentDerivationPath: currentDerivationPath);
-
       // Act
       final result = await mockCryptoLibrary.sendTransferNativeCoin(
-          transferRequest: nearTransferRequest);
+        blockchainType: BlockChains.near,
+        derivationPathData: currentDerivationPath,
+        toAddress: toAddress,
+        transferAmount: transferAmount,
+        walletId: walletId,
+      );
 
       // Assert
       expect(result, expectedResponse);
@@ -286,11 +284,6 @@ void main() {
         change: "0'",
         address: "1'",
       );
-      NearTransferRequest nearTransferRequest = NearTransferRequest(
-          toAddress: toAddress,
-          transferAmount: transferAmount,
-          walletId: walletId,
-          currentDerivationPath: currentDerivationPath);
 
       final expectedResponse = BlockchainResponse(
         status: 'failure',
@@ -299,7 +292,12 @@ void main() {
 
       // Act
       final result = await mockCryptoLibrary.sendTransferNativeCoin(
-          transferRequest: nearTransferRequest);
+        blockchainType: BlockChains.near,
+        derivationPathData: currentDerivationPath,
+        toAddress: toAddress,
+        transferAmount: transferAmount,
+        walletId: walletId,
+      );
 
       // Assert
       expect(result, expectedResponse);
@@ -325,20 +323,18 @@ void main() {
         data: {'txhash': 'some hash'},
       );
 
-      NearTransferRequest nearTransferRequest = NearTransferRequest(
-        currentDerivationPath: currentDerivationPath,
+      // Act
+      final result = await mockCryptoLibrary.callSmartContractFunction(
+        blockchainType: BlockChains.near,
+        derivationPathData: currentDerivationPath,
         walletId: walletID,
         toAddress: smartContractAddress,
-        arguments: NearBlockChainSmartContractArguments(
+        rawSmartContractArguments: RawNearBlockChainSmartContractArguments(
           method: method,
           args: args,
           transferAmount: amountOfDeposit,
         ),
       );
-
-      // Act
-      final result = await mockCryptoLibrary.callSmartContractFunction(
-          transferRequest: nearTransferRequest);
 
       // Assert
       expect(result, expectedResponse);
@@ -350,7 +346,8 @@ void main() {
 
       // Act
       await mockCryptoLibrary.setBlockchainNetworkEnvironment(
-        newUrl: newUrl,
+        blockChainNetworkEnvironmentSettings:
+            NearNetworkEnvironmentSettings(chainUrl: newUrl),
         blockchainType: BlockChains.near,
       );
 

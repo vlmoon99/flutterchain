@@ -1,31 +1,35 @@
+import 'package:flutterchain/flutterchain_lib/models/core/account_info_request.dart';
+import 'package:flutterchain/flutterchain_lib/models/core/blockchain_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_response.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/blockchain_smart_contract_arguments.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 
 abstract class BlockChainService {
-  Future<BlockChainData> getBlockChainDataFromMnemonic(
-    String mnemonic,
-    String passphrase,
-  );
+  Future<BlockChainData> getBlockChainData({
+    required String mnemonic,
+    String? passphrase,
+    DerivationPathData? derivationPath,
+  });
 
   Future<BlockchainResponse> sendTransferNativeCoin(
       TransferRequest transferRequest);
 
-  Future<BlockchainResponse> callSmartContractFunction(
-    TransferRequest transferRequest,
+  Future<String> getWalletBalance(AccountInfoRequest accountInfoRequest);
+
+  Future<void> setBlockchainNetworkEnvironment(
+    BlockChainNetworkEnvironmentSettings blockChainNetworkEnvironmentSettings,
   );
-
-  Future<String> getWalletBalance(TransferRequest transferRequest);
-
-  Future<void> setBlockchainNetworkEnvironment({required String newUrl});
 
   Set<String> getBlockchainsUrlsByBlockchainType();
 
-  Future<BlockChainData> getBlockChainDataByDerivationPath({
-    required String mnemonic,
-    required String? passphrase,
-    required DerivationPath derivationPath,
-  });
-  Future<String> getBlockchainNetworkEnvironment();
+  Future<BlockChainNetworkEnvironmentSettings>
+      getBlockchainNetworkEnvironment();
+}
+
+abstract class BlockchainServiceWithSmartContractCallSupport
+    extends BlockChainService {
+  Future<BlockchainResponse> callSmartContractFunction(
+    BlockChainSmartContractArguments smartContractArguments,
+  );
 }

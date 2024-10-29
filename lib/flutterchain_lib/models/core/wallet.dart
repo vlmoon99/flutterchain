@@ -1,5 +1,7 @@
 import 'package:flutterchain/flutterchain_lib/constants/core/supported_blockchains.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/bitcoin/bitcoin_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_blockchain_data.dart';
+import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordium_derivation_path.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_blockchain_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -35,19 +37,15 @@ class BlockChainData {
   final String identifier;
   final String publicKey;
   final String privateKey;
-  final DerivationPath derivationPath;
-  final String passphrase;
+  final DerivationPathData derivationPath;
 
   BlockChainData({
     required this.identifier,
     required this.publicKey,
     required this.privateKey,
     required this.derivationPath,
-    required this.passphrase,
   });
 
-  // factory BlockChainData.fromJson(Map<String, dynamic> json) =>
-  //     _$BlockChainDataFromJson(json);
   factory BlockChainData.fromJson(Map<String, dynamic> json) {
     String identifier = json['identifier'] as String;
     switch (identifier) {
@@ -55,6 +53,8 @@ class BlockChainData {
         return NearBlockChainData.fromJson(json);
       case BlockChains.bitcoin:
         return BitcoinBlockChainData.fromJson(json);
+      case BlockChains.concordium:
+        return ConcordiumBlockChainData.fromJson(json);
       // Add more cases for other supported blockchains
       default:
         throw Exception('Unsupported blockchain data type');
@@ -67,18 +67,17 @@ class BlockChainData {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is BlockChainData &&
-          // runtimeType == other.runtimeType &&
+          identifier == other.identifier &&
           publicKey == other.publicKey &&
           privateKey == other.privateKey &&
-          derivationPath == other.derivationPath &&
-          passphrase == other.passphrase;
+          derivationPath == other.derivationPath;
 
   @override
   int get hashCode =>
+      identifier.hashCode ^
       publicKey.hashCode ^
       privateKey.hashCode ^
-      derivationPath.hashCode ^
-      passphrase.hashCode;
+      derivationPath.hashCode;
 
   @override
   String toString() {
@@ -87,7 +86,26 @@ class BlockChainData {
 }
 
 @JsonSerializable()
-class DerivationPath {
+class DerivationPathData {
+  DerivationPathData();
+  final String typeOfDerivationPath = "";
+
+  factory DerivationPathData.fromJson(Map<String, dynamic> json) {
+    switch (json['typeOfDerivationPath']) {
+      case "standard":
+        return DerivationPath.fromJson(json);
+      case "concordium":
+        return ConcordiumDerivationPath.fromJson(json);
+      default:
+        throw Exception('Invalid derivation path data');
+    }
+  }
+
+  Map<String, dynamic> toJson() => _$DerivationPathDataToJson(this);
+}
+
+@JsonSerializable()
+class DerivationPath implements DerivationPathData {
   // m / purpose’ / coin_type’ / accountNumber / change / address
   final String purpose;
   final String coinType;
@@ -106,6 +124,7 @@ class DerivationPath {
   factory DerivationPath.fromJson(Map<String, dynamic> json) =>
       _$DerivationPathFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$DerivationPathToJson(this);
 
   @override
@@ -131,4 +150,7 @@ class DerivationPath {
       accountNumber.hashCode ^
       change.hashCode ^
       address.hashCode;
+
+  @override
+  String get typeOfDerivationPath => "standard";
 }
