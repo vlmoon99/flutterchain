@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
@@ -74,6 +75,12 @@ class _CryptoListPageState extends State<CryptoListPage> {
             SizedBox(
               height: 10.h,
             ),
+            if (kIsWeb) ...[
+              const Text("wasm: $kIsWasm"),
+              SizedBox(
+                height: 10.h,
+              ),
+            ],
             Text(
               'Total Amount: \$" Not yet implemented"',
               style: nearTextStyles.headline!.copyWith(

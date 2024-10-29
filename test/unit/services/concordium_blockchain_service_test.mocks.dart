@@ -29,7 +29,7 @@ import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/con
     as _i3;
 import 'package:flutterchain/flutterchain_lib/services/chains/concordium_blockchain_service.dart'
     as _i10;
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart'
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/concordium/concordium_blockchain_js_runner_interface.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i12;
@@ -47,8 +47,9 @@ import 'package:mockito/src/dummies.dart' as _i12;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeJsVMService_0 extends _i1.SmartFake implements _i2.JsVMService {
-  _FakeJsVMService_0(
+class _FakeConcordiumBlockchainJsRunner_0 extends _i1.SmartFake
+    implements _i2.ConcordiumBlockchainJsRunner {
+  _FakeConcordiumBlockchainJsRunner_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -143,13 +144,13 @@ class MockConcordiumBlockChainService extends _i1.Mock
   }
 
   @override
-  _i2.JsVMService get jsVMService => (super.noSuchMethod(
-        Invocation.getter(#jsVMService),
-        returnValue: _FakeJsVMService_0(
+  _i2.ConcordiumBlockchainJsRunner get jsRunner => (super.noSuchMethod(
+        Invocation.getter(#jsRunner),
+        returnValue: _FakeConcordiumBlockchainJsRunner_0(
           this,
-          Invocation.getter(#jsVMService),
+          Invocation.getter(#jsRunner),
         ),
-      ) as _i2.JsVMService);
+      ) as _i2.ConcordiumBlockchainJsRunner);
 
   @override
   _i3.ConcordiumRpcClient get concordiumRpcClient => (super.noSuchMethod(

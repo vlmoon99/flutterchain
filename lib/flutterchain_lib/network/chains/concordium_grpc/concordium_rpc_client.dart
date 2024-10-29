@@ -8,11 +8,10 @@ import 'package:flutterchain/flutterchain_lib/models/chains/concordium/concordiu
 import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/protos/generated/service.pbgrpc.dart';
 import 'package:flutterchain/flutterchain_lib/network/core/network_core.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/utils/concordium_utils.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client.dart';
 import 'package:grpc/grpc_connection_interface.dart';
 import 'protos/generated/types.pb.dart' as grpcTypes;
-import 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client_io.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/grpc_engines/get_grpc_client_web.dart';
+
 
 class ConcordiumRpcClient {
   final NetworkClient concordiumNetworkClient;

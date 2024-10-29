@@ -15,12 +15,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterchain/flutterchain_lib/constants/chains/near_blockchain_network_urls.dart';
 import 'package:flutterchain/flutterchain_lib/models/chains/near/near_network_environment_settings.dart';
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
-import 'package:flutterchain/flutterchain_lib/services/chains/bitcoin_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/crypto_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 
 class NearAccountCreationActionDialog extends StatefulWidget {
   const NearAccountCreationActionDialog({
@@ -57,7 +53,7 @@ class _NearAccountCreationActionDialogState
       );
 
       final flutterChainService = FlutterChainService(
-        jsVMService: getJsVM(),
+        // jsVMService: getJsVM(),
         nearBlockchainService: nearBlockChainService,
       );
 

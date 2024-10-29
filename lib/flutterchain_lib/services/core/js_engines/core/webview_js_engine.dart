@@ -1,23 +1,27 @@
 import 'dart:async';
 
 import 'package:flutterchain/flutterchain_lib/constants/core/webview_constants.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-JsVMService getJsVM() {
-  return WebviewJsVMService();
-}
+// JsVMService getJsVM() {
+//   return WebviewJsVMService();
+// }
 
-class WebviewJsVMService implements JsVMService {
+class WebviewJsVMService {
   late HeadlessInAppWebView _headlessWebView;
   late InAppWebViewController _webViewMobileController;
   final _readyCompleter = Completer<void>();
 
-  WebviewJsVMService() {
+  static final WebviewJsVMService _instance = WebviewJsVMService._();
+
+  WebviewJsVMService._() {
     init();
   }
 
-  @override
+  factory WebviewJsVMService() {
+    return _instance;
+  }
+
   Future<void> init() async {
     _headlessWebView = HeadlessInAppWebView(
       initialSettings: InAppWebViewSettings(
@@ -52,13 +56,11 @@ class WebviewJsVMService implements JsVMService {
     await _headlessWebView.run();
   }
 
-  @override
   Future<dynamic> callJS(String function) async {
     await _readyCompleter.future;
     return _webViewMobileController.evaluateJavascript(source: function);
   }
 
-  @override
   Future<dynamic> callJSAsync(String function) async {
     await _readyCompleter.future;
     final String functionBody = """

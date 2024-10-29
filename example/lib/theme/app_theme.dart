@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 // ignore: depend_on_referenced_packages
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 // @immutable
 // class MyColors extends ThemeExtension<MyColors> {
@@ -324,30 +324,30 @@ class AppTheme {
   AppTheme() {
     appThemeStream.add(_lightTheme);
 
-    final prefs = SharedPreferences.getInstance();
+    // final prefs = SharedPreferences.getInstance();
 
-    prefs.then((storage) {
-      final value = storage.get('themeMode');
+    // prefs.then((storage) {
+    //   final value = storage.get('themeMode');
 
-      var themeMode = value ?? 'light';
-      if (themeMode == 'light') {
-        appThemeStream.add(_lightTheme);
-      } else {
-        appThemeStream.add(_darkTheme);
-      }
-    });
+    //   var themeMode = value ?? 'light';
+    //   if (themeMode == 'light') {
+    //     appThemeStream.add(_lightTheme);
+    //   } else {
+    //     appThemeStream.add(_darkTheme);
+    //   }
+    // });
   }
 
-  void setDarkMode() async {
-    appThemeStream.add(_darkTheme);
-    final prefs = await SharedPreferences.getInstance();
+  // void setDarkMode() async {
+  //   appThemeStream.add(_darkTheme);
+  //   final prefs = await SharedPreferences.getInstance();
 
-    prefs.setString('themeMode', 'dark');
-  }
+  //   prefs.setString('themeMode', 'dark');
+  // }
 
-  void setLightMode() async {
-    appThemeStream.add(_lightTheme);
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('themeMode', 'light');
-  }
+  // void setLightMode() async {
+  //   appThemeStream.add(_lightTheme);
+  //   final prefs = await SharedPreferences.getInstance();
+  //   prefs.setString('themeMode', 'light');
+  // }
 }
