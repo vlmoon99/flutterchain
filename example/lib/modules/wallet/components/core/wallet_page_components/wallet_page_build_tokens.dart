@@ -4,15 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../assets/icon_images/icons.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
 
-class BuilTokens extends StatelessWidget {
-  const BuilTokens({super.key});
+class BuildTokens extends StatelessWidget {
+  const BuildTokens({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Modular.get<AppTheme>();
     final nearColors = theme.getTheme().extension<NearColors>()!;
     final nearTextStyles = theme.getTheme().extension<NearTextStyles>()!;
-    double screenWidth = MediaQuery.of(context).size.width;
 
     List<Map<dynamic, dynamic>> tokens = [
       {
@@ -137,7 +136,7 @@ class BuilTokens extends StatelessWidget {
         final token = tokens[index];
 
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
           child: Row(
             children: [
               token['icon'] as Widget,

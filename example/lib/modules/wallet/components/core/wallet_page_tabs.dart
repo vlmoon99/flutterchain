@@ -289,7 +289,7 @@ class WalletPageTab extends StatelessWidget {
                       ),
                       Expanded(
                         child: TabBarView(
-                          children: [BuilTokens(), BuildNft()],
+                          children: [const BuildTokens(), BuildNft()],
                         ),
                       ),
                     ],

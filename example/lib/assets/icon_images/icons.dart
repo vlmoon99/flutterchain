@@ -2,69 +2,36 @@ import 'package:flutter/widgets.dart';
 
 class Images {
   static const buyIcon =
-      'lib/assets/icon_images/button_icons/buyButtonIcon.png';
+      'lib/assets/icon_images/button_icons/buy_button_icon.png';
   static const receiveIcon =
-      'lib/assets/icon_images/button_icons/receiveButtonIcon.png';
+      'lib/assets/icon_images/button_icons/receive_button_icon.png';
   static const sendIcon =
-      'lib/assets/icon_images/button_icons/sendButtonIcon.png';
+      'lib/assets/icon_images/button_icons/send_button_icon.png';
   static const swapIcon =
-      'lib/assets/icon_images/button_icons/swapButtonIcon.png';
+      'lib/assets/icon_images/button_icons/swap_button_icon.png';
   static const wallet =
-      'lib/assets/icon_images/button_icons/walletButtonIcon.png';
+      'lib/assets/icon_images/button_icons/wallet_button_icon.png';
   static const stackingIcon =
-      'lib/assets/icon_images/button_icons/stackingButtonIcon.png';
+      'lib/assets/icon_images/button_icons/stacking_button_icon.png';
   static const settingsIcon =
-      'lib/assets/icon_images/button_icons/settingsButtonIcon.png';
+      'lib/assets/icon_images/button_icons/settings_button_icon.png';
   static const scanIcon =
-      'lib/assets/icon_images/button_icons/scanButtonIcon.png';
+      'lib/assets/icon_images/button_icons/scan_button_icon.png';
   static const nearIcon =
-      'lib/assets/icon_images/button_icons/nearTokenICon.png';
+      'lib/assets/icon_images/button_icons/near_token_icon.png';
   static const octopusIcon =
-      'lib/assets/icon_images/button_icons/octopusTokenIcon.png';
+      'lib/assets/icon_images/button_icons/octopus_token_icon.png';
   static const deipIcon =
-      'lib/assets/icon_images/button_icons/deipTokenIcon.png';
+      'lib/assets/icon_images/button_icons/deip_token_icon.png';
   static const auroraIcon =
-      'lib/assets/icon_images/button_icons/auroraTokenIcon.png';
-  static const usnIcon = 'lib/assets/icon_images/button_icons/usnTokenIcon.png';
+      'lib/assets/icon_images/button_icons/aurora_token_icon.png';
+  static const usnIcon =
+      'lib/assets/icon_images/button_icons/usn_token_icon.png';
   static const tomasNftICon =
       'lib/assets/icon_images/nft_icons/tomas_nft_icon.png';
   static const clausNftICon =
       'lib/assets/icon_images/nft_icons/claus_nft_icon.png';
 }
-
-// class Images {
-//   // static const familyMan = 'assets/images/jhipster_family_member_0.svg';
-//   static const buyIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/buyButtonIcon.png';
-//   static const receiveIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/receiveButtonIcon.png';
-//   static const sendIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/sendButtonIcon.png';
-//   static const swapIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/swapButtonIcon.png';
-//   static const wallet =
-//       '/Users/hello/flutterchain1/example/lib/assets/images/button_icons/walletButtonIcon.png';
-//   static const stackingIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/stackingButtonIcon.png';
-//   static const settingsIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/settingsButtonIcon.png';
-//   static const scanIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/scanButtonIcon.png';
-//   static const nearIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/nearTokenICon.png';
-//   static const octopusIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/octopusTokenIcon.png';
-//   static const deipIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/deipTokenIcon.png';
-//   static const auroraIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/auroraTokenIcon.png';
-//   static const usnIcon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/button_icons/usnTokenIcon.png';
-//   static const tomasNftICon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/nft_icons/tomas_nft_icon.png';
-//   static const clausNftICon =
-//       '/Users/hello/flutterchain1/example/lib/assets/icon_images/nft_icons/claus_nft_icon.png';
-// }
 
 enum IconType {
   buy,
