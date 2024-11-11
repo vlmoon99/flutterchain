@@ -23,7 +23,7 @@ dependencies:
     sdk: flutter
   grpc:
     git:
-      url: https://github.com/minoic/grpc-dart.git
+      url: https://github.com/ArturLevchuk/grpc-dart
   hex: ^0.2.0
   json_annotation: ^4.8.1
   plugin_platform_interface: ^2.1.8

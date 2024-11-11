@@ -435,7 +435,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0-beta.15"
+    version: "1.0.0-beta.16"
   glob:
     dependency: transitive
     description:
@@ -466,7 +466,7 @@ packages:
       path: "."
       ref: HEAD
       resolved-ref: "3d9ee25fee6d398489816927ffe219408d778ae4"
-      url: "https://github.com/minoic/grpc-dart.git"
+      url: "https://github.com/ArturLevchuk/grpc-dart"
     source: git
     version: "4.0.2-wip"
   hex:
