@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
@@ -27,25 +26,24 @@ import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/evm/evm_blockchain_js_runner.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/nearblockchain/near_blockchain_js_runner.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/nearblockchain/near_blockchain_js_runner_interface.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/xrp/xrp_blockchain_js_runner.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/bitcoin/bitcoin_blockchain_js_runner.dart';
 
 class NearBlockChainService
     implements BlockchainServiceWithSmartContractCallSupport {
-  final JsVMService jsVMService;
+  final NearBlockChainJsRunner jsRunner = getNearJsRunner();
   final NearRpcClient nearRpcClient;
 
   NearBlockChainService({
-    JsVMService? jsVMService,
     required this.nearRpcClient,
-  }) : jsVMService = jsVMService ?? getJsVM();
+  });
 
   factory NearBlockChainService.defaultInstance() {
     return NearBlockChainService(
-      jsVMService: getJsVM(),
       nearRpcClient: NearRpcClient.defaultInstance(),
     );
   }
@@ -56,8 +54,7 @@ class NearBlockChainService
   Future<String> generateMnemonic({
     int strength = 128,
   }) async {
-    return MnemonicGenerator(jsVMService: jsVMService)
-        .generateMnemonic(strength: strength);
+    return MnemonicGenerator().generateMnemonic(strength: strength);
   }
 
   //Send Near tokens thought near blockchain
@@ -197,11 +194,18 @@ class NearBlockChainService
     String? passphrase,
     DerivationPathData? derivationPath,
   }) async {
+    if (derivationPath is! DerivationPath?) {
+      throw ArgumentError(
+          "Invalid derivationPath type. Expected: `DerivationPath`");
+    }
     passphrase ??= "";
-    final rawFunction = derivationPath == null
-        ? "window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
-        : """window.NearBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";
-    final res = await jsVMService.callJS(rawFunction);
+    final res = await jsRunner.getBlockChainDataFromMnemonic(
+      mnemonic: mnemonic,
+      passphrase: passphrase,
+      accountNumber: derivationPath?.accountNumber,
+      change: derivationPath?.change,
+      address: derivationPath?.address,
+    );
     final blockChainData = NearBlockChainData.fromJson(jsonDecode(res));
     return blockChainData;
   }
@@ -245,8 +249,16 @@ class NearBlockChainService
     required List<Map<String, dynamic>> actions,
   }) async {
     nonce++;
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.signNearActions('$fromAddress','$toAddress','$transferAmount', '$gas' , '$privateKey','$nonce','$blockHash','${jsonEncode(actions)}')");
+    final res = await jsRunner.signNearActions(
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      transferAmount: transferAmount,
+      privateKey: privateKey,
+      gas: gas,
+      nonce: nonce,
+      blockHash: blockHash,
+      actions: jsonEncode(actions),
+    );
 
     Map<String, dynamic> decodedRes = jsonDecode(res);
     if (decodedRes.containsKey("error")) {
@@ -350,40 +362,33 @@ class NearBlockChainService
 
   //This method export private key from Flutterchain to the near-api-js format
   Future<String> exportPrivateKeyToTheNearApiJsFormat(
-      {BlockChainData? currentBlockchainData}) async {
-    if (currentBlockchainData == null) {
-      throw Exception('currentBlockchainData is incorrect');
-    }
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.exportSecretKeyToNearApiJSFormat('${currentBlockchainData.privateKey}','${currentBlockchainData.publicKey}')");
-    return res.toString();
+      {required BlockChainData currentBlockchainData}) async {
+    return jsRunner.exportSecretKeyToNearApiJSFormat(
+      privateKey: currentBlockchainData.privateKey,
+      publicKey: currentBlockchainData.publicKey,
+    );
   }
 
   //This method will transform Near public key (which in hex format) to Base58 format with "ed25519:" prefix
   Future<String> getBase58PubKeyFromHexValue(
-      {required String? hexEncodedPubKey}) async {
-    if (hexEncodedPubKey == null) {
-      throw Exception('hexEncodedPubKey is incorrect');
-    }
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBase58PubKeyFromHexValue('$hexEncodedPubKey')");
-    return res.toString();
+      {required String hexEncodedPubKey}) async {
+    return jsRunner.getBase58PubKeyFromHexValue(hexEncodedPubKey);
   }
 
   //This method getting Public Key in hex format from Secret key (which was generated on near-api-js)
   Future<String> getPublicKeyFromSecretKeyFromNearApiJSFormat(
       String base58PrivateKey) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getPublicKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
-    return res.toString();
+    return jsRunner.getPublicKeyFromSecretKeyFromNearApiJSFormat(
+      base58PrivateKey,
+    );
   }
 
   //This method getting Private Key in base64 format from Secret key (which was generated on near-api-js)
   Future<String> getPrivateKeyFromSecretKeyFromNearApiJSFormat(
       String base58PrivateKey) async {
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getPrivateKeyFromSecretKeyFromNearApiJSFormat('$base58PrivateKey')");
-    return res.toString();
+    return jsRunner.getPrivateKeyFromSecretKeyFromNearApiJSFormat(
+      base58PrivateKey,
+    );
   }
 
   @override
@@ -398,69 +403,11 @@ class NearBlockChainService
 
   Future<void> authWithNearWalletsWeb(String privateNearAPIjsFormat,
       [String? successUrlCallBackWeb, String? failureUrlCallBackWeb]) async {
-    final currentUrl = await jsVMService.callJS("window.location.href");
-    await jsVMService.callJS('''
-    // Create a script element
-    var script = document.createElement('script');
-
-    // Set the script source, integrity, and crossorigin attributes
-    script.src = 'https://cdn.jsdelivr.net/npm/near-api-js@0.44.2/dist/near-api-js.min.js';
-    script.integrity = 'sha256-W5o4c5DRZZXMKjuL41jsaoBpE/UHMkrGvIxN9HcjNSY=';
-    script.crossOrigin = 'anonymous';
-
-    // Add an event listener to execute code when the script has loaded
-    script.onload = function() {
-        // Your code to run after the script has loaded
-        console.log('Near API JS has loaded!');
-        const addNewFullAccessKeyToTheNearBlockchain = async (key) => {
-            const { keyStores, KeyPair, connect, WalletConnection } = nearApi;
-            const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
-            const connectionConfig = {
-                networkId: "mainnet",
-                keyStore: myKeyStore,
-                nodeUrl: "https://rpc.mainnet.near.org",
-                walletUrl: "https://app.mynearwallet.com",
-                helperUrl: "https://helper.mainnet.near.org",
-                explorerUrl: "https://explorer.mainnet.near.org",
-            };
-            const nearConnection = await connect(connectionConfig);
-            const wallet = new WalletConnection(nearConnection);
-
-            const PENDING_ACCESS_KEY_PREFIX = "pending_key";
-
-            const loginFullAccess = async (options) => {
-                const currentUrl = new URL(window.location.href);
-                const newUrl = new URL(wallet._walletBaseUrl + "/login/");
-                newUrl.searchParams.set("success_url", "${successUrlCallBackWeb ?? currentUrl}");
-                newUrl.searchParams.set("failure_url", "${failureUrlCallBackWeb ?? currentUrl}");
-
-                const accessKey = KeyPair.fromString(key);
-                newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
-                await wallet._keyStore.setKey(
-                    wallet._networkId,
-                    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
-                    accessKey
-                );
-
-                window.location.assign(newUrl.toString());
-            };
-
-
-            loginFullAccess();
-
-
-        };
-
-        window.addNewFullAccessKeyToTheNearBlockchain = addNewFullAccessKeyToTheNearBlockchain;
-       addNewFullAccessKeyToTheNearBlockchain('$privateNearAPIjsFormat');
-    };
-
-    // Append the script element to the head of the document
-    document.head.appendChild(script);
-
-   // window.addNewFullAccessKeyToTheNearBlockchain('$privateNearAPIjsFormat');
-
-''');
+    jsRunner.authWithNearWalletsWeb(
+      privateNearAPIjsFormat: privateNearAPIjsFormat,
+      failureUrlCallBackWeb: failureUrlCallBackWeb,
+      successUrlCallBackWeb: successUrlCallBackWeb,
+    );
   }
 
   String? getAccountIdFromWalletRedirectOnTheWeb() {
@@ -548,8 +495,12 @@ class NearBlockChainService
     String typeOfNetwork = "testnet",
     String? mpcPublicKey,
   }) async {
-    final mpcAccountInfoData = await jsVMService.callJSAsync(
-      "window.generateAddressForNearMPC('$accountId', '$path', '$chain', ${mpcPublicKey != null ? "'$mpcPublicKey'" : 'undefined'}, '$typeOfNetwork')",
+    final mpcAccountInfoData = await jsRunner.generateAddressForNearMPC(
+      accountId: accountId,
+      path: path,
+      chain: chain,
+      network: typeOfNetwork,
+      publicMPCKey: mpcPublicKey,
     );
     final mpcAccountInfo =
         json.decode(mpcAccountInfoData) as Map<String, dynamic>;
@@ -616,8 +567,14 @@ class NearBlockChainService
     final serializedUnsignedTransaction = Uint8List.fromList(
         List<int>.from(unsignedTransaction["transaction"].values));
 
-    final signedTransaction = await jsVMService.callJS(
-      "window.EVMUtils.signTransactionWithMPCSignature('$signatureData', '${jsonEncode(serializedUnsignedTransaction)}', '$senderAddress', '${unsignedTransaction["typeOfTransaction"]}', '${jsonEncode(unsignedTransaction['chainInfo'])}')",
+    final evmJsRunner = getEVMJsRunner();
+    final signedTransaction =
+        await evmJsRunner.signTransactionWithMPCSignatureForEVMBlockchain(
+      signatureData: signatureData,
+      serializedTransaction: jsonEncode(serializedUnsignedTransaction),
+      sender: senderAddress,
+      typeOfTransaction: unsignedTransaction["typeOfTransaction"],
+      chainInfo: jsonEncode(unsignedTransaction['chainInfo']),
     );
 
     return signedTransaction;
@@ -644,11 +601,18 @@ class NearBlockChainService
     String path = "flutterchain",
     String mpcContract = 'v2.multichain-mpc.testnet',
   }) async {
+    final bitcoinJsRunner = getBitcoinJsRunner();
+
     final unsignedTransaction = transactionInfo.transactionInfo;
 
     //Get payloads of all utxos
-    final payloadsListEncoded = await jsVMService.callJS(
-        "window.BitcoinUtils.getReversedPayloadsToSignForMPC('${unsignedTransaction['psbt']}', '${jsonEncode(unsignedTransaction['utxos'])}', '$mpcSenderPublicKey')");
+    final payloadsListEncoded =
+        await bitcoinJsRunner.getReversedPayloadsToSignForMPCForBitcoin(
+      psbtHex: unsignedTransaction['psbt'],
+      utxos: jsonEncode(unsignedTransaction['utxos']),
+      publicKey: mpcSenderPublicKey,
+    );
+
     final payloadsList = jsonDecode(payloadsListEncoded) as List<dynamic>;
 
     final List<Map<String, dynamic>> signatures = [];
@@ -690,8 +654,12 @@ class NearBlockChainService
     }
 
     //Sign transaction
-    final signedTransactionEncoded = await jsVMService.callJS(
-        "window.BitcoinUtils.signTransactionWithMPCSignature('${unsignedTransaction['psbt']}', '${jsonEncode(signatures)}', '$mpcSenderPublicKey')");
+    final signedTransactionEncoded =
+        await bitcoinJsRunner.signTransactionWithMPCSignatureForBitcoin(
+      psbtHex: unsignedTransaction['psbt'],
+      signatures: jsonEncode(signatures),
+      publicKey: mpcSenderPublicKey,
+    );
 
     final signedTransaction = jsonDecode(signedTransactionEncoded) as String;
 
@@ -740,9 +708,13 @@ class NearBlockChainService
       "big_s": signatureValList[1],
     });
 
-    final signedTransaction = await jsVMService.callJS(
-      "window.XRPUtils.signTransactionWithMPCSignature( '${jsonEncode(unsignedTransaction['unsignedTx'])}', '$signatureData')",
+    final xrpJsRunner = getXRPJsRunner();
+    final signedTransaction =
+        await xrpJsRunner.signTransactionWithMPCSignatureForXRP(
+      unsignedTx: jsonEncode(unsignedTransaction['unsignedTx']),
+      signatureData: signatureData,
     );
+
     return signedTransaction;
   }
 

@@ -43,7 +43,7 @@ class _ExportKeyInNearApiJsFormatState
                 (element) => element.derivationPath == currentDerivationPath);
         final secretKey = await NearBlockChainService.defaultInstance()
             .exportPrivateKeyToTheNearApiJsFormat(
-          currentBlockchainData: currentBlockchainData,
+          currentBlockchainData: currentBlockchainData!,
         );
         nearVM.nearState.add(
           currentState.copyWith(exportSecretKeyToTheNearApiJsFormat: secretKey),

@@ -15,24 +15,21 @@ import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/bitcoin_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/bitcoin/bitcoin_blockchain_js_runner_interface.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/nearblockchain/near_blockchain_js_runner.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/bitcoin/bitcoin_blockchain_js_runner.dart';
 
 class BitcoinBlockChainService implements BlockChainService {
-  final JsVMService jsVMService;
+  final BitcoinBlockChainJsRunner jsRunner = getBitcoinJsRunner();
   final BitcoinRpcClient bitcoinRpcClient;
 
   BitcoinBlockChainService({
-    JsVMService? jsVMService,
     required this.bitcoinRpcClient,
-  }) : jsVMService = jsVMService ?? getJsVM();
+  });
 
   factory BitcoinBlockChainService.defaultInstance() {
     return BitcoinBlockChainService(
-      jsVMService: getJsVM(),
       bitcoinRpcClient: BitcoinRpcClient.defaultInstance(),
     );
   }
@@ -43,8 +40,7 @@ class BitcoinBlockChainService implements BlockChainService {
   Future<String> generateMnemonic({
     int strength = 128,
   }) async {
-    return MnemonicGenerator(jsVMService: jsVMService)
-        .generateMnemonic(strength: strength);
+    return MnemonicGenerator().generateMnemonic(strength: strength);
   }
 
   //Send Bitcoin tokens thought bitcoin blockchain
@@ -122,10 +118,19 @@ class BitcoinBlockChainService implements BlockChainService {
     String? passphrase,
     DerivationPathData? derivationPath,
   }) async {
-    final rawFunction = derivationPath == null
-        ? "window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase')"
-        : """window.BitcoinBlockchain.getBlockChainDataFromMnemonic('$mnemonic','$passphrase', "${(derivationPath as DerivationPath).accountNumber}","${derivationPath.change}","${derivationPath.address}")""";
-    final res = await jsVMService.callJS(rawFunction);
+    if (derivationPath is! DerivationPath?) {
+      throw ArgumentError(
+        'Incorrect derivationPath type. Expected: `DerivationPath`',
+      );
+    }
+    passphrase ??= "";
+    final res = await jsRunner.getBlockChainData(
+      mnemonic: mnemonic,
+      passphrase: passphrase,
+      accountNumber: derivationPath?.accountNumber,
+      change: derivationPath?.change,
+      address: derivationPath?.address,
+    );
     final blockChainData = BitcoinBlockChainData.fromJson(jsonDecode(res));
     return blockChainData;
   }
@@ -140,37 +145,37 @@ class BitcoinBlockChainService implements BlockChainService {
       List<dynamic> dataFromUTXO,
       String format,
       int feeBayte) async {
-    String jsonFormData = jsonEncode(dataFromUTXO);
-    final BigintTransferAmount = BigInt.parse(transferAmount);
-    final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.bitcoinTransferAction('$toAddress', '$accountID', $BigintTransferAmount, '$privateKey', '$publicKey', $jsonFormData, '$format', $feeBayte)");
-    return res.toString();
+    return jsRunner.formBitcoinTransferAction(
+      toAddress: toAddress,
+      accountID: accountID,
+      transferAmount: transferAmount,
+      privateKeyHex: privateKey,
+      publicKey: publicKey,
+      dataFromUTXO: jsonEncode(dataFromUTXO),
+      format: format,
+      feeBayte: feeBayte,
+    );
   }
 
   //This method will transform Bitcoin public key (which in hex format) to Base58 format
   Future<String> getBase58PubKeyFromHexValue(
-      {required String? hexEncodedPubKey}) async {
-    if (hexEncodedPubKey == null) {
-      throw Exception('hexEncodedPubKey is incorrect');
-    }
-    final res = await jsVMService.callJS(
-        "window.NearBlockchain.getBase58PubKeyFromHexValue('$hexEncodedPubKey')");
-    return res.toString();
+      {required String hexEncodedPubKey}) async {
+    final nearJsRunner = getNearJsRunner();
+    return nearJsRunner.getBase58PubKeyFromHexValue(hexEncodedPubKey);
   }
 
   //This method getting Address BTC in P2PKH format from Public Key in Hex format, if needKeyHash = true, return key hash
   Future<String> getAddressBTCP2PKHFormat(
       String publicKeyHEX, bool needKeyHash) async {
-    final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeyP2PKH('$publicKeyHEX', $needKeyHash)");
-    return res.toString();
+    return jsRunner.getAdressBTCFromHexPublicKeyP2PKH(
+      publicKeyHEX: publicKeyHEX,
+      needKeyHash: needKeyHash,
+    );
   }
 
   //This method getting Address BTC in SegWit format from Public Key in Hex format
   Future<String> getAddressBTCSegWitFormat(String publicKeyHEX) async {
-    final res = await jsVMService.callJS(
-        "window.BitcoinBlockchain.getAdressBTCFromHexPublicKeySegWit('$publicKeyHEX')");
-    return res.toString();
+    return jsRunner.getAdressBTCFromHexPublicKeySegWit(publicKeyHEX);
   }
 
   //This method getting actual price fee in SegWit format
@@ -219,8 +224,16 @@ class BitcoinBlockChainService implements BlockChainService {
 
     final network = testNetwork ? 'testnet' : 'mainnet';
 
-    final psbtEncoded = await jsVMService.callJS(
-        "window.BitcoinUtils.createPayload('$senderAddress', '$receiverAddress', $amountOfSatoshi, '${jsonEncode(utxos)}', '${jsonEncode(txInfos)}', $feeRate, '$network')");
+    final psbtEncoded = await jsRunner.createPayloadForNearMPC(
+      sender: senderAddress,
+      receiver: receiverAddress,
+      satoshis: amountOfSatoshi,
+      utxos: jsonEncode(utxos),
+      txInfos: jsonEncode(txInfos),
+      feeRate: feeRate,
+      network: network,
+    );
+
     final psbtInHex = jsonDecode(psbtEncoded);
 
     return MpcTransactionInfo(transactionInfo: {

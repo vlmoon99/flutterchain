@@ -13,23 +13,19 @@ import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/xrp_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/xrp/xrp_blockchain_js_runner.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/xrp/xrp_blockchain_js_runner_interface.dart';
 
 class XRPBlockChainService implements BlockChainService {
-  final JsVMService jsVMService;
+  final XrpBlockChainJSRunner jsRunner = getXRPJsRunner();
   final XRPRpcClient xrpRpcClient;
 
   XRPBlockChainService({
-    required this.jsVMService,
     required this.xrpRpcClient,
   });
 
   factory XRPBlockChainService.defaultInstance() {
     return XRPBlockChainService(
-      jsVMService: getJsVM(),
       xrpRpcClient: XRPRpcClient.defaultInstance(),
     );
   }
@@ -108,14 +104,13 @@ class XRPBlockChainService implements BlockChainService {
       "Amount": amountInDrops.toString(),
       "Destination": receiverAddress,
       "SigningPubKey": mpcAccountInfo.publicKey,
-      // "NetworkID": transactionInfo.networkId,
       "Sequence": transactionInfo.sequence,
       "Fee": transactionInfo.fee.toString(),
       "LastLedgerSequence": transactionInfo.lastLedgerSequence,
     };
 
-    final unsignedTransactionData = await jsVMService.callJSAsync(
-      """window.XRPUtils.createUnsignedTransaction('${jsonEncode(txInJsonFormat)}')""",
+    final unsignedTransactionData = await jsRunner.createUnsignedTransaction(
+      jsonEncode(txInJsonFormat),
     );
 
     final unsignedTransaction =

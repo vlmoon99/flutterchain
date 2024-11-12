@@ -170382,7 +170382,7 @@ var BitcoinBlockchain = exports.BitcoinBlockchain = /*#__PURE__*/function () {
         });
         var input = TW.Bitcoin.Proto.SigningInput.create({
           hashType: BitcoinScript.hashTypeForCoin(CoinType.bitcoin),
-          amount: transferAmount,
+          amount: BigInt(transferAmount),
           byteFee: feeBayte,
           toAddress: toAddress,
           changeAddress: accountID,

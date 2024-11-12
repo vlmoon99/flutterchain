@@ -21,25 +21,21 @@ import 'package:flutterchain/flutterchain_lib/models/core/transfer_request.dart'
 import 'package:flutterchain/flutterchain_lib/models/core/wallet.dart';
 import 'package:flutterchain/flutterchain_lib/network/chains/concordium_grpc/concordium_rpc_client.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/blockchain_service.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/concordium/concordium_blockchain_js_runner.dart';
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/concordium/concordium_blockchain_js_runner_interface.dart';
 import 'package:flutterchain/flutterchain_lib/services/core/mnemonic_generator.dart';
 
 class ConcordiumBlockChainService implements BlockChainService {
-  final JsVMService jsVMService;
+  final ConcordiumBlockchainJsRunner jsRunner = getConcordiumJsRunner();
   ConcordiumRpcClient concordiumRpcClient;
 
   ConcordiumBlockChainService({
-    JsVMService? jsVMService,
     required this.concordiumRpcClient,
-  }) : jsVMService = jsVMService ?? getJsVM();
+  });
 
   factory ConcordiumBlockChainService.defaultInstance() {
     return ConcordiumBlockChainService(
       concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
-      jsVMService: getJsVM(),
     );
   }
 
@@ -103,8 +99,7 @@ class ConcordiumBlockChainService implements BlockChainService {
   Future<String> generateMnemonic({
     int strength = 128,
   }) async {
-    return MnemonicGenerator(jsVMService: jsVMService)
-        .generateMnemonic(strength: strength);
+    return MnemonicGenerator().generateMnemonic(strength: strength);
   }
 
   /// Returns a list of identity providers for the Concordium blockchain.
@@ -132,10 +127,13 @@ class ConcordiumBlockChainService implements BlockChainService {
     final cryptographicParameters =
         await concordiumRpcClient.getCryptographicParameters();
     final String network = concordiumRpcClient.typeOfNetwork;
-
-    final requestJson = await jsVMService.callJSAsync(
-        """window.ConcordiumBlockchain.createIdentityRequestParams('$mnemonic', '$network', '${jsonEncode(identityProvider)}', '${jsonEncode(cryptographicParameters)}', $identityIndex ) """);
-
+    final requestJson = await jsRunner.createIdentityRequestParams(
+      mnemonic: mnemonic,
+      network: network,
+      selectedIdentityProvider: jsonEncode(identityProvider),
+      cryptographicParameters: jsonEncode(cryptographicParameters),
+      identityIndex: identityIndex,
+    );
     return CreateIdentityRequestParams.fromJson(jsonDecode(requestJson));
   }
 
@@ -213,8 +211,13 @@ class ConcordiumBlockChainService implements BlockChainService {
         await concordiumRpcClient.getCryptographicParameters();
     final String network = concordiumRpcClient.typeOfNetwork;
 
-    final requestInfo = jsonDecode(await jsVMService.callJSAsync(
-        "window.ConcordiumBlockchain.createIdentityRecoveryParams('$mnemonic', '$network', '${jsonEncode(identityProvider)}', '$identityIndex', '${jsonEncode(cryptographicParameters)}' ) "));
+    final requestInfo = jsonDecode(await jsRunner.createIdentityRecoveryParams(
+      seedPhrase: mnemonic,
+      network: network,
+      selectedIdentityProvider: jsonEncode(identityProvider),
+      identityIndex: identityIndex,
+      cryptographicParameters: jsonEncode(cryptographicParameters),
+    ));
 
     final baseUrl = requestInfo['baseUrl'];
     final searchParams =
@@ -249,8 +252,16 @@ class ConcordiumBlockChainService implements BlockChainService {
         await concordiumRpcClient.getCryptographicParameters();
     final String network = concordiumRpcClient.typeOfNetwork;
 
-    final createCredentialDeploymentTransaction = await jsVMService.callJSAsync(
-        "window.ConcordiumBlockchain.createCredentialDeploymentTransaction('$mnemonic', '$network', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}', '${jsonEncode(identityInfo)}', '${jsonEncode(identityProviderInfo)}', '${jsonEncode(cryptographicParameters)}'  )");
+    final createCredentialDeploymentTransaction =
+        await jsRunner.createCredentialDeploymentTransaction(
+      seedPhrase: mnemonic,
+      network: network,
+      identityIndex: derivationPath.identityIndex,
+      credNumber: derivationPath.credentialIndex,
+      identity: jsonEncode(identityInfo),
+      selectedIdentityProvider: jsonEncode(identityProviderInfo),
+      global: jsonEncode(cryptographicParameters),
+    );
 
     final txInfo = Map<String, dynamic>.from(
         jsonDecode(createCredentialDeploymentTransaction));
@@ -318,8 +329,14 @@ class ConcordiumBlockChainService implements BlockChainService {
         await concordiumRpcClient.getCryptographicParameters();
     final String network = concordiumRpcClient.typeOfNetwork;
 
-    return await jsVMService.callJS(
-        "window.ConcordiumBlockchain.getAccountAddressFromMnemonic('$mnemonic', '$network', '${derivationPath.identityProviderIndex}', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}', '${jsonEncode(cryptographicParameters)}' )");
+    return jsRunner.getAccountAddressFromMnemonic(
+      seedPhrase: mnemonic,
+      network: network,
+      identityProviderIndex: derivationPath.identityProviderIndex,
+      identityIndex: derivationPath.identityIndex,
+      credNumber: derivationPath.credentialIndex,
+      cryptographicParameters: jsonEncode(cryptographicParameters),
+    );
   }
 
   /// Retrieves the account signing key derived from the given mnemonic and derivation path.
@@ -334,8 +351,13 @@ class ConcordiumBlockChainService implements BlockChainService {
   }) async {
     final String network = concordiumRpcClient.typeOfNetwork;
 
-    return await jsVMService.callJS(
-        "window.ConcordiumBlockchain.getAccountSigningKey('$mnemonic', '$network', '${derivationPath.identityProviderIndex}', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}' )");
+    return jsRunner.getAccountSigningKey(
+      seedPhrase: mnemonic,
+      network: network,
+      identityProviderIndex: derivationPath.identityProviderIndex,
+      identityIndex: derivationPath.identityIndex,
+      credNumber: derivationPath.credentialIndex,
+    );
   }
 
   /// Retrieves the account public key derived from the given mnemonic and derivation path.
@@ -349,8 +371,13 @@ class ConcordiumBlockChainService implements BlockChainService {
     required ConcordiumDerivationPath derivationPath,
   }) async {
     final String network = concordiumRpcClient.typeOfNetwork;
-    return await jsVMService.callJS(
-        "window.ConcordiumBlockchain.getAccountPublicKey('$mnemonic', '$network', '${derivationPath.identityProviderIndex}', '${derivationPath.identityIndex}', '${derivationPath.credentialIndex}' )");
+    return jsRunner.getAccountPublicKey(
+      seedPhrase: mnemonic,
+      network: network,
+      identityProviderIndex: derivationPath.identityProviderIndex,
+      identityIndex: derivationPath.identityIndex,
+      credNumber: derivationPath.credentialIndex,
+    );
   }
 
   /// Retrieves the status of a transaction on the Concordium blockchain.
@@ -429,8 +456,14 @@ class ConcordiumBlockChainService implements BlockChainService {
     }
     final nonce = await concordiumRpcClient
         .getNextAccountNonce(transferRequest.senderAddress);
-    final txParams = jsonDecode(await jsVMService.callJSAsync(
-        "window.ConcordiumBlockchain.createTransferTransactionParams('${transferRequest.senderAddress}', '${transferRequest.toAddress}', '${transferRequest.transferAmountInMicroCcd}', '${transferRequest.privateKey}', '$nonce' )"));
+    final txParams = jsonDecode(await jsRunner.createTransferTransactionParams(
+      senderAddress: transferRequest.senderAddress,
+      toAddress: transferRequest.toAddress,
+      amount: transferRequest.transferAmountInMicroCcd,
+      signingKey: transferRequest.privateKey,
+      nonce: nonce,
+    ));
+
     final txHash = await concordiumRpcClient.sendTransaction(
       accountTransactionParams: txParams,
     );
@@ -481,8 +514,16 @@ class ConcordiumBlockChainService implements BlockChainService {
       delegationTarget =
           {}; // if [delegationType] is null we don't change delegation target
     }
-    final txParams = jsonDecode(await jsVMService.callJSAsync(
-        "window.ConcordiumBlockchain.createDelegationTransactionParams('$senderAddress', '$amountInMicroCcd', '$privateKey', '$nonce', '$restakeEarnings', '${jsonEncode(delegationTarget)}' )"));
+    final txParams =
+        jsonDecode(await jsRunner.createDelegationTransactionParams(
+      senderAddress: senderAddress,
+      amount: amountInMicroCcd.toString(),
+      signingKey: privateKey,
+      nonce: nonce,
+      restakeEarnings: restakeEarnings.toString(),
+      delegationTarget: jsonEncode(delegationTarget),
+    ));
+
     final txHash = await concordiumRpcClient.sendTransaction(
       accountTransactionParams: Map<String, dynamic>.from(txParams),
     );
@@ -538,8 +579,16 @@ class ConcordiumBlockChainService implements BlockChainService {
         "finalizationRewardCommission":
             finalizationRewardCommissionInPercentage * 1000,
     };
-    final txParams = jsonDecode(await jsVMService.callJSAsync(
-        "window.ConcordiumBlockchain.createBakerTransactionParams('$senderAddress', '$privateKey', '$nonce', '$stakeAmountInMicroCcd', '$restakeEarnings', '${jsonEncode(bakerSettings)}', '${jsonEncode(bakerKeys)}' )"));
+    final txParams = jsonDecode(await jsRunner.createBakerTransactionParams(
+      senderAddress: senderAddress,
+      signingKey: privateKey,
+      nonce: nonce,
+      amount: stakeAmountInMicroCcd.toString(),
+      restakeEarnings: restakeEarnings.toString(),
+      bakerSettigs: jsonEncode(bakerSettings),
+      bakerKeys: jsonEncode(bakerKeys),
+    ));
+
     final txHash = await concordiumRpcClient.sendTransaction(
       accountTransactionParams: Map<String, dynamic>.from(txParams),
     );

@@ -30,7 +30,7 @@ import 'package:flutterchain/flutterchain_lib/network/chains/near_rpc_client.dar
     as _i3;
 import 'package:flutterchain/flutterchain_lib/services/chains/near_blockchain_service.dart'
     as _i9;
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_vm.dart'
+import 'package:flutterchain/flutterchain_lib/services/core/js_engines/js_runners/nearblockchain/near_blockchain_js_runner_interface.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i11;
@@ -48,8 +48,9 @@ import 'package:mockito/src/dummies.dart' as _i11;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeJsVMService_0 extends _i1.SmartFake implements _i2.JsVMService {
-  _FakeJsVMService_0(
+class _FakeNearBlockChainJsRunner_0 extends _i1.SmartFake
+    implements _i2.NearBlockChainJsRunner {
+  _FakeNearBlockChainJsRunner_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -133,13 +134,13 @@ class MockNearBlockChainService extends _i1.Mock
   }
 
   @override
-  _i2.JsVMService get jsVMService => (super.noSuchMethod(
-        Invocation.getter(#jsVMService),
-        returnValue: _FakeJsVMService_0(
+  _i2.NearBlockChainJsRunner get jsRunner => (super.noSuchMethod(
+        Invocation.getter(#jsRunner),
+        returnValue: _FakeNearBlockChainJsRunner_0(
           this,
-          Invocation.getter(#jsVMService),
+          Invocation.getter(#jsRunner),
         ),
-      ) as _i2.JsVMService);
+      ) as _i2.NearBlockChainJsRunner);
 
   @override
   _i3.NearRpcClient get nearRpcClient => (super.noSuchMethod(
@@ -508,7 +509,7 @@ class MockNearBlockChainService extends _i1.Mock
 
   @override
   _i10.Future<String> exportPrivateKeyToTheNearApiJsFormat(
-          {_i5.BlockChainData? currentBlockchainData}) =>
+          {required _i5.BlockChainData? currentBlockchainData}) =>
       (super.noSuchMethod(
         Invocation.method(
           #exportPrivateKeyToTheNearApiJsFormat,

@@ -18,9 +18,6 @@ import 'package:flutterchain_example/modules/home/services/helper_service.dart';
 import 'package:flutterchain_example/network/helper_network_client.dart';
 import 'package:flutterchain_example/routes/routes.dart';
 import 'package:flutterchain_example/theme/app_theme.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/js_engines/core/js_engine_stub.dart'
-    if (dart.library.io) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/webview_js_engine.dart'
-    if (dart.library.js) 'package:flutterchain/flutterchain_lib/services/core/js_engines/platforms_implementations/web_js_engine.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AppModule extends Module {
@@ -33,10 +30,6 @@ class AppModule extends Module {
       (i) => const FlutterSecureStorage(),
     ),
 
-    //Inject JS Engine
-    Bind.singleton(
-      (i) => getJsVM(),
-    ),
     //Inject Blockchain Code
 
     //1. Near Blockchain
@@ -53,7 +46,6 @@ class AppModule extends Module {
     ),
     Bind.singleton(
       (i) => NearBlockChainService(
-        jsVMService: i(),
         nearRpcClient: i(),
       ),
     ),
@@ -83,13 +75,11 @@ class AppModule extends Module {
     ),
     Bind.singleton(
       (i) => BitcoinBlockChainService(
-        jsVMService: i(),
         bitcoinRpcClient: i(),
       ),
     ),
     Bind.singleton(
       (i) => ConcordiumBlockChainService(
-        jsVMService: i(),
         concordiumRpcClient: ConcordiumRpcClient.defaultInstance(),
       ),
     ),
@@ -97,7 +87,6 @@ class AppModule extends Module {
     //Inject Main Services for Main File of Crypto Library
     Bind.singleton(
       (i) => FlutterChainService(
-        jsVMService: i(),
         nearBlockchainService: i(),
         bitcoinBlockchainService: i(),
       ),
