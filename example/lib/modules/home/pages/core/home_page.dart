@@ -234,6 +234,7 @@ class _CryptoListPageState extends State<CryptoListPage> {
                         color: Colors.white,
                         fontSize: 20.sp,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
