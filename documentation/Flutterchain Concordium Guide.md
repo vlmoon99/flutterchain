@@ -110,7 +110,7 @@ final res = await concordiumBlockChainService.getTransactionStatus(transactionHa
 
 It returns `BlockchainResponse` with current transaction status and outcome information.
 
-There are also methods to get account adress, public key and private key:
+There are also methods to get account address, public key and private key:
 
 ```dart
 final accAdress = await concordiumBlockChainService
